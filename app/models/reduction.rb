@@ -1,0 +1,2 @@
+class Reduction < ApplicationRecord
+end

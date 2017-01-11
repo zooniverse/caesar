@@ -1,5 +1,4 @@
 require 'spec_helper'
-require_relative '../../app/models/extractors/survey_extractor'
 
 describe Extractors::SurveyExtractor do
   def make_annotation(choice)

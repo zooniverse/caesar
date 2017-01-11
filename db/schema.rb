@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161121164108) do
+ActiveRecord::Schema.define(version: 20170111161040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,49 @@ ActiveRecord::Schema.define(version: 20161121164108) do
     t.integer  "user_id"
     t.datetime "inserted_at", null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "extracts", force: :cascade do |t|
+    t.integer  "classification_id"
+    t.datetime "classification_at"
+    t.integer  "extractor_id"
+    t.integer  "project_id"
+    t.integer  "workflow_id"
+    t.integer  "user_id"
+    t.integer  "subject_id"
+    t.jsonb    "data"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.index ["classification_id", "extractor_id"], name: "index_extracts_on_classification_id_and_extractor_id", unique: true, using: :btree
+    t.index ["subject_id"], name: "index_extracts_on_subject_id", using: :btree
+    t.index ["user_id"], name: "index_extracts_on_user_id", using: :btree
+    t.index ["workflow_id"], name: "index_extracts_on_workflow_id", using: :btree
+  end
+
+  create_table "reductions", force: :cascade do |t|
+    t.integer  "reducer_id"
+    t.integer  "project_id"
+    t.integer  "workflow_id"
+    t.integer  "subject_id"
+    t.jsonb    "data"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["subject_id"], name: "index_reductions_on_subject_id", using: :btree
+    t.index ["workflow_id", "subject_id", "reducer_id"], name: "index_reductions_on_workflow_id_and_subject_id_and_reducer_id", unique: true, using: :btree
+    t.index ["workflow_id"], name: "index_reductions_on_workflow_id", using: :btree
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.jsonb    "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "workflows", force: :cascade do |t|
+    t.integer  "project_id"
+    t.jsonb    "rules"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
