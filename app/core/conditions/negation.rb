@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Negation
     def initialize(operation)
       @operation = operation

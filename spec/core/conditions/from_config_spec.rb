@@ -1,6 +1,7 @@
+# coding: utf-8
 require 'spec_helper'
 
-describe Rules::ConditionFromConfig do
+describe Conditions::FromConfig do
   # Since it's hard to test a DSLish domain object builder like the described class
   # without tightly coupling to the specifics that it generates (which seems silly),
   # these tests are written more as integration tests, checking that the entire stack

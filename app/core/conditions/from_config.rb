@@ -1,20 +1,20 @@
-module Rules
-  module ConditionFromConfig
+module Conditions
+  module FromConfig
     class InvalidConfig < StandardError; end
 
     def self.build(config)
-      case config[0]
-      when :not
+      case config[0].to_s
+      when 'not'
         Negation.new(build(config[1]))
-      when :and
+      when 'and'
         Conjunction.new(build_many(config[1..-1]))
-      when :or
+      when 'or'
         Disjunction.new(build_many(config[1..-1]))
-      when :eq, :gt, :gte, :lt, :lte
+      when 'eq', 'gt', 'gte', 'lt', 'lte'
         Comparison.new(config[0], build_many(config[1..-1]))
-      when :const
+      when 'const'
         Constant.new(config[1])
-      when :lookup
+      when 'lookup'
         Lookup.new(config[1])
       else
         raise InvalidConfig, "Unknown rule type: #{config[0]} (in #{config.inspect})"

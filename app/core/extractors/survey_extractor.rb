@@ -3,8 +3,8 @@ module Extractors
     attr_reader :task_key, :nothing_here_choice
 
     def initialize(config = {})
-      @task_key = "T0"
-      @nothing_here_choice = "NTHNGHR"
+      @task_key = config["task_key"] || "T0"
+      @nothing_here_choice = config["nothing_here_choice"] || "NTHNGHR"
     end
 
     def process(classification)

@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Disjunction
     def initialize(operations)
       @operations = operations

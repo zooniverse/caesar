@@ -1,13 +1,9 @@
-require_relative 'rule'
-require_relative 'condition_from_config'
-require_relative 'effect_from_config'
-
 module Rules
   class Engine
     def initialize(rule_configs)
       @rules = rule_configs.map do |rule_config|
-        Rule.new(ConditionFromConfig.build(config[:if]),
-                 EffectFromConfig.build_many(config[:then]))
+        Rule.new(Conditions::FromConfig.build(rule_config['if']),
+                 Effects::FromConfig.build_many(rule_config['then']))
       end
     end
 

@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Constant
     def initialize(value)
       @value = value

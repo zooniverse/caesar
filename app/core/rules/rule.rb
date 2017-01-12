@@ -1,10 +1,3 @@
-require_relative 'comparison'
-require_relative 'conjunction'
-require_relative 'constant'
-require_relative 'disjunction'
-require_relative 'lookup'
-require_relative 'negation'
-
 module Rules
   class Rule
     attr_reader :condition, :effects

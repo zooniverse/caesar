@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Comparison
     def initialize(type, operations)
       @type = type

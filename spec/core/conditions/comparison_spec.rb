@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Rules::Comparison do
+describe Conditions::Comparison do
   describe 'lt' do
     it 'returns true if all the operations are monotonically increasing in value' do
       comparison = described_class.new(:lt, [constant(1), constant(2), constant(4)])
@@ -73,6 +73,6 @@ describe Rules::Comparison do
   end
 
   def constant(value)
-    Rules::Constant.new(value)
+    Conditions::Constant.new(value)
   end
 end

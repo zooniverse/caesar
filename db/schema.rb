@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170111161040) do
+ActiveRecord::Schema.define(version: 20170112104645) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,8 +54,11 @@ ActiveRecord::Schema.define(version: 20170111161040) do
   create_table "workflows", force: :cascade do |t|
     t.integer  "project_id"
     t.jsonb    "retirement"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.jsonb    "extractors_config"
+    t.jsonb    "reducers_config"
+    t.jsonb    "rules_config"
   end
 
 end

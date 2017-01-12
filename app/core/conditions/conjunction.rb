@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Conjunction
     def initialize(operations)
       @operations = operations

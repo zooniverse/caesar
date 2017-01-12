@@ -8,6 +8,6 @@ class Workflow < ApplicationRecord
   end
 
   def rules
-    []
+    Rules::Engine.new(rules_config)
   end
 end

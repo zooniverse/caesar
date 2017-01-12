@@ -1,4 +1,4 @@
-module Rules
+module Conditions
   class Lookup
     def initialize(key)
       @key = key

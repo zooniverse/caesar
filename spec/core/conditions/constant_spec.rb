@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Rules::Constant do
+describe Conditions::Constant do
   let(:bindings) { double }
 
   it 'returns the stored value' do
