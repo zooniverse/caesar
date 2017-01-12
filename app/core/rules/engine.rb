@@ -10,5 +10,9 @@ module Rules
     def process(results)
       @rules.each { |rule| rule.process(results) }
     end
+
+    def size
+      @rules.size
+    end
   end
 end

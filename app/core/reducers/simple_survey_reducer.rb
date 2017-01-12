@@ -2,8 +2,8 @@ module Reducers
   class SimpleSurveyReducer
     attr_reader :sub_ranges
 
-    def initialize(sub_ranges: [{from: 0, till: 2}])
-      @sub_ranges = sub_ranges
+    def initialize(config = {})
+      @config = config
     end
 
     def process(extractions)
@@ -26,6 +26,10 @@ module Reducers
           results.increment("#{key_prefix}-#{choice}")
         end
       end
+    end
+
+    def sub_ranges
+      @config["sub_ranges"] || [{from: 0, till: 2}]
     end
   end
 end
