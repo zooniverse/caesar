@@ -1,7 +1,7 @@
 module Effects
   class RetireSubject < Effect
-    def perform(workflow, subject)
-      Panoptes.retire_subject(workflow.id, subject.id, reason: reason)
+    def perform(workflow_id, subject_id)
+      Effects.panoptes.retire_subject(workflow_id, subject_id, reason: reason)
     end
 
     def reason

@@ -7,8 +7,8 @@ module Rules
       end
     end
 
-    def process(results)
-      @rules.each { |rule| rule.process(results) }
+    def process(workflow_id, subject_id, results)
+      @rules.each { |rule| rule.process(workflow_id, subject_id, results) }
     end
 
     def size

@@ -1,4 +1,8 @@
 class Workflow < ApplicationRecord
+  def classification_pipeline
+    ClassificationPipeline.new(extractors, reducers, rules)
+  end
+
   def extractors
     Extractors::FromConfig.build_many(extractors_config)
   end

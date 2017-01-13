@@ -7,9 +7,9 @@ module Rules
       @effects = effects
     end
 
-    def process(results)
+    def process(workflow_id, subject_id, results)
       if condition.apply(results)
-        effects.each { |effect| effect.perform }
+        effects.each { |effect| effect.perform(workflow_id, subject_id) }
       end
     end
   end

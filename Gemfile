@@ -19,6 +19,7 @@ gem 'puma', '~> 3.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem 'sidekiq'
+gem 'panoptes-client'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -31,6 +32,7 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'rspec-rails', '~> 3.5'
   gem 'pry-rails'
+  gem 'dotenv-rails'
 end
 
 group :development do

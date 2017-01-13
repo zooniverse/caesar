@@ -8,16 +8,16 @@ module Conditions
     def apply(bindings)
       values = @operations.lazy.map { |operation| operation.apply(bindings) }
 
-      case @type
-      when :lt
+      case @type.to_s
+      when 'lt'
         compare(values) { |a, b| a < b }
-      when :lte
+      when 'lte'
         compare(values) { |a, b| a <= b }
-      when :gt
+      when 'gt'
         compare(values) { |a, b| a > b }
-      when :gte
+      when 'gte'
         compare(values) { |a, b| a >= b }
-      when :eq
+      when 'eq'
         compare(values) { |a, b| a == b }
       else
         raise "Unknown type of comparison: #{@type}"
