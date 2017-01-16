@@ -7,7 +7,7 @@ development:
   database: caesar_development
 test:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL_TEST'] %>
   database: caesar_test
 staging:
   <<: *default
