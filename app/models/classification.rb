@@ -9,6 +9,10 @@ class Classification
     attributes.fetch("id")
   end
 
+  def created_at
+    attributes.fetch("created_at")
+  end
+
   def annotations
     @annotations ||= attributes.fetch("annotations", {})
                                .group_by { |ann| ann["task"] }

@@ -3,7 +3,7 @@ module MergesResults
 
   def self.merge(results)
     results.reduce({}) do |memo, obj|
-      raise OverlappingKeys if overlap?(memo, obj)
+      raise OverlappingKeys, "left: #{memo.keys.inspect}, right: #{obj.keys.inspect}" if overlap?(memo, obj)
       memo.merge(obj)
     end
   end
