@@ -2,19 +2,19 @@ module Extractors
   module FromConfig
     class UnknownExtractor < StandardError; end
 
-    def self.build(config)
+    def self.build(id, config)
       case config["type"].to_s
       when "survey"
-        SurveyExtractor.new(config)
+        SurveyExtractor.new(id, config)
       else
-        raise UnknownExtractor, "Don't know extractor of type #{config["type"]}, from #{config.inspect}"
+        raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{config["type"]}"
       end
     end
 
     def self.build_many(configs)
       return {} unless configs
 
-      configs.map { |id, config| [id, build(config)] }.to_h
+      configs.map { |id, config| [id, build(id, config)] }.to_h
     end
   end
 end

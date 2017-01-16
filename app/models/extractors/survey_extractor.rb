@@ -2,7 +2,8 @@ module Extractors
   class SurveyExtractor
     attr_reader :task_key, :nothing_here_choice
 
-    def initialize(config = {})
+    def initialize(id, config = {})
+      @id = id
       @task_key = config["task_key"] || "T0"
       @nothing_here_choice = config["nothing_here_choice"] || "NTHNGHR"
     end

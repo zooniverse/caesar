@@ -1,15 +1,7 @@
-class ReceiveKinesisPayload
-  def self.run!(params)
-    new(params).execute
-  end
-
+class KinesisStream
   attr_reader :payload
 
-  def initialize(params)
-    @payload = params
-  end
-
-  def execute
+  def receive(payload)
     ActiveRecord::Base.transaction do
       payload.each do |stream_event|
         process(stream_event)

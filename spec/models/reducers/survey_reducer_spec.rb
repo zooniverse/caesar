@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Reducers::SimpleSurveyReducer do
-  subject(:reducer) { described_class.new }
+  subject(:reducer) { described_class.new("s") }
 
   describe '#process' do
     it 'processes when there are no classifications' do
