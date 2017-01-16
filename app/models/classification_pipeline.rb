@@ -8,6 +8,12 @@ class ClassificationPipeline
   end
 
   def process(classification)
+    extract(classification)
+    reduce(classification)
+    check_rules(classification)
+  end
+
+  def extract(classification)
     extractors.each do |id, extractor|
       data = extractor.process(classification)
 
@@ -18,7 +24,9 @@ class ClassificationPipeline
       extract.data = data
       extract.save!
     end
+  end
 
+  def reduce(classification)
     reducers.each do |id, reducer|
       data = reducer.process(extracts(classification))
 
@@ -26,9 +34,13 @@ class ClassificationPipeline
       reduction.data = data
       reduction.save!
     end
+  end
 
+  def check_rules(classification)
     rules.process(classification.workflow_id, classification.subject_id, bindings(classification))
   end
+
+  private
 
   def extracts(classification)
     Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id).order(classification_at: :desc).map(&:data)

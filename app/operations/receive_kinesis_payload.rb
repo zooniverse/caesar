@@ -22,11 +22,11 @@ class ReceiveKinesisPayload
     return unless stream_event.fetch("type") == "classification"
 
     stream_event.fetch("linked").fetch("workflows").each do |workflow|
-      UpdateWorkflowCache.new(workflow).perform
+      Workflow.update_cache(workflow)
     end
 
     stream_event.fetch("linked").fetch("subjects").each do |subject|
-      UpdateSubjectCache.new(subject).perform
+      Subject.update_cache(subject)
     end
 
     classification = Classification.new(stream_event.fetch("data"))
