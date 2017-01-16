@@ -12,6 +12,8 @@ module Extractors
     end
 
     def self.build_many(configs)
+      return {} unless configs
+
       configs.map { |id, config| [id, build(config)] }.to_h
     end
   end

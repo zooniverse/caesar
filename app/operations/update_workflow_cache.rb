@@ -7,7 +7,9 @@ class UpdateWorkflowCache
 
   def perform
     workflow = Workflow.where(id: attributes[:id]).first_or_initialize
-    workflow.retirement = attributes[:retirement]
+    workflow.extractors_config = attributes[:retirement][:nero][:extractors]
+    workflow.reducers_config = attributes[:retirement][:nero][:reducers]
+    workflow.rules_config = attributes[:retirement][:nero][:rules]
     workflow.save!
   end
 end

@@ -64,7 +64,7 @@ describe ClassificationPipeline do
   end
 
   it 'retires the image' do
-    panoptes = double(retire_subject: true)
+    panoptes = instance_double(Panoptes::Client, retire_subject: true)
     allow(Effects).to receive(:panoptes).and_return(panoptes)
 
     pipeline.process(classification)
