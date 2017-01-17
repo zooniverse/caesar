@@ -1,6 +1,6 @@
 class KinesisController < ApplicationController
   def create
-    kinesis_stream.receive(params["_json"])
+    kinesis_stream.receive(params.to_unsafe_h["_json"])
     head :no_content
   end
 

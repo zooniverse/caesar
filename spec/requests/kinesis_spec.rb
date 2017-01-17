@@ -7,7 +7,7 @@ RSpec.describe "Kinesis stream" do
   end
 
   it 'processes the stream events' do
-    post "/kinesis", File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")), {"CONTENT_TYPE" => "application/json"}
+    post "/kinesis", params: File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")), headers: {"CONTENT_TYPE" => "application/json"}
     expect(response.status).to eq(204)
     expect(Workflow.count).to eq(1)
     expect(Extract.count).to eq(1)

@@ -9,8 +9,8 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification)
-    check_rules(classification)
+    reduce(classification.workflow_id, classification.subject_id)
+    check_rules(classification.workflow_id, classification.subject_id)
   end
 
   def extract(classification)
@@ -26,31 +26,31 @@ class ClassificationPipeline
     end
   end
 
-  def reduce(classification)
+  def reduce(workflow_id, subject_id)
     reducers.each do |id, reducer|
-      data = reducer.process(extracts(classification))
+      data = reducer.process(extracts(workflow_id, subject_id))
 
-      reduction = Reduction.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, reducer_id: id).first_or_initialize
+      reduction = Reduction.where(workflow_id: workflow_id, subject_id: subject_id, reducer_id: id).first_or_initialize
       reduction.data = data
       reduction.save!
     end
   end
 
-  def check_rules(classification)
-    rules.process(classification.workflow_id, classification.subject_id, bindings(classification))
+  def check_rules(workflow_id, subject_id)
+    rules.process(workflow_id, subject_id, bindings(workflow_id, subject_id))
   end
 
   private
 
-  def extracts(classification)
-    Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id).order(classification_at: :desc).map(&:data)
+  def extracts(workflow_id, subject_id)
+    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc).map(&:data)
   end
 
-  def reductions(classification)
-    Reduction.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id)
+  def bindings(workflow_id, subject_id)
+    MergesResults.merge(reductions(workflow_id, subject_id).map(&:data))
   end
 
-  def bindings(classification)
-    MergesResults.merge(reductions(classification).map(&:data))
+  def reductions(workflow_id, subject_id)
+    Reduction.where(workflow_id: workflow_id, subject_id: subject_id)
   end
 end

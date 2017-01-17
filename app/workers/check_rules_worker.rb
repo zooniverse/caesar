@@ -1,10 +1,8 @@
 class CheckRulesWorker
   include Sidekiq::Worker
 
-  def perform(workflow_id, classification_data)
+  def perform(workflow_id, subject_id)
     workflow = Workflow.find(workflow_id)
-    classification = Classification.new(classification_data)
-
-    workflow.classification_pipeline.check_rules(classification)
+    workflow.classification_pipeline.check_rules(workflow_id, subject_id)
   end
 end
