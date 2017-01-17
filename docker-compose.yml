@@ -23,6 +23,8 @@ services:
     environment:
       - "RAILS_ENV=development"
       - "REDIS_URL=redis://redis:6379"
+      - "DATABASE_URL=postgresql://caesar:caesar@postgres/caesar_development"
+      - "DATABASE_URL_TEST=postgresql://caesar:caesar@postgres/caesar_test"
     links:
       - redis:redis
       - postgres:postgres
