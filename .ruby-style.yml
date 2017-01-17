@@ -19,7 +19,7 @@ AllCops:
   - "vendor/**/*"
   - "db/schema.rb"
   RunRailsCops: false
-  DisplayCopNames: false
+  DisplayCopNames: true
   StyleGuideCopsOnly: false
 Style/AccessModifierIndentation:
   Description: Check indentation of private/protected visibility modifiers.

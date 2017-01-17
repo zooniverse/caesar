@@ -1,0 +1,28 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:9.4
+    environment:
+      - "POSTGRES_USER=caesar"
+      - "POSTGRES_PASSWORD=caesar"
+
+  redis:
+    image: redis
+    command: redis-server --appendonly yes
+
+  app:
+    build:
+      context: .
+      args:
+        RAILS_ENV: development
+    
+    volumes:
+      - ./:/rails_app
+    ports:
+      - "3000:3000"
+    environment:
+      - "RAILS_ENV=development"
+      - "REDIS_URL=redis://redis:6379"
+    links:
+      - redis:redis
+      - postgres:postgres
