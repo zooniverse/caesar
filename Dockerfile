@@ -18,6 +18,6 @@ ADD ./ /app
 
 RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
 
-EXPOSE 81
+EXPOSE 80
 
 CMD ["bash", "/app/docker/start.sh"]
