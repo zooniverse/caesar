@@ -6,8 +6,17 @@ RSpec.describe "Kinesis stream" do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
+  def http_login(username = Rails.application.secrets.kinesis["username"], password = Rails.application.secrets.kinesis["password"])
+    @env ||= {}
+    @env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
+    @env
+  end
+
   it 'processes the stream events' do
-    post "/kinesis", params: File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")), headers: {"CONTENT_TYPE" => "application/json"}
+    post "/kinesis",
+         headers: {"CONTENT_TYPE" => "application/json"},
+         params: File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")),
+         env: http_login
     expect(response.status).to eq(204)
     expect(Workflow.count).to eq(1)
     expect(Extract.count).to eq(1)
@@ -15,5 +24,11 @@ RSpec.describe "Kinesis stream" do
     expect(Effects.panoptes).to have_received(:retire_subject).once
   end
 
-  it 'should require HTTP Basic authentication'
+  it 'should require HTTP Basic authentication' do
+    post "/kinesis",
+         headers: {"CONTENT_TYPE" => "application/json"},
+         params: File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")),
+         env: http_login('wrong', 'incorrect')
+    expect(response.status).to eq(403)
+  end
 end
