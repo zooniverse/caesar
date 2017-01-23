@@ -1,0 +1,15 @@
+{
+  "name": "caesar-forwarder",
+  "description": "It forwards ZooStream to Caesar",
+  "region": "us-east-1",
+  "handler": "function.lambda_handler",
+  "role": "arn:aws:iam::927935712646:role/zooniverse-kinesis-lambda",
+  "requirements": [],
+  "ignore": [
+    ".travis.yml",
+    ".git",
+    "/*.pyc"
+  ],
+  "timeout": 30,
+  "memory": 128
+}
