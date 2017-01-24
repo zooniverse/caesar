@@ -1,8 +1,8 @@
 {
-  "name": "caesar-forwarder",
-  "description": "It forwards ZooStream to Caesar",
+  "name": "caesar_forwarder_staging",
+  "description": "It forwards Kinesis stream to Caesar staging",
   "region": "us-east-1",
-  "handler": "function.lambda_handler",
+  "handler": "caesar_forwarder.lambda_handler",
   "role": "arn:aws:iam::927935712646:role/zooniverse-kinesis-lambda",
   "requirements": [],
   "ignore": [

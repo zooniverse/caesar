@@ -4,14 +4,14 @@ class KinesisController < ApplicationController
   before_action :require_http_basic_authentication
 
   def create
-    kinesis_stream.receive(params.to_unsafe_h["_json"])
+    kinesis_stream.receive(params["payload"])
     head :no_content
   end
 
   private
 
   def require_http_basic_authentication
-    if authenticate_with_http_basic { |user, pass| authenticate(user, pass)  }
+    if authenticate_with_http_basic { |user, pass| authenticate(user, pass) }
       true
     else
       head :forbidden

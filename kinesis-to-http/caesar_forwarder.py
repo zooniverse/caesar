@@ -4,8 +4,8 @@ import base64
 import requests
 from requests.auth import HTTPBasicAuth
 
-ENDPOINT = "https://misc.panoptes.zooniverse.org:3000/kinesis"
 HEADERS  = {"content-type": "application/json"}
+ENDPOINT = os.environ["KINESIS_STREAM_ENDPOINT"]  # "https://caesar-staging.zooniverse.org/kinesis"
 USERNAME = os.environ["KINESIS_STREAM_USERNAME"]
 PASSWORD = os.environ["KINESIS_STREAM_PASSWORD"]
 

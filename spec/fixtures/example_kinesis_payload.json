@@ -1,120 +1,122 @@
-[
-    {
-        "source": "panoptes",
-        "type": "classification",
-        "version": "1.0.0",
-        "timestamp": "2016-08-16T12:28:51Z",
-        "data": {
-            "id": "15563067",
-            "created_at": "2016-08-16T12:28:51.497Z",
-            "updated_at": "2016-08-16T12:28:51.611Z",
-            "workflow_version": "1045.89",
-            "gold_standard": null,
-            "expert_classifier": null,
-            "annotations": [
-                {
-                    "task": "T0",
-                    "value": [
-                        {
-                            "choice": "VHCL",
-                            "answers": {},
-                            "filters": {}
-                        }
-                    ]
-                }
-            ],
-            "metadata": {
-                "session": "2a259d13f6a964bce120d419788831b6988dd3534b6d93c6e313de6df41a2611",
-                "viewport": {
-                    "width": 1618,
-                    "height": 860
-                },
-                "started_at": "2016-08-16T12:28:44.571Z",
-                "utc_offset": "14400",
-                "finished_at": "2016-08-16T12:28:50.513Z",
-                "live_project": true,
-                "user_language": "en",
-                "user_group_ids": [1234],
-                "subject_dimensions": [
+{
+    "payload": [
+        {
+            "source": "panoptes",
+            "type": "classification",
+            "version": "1.0.0",
+            "timestamp": "2016-08-16T12:28:51Z",
+            "data": {
+                "id": "15563067",
+                "created_at": "2016-08-16T12:28:51.497Z",
+                "updated_at": "2016-08-16T12:28:51.611Z",
+                "workflow_version": "1045.89",
+                "gold_standard": null,
+                "expert_classifier": null,
+                "annotations": [
                     {
-                        "clientWidth": 800,
-                        "clientHeight": 600,
-                        "naturalWidth": 800,
-                        "naturalHeight": 600
+                        "task": "T0",
+                        "value": [
+                            {
+                                "choice": "VHCL",
+                                "answers": {},
+                                "filters": {}
+                            }
+                        ]
                     }
                 ],
-                "workflow_version": "1045.89"
+                "metadata": {
+                    "session": "2a259d13f6a964bce120d419788831b6988dd3534b6d93c6e313de6df41a2611",
+                    "viewport": {
+                        "width": 1618,
+                        "height": 860
+                    },
+                    "started_at": "2016-08-16T12:28:44.571Z",
+                    "utc_offset": "14400",
+                    "finished_at": "2016-08-16T12:28:50.513Z",
+                    "live_project": true,
+                    "user_language": "en",
+                    "user_group_ids": [1234],
+                    "subject_dimensions": [
+                        {
+                            "clientWidth": 800,
+                            "clientHeight": 600,
+                            "naturalWidth": 800,
+                            "naturalHeight": 600
+                        }
+                    ],
+                    "workflow_version": "1045.89"
+                },
+                "href": "/classifications/15563067",
+                "links": {
+                    "project": "593",
+                    "user": "1234",
+                    "workflow": "338",
+                    "subjects": [
+                        "802881"
+                    ]
+                }
             },
-            "href": "/classifications/15563067",
-            "links": {
-                "project": "593",
-                "user": "1234",
-                "workflow": "338",
+            "linked": {
+                "projects": [{"id": "593","display_name": "WildCam Gorongosa","created_at": "2015-08-07T13:29:33.395Z","href": "/projects/593"}],
+                "workflows": [
+                    {
+                        "id": "338",
+                        "display_name": "Survey",
+                        "retirement": {
+                            "nero": {
+                                "extractors": {"s": {"type": "survey", "task_key": "T0"}},
+                                "reducers": {"s": {"type": "simple_survey"}},
+                                "rules": [
+                                    {
+                                        "if": ["gte", ["lookup", "survey-total-VHCL"], ["const", 1]],
+                                        "then": [{"action": "retire_subject", "reason": "flagged"}]
+                                    }
+                                ]
+                            }
+                        },
+                        "created_at": "2015-08-07T13:31:50.501Z",
+                        "href": "/workflows/338"
+                    }
+                ],
+                "workflow_contents": [
+                    {
+                        "id": "338",
+                        "created_at": "2015-08-07T13:31:50.509Z",
+                        "updated_at": "2015-08-27T12:06:16.626Z",
+                        "href": "/workflow_contents/338"
+                    }
+                ],
                 "subjects": [
-                    "802881"
+                    {
+                        "id": "802881",
+                        "metadata": {
+                            "": "46447",
+                            "ESId": "NA",
+                            "year": "2014",
+                            "month": "Sep",
+                            "camera": "D73",
+                            "season": "Dry Jul-Sep",
+                            "DateUTC": "2014-09-18",
+                            "TimeUTC": "7:55:43 AM",
+                            "time_period": "Day 0623-1709",
+                            "Gorongosa_id": "21484_1000_D73_Season 2_Set 1_EK002959",
+                            "distance_human": "533.9",
+                            "distance_water": "3786.25",
+                            "vegetation_edu": "Floodplain Grassland"
+                        },
+                        "created_at": "2015-09-05T13:30:32.842Z",
+                        "updated_at": "2015-09-05T13:30:32.842Z",
+                        "href": "/subjects/802881"
+                    }
+                ],
+                "users": [
+                    {
+                        "id": "1234",
+                        "login": "martenzoo",
+                        "href": "/users/1234"
+                    }
                 ]
             }
-        },
-        "linked": {
-            "projects": [{"id": "593","display_name": "WildCam Gorongosa","created_at": "2015-08-07T13:29:33.395Z","href": "/projects/593"}],
-            "workflows": [
-                {
-                    "id": "338",
-                    "display_name": "Survey",
-                    "retirement": {
-                        "nero": {
-                            "extractors": {"s": {"type": "survey", "task_key": "T0"}},
-                            "reducers": {"s": {"type": "simple_survey"}},
-                            "rules": [
-                                {
-                                    "if": ["gte", ["lookup", "survey-total-VHCL"], ["const", 1]],
-                                    "then": [{"action": "retire_subject", "reason": "flagged"}]
-                                }
-                            ]
-                        }
-                    },
-                    "created_at": "2015-08-07T13:31:50.501Z",
-                    "href": "/workflows/338"
-                }
-            ],
-            "workflow_contents": [
-                {
-                    "id": "338",
-                    "created_at": "2015-08-07T13:31:50.509Z",
-                    "updated_at": "2015-08-27T12:06:16.626Z",
-                    "href": "/workflow_contents/338"
-                }
-            ],
-            "subjects": [
-                {
-                    "id": "802881",
-                    "metadata": {
-                        "": "46447",
-                        "ESId": "NA",
-                        "year": "2014",
-                        "month": "Sep",
-                        "camera": "D73",
-                        "season": "Dry Jul-Sep",
-                        "DateUTC": "2014-09-18",
-                        "TimeUTC": "7:55:43 AM",
-                        "time_period": "Day 0623-1709",
-                        "Gorongosa_id": "21484_1000_D73_Season 2_Set 1_EK002959",
-                        "distance_human": "533.9",
-                        "distance_water": "3786.25",
-                        "vegetation_edu": "Floodplain Grassland"
-                    },
-                    "created_at": "2015-09-05T13:30:32.842Z",
-                    "updated_at": "2015-09-05T13:30:32.842Z",
-                    "href": "/subjects/802881"
-                }
-            ],
-            "users": [
-                {
-                    "id": "1234",
-                    "login": "martenzoo",
-                    "href": "/users/1234"
-                }
-            ]
         }
-    }
-]
+    ]
+}
