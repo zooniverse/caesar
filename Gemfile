@@ -21,6 +21,7 @@ gem 'puma', '~> 3.0'
 gem 'sidekiq'
 gem 'panoptes-client'
 gem 'newrelic_rpm'
+gem 'rollbar'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
