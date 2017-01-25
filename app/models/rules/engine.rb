@@ -11,6 +11,10 @@ module Rules
       @rules.each { |rule| rule.process(workflow_id, subject_id, results) }
     end
 
+    def present?
+      @rules.size > 0
+    end
+
     def size
       @rules.size
     end

@@ -37,6 +37,7 @@ class ClassificationPipeline
   end
 
   def check_rules(workflow_id, subject_id)
+    return unless rules.present?
     rules.process(workflow_id, subject_id, bindings(workflow_id, subject_id))
   end
 
