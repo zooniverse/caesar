@@ -1,6 +1,6 @@
 {
-  "name": "caesar_forwarder_staging",
-  "description": "It forwards Kinesis stream to Caesar staging",
+  "name": "caesar_forwarder_production",
+  "description": "It forwards Kinesis stream to Caesar production",
   "region": "us-east-1",
   "handler": "caesar_forwarder.lambda_handler",
   "role": "arn:aws:iam::927935712646:role/zooniverse-kinesis-lambda",
