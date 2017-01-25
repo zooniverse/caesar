@@ -20,6 +20,7 @@ gem 'puma', '~> 3.0'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'sidekiq'
 gem 'panoptes-client'
+gem 'newrelic_rpm'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
