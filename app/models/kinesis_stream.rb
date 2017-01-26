@@ -3,23 +3,11 @@ class KinesisStream
 
   def receive(payload)
     ActiveRecord::Base.transaction do
-      payload.each do |event|
-        process(StreamEvent.from(event))
-      end
+      payload \
+        .lazy
+        .map    { |event| StreamEvents.from(event) }
+        .select { |event| event.enabled? }
+        .each   { |event| event.process }
     end
-  end
-
-  def process(stream_event)
-    return unless stream_event.enabled?
-
-    Workflow.update_cache(stream_event.workflow)
-
-    stream_event.subjects.each do |subject|
-      Subject.update_cache(subject)
-    end
-
-    classification = stream_event.classification
-    workflow = Workflow.find(classification.workflow_id)
-    workflow.classification_pipeline.process(classification)
   end
 end
