@@ -3,25 +3,22 @@ class KinesisStream
 
   def receive(payload)
     ActiveRecord::Base.transaction do
-      payload.each do |stream_event|
-        process(stream_event)
+      payload.each do |event|
+        process(StreamEvent.from(event))
       end
     end
   end
 
   def process(stream_event)
-    return unless stream_event.fetch("source") == "panoptes"
-    return unless stream_event.fetch("type") == "classification"
+    return unless stream_event.enabled?
 
-    stream_event.fetch("linked").fetch("workflows").each do |workflow|
-      Workflow.update_cache(workflow)
-    end
+    Workflow.update_cache(stream_event.workflow)
 
-    stream_event.fetch("linked").fetch("subjects").each do |subject|
+    stream_event.subjects.each do |subject|
       Subject.update_cache(subject)
     end
 
-    classification = Classification.new(stream_event.fetch("data"))
+    classification = stream_event.classification
     workflow = Workflow.find(classification.workflow_id)
     workflow.classification_pipeline.process(classification)
   end
