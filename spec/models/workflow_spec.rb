@@ -14,7 +14,7 @@ RSpec.describe Workflow, type: :model do
     end
 
     it 'processes workflows without rules' do
-      described_class.update_cache("id" => 1, "retirement" => {"nero" => {}})
+      described_class.update_cache("id" => 1, "retirement" => {"caesar" => {}})
 
       expect(Workflow.count).to eq(1)
       expect(Workflow.first.extractors_config).to eq({})
@@ -31,9 +31,9 @@ RSpec.describe Workflow, type: :model do
           "then" => [{"action" => "retire_subject", "reason" => "flagged"}]
         }
       ]
-      nero_config = {"extractors" => extractors_config, "reducers" => reducers_config, "rules" => rules_config}
+      caesar_config = {"extractors" => extractors_config, "reducers" => reducers_config, "rules" => rules_config}
 
-      described_class.update_cache("id" => 1, "retirement" => {"nero" => nero_config})
+      described_class.update_cache("id" => 1, "retirement" => {"caesar" => caesar_config})
 
       expect(Workflow.count).to eq(1)
       expect(Workflow.first.extractors_config).to eq(extractors_config)

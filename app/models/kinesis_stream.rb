@@ -3,11 +3,7 @@ class KinesisStream
 
   def receive(payload)
     ActiveRecord::Base.transaction do
-      payload \
-        .lazy
-        .map    { |event| StreamEvents.from(event) }
-        .select { |event| event.enabled? }
-        .each   { |event| event.process }
+      payload.each { |event| StreamEvents.from(event).process }
     end
   end
 end

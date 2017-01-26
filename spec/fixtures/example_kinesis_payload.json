@@ -63,7 +63,7 @@
                         "id": "338",
                         "display_name": "Survey",
                         "retirement": {
-                            "nero": {
+                            "caesar": {
                                 "extractors": {"s": {"type": "survey", "task_key": "T0"}},
                                 "reducers": {"s": {"type": "simple_survey"}},
                                 "rules": [

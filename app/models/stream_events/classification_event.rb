@@ -5,11 +5,9 @@ module StreamEvents
       @linked = StreamEvents.linked_to_hash(hash.fetch("linked"))
     end
 
-    def enabled?
-      true
-    end
-
     def process
+      return unless enabled?
+
       cache_linked_models!
 
       workflow = Workflow.find(classification.workflow_id)
@@ -25,6 +23,10 @@ module StreamEvents
     end
 
     private
+
+    def enabled?
+      linked_workflow.fetch("retirement").key?("caesar")
+    end
 
     def classification
       @classification ||= Classification.new(@data)

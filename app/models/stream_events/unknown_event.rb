@@ -1,7 +1,7 @@
 module StreamEvents
   module UnknownEvent
-    def self.enabled?
-      false
+    def self.process
+      nil
     end
   end
 end
