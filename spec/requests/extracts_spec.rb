@@ -10,7 +10,7 @@ RSpec.describe ExtractsController, type: :controller do
 
   describe 'PUT #update' do
     let(:extractor_id) { 1 }
-    let(:extractor_config) { {"type" => "survey"} }
+    let(:extractor_config) { {"type" => "external"} }
     let(:workflow) { Workflow.create!(extractors_config: {extractor_id => extractor_config}) }
     let(:subject) { Subject.create! }
 
