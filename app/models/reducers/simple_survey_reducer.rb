@@ -1,8 +1,9 @@
 module Reducers
   class SimpleSurveyReducer
-    attr_reader :sub_ranges
+    attr_reader :id, :sub_ranges
 
     def initialize(id, config = {})
+      @id = id
       @config = config
     end
 
