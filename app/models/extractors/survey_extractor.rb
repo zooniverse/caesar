@@ -1,6 +1,6 @@
 module Extractors
   class SurveyExtractor
-    attr_reader :task_key, :nothing_here_choice
+    attr_reader :id, :task_key, :nothing_here_choice
 
     def initialize(id, config = {})
       @id = id
