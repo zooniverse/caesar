@@ -1,11 +1,6 @@
 module Reducers
-  class SimpleSurveyReducer
-    attr_reader :id, :sub_ranges
-
-    def initialize(id, config = {})
-      @id = id
-      @config = config
-    end
+  class SimpleSurveyReducer < Reducer
+    attr_reader :sub_ranges
 
     def process(extractions)
       ReductionResults.build do |results|
@@ -30,7 +25,7 @@ module Reducers
     end
 
     def sub_ranges
-      @config["sub_ranges"] || [{from: 0, till: 2}]
+      config["sub_ranges"] || [{from: 0, till: 2}]
     end
   end
 end

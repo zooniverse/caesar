@@ -3,18 +3,27 @@ module Reducers
     class UnknownReducer < StandardError; end
 
     def self.build(id, config)
-      case config["type"].to_s
-      when "simple_survey"
-        SimpleSurveyReducer.new(id, config)
-      else
-        raise UnknownReducer, "Reducer #{id} misconfigured: unknown type #{config["type"]}"
-      end
+      reducer_class(id, config["type"]).new(id, config)
     end
 
     def self.build_many(configs)
       return {} unless configs
 
       configs.map { |id, config| [id, build(id, config)] }.to_h
+    end
+
+    private
+
+    def self.reducer_class(id, type)
+      case type.to_s
+      when "external"
+        ExternalReducer
+      when "simple_survey"
+        SimpleSurveyReducer
+      else
+        raise UnknownReducer, "Reducer #{id} misconfigured: unknown type #{type}"
+      end
+
     end
   end
 end

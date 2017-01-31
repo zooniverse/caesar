@@ -10,7 +10,7 @@ RSpec.describe ReductionsController, type: :controller do
 
   describe 'PUT #update' do
     let(:reducer_id) { 1 }
-    let(:reducer_config) { {"type" => "simple_survey"} }
+    let(:reducer_config) { {"type" => "external"} }
     let(:workflow) { Workflow.create!(reducers_config: {reducer_id => reducer_config}) }
     let(:subject) { Subject.create! }
 
