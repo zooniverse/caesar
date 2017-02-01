@@ -8,6 +8,46 @@ Whenever extracts change, Caesar will then run zero or more reducers defined in 
 
 Whenever a reduction changes, Caesar will then run zero or more rules defined in the workflow. Each rule is a boolean statement that can look at values produced by reducers (by key), compare. Rules support logic clauses like `and` / `or` / `not`. When the rule evaluates to `true`, all of the effects associated with that rule will be performed. For instance, an effect might be to retire a subject.
 
+```
+┏━━━━━━━━━━━━━━━━━━┓
+┃     Kinesis       ┃
+┗━━━┳━━━━━━━━━━━━━━┛
+    │                                                       ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+    │                                                         EXTRACTS:
+    │   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐         ┌──────────────────┐    │                           │
+    ├──▶ Classification 1  ────┬───▶│ FlaggedExtractor │──────▶{flagged: true}
+    │   └ ─ ─ ─ ─ ─ ─ ─ ─ ┘    │    └──────────────────┘    │                           │
+    │                          │    ┌──────────────────┐
+    │                          └───▶│ SurveyExtractor  │────┼─▶{raccoon: 1}             │
+    │                               └──────────────────┘
+    │   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐         ┌──────────────────┐    │                           │
+    └──▶ Classification 2  ────┬───▶│ FlaggedExtractor │──────▶{flagged: false}
+        └ ─ ─ ─ ─ ─ ─ ─ ─ ┘    │    └──────────────────┘    │                           │
+                               │    ┌──────────────────┐
+                               └───▶│ SurveyExtractor  │────┼─▶{beaver: 1, raccoon: 1}  │
+                                    └──────────────────┘
+   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐                          └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+     REDUCTIONS:                                                          │
+   │                             │                                        │
+      {                                                                   │
+   │    votes_flagged: 1,        │  ┌──────────────────┐                  │
+        votes_beaver: 1,      ◀─────│ VoteCountReducer │◀─────────────────┘
+   │    votes_raccoon: 2         │  └──────────────────┘
+      }
+   │                             │
+                                                                              ┏━━━━━━━━━━━━━━━━┓
+   │  {                          │  ┌──────────────────┐                      ┃Some script run  ┃
+        swap_confidence: 0.23 ◀─────│ ExternalReducer  │◀────HTTP API call────┃by project owner ┃
+   │  }                          │  └──────────────────┘                      ┃  (externally)   ┃
+                                                                              ┗━━━━━━━━━━━━━━━━┛
+   └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+                  │
+                  │
+                  │                 ┌──────────────────┐         POST         ┏━━━━━━━━━━━━━━━━┓
+                  └────────────────▶│       Rule       │───/subjects/retire──▶┃    Panoptes     ┃
+                                    └──────────────────┘                      ┗━━━━━━━━━━━━━━━━┛
+```
+
 To make this more concrete, an example would be a survey-task workflow where:
 
 * An extractor emits key-value pairs like `lion=1` when the user tagged a lion in the image.
