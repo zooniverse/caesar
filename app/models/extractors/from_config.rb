@@ -3,12 +3,7 @@ module Extractors
     class UnknownExtractor < StandardError; end
 
     def self.build(id, config)
-      case config["type"].to_s
-      when "survey"
-        SurveyExtractor.new(id, config)
-      else
-        raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{config["type"]}"
-      end
+      extractor_class(id, config["type"]).new(id, config)
     end
 
     def self.build_many(configs)
@@ -16,5 +11,19 @@ module Extractors
 
       configs.map { |id, config| [id, build(id, config)] }.to_h
     end
+
+    private
+
+    def self.extractor_class(id, type)
+      case type.to_s
+      when "external"
+        ExternalExtractor
+      when "survey"
+        SurveyExtractor
+      else
+        raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{type}"
+      end
+    end
+
   end
 end

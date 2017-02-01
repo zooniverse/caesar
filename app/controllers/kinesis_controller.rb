@@ -1,6 +1,4 @@
 class KinesisController < ApplicationController
-  include ActionController::HttpAuthentication::Basic::ControllerMethods
-
   before_action :require_http_basic_authentication
 
   def create
