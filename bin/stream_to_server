@@ -6,7 +6,7 @@ DESTINATION = URI(ENV["SERVER_URL"] || "http://localhost:3000/kinesis")
 
 def submit(data)
   req = Net::HTTP::Post.new(DESTINATION, 'Content-Type' => 'application/json')
-  req.body = "[#{data}]"
+  req.body = "{\"payload\": [#{data}]}"
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
     http.request(req)
   end

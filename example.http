@@ -1,0 +1,4 @@
+PUT http://localhost:3000/workflows/673/reducers/ext/reductions
+Content-Type: application/json
+
+{"reduction": {"subject_id": 123, "data": {"swap_confidence": 0.2}}}

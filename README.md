@@ -69,3 +69,9 @@ Run tests with:
 ```
 docker-compose run -e RAILS_ENV=test app bin/rspec
 ```
+
+To have it listen to the stream:
+
+```
+AWS_REGION=us-east-1 kinesis-tail zooniverse-staging | bin/stream_to_server
+```
