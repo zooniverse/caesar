@@ -9,7 +9,9 @@ class KinesisController < ApplicationController
   private
 
   def require_http_basic_authentication
-    if authenticate_with_http_basic { |user, pass| authenticate(user, pass) }
+    if !has_basic_credentials?(request)
+      allow_unauthenticated_request?
+    elsif authenticate_with_http_basic { |user, pass| authenticate(user, pass) }
       true
     else
       head :forbidden
@@ -24,8 +26,12 @@ class KinesisController < ApplicationController
       given_username == desired_username && given_password == desired_password
     else
       # If no credentials configured in dev/test, don't require authentication
-      Rails.env.development? || Rails.env.test?
+      allow_unauthenticated_request?
     end
+  end
+
+  def allow_unauthenticated_request?
+    Rails.env.development? || Rails.env.test?
   end
 
   def kinesis_stream
