@@ -68,6 +68,6 @@ describe ClassificationPipeline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
 
     pipeline.process(classification)
-    expect(panoptes).to have_received(:retire_subject).with(workflow.id.to_s, subject.id.to_s, reason: "consensus").once
+    expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
   end
 end
