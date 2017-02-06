@@ -10,7 +10,7 @@ Whenever a reduction changes, Caesar will then run zero or more rules defined in
 
 ```
 ┏━━━━━━━━━━━━━━━━━━┓
-┃     Kinesis       ┃
+┃     Kinesis      ┃
 ┗━━━┳━━━━━━━━━━━━━━┛
     │                                                       ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
     │                                                         EXTRACTS:
@@ -36,15 +36,15 @@ Whenever a reduction changes, Caesar will then run zero or more rules defined in
       }
    │                             │
                                                                               ┏━━━━━━━━━━━━━━━━┓
-   │  {                          │  ┌──────────────────┐                      ┃Some script run  ┃
-        swap_confidence: 0.23 ◀─────│ ExternalReducer  │◀────HTTP API call────┃by project owner ┃
-   │  }                          │  └──────────────────┘                      ┃  (externally)   ┃
+   │  {                          │  ┌──────────────────┐                      ┃Some script run ┃
+        swap_confidence: 0.23 ◀─────│ ExternalReducer  │◀────HTTP API call────┃by project owner┃
+   │  }                          │  └──────────────────┘                      ┃  (externally)  ┃
                                                                               ┗━━━━━━━━━━━━━━━━┛
    └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
                   │
                   │
                   │                 ┌──────────────────┐         POST         ┏━━━━━━━━━━━━━━━━┓
-                  └────────────────▶│       Rule       │───/subjects/retire──▶┃    Panoptes     ┃
+                  └────────────────▶│       Rule       │───/subjects/retire──▶┃    Panoptes    ┃
                                     └──────────────────┘                      ┗━━━━━━━━━━━━━━━━┛
 ```
 
