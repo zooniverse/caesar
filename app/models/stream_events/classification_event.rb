@@ -10,8 +10,7 @@ module StreamEvents
 
       cache_linked_models!
 
-      workflow = Workflow.find(classification.workflow_id)
-      workflow.classification_pipeline.process(classification)
+      ExtractWorker.perform_async(classification.workflow_id, @data.to_unsafe_h)
     end
 
     def cache_linked_models!
