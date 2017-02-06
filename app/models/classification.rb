@@ -6,31 +6,63 @@ class Classification
   end
 
   def id
-    attributes.fetch("id")
+    attributes.fetch('id')
   end
 
   def created_at
-    attributes.fetch("created_at")
+    attributes.fetch('created_at')
+  end
+
+  def updated_at
+    attributes.fetch('updated_at')
   end
 
   def annotations
-    @annotations ||= attributes.fetch("annotations", {})
-                               .group_by { |ann| ann["task"] }
+    @annotations ||= attributes.fetch('annotations', {})
+                               .group_by { |ann| ann['task'] }
+  end
+
+  def metadata
+    attributes.fetch('metadata', {})
   end
 
   def project_id
-    attributes.fetch("links").fetch("project")
+    attributes.fetch('links').fetch('project').to_i
   end
 
   def workflow_id
-    attributes.fetch("links").fetch("workflow")
+    attributes.fetch('links').fetch('workflow').to_i
   end
 
   def user_id
-    attributes.fetch("links").fetch("user")
+    attributes.fetch('links').fetch('user').try(&:to_i)
   end
 
   def subject_id
-    attributes.fetch("links").fetch("subjects").first
+    attributes.fetch('links').fetch('subjects').first.to_i
+  end
+
+  def gold_standard
+    attributes.fetch('gold_standard', nil)
+  end
+
+  def expert_classifier
+    attributes.fetch('expert_classifier', nil)
+  end
+
+  def as_json(_options)
+    {
+      id: id,
+      project_id: project_id,
+      workflow_id: workflow_id,
+      subject_id: subject_id,
+      user_id: user_id,
+      annotations: annotations,
+      metadata: metadata,
+      gold_standard: gold_standard,
+      expert_classifier: expert_classifier,
+      created_at: created_at,
+      updated_at: updated_at
+    }
   end
 end
