@@ -18,6 +18,8 @@ module Extractors
       case type.to_s
       when "external"
         ExternalExtractor
+      when "blank"
+        BlankExtractor
       when "survey"
         SurveyExtractor
       else
