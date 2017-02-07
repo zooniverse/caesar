@@ -1,7 +1,7 @@
 class Workflow < ApplicationRecord
   def self.update_cache(attributes)
     attributes = attributes.with_indifferent_access
-    config = attributes.fetch(:retirement, {}).fetch(:caesar, {})
+    config = attributes[:nero_config] || {}
 
     workflow = Workflow.where(id: attributes[:id]).first_or_initialize
     workflow.extractors_config = config[:extractors] || {}
