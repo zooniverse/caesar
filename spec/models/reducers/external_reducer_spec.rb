@@ -1,18 +1,20 @@
 require 'spec_helper'
 
 describe Reducers::ExternalReducer do
-  let(:extracts) { [
-    {"foo" => "bar"} ,
-    {"foo" => "baz"}
-  ] }
+  let(:extracts) {
+    [
+      {"foo" => "bar"},
+      {"foo" => "baz"}
+    ]
+  }
 
   let(:response_data) { {"result" => {"bar" => 1, "baz" => 1}} }
 
   before do
-    stub_request(:post, "http://example.org/post/extracts/here").
-      with(:body => extracts.to_json,
-           :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/json', 'Host'=>'example.org', 'User-Agent'=>'Ruby'}).
-      to_return(:status => 200, :body => response_data.to_json, :headers => {})
+    stub_request(:post, "http://example.org/post/extracts/here")
+      .with(:body => extracts.to_json,
+           :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/json', 'Host'=>'example.org', 'User-Agent'=>'Ruby'})
+      .to_return(:status => 200, :body => response_data.to_json, :headers => {})
   end
 
   it 'posts the extracts to a foreign API' do
