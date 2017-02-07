@@ -44,7 +44,7 @@ class ClassificationPipeline
   private
 
   def extracts(workflow_id, subject_id)
-    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc).map(&:data)
+    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc)
   end
 
   def bindings(workflow_id, subject_id)
