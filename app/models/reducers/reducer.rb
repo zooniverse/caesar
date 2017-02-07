@@ -15,7 +15,11 @@ module Reducers
     end
 
     def apply_subranges(collection)
-      subranges.flat_map{ |r| collection[Range.new(r[:from],r[:to])] }
+      if subranges
+        subranges.flat_map{ |r| collection[Range.new(r[:from],r[:to])] }
+      else
+        collection
+      end
     end
 
     def filter_extracts(extracts)
