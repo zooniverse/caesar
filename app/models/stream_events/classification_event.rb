@@ -24,7 +24,8 @@ module StreamEvents
     private
 
     def enabled?
-      linked_workflow.fetch("retirement").key?("caesar")
+      return false unless linked_workflow.key?("nero_config")
+      linked_workflow.fetch("nero_config").present?
     end
 
     def classification

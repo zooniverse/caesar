@@ -5,7 +5,7 @@ RSpec.describe Workflow, type: :model do
 
   describe '.update_cache' do
     it 'processes unconfigured workflows' do
-      described_class.update_cache("id" => 1, "retirement" => {})
+      described_class.update_cache("id" => 1, "nero_config" => nil)
 
       expect(Workflow.count).to eq(1)
       expect(Workflow.first.extractors_config).to eq({})
@@ -14,7 +14,7 @@ RSpec.describe Workflow, type: :model do
     end
 
     it 'processes workflows without rules' do
-      described_class.update_cache("id" => 1, "retirement" => {"caesar" => {}})
+      described_class.update_cache("id" => 1, "nero_config" => {})
 
       expect(Workflow.count).to eq(1)
       expect(Workflow.first.extractors_config).to eq({})
@@ -33,7 +33,7 @@ RSpec.describe Workflow, type: :model do
       ]
       caesar_config = {"extractors" => extractors_config, "reducers" => reducers_config, "rules" => rules_config}
 
-      described_class.update_cache("id" => 1, "retirement" => {"caesar" => caesar_config})
+      described_class.update_cache("id" => 1, "nero_config" => caesar_config)
 
       expect(Workflow.count).to eq(1)
       expect(Workflow.first.extractors_config).to eq(extractors_config)
