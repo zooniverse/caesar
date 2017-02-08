@@ -70,4 +70,24 @@ describe ClassificationPipeline do
     pipeline.process(classification)
     expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
   end
+
+  it 'fetches classifications from panoptes when there are no other extracts' do
+    expect do
+      pipeline.process(classification)
+    end.to change(FetchClassificationsWorker.jobs, :size).by(1)
+  end
+
+  it 'does not fetch classifications when extracts already present' do
+    Extract.create(
+      extractor_id: "zzz",
+      subject_id: classification.subject_id,
+      workflow_id: classification.workflow_id,
+      classification_at: DateTime.now,
+      data: { "choices" => ["ZZZ"] }
+    )
+
+    expect do
+      pipeline.process(classification)
+    end.not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+  end
 end
