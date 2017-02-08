@@ -5,7 +5,11 @@ module Extractors
     end
 
     def blank?(classification)
-      classification.annotations[task_key].first.present?
+      return true unless classification.annotations.present?
+      return true unless classification.annotations[task_key].present?
+      return true unless classification.annotations[task_key][0].present?
+      return true unless classification.annotations[task_key][0]["value"].present?
+      false
     end
 
     def task_key

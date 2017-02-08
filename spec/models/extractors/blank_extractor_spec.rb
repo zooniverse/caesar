@@ -32,7 +32,10 @@ describe Extractors::BlankExtractor do
 
     it 'detects not-blanks from classification step' do
       classification = Classification.new('annotations' => present_annotations)
-      expect(extractor.process(classification)).to eq('blank' => true)
+      expect(extractor.process(classification)).to eq('blank' => false)
+
+      classification = Classification.new('annotations' => [{"task"=>task_key, "value"=>1}])
+      expect(extractor.process(classification)).to eq('blank' => false)
     end
   end
 end
