@@ -22,6 +22,8 @@ module Extractors
         BlankExtractor
       when "survey"
         SurveyExtractor
+      when "who"
+        WhoExtractor
       else
         raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{type}"
       end
