@@ -42,17 +42,14 @@ class ClassificationPipeline
 
   def check_rules(workflow_id, subject_id)
     return unless rules.present?
-    rules.process(workflow_id, subject_id, bindings(workflow_id, subject_id))
+    rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id))
+    rules.process(workflow_id, subject_id, rule_bindings)
   end
 
   private
 
   def extracts(workflow_id, subject_id)
     Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc)
-  end
-
-  def bindings(workflow_id, subject_id)
-    MergesResults.merge(reductions(workflow_id, subject_id).map(&:data))
   end
 
   def reductions(workflow_id, subject_id)
