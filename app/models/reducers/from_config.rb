@@ -20,6 +20,10 @@ module Reducers
         ExternalReducer
       when "simple_survey"
         SimpleSurveyReducer
+      when "simple_count"
+        SimpleCountReducer
+      when "unique_count"
+        UniqueCountReducer
       else
         raise UnknownReducer, "Reducer #{id} misconfigured: unknown type #{type}"
       end
