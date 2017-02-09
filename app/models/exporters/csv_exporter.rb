@@ -15,7 +15,7 @@ module Exporters
         :write_headers => true,
         :headers => get_csv_headers(workflow_id)) do |csv|
 
-        items.each do |item|
+        items.find_each do |item|
           csv << extract_row(item, model_cols, json_cols)
         end
 
