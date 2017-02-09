@@ -2,7 +2,7 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
-    def process(extractions)
+    def reduction_data_for(extractions)
       if url
         req = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
         req.body = extractions.to_json

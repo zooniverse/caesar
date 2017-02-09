@@ -7,29 +7,15 @@ module Reducers
       @config = config
     end
 
-    def group_extracts(extracts)
-      extracts
-        .group_by(&:classification_id)
-        .map{ |k,v| { :classification_id => k, :data => v } }
-        .sort_by{ |hash| hash[:data][0].classification_at }
+    def process(extracts)
+      filtered_extracts = ExtractFilter.new(extracts, filters).to_a
+      reduction_data_for(filtered_extracts)
     end
 
-    def apply_subranges(collection)
-      if subranges
-        subranges.flat_map{ |r| collection[Range.new(r[:from],r[:to])] }
-      else
-        collection
-      end
-    end
+    private
 
-    def filter_extracts(extracts)
-      apply_subranges(group_extracts(extracts))
-        .flat_map{ |g| g[:data] }
+    def filters
+      config["filters"] || {}
     end
-
-    def subranges
-      config["subranges"]
-    end
-
   end
 end

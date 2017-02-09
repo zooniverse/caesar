@@ -34,11 +34,12 @@ describe Reducers::SimpleSurveyReducer do
 
     it 'counts occurrences of species' do
       expect(reducer.process(extracts))
-        .to include({"survey-total-NTHNGHR" => 2, "survey-total-RCCN" => 3, "survey-total-BBN" => 1})
+        .to include({"NTHNGHR" => 2, "RCCN" => 3, "BBN" => 1})
     end
 
-    it 'counts occurrences of species within the first 3 classifications' do
-      expect(reducer.process(extracts)).to include({"survey-filtered-NTHNGHR" => 1})
+    it 'counts occurrences inside a subrange' do
+      reducer = described_class.new("s", {"filters" => {"from" => 0, "to" => 2}})
+      expect(reducer.process(extracts)).to include({"NTHNGHR" => 1})
     end
   end
 end

@@ -67,7 +67,7 @@
                             "reducers": {"s": {"type": "simple_survey"}},
                             "rules": [
                                 {
-                                    "if": ["gte", ["lookup", "s.survey-total-VHCL"], ["const", 1]],
+                                    "if": ["gte", ["lookup", "s.VHCL"], ["const", 1]],
                                     "then": [{"action": "retire_subject", "reason": "flagged"}]
                                 }
                             ]
