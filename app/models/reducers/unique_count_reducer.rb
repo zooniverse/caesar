@@ -1,6 +1,6 @@
 module Reducers
   class UniqueCountReducer < Reducer
-    def process(extracts)
+    def reduction_data_for(extracts)
       mapped = extracts.map do |extract|
         if extract.data.key?(unique_field)
           extract.data[unique_field]
