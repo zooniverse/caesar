@@ -32,7 +32,15 @@ describe Reducers::Reducer do
     ]
   }
 
-  subject(:reducer) { described_class.new("s") }
+  subject(:reducer) do
+    klass = Class.new(described_class) do
+      def reduction_data_for(extracts)
+        extracts
+      end
+    end
+
+    klass.new("s")
+  end
 
   it 'filters extracts' do
     extract_filter = instance_double(ExtractFilter, to_a: [])
@@ -41,5 +49,4 @@ describe Reducers::Reducer do
 
     expect(extract_filter).to have_received(:to_a).once
   end
-
 end
