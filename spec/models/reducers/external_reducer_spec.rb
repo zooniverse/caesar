@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Reducers::ExternalReducer do
   let(:extracts) {
     [
-      {"foo" => "bar"},
-      {"foo" => "baz"}
+      Extract.new(data: {"foo" => "bar"}),
+      Extract.new(data: {"foo" => "baz"})
     ]
   }
 
