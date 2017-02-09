@@ -11,13 +11,13 @@ module Extractors
     end
 
     def nothing_here_choice
-      config["nothing_here_choice"] || "NTHNGHR"
+      config["nothing_here_choice"]
     end
 
     def choices(classification)
       values = classification.annotations.fetch(task_key)
       choices = values.flat_map { |value| value.fetch("value", []).map { |val| val["choice"] } }
-      choices << nothing_here_choice if choices.empty?
+      choices << nothing_here_choice if choices.empty? && nothing_here_choice
       choices
     end
   end
