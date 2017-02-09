@@ -10,9 +10,9 @@ module Reducers
       @value = {}
     end
 
-    def increment(key)
+    def increment(key, amount = 1)
       @value[key] ||= 0
-      @value[key] += 1
+      @value[key] += amount
     end
 
     def to_h
