@@ -19,7 +19,8 @@ describe Extractors::SurveyExtractor do
   subject(:extractor) { described_class.new("s") }
 
   describe '#process' do
-    it 'converts empty value lists to nothing_here' do
+    it 'converts empty value lists to nothing_here if configured' do
+      extractor.config["nothing_here_choice"] = "NTHNGHR"
       annotations[0]["value"] = []
       expect(extractor.process(classification)).to eq("choices" => ["NTHNGHR"])
     end
