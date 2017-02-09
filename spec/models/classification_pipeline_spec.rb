@@ -83,7 +83,7 @@ describe ClassificationPipeline do
       subject_id: classification.subject_id,
       workflow_id: classification.workflow_id,
       classification_at: DateTime.now,
-      data: { "choices" => ["ZZZ"] }
+      data: {"ZZZ" => 1}
     )
 
     expect do

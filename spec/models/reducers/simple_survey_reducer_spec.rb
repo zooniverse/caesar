@@ -7,22 +7,22 @@ describe Reducers::SimpleSurveyReducer do
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => { "choices" => ["NTHNGHR"] }
+        :data => {"NTHNGHR" => 1}
       ),
       Extract.new(
         :classification_id => 1235,
         :classification_at => Date.new(2017,2,5),
-        :data => { "choices" => ["RCCN", "RCCN"]}
+        :data => {"RCCN" => 2}
       ),
       Extract.new(
         :classification_id => 1236,
         :classification_at => Date.new(2017,2,6),
-        :data => { "choices" => ["RCCN", "BBN"]}
+        :data => {"RCCN" => 1, "BBN" => 1}
       ),
       Extract.new(
         :classification_id => 1237,
         :classification_at => Date.new(2017,2,7),
-        :data => { "choices" => ["NTHNGHR"] }
+        :data => {"NTHNGHR" => 1}
       )
     ]
   }

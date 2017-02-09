@@ -1,7 +1,7 @@
 module Extractors
   class SurveyExtractor < Extractor
     def process(classification)
-      {"choices" => choices(classification)}
+      choices(classification)
     end
 
     private
@@ -15,9 +15,16 @@ module Extractors
     end
 
     def choices(classification)
+      choices = {}
+
       values = classification.annotations.fetch(task_key)
-      choices = values.flat_map { |value| value.fetch("value", []).map { |val| val["choice"] } }
-      choices << nothing_here_choice if choices.empty? && nothing_here_choice
+      values.each do |value|
+        value.fetch("value", []).each do |val| 
+          choices[val["choice"]] ||= 0
+          choices[val["choice"]] += 1
+        end
+      end
+      choices[nothing_here_choice] = 1 if choices.empty? && nothing_here_choice
       choices
     end
   end
