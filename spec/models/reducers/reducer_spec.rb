@@ -32,16 +32,14 @@ describe Reducers::Reducer do
     ]
   }
 
-  subject(:reducer) {
-    described_class.new(
-      "s",
-      {
-        "filter" => {
-          "from" => 0, "to" => 1,
-        }
-      }
-    )
-  }
+  subject(:reducer) { described_class.new("s") }
 
+  it 'filters extracts' do
+    extract_filter = instance_double(ExtractFilter, to_a: [])
+    expect(ExtractFilter).to receive(:new).with(extracts, {}).and_return(extract_filter)
+    subject.process(extracts)
+
+    expect(extract_filter).to have_received(:to_a).once
+  end
 
 end
