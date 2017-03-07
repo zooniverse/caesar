@@ -6,7 +6,7 @@ For each classification, it runs zero or more extractors defined in the workflow
 
 Whenever extracts change, Caesar will then run zero or more reducers defined in the workflow. Each reducer receives all the extracts, merged into one hash per classification. The task of the reducer is to aggregate results from multiple classifications into key-value pairs, where values are simple data types: integers or booleans. The output of each reducer is stored in the database as a `Reduction`.
 
-Whenever a reduction changes, Caesar will then run zero or more rules defined in the workflow. Each rule is a boolean statement that can look at values produced by reducers (by key), compare. Rules support logic clauses like `and` / `or` / `not`. When the rule evaluates to `true`, all of the effects associated with that rule will be performed. For instance, an effect might be to retire a subject.
+Whenever a reduction changes, Caesar will then run zero or more [rules defined in the workflow](https://github.com/zooniverse/caesar/blob/master/docs/rules.md). Each rule is a boolean statement that can look at values produced by reducers (by key), compare. Rules support logic clauses like `and` / `or` / `not`. When the rule evaluates to `true`, all of the effects associated with that rule will be performed. For instance, an effect might be to retire a subject.
 
 ```
 ┏━━━━━━━━━━━━━━━━━━┓
