@@ -8,7 +8,7 @@ describe Extractors::QuestionExtractor do
     }
   end
 
-  let(:annotations) { [ make_annotation("0"), ] }
+  let(:annotations) { [ make_annotation("0") ] }
 
   let(:classification) do
     Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
