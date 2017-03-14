@@ -16,10 +16,12 @@ module Extractors
 
     def self.extractor_class(id, type)
       case type.to_s
-      when "external"
-        ExternalExtractor
       when "blank"
         BlankExtractor
+      when "external"
+        ExternalExtractor
+      when "question"
+        QuestionExtractor
       when "survey"
         SurveyExtractor
       when "who"
