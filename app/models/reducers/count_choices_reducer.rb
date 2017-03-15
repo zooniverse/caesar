@@ -5,7 +5,7 @@ module Reducers
     def reduction_data_for(extractions)
       ReductionResults.build do |results|
         extractions.each do |extraction|
-          results.increment(extraction.data,1)
+          results.increment(extraction.data["value"],1)
         end
       end
     end
