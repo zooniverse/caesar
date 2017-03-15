@@ -7,27 +7,27 @@ describe Reducers::CountChoicesReducer do
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => "0"
+        :data => { "value" => "0"}
       ),
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => "0"
+        :data => { "value" => "0"}
       ),
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => "0"
+        :data => { "value" => "0"}
       ),
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => "1"
+        :data => { "value" => "1"}
       ),
       Extract.new(
         :classification_id => 1234,
         :classification_at => Date.new(2017,2,5),
-        :data => "0"
+        :data => { "value" => "0"}
       )
     ]
   }

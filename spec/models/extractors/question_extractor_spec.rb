@@ -18,7 +18,7 @@ describe Extractors::QuestionExtractor do
 
   describe '#process' do
     it 'extracts a value correctly' do
-      expect(extractor.process(classification)).to eq("0")
+      expect(extractor.process(classification)).to eq({ "value" => "0" })
     end
   end
 
