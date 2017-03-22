@@ -5,9 +5,9 @@ class RuleBindings
     @reductions = reductions.index_by(&:reducer_id)
   end
 
-  def fetch(key)
+  def fetch(key, defaultVal=nil)
     reducer_id, data_key = key.split(".")
-    @reductions.fetch(reducer_id).data.fetch(data_key)
+    @reductions.fetch(reducer_id).data.fetch(data_key, defaultVal)
   end
 
   def keys

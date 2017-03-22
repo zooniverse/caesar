@@ -15,7 +15,7 @@ module Conditions
       when 'const'
         Constant.new(config[1])
       when 'lookup'
-        Lookup.new(config[1])
+        Lookup.new(config[1], config[2])
       else
         raise InvalidConfig, "Unknown rule type: #{config[0]} (in #{config.inspect})"
       end
