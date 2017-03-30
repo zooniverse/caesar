@@ -1,4 +1,8 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+  mount Sidekiq::Web => '/sidekiq'
+
   post 'kinesis', to: 'kinesis#create'
 
   get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'
