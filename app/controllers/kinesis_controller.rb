@@ -2,11 +2,6 @@ class KinesisController < ApplicationController
   before_action :require_http_basic_authentication
 
   def create
-    if Rails.env.development? || Rails.env.staging?
-      logger.info request.headers['Content-Type']
-      logger.info request.format
-    end
-
     kinesis_stream.receive(params["payload"])
     head :no_content
   end

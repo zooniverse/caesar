@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Kinesis stream", sidekiq: :inline do
   before do
-    panoptes = instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: [])
+    panoptes = instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {"classifications" => []})
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 

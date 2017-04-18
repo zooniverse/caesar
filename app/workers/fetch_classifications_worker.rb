@@ -2,7 +2,7 @@ class FetchClassificationsWorker
   include Sidekiq::Worker
 
   def perform(subject_id, workflow_id)
-    classifications = Effects.panoptes.get_subject_classifications(subject_id, workflow_id)
+    classifications = Effects.panoptes.get_subject_classifications(subject_id, workflow_id)["classifications"]
     process_classifications(workflow_id, classifications)
   end
 
