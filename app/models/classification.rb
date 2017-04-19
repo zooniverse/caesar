@@ -35,7 +35,7 @@ class Classification
   end
 
   def user_id
-    attributes.fetch('links').fetch('user').try(&:to_i)
+    attributes.fetch('links')['user']&.to_i
   end
 
   def subject_id
