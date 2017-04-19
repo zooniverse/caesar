@@ -1,5 +1,5 @@
 module Reducers
-  class SimpleSurveyReducer < Reducer
+  class StatsReducer < Reducer
     attr_reader :sub_ranges
 
     def reduction_data_for(extractions)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reducers::SimpleSurveyReducer do
+describe Reducers::StatsReducer do
   subject(:reducer) { described_class.new("s") }
   let(:extracts){
     [

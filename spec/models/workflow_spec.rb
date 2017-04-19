@@ -24,10 +24,10 @@ RSpec.describe Workflow, type: :model do
 
     it 'processes configured workflows' do
       extractors_config = {"s" => {"type" => "survey", "task_key" => "T0"}}
-      reducers_config = {"s" => {"type" => "simple_survey"}}
+      reducers_config = {"s" => {"type" => "stats"}}
       rules_config = [
         {
-          "if" => ["gte", ["lookup", "survey-total-VHCL"], ["const", 1]],
+          "if" => ["gte", ["lookup", "s-VHCL"], ["const", 1]],
           "then" => [{"action" => "retire_subject", "reason" => "flagged"}]
         }
       ]
@@ -53,11 +53,11 @@ RSpec.describe Workflow, type: :model do
 
   it 'returns a list of reducers' do
     workflow.reducers_config = {
-      "s" => {type: "simple_survey"}
+      "s" => {type: "stats"}
     }
 
     expect(workflow.reducers.size).to eq(1)
-    expect(workflow.reducers['s']).to be_a(Reducers::SimpleSurveyReducer)
+    expect(workflow.reducers['s']).to be_a(Reducers::StatsReducer)
   end
 
   describe '#rules' do
