@@ -20,8 +20,8 @@ module Reducers
         CountChoicesReducer
       when "external"
         ExternalReducer
-      when "simple_survey"
-        SimpleSurveyReducer
+      when "stats"
+        StatsReducer
       when "simple_count"
         SimpleCountReducer
       when "unique_count"

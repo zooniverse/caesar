@@ -6,33 +6,38 @@ describe ExtractFilter do
     [
       Extract.new(
         id: 0,
-        :classification_id => 1234,
-        :classification_at => Date.new(2014,12,4),
-        :data => {"foo" => "bar"}
+        extractor_id: "foo",
+        classification_id: 1234,
+        classification_at: Date.new(2014, 12, 4),
+        data: {"foo" => "bar"}
       ),
       Extract.new(
         id: 1,
-        :classification_id => 1234,
-        :classification_at => Date.new(2014,12,4),
-        :data => {"foo" => "baz"}
+        extractor_id: "foo",
+        classification_id: 1234,
+        classification_at: Date.new(2014, 12, 4),
+        data: {"foo" => "baz"}
       ),
       Extract.new(
         id: 2,
-        :classification_id => 1235,
-        :classification_at => Date.new(1980,10,22),
-        :data => {"bar" => "baz"}
+        extractor_id: "bar",
+        classification_id: 1235,
+        classification_at: Date.new(1980, 10, 22),
+        data: {"bar" => "baz"}
       ),
       Extract.new(
         id: 3,
-        :classification_id => 1236,
-        :classification_at => Date.new(2017,2,7),
-        :data => {"baz" => "bar"}
+        extractor_id: "baz",
+        classification_id: 1236,
+        classification_at: Date.new(2017, 2, 7),
+        data: {"baz" => "bar"}
       ),
       Extract.new(
         id: 4,
-        :classification_id => 1237,
-        :classification_at => Date.new(2017,2,7),
-        :data => {"foo" => "fufufu"}
+        extractor_id: "foo",
+        classification_id: 1237,
+        classification_at: Date.new(2017, 2, 7),
+        data: {"foo" => "fufufu"}
       )
     ]
   }
@@ -64,6 +69,13 @@ describe ExtractFilter do
     it 'returns extracts in a slice' do
       filter = described_class.new(extracts, from: 1, to: 2)
       expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[3]])
+    end
+  end
+
+  describe 'extractor filtering' do
+    it 'returns extracts from the given extractor' do
+      filter = described_class.new(extracts, extractor_ids: ["foo"])
+      expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[4]])
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reducers::SimpleSurveyReducer do
+describe Reducers::StatsReducer do
   subject(:reducer) { described_class.new("s") }
   let(:extracts){
     [
@@ -40,6 +40,11 @@ describe Reducers::SimpleSurveyReducer do
     it 'counts occurrences inside a subrange' do
       reducer = described_class.new("s", {"filters" => {"from" => 0, "to" => 2}})
       expect(reducer.process(extracts)).to include({"NTHNGHR" => 1})
+    end
+
+    it 'counts booleans as 1' do
+      extracts = [Extract.new(data: {'blank' => true}), Extract.new(data: {'blank' => false})]
+      expect(reducer.process(extracts)).to eq('blank' => 1)
     end
   end
 end

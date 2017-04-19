@@ -64,7 +64,7 @@
                         "display_name": "Survey",
                         "nero_config": {
                             "extractors": {"s": {"type": "survey", "task_key": "T0"}},
-                            "reducers": {"s": {"type": "simple_survey"}},
+                            "reducers": {"s": {"type": "stats"}},
                             "rules": [
                                 {
                                     "if": ["gte", ["lookup", "s.VHCL"], ["const", 1]],

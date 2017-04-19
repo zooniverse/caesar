@@ -53,7 +53,7 @@ describe ClassificationPipeline do
 
   let(:workflow) do
     Workflow.create extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                    reducers_config: {"s" => {type: "simple_survey"}},
+                    reducers_config: {"s" => {type: "stats"}},
                     rules_config: [rule]
   end
 
