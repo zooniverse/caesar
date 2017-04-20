@@ -8,7 +8,7 @@ module Reducers
           extraction.data.each do |key, value|
             case value
             when TrueClass, FalseClass
-              results.increment(key, 1) if value
+              results.increment(key, value ? 1 : 0)
             else
               results.increment(key, value)
             end

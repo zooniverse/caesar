@@ -43,6 +43,9 @@ describe Reducers::StatsReducer do
     end
 
     it 'counts booleans as 1' do
+      extracts = [Extract.new(data: {'blank' => false})]
+      expect(reducer.process(extracts)).to eq('blank' => 0)
+
       extracts = [Extract.new(data: {'blank' => true}), Extract.new(data: {'blank' => false})]
       expect(reducer.process(extracts)).to eq('blank' => 1)
     end
