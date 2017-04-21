@@ -12,7 +12,8 @@ module Effects
     if ENV.key?("PANOPTES_CLIENT_ID") || Rails.env.staging? || Rails.env.production?
       @panoptes = Panoptes::Client.new(env: Rails.env.to_s,
                                        auth: {client_id: ENV.fetch("PANOPTES_CLIENT_ID"),
-                                              client_secret: ENV.fetch("PANOPTES_CLIENT_SECRET")})
+                                              client_secret: ENV.fetch("PANOPTES_CLIENT_SECRET")},
+                                              params: {:admin => true})
     else
       @panoptes = FakePanoptes.new
     end

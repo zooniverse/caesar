@@ -90,7 +90,7 @@ GEM
     nio4r (1.2.1)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
-    panoptes-client (0.2.12)
+    panoptes-client (0.2.13)
       faraday
       faraday-panoptes (~> 0.2.0)
       jwt (~> 1.5.0)
