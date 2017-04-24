@@ -7,7 +7,7 @@ module Conditions
 
     def apply(bindings)
       dict = bindings.fetch(@dict_name)
-      dict.keys.all? { |key| @operation.apply({"value" => dict.fetch(key)}) }
+      dict.keys.all? { |key| @operation.apply({"key" => key, "value" => dict.fetch(key)}) }
     end
   end
 end
