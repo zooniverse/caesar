@@ -27,4 +27,31 @@ describe Conditions::FromConfig do
 
     expect(condition.apply({})).to eq(true)
   end
+
+  it 'builds an any loop' do
+    condition = described_class.build([
+      :any,
+      'friends',
+      [
+        :gte,
+        [:lookup, 'value'],
+        [:const, 2]
+      ]
+    ])
+
+    expect(condition.apply({
+      'friends' => {
+        :snek => 1,
+        :sand_cat => 1
+      }
+    })).to be(false)
+
+    expect(condition.apply({
+      'friends' => {
+        :beaver => 3,
+        :prairie_dog => 1
+      }
+    })).to be(true)
+  end
+
 end
