@@ -1,7 +1,15 @@
 module Extractors
   class QuestionExtractor < Extractor
     def process(classification)
-      { "value" => classification.annotations.fetch(task_key)[0]["value"] }
+      result = {}
+
+      classification.annotations.fetch(task_key).each do |annotation|
+        key = annotation.fetch("value")
+        result[key] ||= 0
+        result[key] += 1
+      end
+
+      result
     end
 
     private
