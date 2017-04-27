@@ -2,7 +2,6 @@ module Extractors
   class QuestionExtractor < Extractor
     def process(classification)
       CountingHash.build do |result|
-
         classification.annotations.fetch(task_key).each do |annotation|
           value = annotation.fetch("value")
 
