@@ -18,11 +18,19 @@ describe Extractors::QuestionExtractor do
       expect(extractor.process(classification)).to eq({ "0" => 1 })
     end
 
-    it 'extracts multiple answers' do
+    it 'combines multiple annotations for the same task' do
       annotations = [make_annotation("0"), make_annotation("0"), make_annotation("1")]
       classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
 
       expect(extractor.process(classification)).to eq({"0" => 2, "1" => 1})
+    end
+
+    it 'works with multiple-choice checkbox-style questions' do
+      annotations = [make_annotation(["0", "1"])]
+      classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
+
+      expect(extractor.process(classification)).to eq({"0" => 1, "1" => 1})
+
     end
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reducers::ReductionResults do
+describe CountingHash do
   subject(:results) { described_class.new }
 
   it 'is empty initially' do
