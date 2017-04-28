@@ -6,6 +6,7 @@ class Action < ApplicationRecord
 
   def perform
     effect.perform(workflow_id, subject_id)
+    update! status: :completed, completed_at: Time.zone.now
   end
 
   def effect
