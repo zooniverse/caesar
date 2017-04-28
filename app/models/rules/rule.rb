@@ -9,7 +9,10 @@ module Rules
 
     def process(workflow_id, subject_id, results)
       if condition.apply(results)
-        effects.each { |effect| effect.perform(workflow_id, subject_id) }
+        effects.each do |effect|
+          pending_action = effect.prepare(workflow_id, subject_id)
+          PerformActionWorker.perform_async(pending_action.id)
+        end
       end
     end
   end

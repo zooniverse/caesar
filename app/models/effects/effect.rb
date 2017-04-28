@@ -5,5 +5,12 @@ module Effects
     def initialize(config = {})
       @config = config
     end
+
+    def prepare(workflow_id, subject_id)
+      Action.create!(effect_type: self.class.name,
+                     config: config,
+                     workflow_id: workflow_id,
+                     subject_id: subject_id)
+    end
   end
 end

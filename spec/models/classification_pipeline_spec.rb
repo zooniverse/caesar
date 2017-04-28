@@ -63,13 +63,13 @@ describe ClassificationPipeline do
     workflow.classification_pipeline
   end
 
-  let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true) }
+  let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {}) }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
-  it 'retires the image' do
+  it 'retires the image', sidekiq: :inline do
     pipeline.process(classification)
     expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
   end
