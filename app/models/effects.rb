@@ -10,11 +10,11 @@ module Effects
 
   def self.[](effect_type)
     case effect_type.to_s
-    when "retire_subject", "Effects::RetireSubject"
+    when "retire_subject"
       Effects::RetireSubject
-    when "add_subject_to_set", "Effects::AddSubjectToSet"
+    when "add_subject_to_set"
       Effects::AddSubjectToSet
-    when "add_subject_to_collection", "Effects::AddSubjectToCollection"
+    when "add_subject_to_collection"
       Effects::AddSubjectToCollection
     else
       raise UnknownEffect, "Don't know what to do with #{effect_type}"
