@@ -17,4 +17,12 @@ describe Effects::AddSubjectToSet do
       .with(1234, [20])
   end
 
+  it 'knows when an exception is safe to ignore' do
+    duplicate = { :errors => [{:message => "PG::UniqueViolation"}]}
+    unexpected = { :errors => [{:message => "ActiveRecord::Error"}]}
+
+    expect(described_class.was_duplicate(Panoptes::Client::ServerError.new(duplicate))).to be(true)
+    expect(described_class.was_duplicate(Panoptes::Client::ServerError.new(unexpected))).to be(false)
+  end
+
 end
