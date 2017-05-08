@@ -1,7 +1,5 @@
 module Reducers
   class StatsReducer < Reducer
-    attr_reader :sub_ranges
-
     def reduction_data_for(extractions)
       CountingHash.build do |results|
         extractions.each do |extraction|

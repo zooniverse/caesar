@@ -1,5 +1,7 @@
 module Extractors
   class QuestionExtractor < Extractor
+    config :task_key, default: "T0"
+
     def process(classification)
       CountingHash.build do |result|
         classification.annotations.fetch(task_key).each do |annotation|
@@ -18,7 +20,7 @@ module Extractors
     private
 
     def task_key
-      config["task_key"] || "T0"
+      config["task_key"]
     end
   end
 end
