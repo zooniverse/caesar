@@ -3,16 +3,7 @@ module Effects
     class UnknownEffect < StandardError; end
 
     def self.build(config)
-      case config["action"].to_s
-      when "retire_subject"
-        RetireSubject.new(config)
-      when "add_subject_to_set"
-        AddSubjectToSet.new(config)
-      when "add_subject_to_collection"
-        AddSubjectToCollection.new(config)
-      else
-        raise UnknownEffect, "Don't know what to do with #{config.inspect}"
-      end
+      Effects[config["action"]].new(config)
     end
 
     def self.build_many(configs)

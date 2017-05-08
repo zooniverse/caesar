@@ -10,10 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116121348) do
+ActiveRecord::Schema.define(version: 20170427164809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "actions", force: :cascade do |t|
+    t.integer  "workflow_id",               null: false
+    t.integer  "subject_id",                null: false
+    t.string   "effect_type",               null: false
+    t.jsonb    "config",       default: {}, null: false
+    t.integer  "status",       default: 0,  null: false
+    t.datetime "attempted_at"
+    t.datetime "completed_at"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.index ["subject_id"], name: "index_actions_on_subject_id", using: :btree
+    t.index ["workflow_id"], name: "index_actions_on_workflow_id", using: :btree
+  end
 
   create_table "extracts", force: :cascade do |t|
     t.integer  "classification_id"
@@ -60,4 +74,6 @@ ActiveRecord::Schema.define(version: 20170116121348) do
     t.jsonb    "rules_config"
   end
 
+  add_foreign_key "actions", "subjects"
+  add_foreign_key "actions", "workflows"
 end
