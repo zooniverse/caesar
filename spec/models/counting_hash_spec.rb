@@ -26,4 +26,35 @@ describe CountingHash do
       expect(results.to_h).to eq({"a" => 5, "b" => 3})
     end
   end
+
+  describe '#max' do
+    it 'works for empty hash' do
+      expect(results.max).to eq([nil, 0])
+    end
+
+    it 'returns the top result' do
+      results.increment("a")
+      expect(results.max).to eq(["a", 1])
+
+      results.increment("b")
+      results.increment("b")
+      results.increment("b")
+      results.increment("b")
+      expect(results.max).to eq(["b", 4])
+    end
+  end
+
+  describe '#sum' do
+    it 'works for empty hash' do
+      expect(results.sum).to eq(0)
+    end
+
+    it 'returns the sum of all the counts' do
+      results.increment("a")
+      results.increment("b")
+      results.increment("b")
+      results.increment("c")
+      expect(results.sum).to eq(4)
+    end
+  end
 end
