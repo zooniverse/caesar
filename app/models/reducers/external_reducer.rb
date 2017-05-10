@@ -2,6 +2,8 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
+    config :url, default: nil
+
     def reduction_data_for(extractions)
       if url
         req = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
@@ -16,7 +18,7 @@ module Reducers
     end
 
     def url
-      return nil unless config.key?('url')
+      return nil unless config['url'].present?
 
       @url ||= URI(config['url'])
     end

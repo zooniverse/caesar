@@ -1,5 +1,8 @@
 module Extractors
   class SurveyExtractor < Extractor
+    config :task_key, default: "T0"
+    config :nothing_here_choice, default: nil
+
     def process(classification)
       choices(classification)
     end
@@ -7,7 +10,7 @@ module Extractors
     private
 
     def task_key
-      config["task_key"] || "T0"
+      config["task_key"]
     end
 
     def nothing_here_choice

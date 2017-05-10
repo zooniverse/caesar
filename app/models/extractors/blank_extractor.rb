@@ -1,5 +1,7 @@
 module Extractors
   class BlankExtractor < Extractor
+    config :task_key, default: "T0"
+
     def process(classification)
       {'blank' => blank?(classification)}
     end
@@ -13,7 +15,7 @@ module Extractors
     end
 
     def task_key
-      config['task_key'] || 'T0'
+      config['task_key']
     end
   end
 end

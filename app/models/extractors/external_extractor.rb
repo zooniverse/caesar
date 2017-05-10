@@ -2,6 +2,8 @@ require 'uri'
 
 module Extractors
   class ExternalExtractor < Extractor
+    config :url, default: nil
+
     def process(classification)
       if url
         req = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
@@ -16,7 +18,7 @@ module Extractors
     end
 
     def url
-      return nil unless config.key?('url')
+      return nil unless config['url'].present?
 
       @url ||= URI(config['url'])
     end
