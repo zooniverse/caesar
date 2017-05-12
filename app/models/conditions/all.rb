@@ -6,7 +6,7 @@ module Conditions
     end
 
     def apply(bindings)
-      dict = bindings.fetch(@dict_name)
+      dict = bindings.fetch(@dict_name).data
       dict.keys.all? { |key| @operation.apply({"key" => key, "value" => dict.fetch(key)}) }
     end
   end

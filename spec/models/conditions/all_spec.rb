@@ -1,37 +1,52 @@
 require 'spec_helper'
 
 describe Conditions::All do
-  let(:sample){
+  def make_rule(reducer_id, compare_operation, compare_constant)
     described_class.new(
-      'friends',
+      reducer_id,
       Conditions::Comparison.new(
-        'lt', [
+        compare_operation, [
           Conditions::Lookup.new('value'),
-          Conditions::Constant.new(2)
+          Conditions::Constant.new(compare_constant)
         ]
       )
     )
+  end
+
+  let(:reductions){
+    [
+      Reduction.new(reducer_id: 'savannah', data: {:serval => 1, :hippo => 1, :cerulean => 1}),
+      Reduction.new(reducer_id: 'mountain', data: {:ibis => 1, :alpaca => 1, :cerulean => 5})
+    ]
+  }
+
+  let(:bindings){
+    RuleBindings.new(reductions)
   }
 
   it('throws an error on empty bindings') do
+    rule = make_rule('friends', 'lt', 2)
     expect {
-      sample.apply(nil)
+      rule.apply(nil)
     }.to raise_error(NoMethodError)
   end
 
   it('throws an error on bindings that lack the requested dictionary') do
+    rule = make_rule('friends', 'lt', 2)
     expect {
-      sample.apply({ 'blah' => {} })
+      rule.apply({ 'blah' => {} })
     }.to raise_error(KeyError)
   end
 
   it('is true when there are less than 2 of every critter') do
-    result = sample.apply({ 'friends' => {:serval =>1, :kaban => 1, :ibis => 1} })
+    rule = make_rule('savannah', 'lt', 2)
+    result = rule.apply(bindings)
     expect(result).to be(true)
   end
 
   it('is false when there are more than 2 of a critter') do
-    result = sample.apply({ 'friends' => {:serval =>1, :kaban => 1, :cerulean => 5} })
+    rule = make_rule('mountain', 'lt', 2)
+    result = rule.apply(bindings)
     expect(result).to be(false)
   end
 end

@@ -31,7 +31,7 @@ describe Conditions::FromConfig do
   it 'builds an any loop' do
     condition = described_class.build([
       :any,
-      'friends',
+      'desert',
       [
         :gte,
         [:lookup, 'value'],
@@ -39,19 +39,13 @@ describe Conditions::FromConfig do
       ]
     ])
 
-    expect(condition.apply({
-      'friends' => {
-        :snek => 1,
-        :sand_cat => 1
-      }
-    })).to be(false)
+    binding = RuleBindings.new(
+      [
+        Reduction.new(reducer_id: 'desert', data: {:snek => 1, :sand_cat => 1})
+      ]
+    )
 
-    expect(condition.apply({
-      'friends' => {
-        :beaver => 3,
-        :prairie_dog => 1
-      }
-    })).to be(true)
+    expect(condition.apply(binding)).to be(false)
   end
 
 end
