@@ -10,11 +10,11 @@ class Classification
   end
 
   def created_at
-    attributes.fetch('created_at')
+    attributes.fetch('created_at', nil)
   end
 
   def updated_at
-    attributes.fetch('updated_at')
+    attributes.fetch('updated_at', attributes.fetch('created_at', nil))
   end
 
   def annotations
