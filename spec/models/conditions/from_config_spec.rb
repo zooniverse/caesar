@@ -12,10 +12,12 @@ describe Conditions::FromConfig do
     expect(condition.apply({})).to eq(123)
   end
 
-  it 'builds a comparison with a lookup' do
-    condition = described_class.build([:lt, [:const, 1], [:lookup, "num"], [:const, 3]])
-    expect(condition.apply({"num" => 2})).to eq(true)
-    expect(condition.apply({"num" => 4})).to eq(false)
+  describe 'lookups' do
+    it 'builds a comparison with a lookup' do
+      condition = described_class.build([:lt, [:const, 1], [:lookup, "num", 0], [:const, 3]])
+      expect(condition.apply({"num" => 2})).to eq(true)
+      expect(condition.apply({"num" => 4})).to eq(false)
+    end
   end
 
   it 'builds boolean algebra' do

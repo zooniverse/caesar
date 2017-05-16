@@ -46,7 +46,7 @@ describe ClassificationPipeline do
 
   let(:rule) do
     {
-      if: [:gt, [:lookup, "s.LK"], [:const, 0]],
+      if: [:gt, [:lookup, "s.LK", 0], [:const, 0]],
       then: [{action: :retire_subject, reason: "consensus"}]
     }
   end
