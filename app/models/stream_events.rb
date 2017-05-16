@@ -1,7 +1,7 @@
 module StreamEvents
-  def self.from(hash)
+  def self.from(stream, hash)
     if hash.fetch("source") == "panoptes" && hash.fetch("type") == "classification"
-      StreamEvents::ClassificationEvent.new(hash)
+      StreamEvents::ClassificationEvent.new(stream, hash)
     else
       StreamEvents::UnknownEvent
     end
