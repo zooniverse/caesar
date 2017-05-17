@@ -1,6 +1,9 @@
 module StreamEvents
   class ClassificationEvent
-    def initialize(hash)
+    attr_reader :stream
+
+    def initialize(stream, hash)
+      @stream = stream
       @data = hash.fetch("data")
       @linked = StreamEvents.linked_to_hash(hash.fetch("linked"))
     end
@@ -10,7 +13,7 @@ module StreamEvents
 
       cache_linked_models!
 
-      ExtractWorker.perform_async(classification.workflow_id, @data.to_unsafe_h)
+      stream.queue.add(ExtractWorker, classification.workflow_id, @data.to_unsafe_h)
     end
 
     def cache_linked_models!
