@@ -2,7 +2,6 @@
 require 'json'
 
 workflow_id = ARGV[0]
-puts ARGV.inspect
 nero_config = JSON.parse(File.read(ARGV[1]))
 
 while line = STDIN.gets
