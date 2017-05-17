@@ -31,6 +31,8 @@ class ClassificationPipeline
   end
 
   def reduce(workflow_id, subject_id)
+    tries ||= 2
+
     reducers.each do |id, reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
@@ -38,6 +40,8 @@ class ClassificationPipeline
       reduction.data = data
       reduction.save!
     end
+  rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    retry unless (tries-=1).zero?
   end
 
   def check_rules(workflow_id, subject_id)
