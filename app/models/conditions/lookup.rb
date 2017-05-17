@@ -1,6 +1,6 @@
 module Conditions
   class Lookup
-    def initialize(key, absent_val=nil)
+    def initialize(key, absent_val)
       @key = key
       @absent_val = absent_val
     end
