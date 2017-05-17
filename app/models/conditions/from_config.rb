@@ -10,6 +10,10 @@ module Conditions
         Conjunction.new(build_many(config[1..-1]))
       when 'or'
         Disjunction.new(build_many(config[1..-1]))
+      when 'any'
+        Any.new(config[1], build(config[2]))
+      when 'all'
+        All.new(config[1], build(config[2]))
       when 'eq', 'gt', 'gte', 'lt', 'lte'
         Comparison.new(config[0], build_many(config[1..-1]))
       when 'const'

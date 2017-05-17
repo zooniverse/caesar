@@ -7,6 +7,7 @@ class RuleBindings
 
   def fetch(key, defaultVal=nil)
     reducer_id, data_key = key.split(".")
+    return @reductions.fetch(reducer_id) if data_key.nil?
     @reductions.fetch(reducer_id).data.fetch(data_key, defaultVal)
   end
 

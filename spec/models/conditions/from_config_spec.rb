@@ -29,4 +29,25 @@ describe Conditions::FromConfig do
 
     expect(condition.apply({})).to eq(true)
   end
+
+  it 'builds an any loop' do
+    condition = described_class.build([
+      :any,
+      'desert',
+      [
+        :gte,
+        [:lookup, 'value'],
+        [:const, 2]
+      ]
+    ])
+
+    binding = RuleBindings.new(
+      [
+        Reduction.new(reducer_id: 'desert', data: {:snek => 1, :sand_cat => 1})
+      ]
+    )
+
+    expect(condition.apply(binding)).to be(false)
+  end
+
 end

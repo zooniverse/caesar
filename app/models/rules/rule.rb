@@ -7,8 +7,8 @@ module Rules
       @effects = effects
     end
 
-    def process(workflow_id, subject_id, results)
-      if condition.apply(results)
+    def process(workflow_id, subject_id, bindings)
+      if condition.apply(bindings)
         effects.each do |effect|
           pending_action = effect.prepare(workflow_id, subject_id)
           PerformActionWorker.perform_async(pending_action.id)
