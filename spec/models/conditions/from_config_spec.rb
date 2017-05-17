@@ -36,7 +36,7 @@ describe Conditions::FromConfig do
       'desert',
       [
         :gte,
-        [:lookup, 'value'],
+        [:lookup, 'value', 0],
         [:const, 2]
       ]
     ])

@@ -6,7 +6,7 @@ describe Conditions::All do
       reducer_id,
       Conditions::Comparison.new(
         compare_operation, [
-          Conditions::Lookup.new('value'),
+          Conditions::Lookup.new('value', 0),
           Conditions::Constant.new(compare_constant)
         ]
       )
