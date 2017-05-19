@@ -70,8 +70,20 @@ Run tests with:
 docker-compose run -e RAILS_ENV=test app bin/rspec
 ```
 
+Start a local server with:
+
+```
+docker-compose up
+```
+
 To have it listen to the stream:
 
 ```
 AWS_REGION=us-east-1 kinesis-tail zooniverse-staging | bin/stream_to_server
+```
+
+Or to override the configuration for a given workflow, create a local file in `tmp/` (or anywhere else, but that directory is ignored by git) and run:
+
+```
+AWS_REGION=us-east-1 kinesis-tail zooniverse-staging | bin/override_workflow_configuration workflow_id tmp/path_to_nero_config.json | bin/stream_to_server
 ```
