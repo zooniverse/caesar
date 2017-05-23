@@ -14,6 +14,8 @@ class ClassificationPipeline
   end
 
   def extract(classification)
+    tries ||= 2
+
     extractors.each do |id, extractor|
       unless Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
         FetchClassificationsWorker.perform_async(classification.subject_id, classification.workflow_id)
@@ -28,6 +30,8 @@ class ClassificationPipeline
       extract.data = data
       extract.save!
     end
+  rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    retry unless (tries-=1).zero?
   end
 
   def reduce(workflow_id, subject_id)
