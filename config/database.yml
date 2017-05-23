@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 4 } %>
+  pool: <%= ENV.fetch("DATABASE_POOL_SIZE") { 4 } %>
 development:
   <<: *default
   database: caesar_development
