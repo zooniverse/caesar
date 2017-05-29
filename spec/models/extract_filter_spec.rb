@@ -78,4 +78,30 @@ describe ExtractFilter do
       expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[4]])
     end
   end
+
+  describe 'repeats filtering' do
+    describe 'set to keep all' do
+      it 'keeps all'
+    end
+
+    describe 'set to keep first' do
+      it 'keeps the first classification for a given user' do
+        extracts = [
+          Extract.new(id: 1, user_id: 1),
+          Extract.new(id: 2, user_id: 2),
+          Extract.new(id: 3, user_id: 1)
+        ]
+
+        filter = described_class.new(extracts, repeated_classifications: "keep_first")
+        expect(filter.to_a).to eq([extracts[0], extracts[1]])
+      end
+
+      it 'keeps repeated anonymous classifications'
+    end
+
+    describe 'set to keep last' do
+      it 'keeps the last classification for a given user'
+      it 'keeps repeated anonymous classifications'
+    end
+  end
 end

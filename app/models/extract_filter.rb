@@ -7,10 +7,22 @@ class ExtractFilter
   end
 
   def to_a
-    filter_by_extractor_ids(filter_by_subrange(extracts))
+    filter_by_extractor_ids(filter_by_subrange(filter_by_repeatedness(extracts)))
   end
 
   private
+
+  def filter_by_repeatedness(extracts)
+    user_ids ||= Set.new
+
+    extracts.select do |extract|
+      next true unless extract.user_id
+      next false if user_ids.include?(extract.user_id)
+
+      user_ids << extract.user_id
+      true
+    end
+  end
 
   def filter_by_subrange(extracts)
     group_extracts(extracts)[subrange].flat_map { |i| i[:data] }
