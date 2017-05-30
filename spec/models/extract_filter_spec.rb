@@ -81,27 +81,69 @@ describe ExtractFilter do
 
   describe 'repeats filtering' do
     describe 'set to keep all' do
-      it 'keeps all'
+      it 'keeps all' do
+        extracts = [
+          Extract.new(id: 1, user_id: 1),
+          Extract.new(id: 2, user_id: 1)
+        ]
+
+        filter = described_class.new(extracts, repeated_classifications: "keep_all")
+        expect(filter.to_a).to eq([extracts[0], extracts[1]])
+      end
     end
 
     describe 'set to keep first' do
       it 'keeps the first classification for a given user' do
         extracts = [
-          Extract.new(id: 1, user_id: 1),
-          Extract.new(id: 2, user_id: 2),
-          Extract.new(id: 3, user_id: 1)
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_id: "a"),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_id: "b"),
+          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b"),
         ]
 
         filter = described_class.new(extracts, repeated_classifications: "keep_first")
-        expect(filter.to_a).to eq([extracts[0], extracts[1]])
+        expect(filter.to_a).to eq(extracts[0..3])
       end
 
-      it 'keeps repeated anonymous classifications'
+      it 'keeps repeated anonymous classifications' do
+        extracts = [
+          Extract.new(id: 1, user_id: nil),
+          Extract.new(id: 2, user_id: 2),
+          Extract.new(id: 3, user_id: nil)
+        ]
+
+        filter = described_class.new(extracts, repeated_classifications: "keep_first")
+        expect(filter.to_a).to eq(extracts)
+      end
     end
 
     describe 'set to keep last' do
-      it 'keeps the last classification for a given user'
-      it 'keeps repeated anonymous classifications'
+      it 'keeps the last classification for a given user' do
+        extracts = [
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_id: "a"),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_id: "b"),
+          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b"),
+        ]
+
+        filter = described_class.new(extracts, repeated_classifications: "keep_last")
+        expect(filter.to_a).to eq(extracts[2..5])
+      end
+
+      it 'keeps repeated anonymous classifications' do
+        extracts = [
+          Extract.new(id: 1, user_id: nil),
+          Extract.new(id: 2, user_id: 2),
+          Extract.new(id: 3, user_id: nil)
+        ]
+
+        filter = described_class.new(extracts, repeated_classifications: "keep_first")
+        expect(filter.to_a).to eq(extracts)
+      end
     end
   end
 end

@@ -13,15 +13,25 @@ class ExtractFilter
   private
 
   def filter_by_repeatedness(extracts)
+    case @filters[:repeated_classifications] || "keep_all"
+    when "keep_all"
+      extracts
+    when "keep_first"
+      keep_first_classification(extracts)
+    when "keep_last"
+      keep_first_classification(extracts.reverse).reverse
+    end
+  end
+
+  def keep_first_classification(extracts)
     user_ids ||= Set.new
 
-    extracts.select do |extract|
-      next true unless extract.user_id
-      next false if user_ids.include?(extract.user_id)
-
-      user_ids << extract.user_id
+    extracts.group_by(&:classification_id).select do |_, extracts_for_classification|
+      next true unless extracts_for_classification.first.user_id
+      next false if user_ids.include?(extracts_for_classification.first.user_id)
+      user_ids << extracts_for_classification.first.user_id
       true
-    end
+    end.map(&:last).flatten
   end
 
   def filter_by_subrange(extracts)
