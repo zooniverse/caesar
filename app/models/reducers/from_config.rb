@@ -22,8 +22,8 @@ module Reducers
         ExternalReducer
       when "stats"
         StatsReducer
-      when "simple_count"
-        SimpleCountReducer
+      when "consensus"
+        ConsensusReducer
       when "unique_count"
         UniqueCountReducer
       else
