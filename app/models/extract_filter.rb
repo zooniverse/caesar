@@ -1,13 +1,37 @@
 class ExtractFilter
+  class ExtractsForClassification
+    attr_reader :extracts
+
+    def initialize(extracts)
+      @extracts = extracts
+    end
+
+    def select(&block)
+      self.class.new(extracts.select(&block))
+    end
+
+    def classification_id
+      extracts.first.classification_id
+    end
+
+    def classification_at
+      extracts.first.classification_at
+    end
+
+    def user_id
+      extracts.first.user_id
+    end
+  end
+
   attr_reader :extracts, :filters
 
   def initialize(extracts, filters)
-    @extracts = extracts
+    @extracts = extracts.group_by(&:classification_id).map { |_, group| ExtractsForClassification.new(group) }
     @filters = filters.with_indifferent_access
   end
 
   def to_a
-    filter_by_extractor_ids(filter_by_subrange(filter_by_repeatedness(extracts)))
+    filter_by_extractor_ids(filter_by_subrange(filter_by_repeatedness(extracts))).flat_map(&:extracts)
   end
 
   private
@@ -23,32 +47,29 @@ class ExtractFilter
     end
   end
 
-  def keep_first_classification(extracts)
-    user_ids ||= Set.new
-
-    extracts.group_by(&:classification_id).select do |_, extracts_for_classification|
-      next true unless extracts_for_classification.first.user_id
-      next false if user_ids.include?(extracts_for_classification.first.user_id)
-      user_ids << extracts_for_classification.first.user_id
-      true
-    end.map(&:last).flatten
-  end
-
   def filter_by_subrange(extracts)
-    group_extracts(extracts)[subrange].flat_map { |i| i[:data] }
-  end
-
-  def group_extracts(extracts)
-    extracts
-      .group_by(&:classification_id)
-      .map { |k, v| {classification_id: k, data: v} }
-      .sort_by { |hash| hash[:data][0].classification_at }
+    extracts.sort_by(&:classification_at)[subrange]
   end
 
   def filter_by_extractor_ids(extracts)
     return extracts if extractor_ids.blank?
 
-    extracts.select { |extract| extractor_ids.include?(extract.extractor_id) }
+    extracts.map do |group|
+      group.select do |extract|
+        extractor_ids.include?(extract.extractor_id)
+      end
+    end
+  end
+
+  def keep_first_classification(extracts)
+    user_ids ||= Set.new
+
+    extracts.select do |extracts_for_classification|
+      next true unless extracts_for_classification.user_id
+      next false if user_ids.include?(extracts_for_classification.user_id)
+      user_ids << extracts_for_classification.user_id
+      true
+    end.to_a
   end
 
   def subrange
