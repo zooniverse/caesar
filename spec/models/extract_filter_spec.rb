@@ -100,7 +100,7 @@ describe ExtractFilter do
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
           Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b")
         ]
 
         filter = described_class.new(extracts, repeated_classifications: "keep_first")
@@ -127,7 +127,7 @@ describe ExtractFilter do
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
           Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b")
         ]
 
         filter = described_class.new(extracts, repeated_classifications: "keep_last")
