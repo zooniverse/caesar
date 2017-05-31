@@ -37,7 +37,7 @@ class ExtractFilter
   private
 
   def filter_by_repeatedness(extracts)
-    case @filters[:repeated_classifications] || "keep_all"
+    case @filters[:repeated_classifications] || "keep_first"
     when "keep_all"
       extracts
     when "keep_first"
