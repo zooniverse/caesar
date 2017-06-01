@@ -32,6 +32,7 @@ class ClassificationPipeline
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     retry unless (tries-=1).zero?
+    raise
   end
 
   def reduce(workflow_id, subject_id)
@@ -46,6 +47,7 @@ class ClassificationPipeline
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     retry unless (tries-=1).zero?
+    raise
   end
 
   def check_rules(workflow_id, subject_id)
