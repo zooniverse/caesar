@@ -84,13 +84,14 @@ ActiveRecord::Schema.define(version: 20170627103857) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "workflows", id: :serial, force: :cascade do |t|
-    t.integer "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.jsonb "extractors_config"
-    t.jsonb "reducers_config"
-    t.jsonb "rules_config"
+  create_table "workflows", force: :cascade do |t|
+    t.integer  "project_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.jsonb    "extractors_config"
+    t.jsonb    "reducers_config"
+    t.jsonb    "rules_config"
+    t.jsonb    "webhooks"
   end
 
   add_foreign_key "actions", "subjects"

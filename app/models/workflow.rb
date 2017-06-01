@@ -12,6 +12,17 @@ class Workflow < ApplicationRecord
     extractors_config.present? || reducers_config.present? || rules_config.present?
   end
 
+  def update_cache(config)
+    if workflow.new_record? || workflow.updated_at < attributes[:updated_at]
+      workflow.extractors_config = config[:extractors] || {}
+      workflow.reducers_config = config[:reducers] || {}
+      workflow.rules_config = config[:rules] || []
+      workflow.updated_at = attributes[:updated_at] || Time.zone.now
+      workflow.webhooks = config[:webhooks] || []
+      workflow.save!
+    end
+  end
+
   def classification_pipeline
     ClassificationPipeline.new(extractors, reducers, rules)
   end
