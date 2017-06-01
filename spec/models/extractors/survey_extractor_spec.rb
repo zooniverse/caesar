@@ -19,6 +19,20 @@ describe Extractors::SurveyExtractor do
   subject(:extractor) { described_class.new("s") }
 
   describe '#process' do
+    it 'can ignore missing task' do
+      annotations.clear
+
+      extractor.config["if_missing"] = "ignore"
+      expect(extractor.process(classification)).to eq({})
+
+      extractor.config["if_missing"] = "nothing_here"
+      extractor.config["nothing_here_choice"] = "NTHNGHR"
+      expect(extractor.process(classification)).to eq("NTHNGHR" => 1)
+
+      extractor.config["if_missing"] = "error"
+      expect { extractor.process(classification) }.to raise_error(Extractors::SurveyExtractor::MissingAnnotation)
+    end
+
     it 'converts empty value lists to nothing_here if configured' do
       extractor.config["nothing_here_choice"] = "NTHNGHR"
       annotations[0]["value"] = []
