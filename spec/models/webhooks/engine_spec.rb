@@ -32,9 +32,10 @@ describe Webhooks::Engine do
 
       expect do
         two_engine.process("classification", {})
+        two_engine.process("classification", {})
         two_engine.process("extraction", {})
         two_engine.process("reduction", {})
-      end.to change(NotifyWebhookWorker.jobs, :size).by(2)
+      end.to change(NotifyWebhookWorker.jobs, :size).by(3)
     end
   end
 

@@ -7,7 +7,7 @@ describe NotifyWebhookWorker do
 
   before do
     stub_request(:post, "http://example.org/api?event_type=test").
-      with(:body => sample_data.to_json,
+      with(:body => [sample_data].to_json,
            :headers => {
              'Content-Type' => 'application/json'
            }).
@@ -22,7 +22,7 @@ describe NotifyWebhookWorker do
     )
 
     expect(a_request(:post, "example.org/api?event_type=test")
-            .with(body: sample_data.to_json))
+            .with(body: [sample_data].to_json))
       .to have_been_made.once
   end
 
@@ -31,7 +31,7 @@ describe NotifyWebhookWorker do
     described_class.new.perform(nil, "test", sample_data)
 
     expect(a_request(:post, "example.org/api?event_type=test")
-            .with(body: sample_data.to_json))
+            .with(body: [sample_data].to_json))
       .not_to have_been_made
   end
 end

@@ -11,7 +11,7 @@ class NotifyWebhookWorker
     url.query = URI.encode_www_form(new_args)
 
     req = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
-    req.body = data.to_json
+    req.body = [data].to_json
 
     Net::HTTP.start(url.hostname, url.port) do |http|
       http.request(req)
