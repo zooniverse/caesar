@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20170627103857) do
     t.jsonb    "extractors_config"
     t.jsonb    "reducers_config"
     t.jsonb    "rules_config"
-    t.jsonb    "webhooks"
+    t.jsonb    "webhooks_config"
   end
 
   add_foreign_key "actions", "subjects"

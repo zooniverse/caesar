@@ -38,4 +38,8 @@ class Workflow < ApplicationRecord
   def rules
     Rules::Engine.new(rules_config)
   end
+
+  def webhooks
+    Webhooks::Engine.new(webhooks_config)
+  end
 end
