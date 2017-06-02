@@ -11,6 +11,10 @@ class ExtractsController < ApplicationController
                                             subject_id: subject.id)
     extract.update! extract_params
 
+    ReduceWorker.perform_async(workflow.id, subject.id) if workflow.configured?
+
+    workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
+    
     render json: extract
   end
 
@@ -30,6 +34,10 @@ class ExtractsController < ApplicationController
 
   def subject
     @subject ||= Subject.find(params[:extract][:subject_id])
+  end
+
+  def data
+    params[:extract][:data]
   end
 
   def extract_params

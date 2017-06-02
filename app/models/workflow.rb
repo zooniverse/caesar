@@ -22,7 +22,7 @@ class Workflow < ApplicationRecord
       workflow.reducers_config = config[:reducers] || {}
       workflow.rules_config = config[:rules] || []
       workflow.updated_at = attributes[:updated_at] || Time.zone.now
-      workflow.webhooks = config[:webhooks] || []
+      workflow.webhooks_config = config[:webhooks] || []
       workflow.save!
     end
   end
@@ -46,4 +46,14 @@ class Workflow < ApplicationRecord
   def webhooks
     Webhooks::Engine.new(webhooks_config)
   end
+
+  def configured?
+    (not (extractors&.empty? and reducers&.empty?)) and
+      (rules&.present? and subscribers?)
+  end
+
+  def subscribers?
+    webhooks.size > 0
+  end
+
 end
