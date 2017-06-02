@@ -1,10 +1,11 @@
 language: ruby
 rvm:
-  - 2.3.2
+  - 2.4.1
 cache: bundler
 sudo: false
-addons:
-  postgresql: "9.4"
+services:
+  - postgresql
+  - redis-server
 env:
   - DATABASE_URL_TEST=postgresql://localhost/caesar_test?user=postgres
 
