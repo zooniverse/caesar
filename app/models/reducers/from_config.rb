@@ -16,8 +16,8 @@ module Reducers
 
     def self.reducer_class(id, type)
       case type.to_s
-      when "count_choices"
-        CountChoicesReducer
+      when "count"
+        CountReducer
       when "external"
         ExternalReducer
       when "stats"
