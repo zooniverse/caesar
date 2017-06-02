@@ -4,8 +4,9 @@ rvm:
 cache: bundler
 sudo: false
 services:
-  - postgresql
   - redis-server
+addons:
+  postgresql: "9.6"
 env:
   - DATABASE_URL_TEST=postgresql://localhost/caesar_test?user=postgres
 
