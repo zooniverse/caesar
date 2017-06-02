@@ -87,3 +87,10 @@ Or to override the configuration for a given workflow, create a local file in `t
 ```
 AWS_REGION=us-east-1 kinesis-tail zooniverse-staging | bin/override_workflow_configuration workflow_id tmp/path_to_nero_config.json | bin/stream_to_server
 ```
+
+
+### Mutation tests
+
+```
+RAILS_ENV=test bundle exec mutant -r ./config/environment --use rspec Reducers::ExternalReducer
+```

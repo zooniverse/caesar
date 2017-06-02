@@ -24,13 +24,13 @@ describe Reducers::ConsensusReducer do
     it 'returns the most likely' do
       extracts = build_extracts(["ZEBRA", "ZEBRA", "ZEBRA", ["ZEBRA", "BIRD"]])
       expect(reducer.process(extracts))
-        .to include({"most_likely" => "ZEBRA", "agreement" => 0.75})
+        .to include({"most_likely" => "ZEBRA", "agreement" => 0.75, "num_votes" => 3})
     end
 
     it 'handles multiple species' do
       extracts = build_extracts([["ZEBRA", "BIRD"], ["ZEBRA", "BIRD"]])
       expect(reducer.process(extracts))
-        .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0})
+        .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0, "num_votes" => 2})
 
     end
   end
