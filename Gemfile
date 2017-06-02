@@ -38,6 +38,7 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
+  gem 'rubocop'
 end
 
 group :development do
