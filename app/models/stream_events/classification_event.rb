@@ -13,7 +13,7 @@ module StreamEvents
 
       cache_linked_models!
 
-      if workflow["nero_config"]&.keys&.include? "webhooks"
+      if workflow.subscribers?
         workflow.webhooks.process "new_classification", [@data]
       end
 

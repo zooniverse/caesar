@@ -12,6 +12,10 @@ class Workflow < ApplicationRecord
     extractors_config.present? || reducers_config.present? || rules_config.present?
   end
 
+  def subscribers?
+    webhooks&.size > 0
+  end
+
   def update_cache(config)
     if workflow.new_record? || workflow.updated_at < attributes[:updated_at]
       workflow.extractors_config = config[:extractors] || {}

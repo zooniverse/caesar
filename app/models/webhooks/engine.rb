@@ -7,7 +7,7 @@ module Webhooks
     end
 
     def process(event_type, data)
-      @hooks.each { |hook| hook.process(event_type, data) }
+      @hooks.each { |hook| hook.process(event_type.to_s, data) }
     end
 
     def size

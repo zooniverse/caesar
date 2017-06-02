@@ -7,15 +7,15 @@ describe Webhooks::Engine do
 
   let(:one_engine) { described_class.new([{
    "endpoint" => "http://example.org",
-   "events" => ["extraction"]
+   "events" => ["new_extraction"]
   }]) }
 
   let(:two_engine) { described_class.new([{
     "endpoint" => "http://example.org",
-    "events" => ["classification"]
+    "events" => ["new_classification"]
   }, {
     "endpoint" => "http://example.org",
-    "events" => ["reduction"]
+    "events" => ["new_reduction"]
   }]) }
 
   describe '#initialize' do
@@ -31,10 +31,10 @@ describe Webhooks::Engine do
     it 'queues up notification jobs correctly' do
 
       expect do
-        two_engine.process("classification", {})
-        two_engine.process("classification", {})
-        two_engine.process("extraction", {})
-        two_engine.process("reduction", {})
+        two_engine.process(:new_classification, {})
+        two_engine.process(:new_classification, {})
+        two_engine.process(:new_extraction, {})
+        two_engine.process(:new_reduction, {})
       end.to change(NotifyWebhookWorker.jobs, :size).by(3)
     end
   end
