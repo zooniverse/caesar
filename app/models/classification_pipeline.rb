@@ -31,6 +31,7 @@ class ClassificationPipeline
       extract.save!
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    sleep 2
     retry unless (tries-=1).zero?
     raise
   end
@@ -46,6 +47,7 @@ class ClassificationPipeline
       reduction.save!
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    sleep 2
     retry unless (tries-=1).zero?
     raise
   end
