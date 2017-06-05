@@ -4,10 +4,14 @@ class Workflow < ApplicationRecord
     config = attributes[:nero_config] || {}
 
     workflow = Workflow.where(id: attributes[:id]).first_or_initialize
-    workflow.extractors_config = config[:extractors] || {}
-    workflow.reducers_config = config[:reducers] || {}
-    workflow.rules_config = config[:rules] || []
-    workflow.save!
+
+    if workflow.new_record? || workflow.updated_at < attributes[:updated_at]
+      workflow.extractors_config = config[:extractors] || {}
+      workflow.reducers_config = config[:reducers] || {}
+      workflow.rules_config = config[:rules] || []
+      workflow.updated_at = attributes[:updated_at] || Time.zone.now
+      workflow.save!
+    end
   end
 
   def classification_pipeline

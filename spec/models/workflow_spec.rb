@@ -40,6 +40,26 @@ RSpec.describe Workflow, type: :model do
       expect(Workflow.first.reducers_config).to eq(reducers_config)
       expect(Workflow.first.rules_config).to eq(rules_config)
     end
+
+    it 'updates when own record is older' do
+      workflow = Workflow.create! id: 1, extractors_config: {s: {type: 'survey'}}, updated_at: 1.hour.ago
+
+      timestamp = 10.minutes.ago.change(usec: 0)
+      described_class.update_cache("id" => 1, "nero_config" => {}, "updated_at" => timestamp.as_json)
+
+      expect(Workflow.count).to eq(1)
+      expect(Workflow.first.extractors_config.keys).to eq([])
+      expect(Workflow.first.updated_at).to eq(timestamp)
+    end
+
+    it 'skips when own record is newer' do
+      workflow = Workflow.create! id: 1, extractors_config: {s: {type: 'survey'}}, updated_at: 1.hour.ago
+
+      described_class.update_cache("id" => 1, "nero_config" => {}, "updated_at" => 2.hours.ago.as_json)
+
+      expect(Workflow.count).to eq(1)
+      expect(Workflow.first.extractors_config.keys).to eq(["s"])
+    end
   end
 
   it 'returns a list of extractors' do
