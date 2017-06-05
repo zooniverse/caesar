@@ -1,6 +1,8 @@
 class FetchClassificationsWorker
   include Sidekiq::Worker
 
+  sidekiq_options unique: :until_executing
+
   def perform(subject_id, workflow_id)
     classifications = Effects.panoptes.get_subject_classifications(subject_id, workflow_id)["classifications"]
     process_classifications(workflow_id, classifications)

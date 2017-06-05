@@ -1,6 +1,6 @@
 class ReduceWorker
   include Sidekiq::Worker
-  sidekiq_options retry: 5
+  sidekiq_options retry: 5, unique: :until_executing
   sidekiq_retry_in do |count|
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
