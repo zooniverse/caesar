@@ -39,7 +39,11 @@ module Extractors
     def fetch_values(classification)
       case if_missing
       when "ignore"
-        []
+        begin
+          classification.annotations.fetch(task_key)
+        rescue KeyError
+          []
+        end
       when "nothing_here"
         [{"value" => [{"choice" => nothing_here_choice}]}]
       else
