@@ -33,9 +33,10 @@ describe Reducers::ExternalReducer do
   end
 
   it 'does not post if no url is configured' do
-    reducer = described_class.new("red")
-    reducer.process(extracts)
+    reducer = described_class.new("red", url: nil)
+    result = reducer.process(extracts)
 
+    expect(result).to eq({})
     expect(a_request(:post, "example.org/post/extracts/here")
             .with(body: extracts.to_json))
       .not_to have_been_made
