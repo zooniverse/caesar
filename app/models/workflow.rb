@@ -1,6 +1,6 @@
 class Workflow < ApplicationRecord
   def self.update_cache(attributes)
-    attributes = attributes.with_indifferent_access
+    attributes = attributes.with_indifferent_access if attributes.is_a?(Hash)
     config = attributes[:nero_config] || {}
 
     workflow = Workflow.where(id: attributes[:id]).first_or_initialize
