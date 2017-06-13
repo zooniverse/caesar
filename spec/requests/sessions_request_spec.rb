@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe SessionsController, type: :controller do
-  describe "GET #new" do
+  describe "GET /session" do
     it "returns http success" do
-      get :new
+      get :show
       expect(response).to have_http_status(:success)
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe SessionsController, type: :controller do
 
     it "returns http success" do
       delete :destroy
-      expect(response).to redirect_to("/session/new")
+      expect(response).to redirect_to("/session")
     end
   end
 
