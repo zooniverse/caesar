@@ -1,4 +1,6 @@
 class CurrentUser
+  attr_reader :attributes
+
   def initialize(attributes)
     @attributes = attributes
   end
@@ -8,10 +10,10 @@ class CurrentUser
   end
 
   def login
-    @attributes.fetch("login")
+    attributes.fetch("login")
   end
 
   def admin?
-    @attributes.fetch("admin") || false
+    attributes.fetch("admin") || false
   end
 end

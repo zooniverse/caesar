@@ -1,9 +1,10 @@
 require 'sidekiq/web'
 Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
 
-Rails.application.routes.draw do
+require 'panoptes_admin_constraint'
 
-  mount Sidekiq::Web => '/sidekiq'
+Rails.application.routes.draw do
+  mount Sidekiq::Web => '/sidekiq', constraints: PanoptesAdminConstraint.new
 
   get '/', to: 'status#show'
 

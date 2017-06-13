@@ -1,4 +1,5 @@
 class KinesisController < ApplicationController
+  skip_before_action :authorize!
   before_action :require_http_basic_authentication
 
   def create
