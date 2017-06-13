@@ -36,10 +36,12 @@ gem 'sidekiq-unique-jobs'
 gem 'flipper'
 gem 'flipper-active_record'
 gem 'flipper-ui'
-gem 'panoptes-client'
+gem 'panoptes-client', '~> 0.3.1'
 gem 'newrelic_rpm'
 gem 'lograge'
 gem 'rollbar'
+gem 'omniauth'
+gem 'omniauth-zooniverse'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

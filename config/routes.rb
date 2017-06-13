@@ -2,9 +2,13 @@ require 'sidekiq/web'
 Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
 
 Rails.application.routes.draw do
+
   mount Sidekiq::Web => '/sidekiq'
 
   get '/', to: 'status#show'
+
+  resource :session
+  get '/auth/:provider/callback', to: 'sessions#create'
 
   post 'kinesis', to: 'kinesis#create'
 
