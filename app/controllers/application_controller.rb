@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    if session[:credentials]["token"]
+    if session[:credentials]
       CurrentUser.new(panoptes_client.current_user)
     else
       CurrentUser.new({})
@@ -33,6 +33,9 @@ class ApplicationController < ActionController::Base
     unless authorized?
       head :forbidden
     end
+  rescue JWT::ExpiredSignature
+    reset_session
+    redirect_to session_path, alert: "Session expired"
   end
 
   def authorized?

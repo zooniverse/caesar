@@ -6,8 +6,8 @@
 
     <title><%= content_for?(:title) ? yield(:title) : "Caesar" %></title>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
     <%= csrf_meta_tags %>
   </head>
 
@@ -27,11 +27,19 @@
             <li class="menu-text">Logged in as <%= current_user.login %></li>
             <li><%= button_to 'Log out', session_path, method: :delete, class: 'button' %></li>
           <% else %>
-            <li><%= link_to 'Log in', new_session_path %></li>
+            <li><%= link_to 'Log in', '/auth/zooniverse' %></li>
           <% end %>
         </ul>
       </nav>
     </header>
+
+    <% if flash[:alert] %>
+      <div class="alert"><%= flash[:alert] %></div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notice"><%= flash[:notice] %></div>
+    <% end %>
 
     <%= yield %>
   </body>

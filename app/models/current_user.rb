@@ -14,6 +14,6 @@ class CurrentUser
   end
 
   def admin?
-    attributes.fetch("admin") || false
+    attributes.fetch("admin", false)
   end
 end
