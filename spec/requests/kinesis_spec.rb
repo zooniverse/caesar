@@ -6,7 +6,8 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
-  def http_login(username = Rails.application.secrets.kinesis["username"], password = Rails.application.secrets.kinesis["password"])
+  def http_login(username = Rails.application.secrets.kinesis[:username],
+                 password = Rails.application.secrets.kinesis[:password])
     @env ||= {}
     @env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
     @env

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ExtractsController, type: :controller do
+  before { fake_session admin: true }
+
   describe "GET #index" do
     it "returns http success" do
       get :index, params: {workflow_id: 1, extractor_id: 1}

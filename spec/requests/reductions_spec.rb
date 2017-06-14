@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ReductionsController, type: :controller do
+  before { fake_session admin: true }
+
   describe "GET #index" do
     it "returns http success" do
       get :index, params: {workflow_id: 1, reducer_id: 1}
@@ -33,9 +35,9 @@ RSpec.describe ReductionsController, type: :controller do
 
     it 'updates an existing reduction' do
       Reduction.create!(workflow_id: workflow.id,
-                      subject_id: subject.id,
-                      reducer_id: reducer_id,
-                      data: {"foo" => 1})
+                        subject_id: subject.id,
+                        reducer_id: reducer_id,
+                        data: {"foo" => 1})
 
       put :update, as: :json,
           params: {workflow_id: workflow.id, reducer_id: reducer_id},
