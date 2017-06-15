@@ -14,7 +14,7 @@ module StreamEvents
       cache_linked_models!
 
       if workflow.subscribers?
-        workflow.webhooks.process "new_classification", [@data]
+        workflow.webhooks.process "new_classification", @data.as_json
       end
 
       stream.queue.add(ExtractWorker, classification.workflow_id, @data.to_unsafe_h)
