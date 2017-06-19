@@ -19,6 +19,8 @@ ADD ./ /app
 
 RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
 
+RUN (cd /app && bundle exec rails assets:precompile)
+
 EXPOSE 80
 
 CMD ["bash", "/app/docker/start.sh"]
