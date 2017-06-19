@@ -10,23 +10,8 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def panoptes_client
-    panoptes_client_env = case Rails.env.to_s
-                          when "production"
-                            "production"
-                          else
-                            "staging"
-                          end
-
-    @panoptes_client = Panoptes::Client.new(env: panoptes_client_env, auth: {token: session[:credentials]["token"]})
-  end
-
   def current_user
-    if session[:credentials]
-      CurrentUser.new(panoptes_client.current_user)
-    else
-      CurrentUser.new({})
-    end
+    CurrentUser.new(session[:credentials])
   end
 
   def authorize!
