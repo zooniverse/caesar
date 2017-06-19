@@ -2,6 +2,8 @@ class PanoptesAdminConstraint
   def matches?(request)
     user = current_user(request.session)
     user.logged_in? && user.admin?
+  rescue JWT::ExpiredSignature
+    false
   end
 
   def panoptes_client(session)
