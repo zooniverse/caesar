@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    CurrentUser.new(session[:credentials])
+    @current_user ||= CurrentUser.new(session[:credentials])
   end
 
   def authorize!

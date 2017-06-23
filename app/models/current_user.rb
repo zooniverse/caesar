@@ -35,6 +35,8 @@ class CurrentUser
     case Rails.env.to_s
     when "production"
       "production"
+    when "test"
+      "test"
     else
       "staging"
     end
