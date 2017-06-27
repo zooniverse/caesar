@@ -15,6 +15,10 @@ class WorkflowsController < ApplicationController
   end
 
   def workflow_params
-    params.require(:workflow).permit(:extractors_config, :reducers_config, :rules_config)
+    params.require(:workflow).permit(
+      extractors_config: {},
+      reducers_config: {},
+      rules_config: {}
+    )
   end
 end

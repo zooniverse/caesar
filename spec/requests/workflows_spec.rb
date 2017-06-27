@@ -12,20 +12,6 @@ RSpec.describe WorkflowsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    it 'creates a new workflow' do
-      put :update, as: :json,
-          params: {id: 123},
-          body: {
-            workflow: {
-              project_id: 1,
-              extractors_config: {"type" => "external"}
-            }
-          }.to_json
-
-      expect(response).to have_http_status(:success)
-      expect(Workflow.count).to eq(1)
-    end
-
     it 'updates an existing workflow' do
       workflow = Workflow.create!(project_id: 1)
 

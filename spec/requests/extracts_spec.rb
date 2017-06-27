@@ -3,17 +3,18 @@ require 'rails_helper'
 RSpec.describe ExtractsController, type: :controller do
   before { fake_session admin: true }
 
+  let(:extractor_id) { 1 }
+  let(:extractor_config) { {"type" => "external"} }
+  let(:workflow) { Workflow.create!(extractors_config: {extractor_id => extractor_config}) }
+
   describe "GET #index" do
     it "returns http success" do
-      get :index, params: {workflow_id: 1, extractor_id: 1}
+      get :index, params: {workflow_id: workflow.id, extractor_id: extractor_id}
       expect(response).to have_http_status(:success)
     end
   end
 
   describe 'PUT #update' do
-    let(:extractor_id) { 1 }
-    let(:extractor_config) { {"type" => "external"} }
-    let(:workflow) { Workflow.create!(extractors_config: {extractor_id => extractor_config}) }
     let(:subject) { Subject.create! }
 
     it 'creates a new extract' do
