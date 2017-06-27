@@ -22,7 +22,7 @@ class ExtractsController < ApplicationController
   end
 
   def workflow
-    @workflow ||= Workflow.accessible_by(current_user).find(params[:workflow_id])
+    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
   end
 
   def extractor

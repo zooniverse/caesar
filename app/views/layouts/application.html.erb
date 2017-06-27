@@ -17,14 +17,14 @@
 
       <nav>
         <ul>
-          <% if current_user.admin? %>
+          <% if credential.admin? %>
           <li><%= link_to "Sidekiq", '/sidekiq' %></li>
           <% end %>
         </ul>
 
         <ul class="menu">
-          <% if current_user.logged_in? %>
-            <li class="menu-text">Logged in as <%= current_user.login %></li>
+          <% if credential.logged_in? %>
+            <li class="menu-text">Logged in as <%= credential.login %></li>
             <li><%= button_to 'Log out', session_path, method: :delete, class: 'button' %></li>
           <% else %>
             <li><%= link_to 'Log in', '/auth/zooniverse' %></li>

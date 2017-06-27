@@ -11,6 +11,10 @@ class Credential < ApplicationRecord
     jwt_payload.fetch("admin", false)
   end
 
+  def expired?
+    expires_at < Time.utc.now
+  end
+
   def fetch_accessible_projects
     client.panoptes.paginate("/projects", current_user_roles: ['owner', 'collaborator'])
   end

@@ -1,6 +1,6 @@
 module FakeSession
   def fake_session(admin: false)
-    current_user = double(Credential, logged_in?: true, admin?: admin)
-    allow(controller).to receive(:current_user).and_return(current_user)
+    credential = double(Credential, logged_in?: true, admin?: admin, expired?: false)
+    allow(controller).to receive(:credential).and_return(credential)
   end
 end

@@ -1,10 +1,11 @@
 class Workflow < ApplicationRecord
-  def self.accessible_by(current_user)
-    return none unless current_user.logged_in?
-    return all if current_user.admin?
-    return none unless current_user.project_ids.present?
+  def self.accessible_by(credential)
+    return none unless credential.logged_in?
+    return none if credential.expired?
+    return all if credential.admin?
+    return none unless credential.project_ids.present?
 
-    where(project_id: current_user.project_ids)
+    where(project_id: credential.project_ids)
   end
 
   def self.update_cache(attributes)

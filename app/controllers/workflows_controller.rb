@@ -11,7 +11,7 @@ class WorkflowsController < ApplicationController
   private
 
   def workflow
-    @workflow ||= Workflow.accessible_by(current_user).find(params[:id])
+    @workflow ||= Workflow.accessible_by(credential).find(params[:id])
   end
 
   def workflow_params

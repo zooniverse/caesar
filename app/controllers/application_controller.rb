@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :reset_session
 
-  helper_method :current_user
+  helper_method :credential
 
   before_action :authorize!
 
@@ -13,10 +13,6 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   private
-
-  def current_user
-    credential
-  end
 
   def authorize!
     unless authorized?
@@ -28,7 +24,8 @@ class ApplicationController < ActionController::Base
   end
 
   def authorized?
-    current_user.admin?
+    return false if credential.expired?
+    credential.admin?
   end
 
   def credential
