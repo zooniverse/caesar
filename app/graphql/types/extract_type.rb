@@ -1,5 +1,6 @@
 Types::ExtractType = GraphQL::ObjectType.define do
   name "Extract"
+
   field :classification_id, types.String
   field :classification_at, Types::TimeType
 

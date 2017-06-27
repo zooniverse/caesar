@@ -1,6 +1,7 @@
 class Workflow < ApplicationRecord
   has_many :extracts
   has_many :reductions
+  has_many :actions
 
   def self.accessible_by(credential)
     return none unless credential.logged_in?
