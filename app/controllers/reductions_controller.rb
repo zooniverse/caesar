@@ -18,19 +18,11 @@ class ReductionsController < ApplicationController
   private
 
   def authenticate!
-    if request_signature_valid?
-      true
-    else
-      head :forbidden
-    end
-  end
-
-  def request_signature_valid?
-    Rails.env.development? || Rails.env.test?
+    head :forbidden unless workflow.present?
   end
 
   def workflow
-    @workflow ||= Workflow.find(params[:workflow_id])
+    @workflow ||= Workflow.accessible_by(current_user).find(params[:workflow_id])
   end
 
   def reducer
