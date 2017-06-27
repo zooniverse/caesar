@@ -2,6 +2,9 @@ class SessionsController < ApplicationController
   skip_before_action :authorize!
 
   def show
+    if credential.expired?
+      reset_session
+    end
   end
 
   def create

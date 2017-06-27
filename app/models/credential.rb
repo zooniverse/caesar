@@ -12,7 +12,7 @@ class Credential < ApplicationRecord
   end
 
   def expired?
-    expires_at < Time.utc.now
+    expires_at < Time.zone.now
   end
 
   def fetch_accessible_projects

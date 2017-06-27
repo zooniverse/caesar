@@ -1,0 +1,5 @@
+<ul>
+    <% @workflows.each do |workflow| %>
+        <li><%= link_to "Project #{workflow.project_id}, workflow: #{workflow.id}", workflow %></li>
+    <% end %>
+</ul>

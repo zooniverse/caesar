@@ -1,4 +1,9 @@
 class WorkflowsController < ApplicationController
+  def index
+    @workflows = Workflow.accessible_by(credential).all
+    respond_with @workflows
+  end
+  
   def show
     respond_with workflow
   end
