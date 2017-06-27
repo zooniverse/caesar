@@ -8,10 +8,14 @@ class ApplicationController < ActionController::Base
 
   before_action :authorize!
 
+  respond_to :html, :json
+
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
   private
 
   def current_user
-    @current_user ||= CurrentUser.new(session[:credentials])
+    credential
   end
 
   def authorize!
@@ -25,5 +29,36 @@ class ApplicationController < ActionController::Base
 
   def authorized?
     current_user.admin?
+  end
+
+  def credential
+    token = session_token || bearer_token
+
+    @credential ||= if token
+                      Credential.find_or_create_by(token: token) do |credential|
+                        if session[:credentials]
+                          credential.refresh = session[:credentials]["refresh_token"]
+                          credential.expires_at = Time.at(session[:credentials]["expires_at"])
+                        end
+
+                        credential.project_ids = credential.fetch_accessible_projects["projects"].map{ |prj| prj["id"] }
+                      end
+                    else
+                      Credential.new
+                    end
+  end
+
+  def session_token
+    session[:credentials] && session[:credentials]["token"]
+  end
+
+  def bearer_token
+    return unless request.headers['Authorization']
+
+    request.headers['Authorization'].match(/\ABearer (?<token>.*)\Z/)["token"]
+  end
+
+  def record_not_found
+    head 404
   end
 end
