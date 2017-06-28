@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :credential
 
+  before_action :authenticate!
   before_action :authorize!
 
   respond_to :html, :json
@@ -14,18 +15,31 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def authorize!
-    unless authorized?
-      head :forbidden
-    end
+  def authenticate!
+    head :unauthorized unless authenticated?
   rescue JWT::ExpiredSignature
-    reset_session
-    redirect_to session_path, alert: "Session expired"
+    respond_to do |format|
+      format.html do
+        reset_session
+        redirect_to session_path, alert: "Session expired"
+      end
+
+      format.json do
+        head :unauthorized
+      end
+    end
+  end
+
+  def authenticated?
+    credential.ok?
+  end
+
+  def authorize!
+    head :forbidden unless authorized?
   end
 
   def authorized?
-    return false if credential.expired?
-    true
+    false
   end
 
   def credential

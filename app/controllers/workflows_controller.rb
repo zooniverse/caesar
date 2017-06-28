@@ -3,7 +3,7 @@ class WorkflowsController < ApplicationController
     @workflows = Workflow.accessible_by(credential).all
     respond_with @workflows
   end
-  
+
   def show
     respond_with workflow
   end
@@ -14,6 +14,10 @@ class WorkflowsController < ApplicationController
   end
 
   private
+
+  def authorized?
+    true
+  end
 
   def workflow
     @workflow ||= Workflow.accessible_by(credential).find(params[:id])

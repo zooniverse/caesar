@@ -11,6 +11,10 @@ class Credential < ApplicationRecord
     jwt_payload.fetch("admin", false)
   end
 
+  def ok?
+    jwt_payload.present? && !expired?
+  end
+
   def expired?
     expires_at < Time.zone.now
   end

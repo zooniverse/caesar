@@ -1,6 +1,4 @@
 class ReductionsController < ApplicationController
-  before_action :authenticate!
-
   def index
     reductions = Reduction.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
     render json: reductions
@@ -17,8 +15,8 @@ class ReductionsController < ApplicationController
 
   private
 
-  def authenticate!
-    head :forbidden unless workflow.present?
+  def authorized?
+    workflow.present?
   end
 
   def workflow

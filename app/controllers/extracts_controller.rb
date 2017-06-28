@@ -1,5 +1,4 @@
 class ExtractsController < ApplicationController
-  before_action :authenticate!
 
   def index
     extracts = Extract.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
@@ -17,8 +16,8 @@ class ExtractsController < ApplicationController
 
   private
 
-  def authenticate!
-    head :forbidden unless workflow.present?
+  def authorized?
+    workflow.present?
   end
 
   def workflow
