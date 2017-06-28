@@ -49,7 +49,6 @@ describe Exporters::CsvReductionExporter do
       subject_id: Subject.create!.id,
       data: {"key4" => "val4"}
     ).save
-
   end
 
   it 'should give the right header row for the csv' do
