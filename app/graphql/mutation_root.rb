@@ -19,7 +19,11 @@ MutationRoot = GraphQL::ObjectType.define do
   end
 
   field :upsertExtract, Types::ExtractType do
-    description "Creates/updates the data for an extract"
+    description <<-END.strip_heredoc
+      Creates/updates the data for an reduction. Triggers evaluation of reductions and then
+      rules afterwards (asynchronously).
+    END
+
     argument :workflowId, !types.ID
     argument :subjectId, !types.ID
     argument :classificationId, !types.ID
@@ -40,7 +44,11 @@ MutationRoot = GraphQL::ObjectType.define do
   end
 
   field :upsertReduction, Types::ReductionType do
-    description "Creates/updates the data for an reduction"
+    description <<-END.strip_heredoc
+      Creates/updates the data for an reduction. Triggers evaluation of the workflow rules
+      afterwards (asynchronously).
+    END
+
     argument :workflowId, !types.ID
     argument :subjectId, !types.ID
     argument :reducerId, !types.String
@@ -59,7 +67,16 @@ MutationRoot = GraphQL::ObjectType.define do
   end
 
   field :extractSubject, types.Boolean do
-    description "Forces a re-evaluation of extracts (and subsequently reducers and rules) for a subject. This runs asynchronously."
+    description <<-END.strip_heredoc
+      Forces a re-evaluation of extracts (and subsequently reducers and rules) for a subject.
+      This works by fetching a complete list of classifications for the specified subject,
+      and then extracting, reducing and applying the rules on it. This means that any data
+      inconsistencies should get cleared up by running this, and that it should be idempotent.
+
+      This runs asynchronously. Returns true if a job was enqueued. Returns false if no job
+      was enqueued, typically this happens when one was already pending.
+    END
+
     argument :workflowId, !types.ID
     argument :subjectId, !types.ID
 
