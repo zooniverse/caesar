@@ -57,4 +57,17 @@ MutationRoot = GraphQL::ObjectType.define do
       reduction
     }
   end
+
+  field :extractSubject, types.Boolean do
+    description "Forces a re-evaluation of extracts (and subsequently reducers and rules) for a subject. This runs asynchronously."
+    argument :workflowId, !types.ID
+    argument :subjectId, !types.ID
+
+    resolve ->(obj, args, ctx) {
+      workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
+      subject   = Subject.find(args[:subjectId])
+
+      !!FetchClassificationsWorker.perform_async(subject.id, workflow.id)
+    }
+  end
 end
