@@ -37,6 +37,7 @@ gem 'lograge'
 gem 'rollbar'
 gem 'omniauth'
 gem 'omniauth-zooniverse'
+gem 'responders'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

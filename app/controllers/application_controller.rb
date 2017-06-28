@@ -4,41 +4,72 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :reset_session
 
-  helper_method :current_user
+  helper_method :credential
 
+  before_action :authenticate!
   before_action :authorize!
+
+  respond_to :html, :json
+
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   private
 
-  def panoptes_client
-    panoptes_client_env = case Rails.env.to_s
-                          when "production"
-                            "production"
-                          else
-                            "staging"
-                          end
+  def authenticate!
+    head :unauthorized unless authenticated?
+  rescue JWT::ExpiredSignature
+    respond_to do |format|
+      format.html do
+        reset_session
+        redirect_to session_path, alert: "Session expired"
+      end
 
-    @panoptes_client = Panoptes::Client.new(env: panoptes_client_env, auth: {token: session[:credentials]["token"]})
+      format.json do
+        head :unauthorized
+      end
+    end
   end
 
-  def current_user
-    if session[:credentials]
-      CurrentUser.new(panoptes_client.current_user)
-    else
-      CurrentUser.new({})
-    end
+  def authenticated?
+    credential.ok?
   end
 
   def authorize!
-    unless authorized?
-      head :forbidden
-    end
-  rescue JWT::ExpiredSignature
-    reset_session
-    redirect_to session_path, alert: "Session expired"
+    head :forbidden unless authorized?
   end
 
   def authorized?
-    current_user.admin?
+    false
+  end
+
+  def credential
+    token = session_token || bearer_token
+
+    @credential ||= if token
+                      Credential.find_or_create_by(token: token) do |credential|
+                        if session[:credentials]
+                          credential.refresh = session[:credentials]["refresh_token"]
+                          credential.expires_at = Time.at(session[:credentials]["expires_at"])
+                        end
+
+                        credential.project_ids = credential.fetch_accessible_projects["projects"].map{ |prj| prj["id"] }
+                      end
+                    else
+                      Credential.new
+                    end
+  end
+
+  def session_token
+    session[:credentials] && session[:credentials]["token"]
+  end
+
+  def bearer_token
+    return unless request.headers['Authorization']
+
+    request.headers['Authorization'].match(/\ABearer (?<token>.*)\Z/)["token"]
+  end
+
+  def record_not_found
+    head 404
   end
 end

@@ -1,6 +1,4 @@
 class ReductionsController < ApplicationController
-  before_action :authenticate!
-
   def index
     reductions = Reduction.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
     render json: reductions
@@ -17,20 +15,12 @@ class ReductionsController < ApplicationController
 
   private
 
-  def authenticate!
-    if request_signature_valid?
-      true
-    else
-      head :forbidden
-    end
-  end
-
-  def request_signature_valid?
-    Rails.env.development? || Rails.env.test?
+  def authorized?
+    workflow.present?
   end
 
   def workflow
-    @workflow ||= Workflow.find(params[:workflow_id])
+    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
   end
 
   def reducer

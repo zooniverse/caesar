@@ -1,4 +1,13 @@
 class Workflow < ApplicationRecord
+  def self.accessible_by(credential)
+    return none unless credential.logged_in?
+    return none if credential.expired?
+    return all if credential.admin?
+    return none unless credential.project_ids.present?
+
+    where(project_id: credential.project_ids)
+  end
+
   def self.update_cache(attributes)
     attributes = attributes.with_indifferent_access if attributes.is_a?(Hash)
     config = attributes[:nero_config] || {}
@@ -6,6 +15,7 @@ class Workflow < ApplicationRecord
     workflow = Workflow.where(id: attributes[:id]).first_or_initialize
 
     if workflow.new_record? || workflow.updated_at < attributes[:updated_at]
+      workflow.project_id = attributes[:project_id]
       workflow.extractors_config = config[:extractors] || {}
       workflow.reducers_config = config[:reducers] || {}
       workflow.rules_config = config[:rules] || []

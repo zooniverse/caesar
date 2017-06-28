@@ -1,8 +1,6 @@
 module FakeSession
-  def fake_session(attributes = {})
-    attributes = attributes.with_indifferent_access.reverse_merge(login: 'tester', admin: false)
-    current_user = CurrentUser.new(attributes)
-
-    allow(controller).to receive(:current_user).and_return(current_user)
+  def fake_session(admin: false)
+    credential = double(Credential, logged_in?: true, admin?: admin, ok?: true, expired?: false)
+    allow(controller).to receive(:credential).and_return(credential)
   end
 end

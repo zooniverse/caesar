@@ -1,0 +1,61 @@
+<h2>Extracts</h2>
+<% @extracts.group_by {|e| e.data.keys }.each do |keys, extracts| %>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Classification</th>
+                <th>User</th>
+                <th>Extractor</th>
+                <th>Timestamp</th>
+                <% keys.each do |key| %>
+                    <th><%= key %></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% extracts.each do |extract| %>
+                <tr>
+                    <td><%= extract.id %></td>
+                    <td><%= extract.classification_id %></td>
+                    <td><%= extract.user_id %></td>
+                    <td><%= extract.extractor_id %></td>
+                    <td><%= extract.updated_at %></td>
+                    
+                    <% keys.each do |key| %>
+                        <td><%= extract.data[key] %></td>
+                    <% end %>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>
+
+<h2>Reductions</h2>
+<% @reductions.group_by {|e| e.data.keys }.each do |keys, reductions| %>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Reducer</th>
+                <th>Timestamp</th>
+                <% keys.each do |key| %>
+                    <th><%= key %></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% reductions.sort_by(&:reducer_id).each do |reduction| %>
+                <tr>
+                    <td><%= reduction.id %></td>
+                    <td><%= reduction.reducer_id %></td>
+                    <td><%= reduction.updated_at %></td>
+                    
+                    <% keys.each do |key| %>
+                        <td><%= reduction.data[key] %></td>
+                    <% end %>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>

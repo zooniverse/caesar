@@ -13,6 +13,10 @@ Rails.application.routes.draw do
 
   post 'kinesis', to: 'kinesis#create'
 
+  resources :workflows do
+    resources :subjects, only: [:show]
+  end
+
   get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'
   put 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#update'
 
