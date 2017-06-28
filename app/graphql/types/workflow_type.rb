@@ -5,9 +5,17 @@ Types::WorkflowType = GraphQL::ObjectType.define do
   field :created_at, !Types::TimeType, "Timestamp when this workflow was created"
   field :updated_at, !Types::TimeType, "Timestamp when this workflow was updated"
 
-  field :extractors_config, Types::JsonType, "List of extractors"
-  field :reducers_config, Types::JsonType, "List of reducers"
-  field :rules_config, Types::JsonType, "List of rules"
+  field :extractors, types[Types::ExtractorInterface] do
+    resolve ->(workflow, args, ctx) {
+      workflow.extractors.values
+    }
+  end
+
+  field :reducers, types[Types::ReducerInterface] do
+    resolve ->(workflow, args, ctx) {
+      workflow.reducers.values
+    }
+  end
 
   field :extracts, types[Types::ExtractType] do
     argument :subject_id, !types.ID, "Filter by specific subject"
