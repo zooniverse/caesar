@@ -1,3 +1,4 @@
 CaesarSchema = GraphQL::Schema.define do
-  query(Types::QueryType)
+  query(QueryRoot)
+  mutation(MutationRoot)
 end

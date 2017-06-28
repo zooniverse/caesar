@@ -1,5 +1,5 @@
-Types::QueryType = GraphQL::ObjectType.define do
-  name "Query"
+QueryRoot = GraphQL::ObjectType.define do
+  name "QueryRoot"
 
   field :workflow do
     type Types::WorkflowType
