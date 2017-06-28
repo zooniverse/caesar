@@ -1,6 +1,7 @@
 class CheckRulesWorker
   include Sidekiq::Worker
-  sidekiq_options retry: 2, unique: :until_executing
+  sidekiq_options retry: 2
+  sidekiq_options unique: :until_executing unless Rails.env.test?
 
   def perform(workflow_id, subject_id)
     workflow = Workflow.find(workflow_id)
