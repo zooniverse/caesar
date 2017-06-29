@@ -16,7 +16,7 @@ services:
       args:
         RAILS_ENV: development
 
-    
+
     volumes:
       - ./:/rails_app
     ports:
