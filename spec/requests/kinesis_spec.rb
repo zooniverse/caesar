@@ -14,10 +14,18 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
   end
 
   it 'processes the stream events' do
+    workflow = Workflow.new(id: 338)
+    workflow.extractors_config = {"s": {"type": "survey", "task_key": "T0"}}
+    workflow.reducers_config = {"s": {"type": "stats"}}
+    workflow.rules_config = [{"if": ["gte", ["lookup", "s.VHCL", 0], ["const", 1]],
+                              "then": [{"action": "retire_subject", "reason": "flagged"}]}]
+    workflow.save!
+
     post "/kinesis",
          headers: {"CONTENT_TYPE" => "application/json"},
          params: File.read(Rails.root.join("spec/fixtures/example_kinesis_payload.json")),
          env: http_login
+
     expect(response.status).to eq(204)
     expect(Workflow.count).to eq(1)
     expect(Extract.count).to eq(1)
