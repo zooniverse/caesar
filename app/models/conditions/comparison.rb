@@ -1,5 +1,7 @@
 module Conditions
   class Comparison
+    attr_reader :type, :operations
+
     def initialize(type, operations)
       @type = type
       @operations = operations

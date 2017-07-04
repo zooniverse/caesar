@@ -17,6 +17,12 @@ Types::WorkflowType = GraphQL::ObjectType.define do
     }
   end
 
+  field :rules, types[Types::RuleType] do
+    resolve ->(workflow, args, ctx) {
+      workflow.rules.all
+    }
+  end
+
   field :extracts, types[Types::ExtractType] do
     argument :subject_id, !types.ID, "Filter by specific subject"
     argument :extractor_id, types.String, "Filter by specific extractor"
