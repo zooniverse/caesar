@@ -12,6 +12,21 @@ class Workflow < ApplicationRecord
     extractors_config.present? || reducers_config.present? || rules_config.present?
   end
 
+  def subscribers?
+    webhooks&.size > 0
+  end
+
+  def update_cache(config)
+    if workflow.new_record? || workflow.updated_at < attributes[:updated_at]
+      workflow.extractors_config = config[:extractors] || {}
+      workflow.reducers_config = config[:reducers] || {}
+      workflow.rules_config = config[:rules] || []
+      workflow.updated_at = attributes[:updated_at] || Time.zone.now
+      workflow.webhooks_config = config[:webhooks] || []
+      workflow.save!
+    end
+  end
+
   def classification_pipeline
     ClassificationPipeline.new(extractors, reducers, rules)
   end
@@ -27,4 +42,18 @@ class Workflow < ApplicationRecord
   def rules
     Rules::Engine.new(rules_config)
   end
+
+  def webhooks
+    Webhooks::Engine.new(webhooks_config)
+  end
+
+  def configured?
+    (not (extractors&.empty? and reducers&.empty?)) and
+      (rules&.present? and subscribers?)
+  end
+
+  def subscribers?
+    webhooks.size > 0
+  end
+
 end

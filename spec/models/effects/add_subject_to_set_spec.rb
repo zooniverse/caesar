@@ -3,18 +3,25 @@ require 'spec_helper'
 describe Effects::AddSubjectToSet do
   let(:workflow_id) { 10 }
   let(:subject_id){ 20 }
+  let(:subject_set_id){ 1234 }
 
   let(:panoptes) { double("PanoptesAdapter", add_subjects_to_subject_set: true) }
+  let(:effect) { described_class.new("subject_set_id" => subject_set_id) }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
+    allow(effect).to receive(:notify_subscribers).and_return(nil)
   end
 
   it 'adds the given subject to a given subject set' do
-    add_to_set = described_class.new("subject_set_id" => 1234)
-    add_to_set.perform(workflow_id, subject_id)
+    effect.perform(workflow_id, subject_id)
     expect(panoptes).to have_received(:add_subjects_to_subject_set)
-      .with(1234, [20])
+      .with(subject_set_id, [subject_id])
+  end
+
+  it 'notifies subscribers' do
+    effect.perform(workflow_id, subject_id)
+    expect(effect).to have_received(:notify_subscribers).once
   end
 
   it 'knows when an exception is safe to ignore' do

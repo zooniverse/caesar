@@ -29,6 +29,8 @@ class ClassificationPipeline
       extract.classification_at = classification.created_at
       extract.data = data
       extract.save!
+
+      extract
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
@@ -45,6 +47,8 @@ class ClassificationPipeline
       reduction = Reduction.where(workflow_id: workflow_id, subject_id: subject_id, reducer_id: id).first_or_initialize
       reduction.data = data
       reduction.save!
+
+      reduction
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
