@@ -42,14 +42,20 @@ class ClassificationPipeline
   def reduce(workflow_id, subject_id)
     tries ||= 2
 
-    reducers.each do |key, reducer|
+    reducers.each do |reducer_key, reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
-      reduction = Reduction.where(workflow_id: workflow_id, subject_id: subject_id, reducer_key: key).first_or_initialize
-      reduction.data = data
-      reduction.save!
+      data.each do |subgroup, datum|
+        reduction = Reduction.where(
+          workflow_id: workflow_id,
+          subject_id: subject_id,
+          reducer_key: reducer_key,
+          subgroup: subgroup).first_or_initialize
 
-      reduction
+        reduction.data = datum
+        reduction.subgroup = subgroup
+        reduction.save!
+      end
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
