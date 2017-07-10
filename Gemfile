@@ -39,6 +39,7 @@ gem 'omniauth'
 gem 'omniauth-zooniverse'
 gem 'responders'
 gem 'listen', '>= 3.0.5', '< 3.2'
+gem 'rest-client', '> 2.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

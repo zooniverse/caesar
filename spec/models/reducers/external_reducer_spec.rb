@@ -13,7 +13,7 @@ describe Reducers::ExternalReducer do
   before do
     stub_request(:post, "http://example.org/post/extracts/here")
       .with(:body => extracts.to_json,
-           :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/json', 'Host'=>'example.org', 'User-Agent'=>'Ruby'})
+           :headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'419', 'Content-Type'=>'application/json', 'Host'=>'example.org', 'User-Agent'=>'rest-client/2.0.2 (darwin16.5.0 x86_64) ruby/2.4.1p111'})
       .to_return(:status => 200, :body => response_data.to_json, :headers => {})
   end
 
