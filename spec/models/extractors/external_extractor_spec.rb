@@ -17,7 +17,9 @@ describe Extractors::ExternalExtractor do
   before do
     stub_request(:post, "http://example.org/post/classification/here").
       with(:body => classification.to_json,
-           :headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'227', 'Content-Type'=>'application/json', 'Host'=>'example.org', 'User-Agent'=>'rest-client/2.0.2 (darwin16.5.0 x86_64) ruby/2.4.1p111'}).
+           :headers => {'Accept'=>'application/json',
+                        'Content-Type'=>'application/json',
+                        'Host'=>'example.org'}).
       to_return(:status => 200, :body => response_data.to_json, :headers => {})
   end
 
