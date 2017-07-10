@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170627103857) do
+ActiveRecord::Schema.define(version: 20170710100850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,19 +29,10 @@ ActiveRecord::Schema.define(version: 20170627103857) do
     t.index ["workflow_id"], name: "index_actions_on_workflow_id"
   end
 
-  create_table "classifications", id: :serial, force: :cascade do |t|
-    t.jsonb "annotations", array: true
-    t.integer "project_id"
-    t.integer "workflow_id"
-    t.integer "user_id"
-    t.datetime "inserted_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "credentials", force: :cascade do |t|
     t.text "token", null: false
     t.string "refresh"
-    t.datetime "expires_at", default: "2017-06-27 11:01:01", null: false
+    t.datetime "expires_at", null: false
     t.integer "project_ids", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -84,14 +75,26 @@ ActiveRecord::Schema.define(version: 20170627103857) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "workflows", force: :cascade do |t|
-    t.integer  "project_id"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-    t.jsonb    "extractors_config"
-    t.jsonb    "reducers_config"
-    t.jsonb    "rules_config"
-    t.jsonb    "webhooks_config"
+  create_table "user_profiles", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "workflow_id", null: false
+    t.integer "user_id", null: false
+    t.string "generator", null: false
+    t.datetime "as_of", null: false
+    t.jsonb "data", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id", "user_id"], name: "index_user_profiles_on_workflow_id_and_user_id"
+  end
+
+  create_table "workflows", id: :serial, force: :cascade do |t|
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "extractors_config"
+    t.jsonb "reducers_config"
+    t.jsonb "rules_config"
+    t.jsonb "webhooks_config"
   end
 
   add_foreign_key "actions", "subjects"

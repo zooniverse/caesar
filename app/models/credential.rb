@@ -1,6 +1,10 @@
 class Credential < ApplicationRecord
+  before_create :set_expires_at
+
   def logged_in?
     jwt_payload["login"].present?
+  rescue JWT::ExpiredSignature
+    false
   end
 
   def login
@@ -9,6 +13,8 @@ class Credential < ApplicationRecord
 
   def admin?
     jwt_payload.fetch("admin", false)
+  rescue JWT::ExpiredSignature
+    false
   end
 
   def ok?
@@ -46,5 +52,11 @@ class Credential < ApplicationRecord
     else
       "staging"
     end
+  end
+
+  def set_expires_at
+    payload, _ = JWT.decode token, client.jwt_signing_public_key, algorithm: 'RS512'
+
+    self.expires_at ||= Time.at(payload.fetch("exp"))
   end
 end
