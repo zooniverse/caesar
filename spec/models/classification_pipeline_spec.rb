@@ -76,9 +76,8 @@ describe ClassificationPipeline do
   end
 
   it 'fetches classifications from panoptes when there are no other extracts' do
-    expect do
-      pipeline.process(classification)
-    end.to change(FetchClassificationsWorker.jobs, :size).by(1)
+    expect { pipeline.process(classification) }.
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
   end
 
   it 'does not fetch classifications when extracts already present' do
@@ -91,8 +90,34 @@ describe ClassificationPipeline do
       data: {"ZZZ" => 1}
     )
 
-    expect do
-      pipeline.process(classification)
-    end.not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+    expect { pipeline.process(classification) }.
+      not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+  end
+
+  let(:reduction_pipeline) do
+    instance_double
+  end
+
+  it 'folds up the reductions hash into distinct reductions' do
+    # no touching the database!
+    allow_any_instance_of(Reduction).to receive(:save!).and_return(nil)
+
+    reducer = Reducers::Reducer.new("s", { "group_by" => "foo" })
+    allow(reducer).to receive(:process){{
+      "foo" => 2,
+      "bar" => 2,
+      "baz" => 1
+    }}
+
+    pipeline = described_class.new(nil, {"s" => reducer, "t" => reducer}, nil)
+    reductions = pipeline.reduce(1234, 2345).map(&:serializable_hash)
+
+    # i wish that i could write tests for this that were less brittle
+    expect(reductions[0]).to include({ "reducer_id" => "s", "data" => 2, "subgroup" => "foo"})
+    expect(reductions[1]).to include({ "reducer_id" => "s", "data" => 2, "subgroup" => "bar"})
+    expect(reductions[2]).to include({ "reducer_id" => "s", "data" => 1, "subgroup" => "baz"})
+    expect(reductions[3]).to include({ "reducer_id" => "t", "data" => 2, "subgroup" => "foo"})
+    expect(reductions[4]).to include({ "reducer_id" => "t", "data" => 2, "subgroup" => "bar"})
+    expect(reductions[5]).to include({ "reducer_id" => "t", "data" => 1, "subgroup" => "baz"})
   end
 end

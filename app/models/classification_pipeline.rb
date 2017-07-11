@@ -42,10 +42,10 @@ class ClassificationPipeline
   def reduce(workflow_id, subject_id)
     tries ||= 2
 
-    reducers.each do |reducer_key, reducer|
+    reducers.map do |reducer_key, reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
-      data.each do |subgroup, datum|
+      data.map do |subgroup, datum|
         reduction = Reduction.where(
           workflow_id: workflow_id,
           subject_id: subject_id,
@@ -55,8 +55,10 @@ class ClassificationPipeline
         reduction.data = datum
         reduction.subgroup = subgroup
         reduction.save!
+
+        reduction
       end
-    end
+    end.flatten
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
     retry unless (tries-=1).zero?
