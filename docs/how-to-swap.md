@@ -64,7 +64,7 @@ Authorization: Bearer TOKEN
 Content-Type: application/json
 Accept: application/vnd.api+json; version=1
 
-{"project_preferences": {"designator": {"subject_set_chances": {"WORKFLOW_ID": 0.5}}}}
+{"project_preferences": {"designator": {"subject_set_chances": {"WORKFLOW_ID": {"SUBJECT_SET_ID": 0.5}}}}}
 ```
 
 ### Sending the reductions into Caesar:
