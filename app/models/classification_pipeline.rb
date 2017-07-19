@@ -17,9 +17,7 @@ class ClassificationPipeline
     tries ||= 2
 
     extractors.each do |id, extractor|
-      unless Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
-        FetchClassificationsWorker.perform_async(classification.subject_id, classification.workflow_id)
-      end
+      known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
@@ -29,6 +27,10 @@ class ClassificationPipeline
       extract.classification_at = classification.created_at
       extract.data = data
       extract.save!
+
+      unless known_subject
+        FetchClassificationsWorker.perform_async(classification.subject_id, classification.workflow_id)
+      end
 
       extract
     end
