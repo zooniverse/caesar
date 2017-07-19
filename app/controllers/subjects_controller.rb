@@ -13,4 +13,8 @@ class SubjectsController < ApplicationController
   def subject
     @subject ||= Subject.find(params[:id])
   end
+
+  def authorized?
+    true
+  end
 end
