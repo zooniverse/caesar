@@ -30,6 +30,5 @@ module Extractors
         raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{type}"
       end
     end
-
   end
 end

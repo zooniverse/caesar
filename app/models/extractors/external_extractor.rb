@@ -7,7 +7,12 @@ module Extractors
     def process(classification)
       if url
         response = RestClient.post(url.to_s, classification.to_json, {content_type: :json, accept: :json})
-        JSON.parse(response.body)
+
+        if response.body.present?
+          JSON.parse(response.body)
+        else
+          {}
+        end
       else
         {}
       end
