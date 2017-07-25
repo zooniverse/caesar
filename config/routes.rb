@@ -22,4 +22,9 @@ Rails.application.routes.draw do
 
   get 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#index'
   put 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#update'
+
+  get 'data_request/:request_id', to: 'data_requests#check_status'
+  get 'data_request/:request_id/retrieve', to: 'data_requests#retrieve'
+  get 'workflows/:workflow_id/extractors/export', to: 'data_requests#request_extracts'
+  get 'workflows/:workflow_id/reducers/export', to: 'data_requests#request_reductions'
 end
