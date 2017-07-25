@@ -14,6 +14,10 @@ class DataRequestsController < ApplicationController
   private
 
   def authorized?
-    false
+    workflow.present?
+  end
+
+  def workflow
+    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
   end
 end

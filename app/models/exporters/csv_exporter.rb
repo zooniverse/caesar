@@ -4,8 +4,8 @@ module Exporters
   class UnknownExporter < StandardError; end
 
   class CsvExporter
-    def dump(workflow_id)
-      path = get_path(workflow_id)
+    def dump(workflow_id, path=nil)
+      path = get_path(workflow_id) if path.blank?
       items = get_items(workflow_id)
 
       model_cols = get_model_cols
