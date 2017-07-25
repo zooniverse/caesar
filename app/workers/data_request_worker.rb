@@ -1,5 +1,9 @@
 class DataRequestWorker
   include Sidekiq::Worker
+  sidekiq_options retry: 5
+  sidekiq_retry_in do |count|
+    (count ** 8) + 15 + (rand(30) * count + 1)
+  end
 
   def perform(request_id)
     request = DataRequest.find(request_id)
@@ -19,6 +23,7 @@ class DataRequestWorker
         exporter = CsvReductionExporter.new
       end
 
+      # TODO: handle other parameters
       exporter.dump(request.workflow_id, "tmp/#{request.id}.csv")
       # TODO: put this file to S3
 
