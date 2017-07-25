@@ -38,6 +38,15 @@ describe Extractors::ExternalExtractor do
     expect(result).to eq(response_data)
   end
 
+  it 'handles 204s' do
+    stub_request(:post, "http://example.org/post/classification/here").
+      to_return(status: 204, body: "", headers: {})
+
+    extractor = described_class.new("ext", "url" => "http://example.org/post/classification/here")
+    result = extractor.process(classification)
+    expect(result).to eq({})
+  end
+
   it 'does not post if no url is configured' do
     extractor = described_class.new("ext")
     extractor.process(classification)

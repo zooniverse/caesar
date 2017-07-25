@@ -7,7 +7,12 @@ module Reducers
     def reduction_data_for(extractions)
       if url
         response = RestClient.post(url.to_s, extractions.to_json, {content_type: :json, accept: :json})
-        JSON.parse(response.body)
+
+        if response.body.present?
+          JSON.parse(response.body)
+        else
+          {}
+        end
       else
         {}
       end

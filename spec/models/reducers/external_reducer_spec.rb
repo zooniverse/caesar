@@ -34,6 +34,15 @@ describe Reducers::ExternalReducer do
     expect(result).to eq(response_data)
   end
 
+  it 'handles 204s' do
+    stub_request(:post, "http://example.org/post/extracts/here").
+      to_return(status: 204, body: "", headers: {})
+
+    extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
+    result = extractor.process(extracts)
+    expect(result).to eq({})
+  end
+
   it 'does not post if no url is configured' do
     reducer = described_class.new("red", url: nil)
     result = reducer.process(extracts)
