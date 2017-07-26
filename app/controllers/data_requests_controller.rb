@@ -8,12 +8,7 @@ class DataRequestsController < ApplicationController
   end
 
   def check_status
-    request = DataRequest.find(
-      user_id: params[:user_id],
-      workflow_id: params[:workflow_id],
-      subgroup: params[:subgroup],
-      requested_data: request_type
-    )
+    request = DataRequest.find(make_params)
 
     head 404 if request.blank?
 
@@ -30,12 +25,7 @@ class DataRequestsController < ApplicationController
   end
 
   def retrieve
-    request = DataRequest.find(
-      user_id: params[:user_id],
-      workflow_id: params[:workflow_id],
-      subgroup: params[:subgroup],
-      requested_data: request_type
-    )
+    request = DataRequest.find(make_params)
 
     head 404 if request.blank? || request.url.blank?
 
@@ -44,13 +34,17 @@ class DataRequestsController < ApplicationController
 
   private
 
-  def make_request(request_type)
-    request = DataRequest.find_or_initialize_by(
+  def make_params
+    {
       user_id: params[:user_id],
       workflow_id: params[:workflow_id],
       subgroup: params[:subgroup],
       requested_data: request_type
-    )
+    }
+  end
+
+  def make_request(request_type)
+    request = DataRequest.find_or_initialize_by(make_params)
 
     case request.status
     when DataRequest::EMPTY, DataRequest::FAILED, DataRequest::COMPLETE

@@ -5,7 +5,7 @@ describe Exporters::CsvReductionExporter do
   let(:subject) { Subject.create! }
 
   let(:exporter) { described_class.new }
-  let(:sample) {
+  let(:sample){
     Reduction.new(
       reducer_id: "x",
       workflow_id: workflow.id,
@@ -53,25 +53,8 @@ describe Exporters::CsvReductionExporter do
 
   end
 
-  it '#get_unique_json_cols should calculate keys correctly' do
-    keys = exporter.get_unique_json_cols(workflow.id)
-    expect(keys.size).to eq(3)
-    expect(keys).to include("key1")
-    expect(keys).to include("key2")
-    expect(keys).to include("key3")
-    expect(keys).not_to include("key4")
-  end
-
-  it 'should get the list of model columns correctly' do
-    keys = exporter.get_model_cols
-    expect(keys).to include("id")
-    expect(keys).to include("reducer_id")
-    expect(keys).not_to include("data")
-    expect(keys).not_to include("sdfjkasdfjk")
-  end
-
   it 'should give the right header row for the csv' do
-    keys = exporter.get_csv_headers(workflow.id)
+    keys = exporter.get_csv_headers
     expect(keys).to include("id")
     expect(keys).to include("reducer_id")
     expect(keys).not_to include("data")
@@ -84,11 +67,7 @@ describe Exporters::CsvReductionExporter do
   end
 
   it 'should build the rows properly' do
-    row = exporter.extract_row(
-      sample,
-      exporter.get_model_cols,
-      exporter.get_unique_json_cols(workflow.id)
-    )
+    row = exporter.extract_row(sample)
 
     expect(row).to include("x")
     expect(row).to include("val1")
@@ -99,7 +78,11 @@ describe Exporters::CsvReductionExporter do
   end
 
   it 'should create the right file' do
-    exporter.dump(workflow.id)
-    expect(File.exist?("tmp/reductions_#{workflow.id}.csv")).to be(true)
+    exporter.dump
+    expect(File.exist?("tmp/reductions_#{workflow_id}.csv")).to be(true)
+  end
+
+  after do
+    Reduction.delete_all
   end
 end

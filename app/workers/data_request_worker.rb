@@ -16,15 +16,18 @@ class DataRequestWorker
     request.save
 
     begin
-      case request.requested_data
+      exporter = case request.requested_data
       when DataRequest::EXTRACTS
-        exporter = CsvExtractExporter.new
+        CsvExtractExporter
       when DataRequest::REDUCTIONS
-        exporter = CsvReductionExporter.new
-      end
+        CsvReductionExporter
+      end.new(
+        :workflow_id => request.workflow_id,
+        :user_id => request.user_id,
+        :subgroup => request.subgroup
+      )
 
-      # TODO: handle other parameters
-      exporter.dump(request.workflow_id, "tmp/#{request.id}.csv")
+      exporter.dump("tmp/#{request.id}.csv")
       # TODO: put this file to S3
 
       request.status = DataRequest::COMPLETE
