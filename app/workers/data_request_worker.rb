@@ -11,7 +11,6 @@ class DataRequestWorker
 
   def perform(request_id)
     request = DataRequest.find(request_id)
-
     return unless request.status == DataRequest::PENDING
 
     self.path = "tmp/#{request.id}.csv"
@@ -22,9 +21,9 @@ class DataRequestWorker
     begin
       exporter = case request.requested_data
       when DataRequest::EXTRACTS
-        CsvExtractExporter
+        Exporters::CsvExtractExporter
       when DataRequest::REDUCTIONS
-        CsvReductionExporter
+        Exporters::CsvReductionExporter
       end.new(
         :workflow_id => request.workflow_id,
         :user_id => request.user_id,

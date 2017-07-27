@@ -25,6 +25,6 @@ class Uploader
   end
 
   def upload_path
-    "data-exports.zooniverse.org/#{ ::File.basename(local_file) }".gsub /\/{2,}/, '/'
+    "data-exports.zooniverse.org/caesar/#{ ::File.basename(local_file) }".gsub /\/{2,}/, '/'
   end
 end
