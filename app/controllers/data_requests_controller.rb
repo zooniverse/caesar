@@ -9,7 +9,7 @@ class DataRequestsController < ApplicationController
 
   def check_status
     request = DataRequest.find(params[:request_id])
-    head 404 if request.blank?
+    return head 404 if request.blank?
 
     case request.status
     when DataRequest::PENDING
@@ -25,12 +25,16 @@ class DataRequestsController < ApplicationController
 
   def retrieve
     request = DataRequest.find(params[:request_id])
-    head 404 if request.blank? || request.url.blank?
+    return head 404 if request.blank? || request.url.blank?
 
     render json: request.url
   end
 
   private
+
+  def authorized?
+    workflow.present?
+  end
 
   def make_request(request_type)
     request = DataRequest.find_or_initialize_by(
@@ -53,10 +57,6 @@ class DataRequestsController < ApplicationController
       # we already know about this request and are working on it
       head 429
     end
-  end
-
-  def authorized?
-    workflow.present?
   end
 
   def workflow
