@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20170821150623) do
   create_table "credentials", force: :cascade do |t|
     t.text "token", null: false
     t.string "refresh"
-    t.datetime "expires_at", default: "2017-07-07 18:21:05", null: false
+    t.datetime "expires_at", null: false
     t.integer "project_ids", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 20170821150623) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "subgroup", default: "default"
+    t.string "subgroup", default: "_default"
     t.index ["subject_id"], name: "index_reductions_on_subject_id"
     t.index ["workflow_id", "subject_id", "reducer_key"], name: "index_reductions_on_workflow_id_and_subject_id_and_reducer_key", unique: true
     t.index ["workflow_id"], name: "index_reductions_on_workflow_id"
