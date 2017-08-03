@@ -6,6 +6,12 @@
 
     <title><%= content_for?(:title) ? yield(:title) : "Caesar" %></title>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+    integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/application.css" media="screen">
+
+
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
     <%= csrf_meta_tags %>
@@ -13,23 +19,44 @@
 
   <body>
     <header>
-      <h1>Caesar</h1>
+
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Caesar</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="https://zooniverse.org">Back to Zooniverse<span class="sr-only">(current)</span></a>
+            </li>
+
+            <% if credential.admin? || true %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Admin
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <%= link_to "Sidekiq", '/sidekiq', class: 'dropdown-item' %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+
+          <% if credential.logged_in? %>
+            <span class="navbar-text mr-sm-2">
+              Logged in as <%= credential.login %>
+            </span>
+            <%= button_to 'Log out', session_path, method: :delete, class: 'btn btn-outline-success my-2 my-sm-0' %>
+          <% else %>
+            <%= link_to 'Log in', '/auth/zooniverse' %>
+          <% end %>
+        </div>
+      </nav>
+
 
       <nav>
-        <ul>
-          <% if credential.admin? %>
-          <li><%= link_to "Sidekiq", '/sidekiq' %></li>
-          <% end %>
-        </ul>
-
-        <ul class="menu">
-          <% if credential.logged_in? %>
-            <li class="menu-text">Logged in as <%= credential.login %></li>
-            <li><%= button_to 'Log out', session_path, method: :delete, class: 'button' %></li>
-          <% else %>
-            <li><%= link_to 'Log in', '/auth/zooniverse' %></li>
-          <% end %>
-        </ul>
       </nav>
     </header>
 
@@ -42,5 +69,9 @@
     <% end %>
 
     <%= yield %>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
 </html>
