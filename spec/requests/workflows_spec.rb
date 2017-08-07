@@ -5,7 +5,7 @@ RSpec.describe WorkflowsController, type: :controller do
 
   describe "GET #show" do
     it "returns http success" do
-      workflow = Workflow.create! project_id: 1
+      workflow = create(:workflow)
       get :show, format: :json, params: {id: workflow.id}
       expect(response).to have_http_status(:success)
     end
@@ -13,7 +13,7 @@ RSpec.describe WorkflowsController, type: :controller do
 
   describe 'PUT #update' do
     it 'updates an existing workflow' do
-      workflow = Workflow.create!(project_id: 1)
+      workflow = create(:workflow)
 
       put :update, as: :json,
           params: {id: workflow.id},

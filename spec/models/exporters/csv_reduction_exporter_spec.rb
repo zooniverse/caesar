@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Exporters::CsvReductionExporter do
-  let(:workflow) { Workflow.create! }
+  let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
 
   let(:exporter) { described_class.new }
@@ -46,7 +46,7 @@ describe Exporters::CsvReductionExporter do
     ).save
     Reduction.new(
       reducer_id: "x",
-      workflow_id: Workflow.create!.id,
+      workflow_id: create(:workflow).id,
       subject_id: Subject.create!.id,
       data: {"key4" => "val4"}
     ).save

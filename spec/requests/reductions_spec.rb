@@ -5,7 +5,7 @@ RSpec.describe ReductionsController, type: :controller do
 
   let(:reducer_id) { 1 }
   let(:reducer_config) { {"type" => "external"} }
-  let(:workflow) { Workflow.create!(reducers_config: {reducer_id => reducer_config}) }
+  let(:workflow) { create(:workflow, reducers_config: {reducer_id => reducer_config}) }
 
   describe "GET #index" do
     it "returns http success" do

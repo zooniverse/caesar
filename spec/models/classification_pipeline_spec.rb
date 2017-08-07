@@ -52,10 +52,10 @@ describe ClassificationPipeline do
   end
 
   let(:workflow) do
-    Workflow.create! project_id: 1,
-                     extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                     reducers_config: {"s" => {type: "stats"}},
-                     rules_config: [rule]
+    create :workflow, project_id: 1,
+                      extractors_config: {"s" => {type: "survey", task_key: "T1"}},
+                      reducers_config: {"s" => {type: "stats"}},
+                      rules_config: [rule]
   end
 
   let(:subject) { Subject.create }

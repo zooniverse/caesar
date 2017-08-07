@@ -3,7 +3,7 @@ require 'spec_helper'
 describe StreamEvents::ClassificationEvent do
   let(:queue) { double(add: nil) }
   let(:stream) { double(KinesisStream, queue: queue) }
-  let(:workflow) { Workflow.create! }
+  let(:workflow) { create :workflow }
   let(:hash) do
     {
       "data" => ActionController::Parameters.new("links" => {"workflow" => workflow.id}),

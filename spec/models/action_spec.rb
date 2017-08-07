@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Action, type: :model do
   describe '#perform' do
-    let(:workflow) { Workflow.create! }
+    let(:workflow) { create :workflow }
     let(:subject) { Subject.create! }
 
     it 'performs the effect' do

@@ -59,6 +59,7 @@ group :development, :test do
   gem 'spring-commands-rspec'
   gem 'rubocop'
   gem 'mutant-rspec'
+  gem 'factory_girl_rails'
 end
 
 group :development do
