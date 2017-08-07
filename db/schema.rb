@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170710100850) do
+ActiveRecord::Schema.define(version: 20170807130844) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,13 +40,13 @@ ActiveRecord::Schema.define(version: 20170710100850) do
   end
 
   create_table "extracts", id: :serial, force: :cascade do |t|
-    t.integer "classification_id"
-    t.datetime "classification_at"
+    t.integer "classification_id", null: false
+    t.datetime "classification_at", null: false
     t.string "extractor_id", null: false
-    t.integer "project_id"
-    t.integer "workflow_id"
+    t.integer "project_id", null: false
+    t.integer "workflow_id", null: false
     t.integer "user_id"
-    t.integer "subject_id"
+    t.integer "subject_id", null: false
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -58,9 +58,9 @@ ActiveRecord::Schema.define(version: 20170710100850) do
 
   create_table "reductions", id: :serial, force: :cascade do |t|
     t.string "reducer_id", null: false
-    t.integer "project_id"
-    t.integer "workflow_id"
-    t.integer "subject_id"
+    t.integer "project_id", null: false
+    t.integer "workflow_id", null: false
+    t.integer "subject_id", null: false
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -75,18 +75,6 @@ ActiveRecord::Schema.define(version: 20170710100850) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_profiles", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "workflow_id", null: false
-    t.integer "user_id", null: false
-    t.string "generator", null: false
-    t.datetime "as_of", null: false
-    t.jsonb "data", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["workflow_id", "user_id"], name: "index_user_profiles_on_workflow_id_and_user_id"
-  end
-
   create_table "workflows", id: :serial, force: :cascade do |t|
     t.integer "project_id"
     t.datetime "created_at", null: false
@@ -99,4 +87,8 @@ ActiveRecord::Schema.define(version: 20170710100850) do
 
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
+  add_foreign_key "extracts", "subjects"
+  add_foreign_key "extracts", "workflows"
+  add_foreign_key "reductions", "subjects"
+  add_foreign_key "reductions", "workflows"
 end
