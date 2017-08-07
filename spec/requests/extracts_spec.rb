@@ -38,6 +38,8 @@ RSpec.describe ExtractsController, type: :controller do
       Extract.create!(workflow_id: workflow.id,
                       subject_id: subject.id,
                       extractor_id: extractor_id,
+                      classification_id: 123,
+                      classification_at: 5.days.ago,
                       data: {"foo" => 1})
 
       put :update, as: :json,

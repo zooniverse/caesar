@@ -1,52 +1,60 @@
 require 'spec_helper'
 
 describe Exporters::CsvReductionExporter do
-  let(:workflow_id){ 1234 }
+  let(:workflow) { Workflow.create! }
+  let(:subject) { Subject.create! }
 
-  let(:exporter){ described_class.new }
-  let(:sample){
+  let(:exporter) { described_class.new }
+  let(:sample) {
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => workflow_id,
-      :data => {"key1" => "val1", "key2" => "val2"}
+      reducer_id: "x",
+      workflow_id: workflow.id,
+      subject_id: subject.id,
+      data: {"key1" => "val1", "key2" => "val2"}
     )
   }
 
   before do
-    if File.exist?"tmp/reductions_#{workflow_id}.csv"
-      File.delete("tmp/reductions_#{workflow_id}.csv")
+    if File.exist?"tmp/reductions_#{workflow.id}.csv"
+      File.delete("tmp/reductions_#{workflow.id}.csv")
     end
+
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => workflow_id,
-      :data => {"key2" => "val2"}
+      reducer_id: "x",
+      workflow_id: workflow.id,
+      subject_id: Subject.create!.id,
+      data: {"key2" => "val2"}
     ).save
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => workflow_id,
-      :data => {"key2" => "val2"}
+      reducer_id: "x",
+      workflow_id: workflow.id,
+      subject_id: Subject.create!.id,
+      data: {"key2" => "val2"}
     ).save
     sample.save
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => workflow_id,
-      :data => {"key1" => "val1", "key2" => "val2"}
+      reducer_id: "x",
+      workflow_id: workflow.id,
+      subject_id: Subject.create!.id,
+      data: {"key1" => "val1", "key2" => "val2"}
     ).save
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => workflow_id,
-      :data => {"key1" => "val1", "key3" => "val3"}
+      reducer_id: "x",
+      workflow_id: workflow.id,
+      subject_id: Subject.create!.id,
+      data: {"key1" => "val1", "key3" => "val3"}
     ).save
     Reduction.new(
-      :reducer_id => "x",
-      :workflow_id => 0,
-      :data => {"key4" => "val4"}
+      reducer_id: "x",
+      workflow_id: Workflow.create!.id,
+      subject_id: Subject.create!.id,
+      data: {"key4" => "val4"}
     ).save
 
   end
 
   it '#get_unique_json_cols should calculate keys correctly' do
-    keys = exporter.get_unique_json_cols(workflow_id)
+    keys = exporter.get_unique_json_cols(workflow.id)
     expect(keys.size).to eq(3)
     expect(keys).to include("key1")
     expect(keys).to include("key2")
@@ -63,7 +71,7 @@ describe Exporters::CsvReductionExporter do
   end
 
   it 'should give the right header row for the csv' do
-    keys = exporter.get_csv_headers(workflow_id)
+    keys = exporter.get_csv_headers(workflow.id)
     expect(keys).to include("id")
     expect(keys).to include("reducer_id")
     expect(keys).not_to include("data")
@@ -79,7 +87,7 @@ describe Exporters::CsvReductionExporter do
     row = exporter.extract_row(
       sample,
       exporter.get_model_cols,
-      exporter.get_unique_json_cols(workflow_id)
+      exporter.get_unique_json_cols(workflow.id)
     )
 
     expect(row).to include("x")
@@ -87,16 +95,11 @@ describe Exporters::CsvReductionExporter do
     expect(row).to include("val2")
     expect(row).to include("")
     expect(row).not_to include("val3")
-    expect(row).to include(workflow_id)
+    expect(row).to include(workflow.id)
   end
 
   it 'should create the right file' do
-    exporter.dump(workflow_id)
-    expect(File.exist?("tmp/reductions_#{workflow_id}.csv")).to be(true)
+    exporter.dump(workflow.id)
+    expect(File.exist?("tmp/reductions_#{workflow.id}.csv")).to be(true)
   end
-
-  after do
-    Reduction.delete_all
-  end
-
 end

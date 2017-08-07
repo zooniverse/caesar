@@ -52,9 +52,10 @@ describe ClassificationPipeline do
   end
 
   let(:workflow) do
-    Workflow.create extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                    reducers_config: {"s" => {type: "stats"}},
-                    rules_config: [rule]
+    Workflow.create! project_id: 1,
+                     extractors_config: {"s" => {type: "survey", task_key: "T1"}},
+                     reducers_config: {"s" => {type: "stats"}},
+                     rules_config: [rule]
   end
 
   let(:subject) { Subject.create }
@@ -82,6 +83,7 @@ describe ClassificationPipeline do
 
   it 'does not fetch classifications when extracts already present' do
     Extract.create(
+      classification_id: classification.id,
       extractor_id: "zzz",
       subject_id: classification.subject_id,
       workflow_id: classification.workflow_id,

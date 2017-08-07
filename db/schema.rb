@@ -43,7 +43,6 @@ ActiveRecord::Schema.define(version: 20170807130844) do
     t.integer "classification_id", null: false
     t.datetime "classification_at", null: false
     t.string "extractor_id", null: false
-    t.integer "project_id", null: false
     t.integer "workflow_id", null: false
     t.integer "user_id"
     t.integer "subject_id", null: false
@@ -58,7 +57,6 @@ ActiveRecord::Schema.define(version: 20170807130844) do
 
   create_table "reductions", id: :serial, force: :cascade do |t|
     t.string "reducer_id", null: false
-    t.integer "project_id", null: false
     t.integer "workflow_id", null: false
     t.integer "subject_id", null: false
     t.jsonb "data"
