@@ -22,7 +22,6 @@ class ClassificationPipeline
       data = extractor.process(classification)
 
       extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_id: id).first_or_initialize
-      extract.project_id = classification.project_id
       extract.user_id = classification.user_id
       extract.classification_at = classification.created_at
       extract.data = data

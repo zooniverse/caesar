@@ -5,7 +5,7 @@ RSpec.describe ExtractsController, type: :controller do
 
   let(:extractor_id) { 1 }
   let(:extractor_config) { {"type" => "external"} }
-  let(:workflow) { Workflow.create!(extractors_config: {extractor_id => extractor_config}) }
+  let(:workflow) { create(:workflow, extractors_config: {extractor_id => extractor_config}) }
 
   describe "GET #index" do
     it "returns http success" do
@@ -38,6 +38,8 @@ RSpec.describe ExtractsController, type: :controller do
       Extract.create!(workflow_id: workflow.id,
                       subject_id: subject.id,
                       extractor_id: extractor_id,
+                      classification_id: 123,
+                      classification_at: 5.days.ago,
                       data: {"foo" => 1})
 
       put :update, as: :json,
