@@ -1,5 +1,6 @@
 FROM ruby:2.4
 WORKDIR /app
+ENV PORT=80
 ARG RAILS_ENV
 
 RUN apt-get update && \
@@ -18,7 +19,7 @@ ADD ./docker/supervisord.conf /etc/supervisor/conf.d/caesar.conf
 ADD ./ /app
 
 RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
-
+RUN (cd /app && mkdir -p tmp/pids)
 RUN (cd /app && bundle exec rails assets:precompile)
 
 EXPOSE 80
