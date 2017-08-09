@@ -20,6 +20,8 @@ else
     git pull
   fi
 
+  bin/rails db:migrate
+
   if [ -f "commit_id.txt" ]
   then
     cp commit_id.txt public/
