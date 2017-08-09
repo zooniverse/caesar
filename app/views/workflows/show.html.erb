@@ -1,8 +1,78 @@
-<h2>Extractors</h2>
+<%# <h2>Extractors</h2>
 <%= debug @workflow.extractors_config %>
 
-<h2>Reducers</h2>
+<%# <h2>Reducers</h2>
 <%= debug @workflow.reducers_config %>
 
-<h2>Rules</h2>
+<%# <h2>Rules</h2>
 <%= debug @workflow.rules_config %>
+
+<h2>Rules</h2>
+<!-- <button type="button" name="button">Add New</button> -->
+<table class="table table-hover table table-sm">
+  <thead>
+     <thead class="thead-inverse">
+    <tr>
+      <th>If</th>
+      <th>Then</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for rule in @workflow.rules_config %>
+      <tr>
+        <td><%= debug rule["if"] %></td>
+        <td><%= debug rule["then"] %></td>
+        <td><!-- <button type="button" name="button">Edit</button>
+            <button type="button" name="button">Delete</button> --></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Reducers</h2>
+<table class="table table-hover table table-sm">
+  <thead>
+     <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Configuration</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for key, reducer in @workflow.reducers_config %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= reducer["type"] %></td>
+        <td><%= debug reducer %></td>
+        <td><!--<button type="button" name="button">Edit</button> <button type="button" name="button">Delete</button> --></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Extractors</h2>
+<!-- <button type="button" name="button">Add New</button> -->
+<table class="table table-hover table table-sm">
+  <thead>
+     <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Configuration</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for key, extractor in @workflow.extractors_config %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= extractor["type"] %></td>
+        <td><%= debug extractor %></td>
+        <td><!-- <button type="button" name="button">Edit</button> <button type="button" name="button">Delete</button> --></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
