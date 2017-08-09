@@ -1,0 +1,6 @@
+<%= form_for @workflow do |f| %>
+    <h1>Enable Caesar for workflow <%= @workflow.id %>?</h1>
+    <%= f.hidden_field :id %>
+    <%= f.hidden_field :project_id %>
+    <%= f.submit value: "Enable" %>
+<% end %>
