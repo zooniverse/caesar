@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include ActionController::HttpAuthentication::Basic
   include ActionController::HttpAuthentication::Basic::ControllerMethods
+  include Pundit
 
   protect_from_forgery with: :reset_session
 
@@ -8,6 +9,9 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate!
   before_action :authorize!
+
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
 
   respond_to :html, :json
 
@@ -57,6 +61,11 @@ class ApplicationController < ActionController::Base
                     else
                       Credential.new expires_at: 2.minutes.from_now
                     end
+  end
+
+  # Alias for Pundit
+  def current_user
+    credential
   end
 
   def session_token

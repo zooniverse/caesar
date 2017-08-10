@@ -1,10 +1,11 @@
 class WorkflowsController < ApplicationController
   def index
-    @workflows = Workflow.accessible_by(credential).all
+    @workflows = policy_scoped(Workflow).all
     respond_with @workflows
   end
 
   def show
+    authorize workflow
     respond_with workflow
   end
 
