@@ -9,7 +9,8 @@ class ReductionsController < ApplicationController
   def update
     reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
                                                 reducer_key: reducer.key,
-                                                subject_id: subject.id)
+                                                subject_id: subject.id,
+                                                subgroup: :_default)
     authorize reduction
     reduction.update! reduction_params
 
@@ -18,6 +19,26 @@ class ReductionsController < ApplicationController
     workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
 
     render json: reduction
+  end
+
+  def nested_update
+    reductions = reduction_params[:data].map do |key, data|
+      Reduction.find_or_initialize_by(
+        workflow_id: workflow.id,
+        reducer_id: reducer.id,
+        subject_id: subject.id,
+        subgroup: key
+      ).tap do |item|
+        item[:data] = data.permit!
+        item.save
+      end
+    end
+
+    CheckRulesWorker.perform_async(workflow.id, subject.id) if workflow.configured?
+
+    workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
+
+    render json: reductions
   end
 
   private
