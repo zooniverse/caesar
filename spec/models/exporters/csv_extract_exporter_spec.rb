@@ -3,8 +3,7 @@ require 'spec_helper'
 describe Exporters::CsvExtractExporter do
   let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
-  let(:workflow_id){ 1234 }
-  let(:exporter){ described_class.new workflow_id: workflow_id }
+  let(:exporter){ described_class.new workflow_id: workflow.id }
 
   let(:sample){
     Extract.new(
@@ -73,7 +72,7 @@ describe Exporters::CsvExtractExporter do
 
   it 'should create the right file' do
     exporter.dump
-    expect(File.exist?("tmp/extracts_#{workflow_id}.csv")).to be(true)
+    expect(File.exist?("tmp/extracts_#{workflow.id}.csv")).to be(true)
   end
 
   it 'should build the rows properly' do

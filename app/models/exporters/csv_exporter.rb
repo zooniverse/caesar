@@ -43,7 +43,7 @@ module Exporters
     end
 
     private
-    
+
     def get_items
       find_hash = { :workflow_id => workflow_id }
       find_hash[:user_id] = user_id unless user_id.blank?

@@ -3,8 +3,7 @@ require 'spec_helper'
 describe Exporters::CsvReductionExporter do
   let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
-  let(:workflow_id) { 1234 }
-  let(:exporter) { described_class.new workflow_id: workflow_id }
+  let(:exporter) { described_class.new workflow_id: workflow.id }
   let(:sample){
     Reduction.new(
       reducer_id: "x",
@@ -79,7 +78,7 @@ describe Exporters::CsvReductionExporter do
 
   it 'should create the right file' do
     exporter.dump
-    expect(File.exist?("tmp/reductions_#{workflow_id}.csv")).to be(true)
+    expect(File.exist?("tmp/reductions_#{workflow.id}.csv")).to be(true)
   end
 
   after do
