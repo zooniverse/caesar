@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20170807134722) do
     t.string "subgroup"
     t.integer "requested_data"
     t.string "url"
-    t.integer "status"
+    t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
@@ -86,18 +86,6 @@ ActiveRecord::Schema.define(version: 20170807134722) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "user_profiles", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "workflow_id", null: false
-    t.integer "user_id", null: false
-    t.string "generator", null: false
-    t.datetime "as_of", null: false
-    t.jsonb "data", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["workflow_id", "user_id"], name: "index_user_profiles_on_workflow_id_and_user_id"
   end
 
   create_table "workflows", id: :serial, force: :cascade do |t|

@@ -6,7 +6,7 @@ class CreateDataRequests < ActiveRecord::Migration[5.1]
       t.string :subgroup
       t.integer :requested_data
       t.string :url
-      t.integer :status
+      t.integer :status, default: 0, null: false
 
       t.timestamps
     end

@@ -11,10 +11,4 @@ class DataRequest < ApplicationRecord
     extracts: 0,
     reductions: 1
   }
-
-  def initialize(attributes={})
-    super
-
-    self.status = DataRequest.statuses[:empty]
-  end
 end
