@@ -11,7 +11,7 @@ describe DataRequestWorker do
       user_id: 1234,
       workflow_id: 4567,
       subgroup: nil,
-      requested_data: DataRequest::EXTRACTS
+      requested_data: DataRequest.requested_data[:extracts]
     )
   end
 
@@ -21,23 +21,15 @@ describe DataRequestWorker do
 
   before do
     allow(Uploader).to receive(:new).and_return(uploader)
-    request.status = DataRequest::PENDING
-    request.url = ''
-    request.save
+    request.status = DataRequest.statuses[:pending]
+    request.url = nil
+    request.save!
   end
 
   describe '#perform' do
     it 'does the thing' do
       worker.perform(request_id)
-      expect(DataRequest.find(request_id).status).to eq(DataRequest::COMPLETE)
-    end
-
-    it 'fails if they ask for something weird' do
-      request.requested_data = 5
-      request.save
-
-      worker.perform(request_id)
-      expect(DataRequest.find(request_id).status).to eq(DataRequest::FAILED)
+      expect(DataRequest.find(request_id).complete?).to be(true)
     end
 
     it 'creates the file' do

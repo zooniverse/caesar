@@ -1,31 +1,37 @@
 class DataRequestsController < ApplicationController
   def request_extracts
-    make_request(DataRequest::EXTRACTS)
+    make_request(DataRequest.requested_data[:extracts])
   end
 
   def request_reductions
-    make_request(DataRequest::REDUCTIONS)
+    make_request(DataRequest.requested_data[:reductions])
   end
 
   def check_status
     request = DataRequest.find(params[:request_id])
-    return head 404 if request.blank?
+    return head 404 if request.nil?
 
-    case request.status
-    when DataRequest::PENDING
-      head 201
-    when DataRequest::PROCESSING
-      head 202
-    when DataRequest::FAILED
-      head 500
-    when DataRequest::COMPLETE
-      head 200
+    if request.pending?
+      return head 201
     end
+
+    if request.processing?
+      return head 202
+    end
+
+    if request.failed?
+      return head 500
+    end
+
+    if request.complete?
+      return head 200
+    end
+
   end
 
   def retrieve
     request = DataRequest.find(params[:request_id])
-    return head 404 if request.blank? || request.url.blank?
+    return head 404 if request.nil? or request.url.blank?
 
     render json: request.url
   end
@@ -44,19 +50,19 @@ class DataRequestsController < ApplicationController
       requested_data: request_type
     )
 
-    case request.status
-    when DataRequest::EMPTY, DataRequest::FAILED, DataRequest::COMPLETE
-      # set the job to pending status, save it, and kick off a worker to process it
-      request.status = DataRequest::PENDING
-      request.url = ''
-      request.save
+    if request.empty? or request.failed? or request.complete?
+      request.status = DataRequest.statuses[:pending]
+      request.url = nil
+      request.save!
 
       DataRequestWorker.perform_async(request.workflow_id)
-      render json: request
-    when DataRequest::PENDING, DataRequest::PROCESSING
-      # we already know about this request and are working on it
-      head 429
+      return render json: request
     end
+
+    if request.pending? or request.processing?
+      return head 429
+    end
+
   end
 
   def workflow

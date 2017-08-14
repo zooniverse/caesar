@@ -11,18 +11,17 @@ class DataRequestWorker
 
   def perform(request_id)
     request = DataRequest.find(request_id)
-    return unless request.status == DataRequest::PENDING
+    # return unless request.status == DataRequest::PENDING
+    return unless request.pending?
 
     self.path = "tmp/#{request.id}.csv"
 
-    request.status = DataRequest::PROCESSING
-    request.save
+    request.processing!
 
     begin
-      exporter = case request.requested_data
-      when DataRequest::EXTRACTS
+      exporter = if request.extracts?
         Exporters::CsvExtractExporter
-      when DataRequest::REDUCTIONS
+      elsif request.reductions?
         Exporters::CsvReductionExporter
       end.new(
         :workflow_id => request.workflow_id,
@@ -36,11 +35,9 @@ class DataRequestWorker
       ::File.unlink path
 
       request.url = uploader.url
-      request.status = DataRequest::COMPLETE
-      request.save
+      request.complete!
     rescue
-      request.status = DataRequest::FAILED
-      request.save
+      request.failed!
     end
   end
 end

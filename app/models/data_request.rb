@@ -1,16 +1,20 @@
 class DataRequest < ApplicationRecord
-  EMPTY = 0.freeze
-  PENDING = 1.freeze
-  PROCESSING = 2.freeze
-  FAILED = 3.freeze
-  COMPLETE = 4.freeze
+  enum status: {
+    empty: 0,
+    pending: 1,
+    processing: 2,
+    failed: 3,
+    complete: 4
+  }
 
-  EXTRACTS = 0.freeze
-  REDUCTIONS = 1.freeze
+  enum requested_data: {
+    extracts: 0,
+    reductions: 1
+  }
 
   def initialize(attributes={})
     super
 
-    self.status = EMPTY
+    self.status = DataRequest.statuses[:empty]
   end
 end

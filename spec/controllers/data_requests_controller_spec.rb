@@ -9,7 +9,7 @@ describe DataRequestsController, :type => :controller do
     DataRequest.new(
       workflow_id: workflow_id,
       subgroup: nil,
-      requested_data: DataRequest::EXTRACTS
+      requested_data: DataRequest.requested_data[:extracts]
     )
   end
 
@@ -33,7 +33,7 @@ describe DataRequestsController, :type => :controller do
 
       expect(response.status).to eq(200)
       expect(DataRequest.count).to eq(1)
-      expect(DataRequest.first.requested_data).to eq(DataRequest::EXTRACTS)
+      expect(DataRequest.first.extracts?).to be(true)
     end
 
     it('should store multiple data requests') do
@@ -79,7 +79,7 @@ describe DataRequestsController, :type => :controller do
       }
 
       post :request_extracts, params: params
-      DataRequest.first.update_attribute :status, DataRequest::COMPLETE
+      DataRequest.first.update_attribute :status, DataRequest.statuses[:complete]
       response = post :request_extracts, params: params
 
       expect(response.status).to eq(200)
@@ -103,7 +103,7 @@ describe DataRequestsController, :type => :controller do
 
       expect(response.status).to eq(200)
       expect(DataRequest.count).to eq(1)
-      expect(DataRequest.first.requested_data).to eq(DataRequest::REDUCTIONS)
+      expect(DataRequest.first.reductions?).to be(true)
     end
   end
 
@@ -127,23 +127,19 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
-      request.status = DataRequest::PENDING
-      request.save
+      request.pending!
       response = get :check_status, params: { request_id: request_id }
       expect(response.status).to eq(201)
 
-      request.status = DataRequest::PROCESSING
-      request.save
+      request.processing!
       response = get :check_status, params: { request_id: request_id }
       expect(response.status).to eq(202)
 
-      request.status = DataRequest::FAILED
-      request.save
+      request.failed!
       response = get :check_status, params: { request_id: request_id }
       expect(response.status).to eq(500)
 
-      request.status = DataRequest::COMPLETE
-      request.save
+      request.complete!
       response = get :check_status, params: { request_id: request_id }
       expect(response.status).to eq(200)
     end
@@ -154,8 +150,8 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
-      request.url = ''
-      request.save
+      request.url = nil
+      request.save!
 
       response = get :retrieve, params: { request_id: request_id }
       expect(response.status).to eq(404)
@@ -166,7 +162,7 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       request.url = 'foo'
-      request.save
+      request.save!
 
       response = get :retrieve, params: { request_id: request_id }
       expect(response.status).to eq(200)
