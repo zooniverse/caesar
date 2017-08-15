@@ -16,7 +16,7 @@ before_script:
 script: "bin/rspec"
 
 after_success:
-  - "BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle install && cd docs && BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle exec middleman build --clean && cd .. && ls -al docs"
+  - "BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle install && cd docs && BUNDLE_GEMFILE=$PWD/Gemfile bundle exec middleman build --clean && cd .. && ls -al docs"
 
 deploy:
   provider: pages
