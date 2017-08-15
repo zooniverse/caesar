@@ -16,7 +16,7 @@ before_script:
 script: "bin/rspec"
 
 after_success:
-  - "cd docs && bundle exec middleman build --clean"
+  - "cd docs && bundle install && bundle exec middleman build --clean"
 
 deploy:
   provider: pages
