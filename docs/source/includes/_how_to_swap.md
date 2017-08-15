@@ -1,4 +1,4 @@
- How to do SWAP
+# How to do SWAP
 
 > In Panoptes, set `workflow.configuration` to something like:
 
