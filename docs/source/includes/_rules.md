@@ -1,7 +1,5 @@
 # Rules
 
-A workflow can configure an array of rules. Each rule has a condition (`if`) and an array of effects (`then`) that happen when that condition evaluates to true.
-
 ```json
 {
   "extractors": {},
@@ -14,10 +12,12 @@ A workflow can configure an array of rules. Each rule has a condition (`if`) and
   ]
 }
 ```
+A workflow can configure an array of rules. Each rule has a condition (`if`) and an array of effects (`then`) that happen when that condition evaluates to true.
+
 
 ## Condition
 
-The condition is a single operation, but some types of operations can be nested. The general syntax is like if you'd write Lisp in JSON. It's always an array with as the first item a string identifying the operator. The other values are operations in themselves: `[operator, arg1, arg2, ...]`. 
+The condition is a single operation, but some types of operations can be nested. The general syntax is like if you'd write Lisp in JSON. It's always an array with as the first item a string identifying the operator. The other values are operations in themselves: `[operator, arg1, arg2, ...]`.
 
 * `["lt", operation, operation, ...]` - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as `a < b < c < d`.
 * `["lte", operation, operation, ...]` - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as `a <= b <= c <= d`.
