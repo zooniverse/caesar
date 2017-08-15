@@ -16,12 +16,12 @@ before_script:
 script: "bin/rspec"
 
 after_success:
-  - "export BUNDLE_GEMFILE=$PWD/docs/Gemfile && cd docs && bundle install && bundle exec middleman build --clean"
+  - "BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle install && cd docs && BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle exec middleman build --clean && cd .."
 
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  local_dir: docs/build
+  local_dir: docs/build/
   on:
     branch: master
