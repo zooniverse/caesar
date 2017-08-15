@@ -10,7 +10,7 @@ class ReductionsController < ApplicationController
     reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
                                                 reducer_key: reducer.key,
                                                 subject_id: subject.id,
-                                                subgroup: :_default)
+                                                subgroup: subgroup)
     authorize reduction
     reduction.update! reduction_params
 
@@ -49,6 +49,10 @@ class ReductionsController < ApplicationController
 
   def data
     params[:reduction][:data]
+  end
+
+  def subgroup
+    params[:reduction][:subgroup] || :_default
   end
 
   def reducer

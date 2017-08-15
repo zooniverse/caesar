@@ -44,7 +44,11 @@ describe Reducers::ExternalReducer do
 
     extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
     result = extractor.process(extracts)
+<<<<<<< HEAD
     expect(unwrap(result)).to eq(Reducers::Reducer.NoData)
+=======
+    expect(unwrap(result)).to eq({})
+>>>>>>> fix failing test, let reduction update optionally accept a subgroup
   end
 
   it 'does not post if no url is configured' do
