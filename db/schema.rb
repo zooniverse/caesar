@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 20170816094055) do
     t.jsonb "reducers_config", default: {}, null: false
     t.jsonb "rules_config", default: [], null: false
     t.jsonb "webhooks_config", default: [], null: false
+    t.boolean "public_extracts", default: false, null: false
+    t.boolean "public_reductions", default: false, null: false
   end
 
   add_foreign_key "actions", "subjects"
