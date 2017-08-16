@@ -4,6 +4,8 @@ class KinesisController < ApplicationController
   before_action :require_http_basic_authentication
 
   def create
+    skip_authorization
+
     kinesis_stream.receive(params["payload"])
     head :no_content
   end

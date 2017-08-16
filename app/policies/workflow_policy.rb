@@ -14,6 +14,10 @@ class WorkflowPolicy < ApplicationPolicy
     true
   end
 
+  def create?
+    show?
+  end
+
   def update?
     show?
   end

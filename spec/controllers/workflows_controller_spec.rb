@@ -56,6 +56,8 @@ RSpec.describe WorkflowsController, type: :controller do
   describe 'POST #create' do
     it 'creates a workflow' do
       workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
+      allow(@credential).to receive(:project_ids)
+                              .and_return([10])
       allow(@credential).to receive(:accessible_workflow?)
                               .with(workflow_hash["id"])
                               .and_return(workflow_hash)

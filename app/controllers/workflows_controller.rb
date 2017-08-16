@@ -1,6 +1,6 @@
 class WorkflowsController < ApplicationController
   def index
-    @workflows = policy_scoped(Workflow).all
+    @workflows = policy_scope(Workflow).all
     respond_with @workflows
   end
 
@@ -10,6 +10,8 @@ class WorkflowsController < ApplicationController
   end
 
   def new
+    skip_authorization
+
     unless params[:id].present?
       head :bad_request
       return
@@ -30,9 +32,12 @@ class WorkflowsController < ApplicationController
   end
 
   def create
+    skip_authorization
+
     workflow_hash = credential.accessible_workflow?(params[:workflow][:id])
 
     unless workflow_hash.present?
+      skip_authorization
       head :forbidden
       return
     end
@@ -45,6 +50,8 @@ class WorkflowsController < ApplicationController
   end
 
   def update
+    authorize workflow
+
     workflow.update!(workflow_params)
     respond_with workflow
   end
