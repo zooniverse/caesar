@@ -1,33 +1,23 @@
 require 'spec_helper'
 
 describe ExtractGrouping do
+  after do
+    Extract.delete_all
+  end
+
   let(:extracts){
     [
-      Extract.new(
-        :classification_id => 1237,
-        :classification_at => Date.new(2017,2,7),
-        :data => { "foo" => "fufufu" }
-      ),
-      Extract.new(
-        :classification_id => 1234,
-        :classification_at => Date.new(2014,12,4),
-        :data => { "foo" => "bar" }
-      ),
-      Extract.new(
-        :classification_id => 1234,
-        :classification_at => Date.new(2014,12,4),
-        :data => { "foo" => "bar" }
-      ),
-      Extract.new(
-        :classification_id => 1236,
-        :classification_at => Date.new(2017,2,7),
-        :data => { "foo" => "baz" }
-      ),
-      Extract.new(
-        :classification_id => 1235,
-        :classification_at => Date.new(1980,10,22),
-        :data => { "foo" => "baz" }
-      )
+      Extract.new(extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { LN: 1 }),
+      Extract.new(extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { LN: 1 }),
+      Extract.new(extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { TGR: 1 }),
+      Extract.new(extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { classroom: 1 }),
+      Extract.new(extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { classroom: 1 }),
+      Extract.new(extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { classroom: 1 }),
+
+      Extract.new(extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { LN: 1 }),
+      Extract.new(extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { LN: 1, BR: 1 }),
+      Extract.new(extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { classroom: 2 }),
+      Extract.new(extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { classroom: 2 })
     ]
   }
 
@@ -36,19 +26,8 @@ describe ExtractGrouping do
   }
 
   let(:grouping){
-    ExtractGrouping.new(extracts, "foo")
+    ExtractGrouping.new(extracts, "g.classroom")
   }
-
-  let(:missing){
-    ExtractGrouping.new(extracts,"bar")
-  }
-
-  describe '#initialize' do
-    it('constructs the grouping object') do
-      expect(grouping.extracts).to eq(extracts)
-      expect(grouping.subgroup).to eq("foo")
-    end
-  end
 
   describe '#to_h' do
     it('works when no grouping is defined') do
@@ -58,18 +37,19 @@ describe ExtractGrouping do
     end
 
     it('throws an error if an extract is missing the key') do
-      expect { missing.to_h }.to raise_error(MissingGroupingField)
+      expect { ExtractGrouping.new(extracts,"h.classroom").to_h }.to raise_error(MissingGroupingField)
+      expect { ExtractGrouping.new(extracts,"g.foo").to_h }.to raise_error(MissingGroupingField)
     end
 
     it('groups extracts correctly') do
       grouped = grouping.to_h
-      expect(grouped.keys.sort()).to eq(["bar", "baz", "fufufu"])
-      expect(grouped["fufufu"]).to include(extracts[0])
-      expect(grouped["fufufu"]).not_to include(extracts[1])
+      expect(grouped.keys.sort()).to eq([1, 2])
 
-      expect(grouped["bar"]).not_to include(extracts[0])
-      expect(grouped["bar"]).to include(extracts[1])
-      expect(grouped["bar"]).to include(extracts[2])
+      expect(grouped[1]).to include(extracts[0])
+      expect(grouped[1]).not_to include(extracts[6])
+
+      expect(grouped[2]).not_to include(extracts[0])
+      expect(grouped[2]).to include(extracts[6])
     end
   end
 

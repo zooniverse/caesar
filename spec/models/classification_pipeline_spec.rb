@@ -54,7 +54,10 @@ describe ClassificationPipeline do
   let(:workflow) do
     create :workflow, project_id: 1,
                       extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                      reducers_config: {"s" => {type: "stats"}},
+                      reducers_config: {
+                        "s" => {type: "stats"},
+                        "g" => {type: "stats", grouping: "s.LK" }
+                      },
                       rules_config: [rule]
   end
 
@@ -68,6 +71,14 @@ describe ClassificationPipeline do
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
+  end
+
+  after do
+    Action.delete_all
+    Extract.delete_all
+    Reduction.delete_all
+    Workflow.delete_all
+    Subject.delete_all
   end
 
   it 'retires the image', sidekiq: :inline do
@@ -94,30 +105,33 @@ describe ClassificationPipeline do
       not_to change(FetchClassificationsWorker.jobs, :size).from(0)
   end
 
-  let(:reduction_pipeline) do
-    instance_double
+  it 'groups extracts before reduction' do
+    Subject.create! id: 2345
+    Workflow.create! id: 1234, project_id: 1
+
+    # "classroom 1" extracts for subject 2345 in workflow 1234
+    Extract.create! extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { LN: 1 }
+    Extract.create! extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { LN: 1 }
+    Extract.create! extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { TGR: 1 }
+    Extract.create! extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { classroom: 1 }
+    Extract.create! extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { classroom: 1 }
+    Extract.create! extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { classroom: 1 }
+
+    # "classroom 2" extracts for subject 2345 in workflow 1234
+    Extract.create! extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { LN: 1 }
+    Extract.create! extractor_id: 's', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { LN: 1, BR: 1 }
+    Extract.create! extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { classroom: 2 }
+    Extract.create! extractor_id: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { classroom: 2 }
+
+    # build a simplified pipeline to reduce these extracts
+    reducer = Reducers::StatsReducer.new("s", {"group_by" => "g.classroom"})
+    pipeline = described_class.new(nil, {"s" => reducer }, nil)
+    pipeline.reduce(1234, 2345).map(&:serializable_hash)
+
+    expect(Reduction.count).to eq(2)
+    expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
+    expect(Reduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
+    expect(Reduction.where(subgroup: 1).first.data.keys).not_to include("classroom")
   end
 
-  it 'folds up the reductions hash into distinct reductions' do
-    # no touching the database!
-    allow_any_instance_of(Reduction).to receive(:save!).and_return(nil)
-
-    reducer = Reducers::Reducer.new("s", { "group_by" => "foo" })
-    allow(reducer).to receive(:process){{
-      "foo" => 2,
-      "bar" => 2,
-      "baz" => 1
-    }}
-
-    pipeline = described_class.new(nil, {"s" => reducer, "t" => reducer}, nil)
-    reductions = pipeline.reduce(1234, 2345).map(&:serializable_hash)
-
-    # i wish that i could write tests for this that were less brittle
-    expect(reductions[0]).to include({ "reducer_id" => "s", "data" => 2, "subgroup" => "foo"})
-    expect(reductions[1]).to include({ "reducer_id" => "s", "data" => 2, "subgroup" => "bar"})
-    expect(reductions[2]).to include({ "reducer_id" => "s", "data" => 1, "subgroup" => "baz"})
-    expect(reductions[3]).to include({ "reducer_id" => "t", "data" => 2, "subgroup" => "foo"})
-    expect(reductions[4]).to include({ "reducer_id" => "t", "data" => 2, "subgroup" => "bar"})
-    expect(reductions[5]).to include({ "reducer_id" => "t", "data" => 1, "subgroup" => "baz"})
-  end
 end
