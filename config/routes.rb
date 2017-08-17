@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
 
   get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'
-  put 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#update'
+  put 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#update', defaults: { format: :json }
 
   get 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#index'
   put 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#update'
