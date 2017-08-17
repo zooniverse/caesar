@@ -10,8 +10,9 @@ class ReduceWorker
     workflow = Workflow.find(workflow_id)
     reduction = workflow.classification_pipeline.reduce(workflow_id, subject_id)
 
-    CheckRulesWorker.perform_async(workflow_id, subject_id)
+    return if reduction == Reducers::Reducer.NoData
 
+    CheckRulesWorker.perform_async(workflow_id, subject_id)
     workflow.webhooks.process(:new_reduction, reduction.data) if workflow.subscribers?
   end
 end

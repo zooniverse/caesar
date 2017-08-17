@@ -10,8 +10,9 @@ class ExtractWorker
     classification = Classification.new(classification_data)
     extract = workflow.classification_pipeline.extract(classification)
 
-    ReduceWorker.perform_async(workflow_id, classification.subject_id)
+    return if extract == Extractors::Extractor.NoData
 
+    ReduceWorker.perform_async(workflow_id, classification.subject_id)
     workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
   end
 end

@@ -2,6 +2,11 @@ module Reducers
   class Reducer
     include Configurable
 
+    @@NoData = Object.new
+    def self.NoData
+      @@NoData
+    end
+
     attr_reader :key, :filters
 
     def initialize(key, config = {})

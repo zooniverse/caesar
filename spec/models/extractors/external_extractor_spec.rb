@@ -44,15 +44,14 @@ describe Extractors::ExternalExtractor do
 
     extractor = described_class.new("ext", "url" => "http://example.org/post/classification/here")
     result = extractor.process(classification)
-    expect(result).to eq({})
+    expect(result).to eq(Extractors::Extractor.NoData)
   end
 
   it 'does not post if no url is configured' do
     extractor = described_class.new("ext")
-    extractor.process(classification)
 
-    expect(a_request(:post, "example.org/post/classification/here")
-             .with(body: classification.to_json))
-      .not_to have_been_made
+    expect do
+      extractor.process(classification)
+    end.to raise_error(StandardError)
   end
 end
