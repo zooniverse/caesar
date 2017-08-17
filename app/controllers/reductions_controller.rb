@@ -1,6 +1,9 @@
 class ReductionsController < ApplicationController
   def index
-    reductions = Reduction.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
+    find_params = { workflow_id: params[:workflow_id], subject_id: params[:subject_id] }
+    find_params[:reducer_id] = params[:reducer_id] if params.key?(:reducer_id)
+
+    reductions = Reduction.where(find_params)
     render json: reductions
   end
 
