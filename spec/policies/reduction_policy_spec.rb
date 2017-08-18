@@ -63,15 +63,31 @@ RSpec.describe ReductionPolicy do
 
   end
 
-  permissions :create? do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
-
   permissions :update? do
-    pending "add some examples to (or delete) #{__FILE__}"
+    let(:reduction) { create :reduction }
+
+    it 'grants access to an admin' do
+      credential = build(:credential, :admin, workflows: [])
+      expect(subject).to permit(credential, reduction)
+    end
+
+    it 'grants access to reduction of collaborated project' do
+      credential = build(:credential, workflows: [reduction.workflow])
+      expect(subject).to permit(credential, reduction)
+    end
+
+    it 'denies access to non-collabs for public reduction' do
+      reduction.workflow.update! public_reductions: true
+      credential = build(:credential)
+      expect(subject).not_to permit(credential, reduction)
+    end
   end
 
   permissions :destroy? do
-    pending "add some examples to (or delete) #{__FILE__}"
+    it 'allows admin to destroy records' do
+      reduction = create :reduction
+      credential = build(:credential, :admin)
+      expect(subject).to permit(credential, reduction)
+    end
   end
 end

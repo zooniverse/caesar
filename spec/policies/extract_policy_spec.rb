@@ -60,18 +60,33 @@ RSpec.describe ExtractPolicy do
       credential = build(:credential, :not_logged_in)
       expect(subject).to permit(credential, extract)
     end
-
-  end
-
-  permissions :create? do
-    pending "add some examples to (or delete) #{__FILE__}"
   end
 
   permissions :update? do
-    pending "add some examples to (or delete) #{__FILE__}"
+    let(:extract) { create :extract }
+
+    it 'grants access to an admin' do
+      credential = build(:credential, :admin, workflows: [])
+      expect(subject).to permit(credential, extract)
+    end
+
+    it 'grants access to extracts of collaborated project' do
+      credential = build(:credential, workflows: [extract.workflow])
+      expect(subject).to permit(credential, extract)
+    end
+
+    it 'denies access to non-collabs for public extracts' do
+      extract.workflow.update! public_extracts: true
+      credential = build(:credential)
+      expect(subject).not_to permit(credential, extract)
+    end
   end
 
   permissions :destroy? do
-    pending "add some examples to (or delete) #{__FILE__}"
+    it 'allows admin to destroy records' do
+      extract = create :extract
+      credential = build(:credential, :admin)
+      expect(subject).to permit(credential, extract)
+    end
   end
 end

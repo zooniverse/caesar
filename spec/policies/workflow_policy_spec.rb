@@ -34,15 +34,7 @@ RSpec.describe WorkflowPolicy do
     end
   end
 
-  permissions :show? do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
-
-  permissions :create? do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
-
-  permissions :update?, :edit? do
+  permissions :show?, :create?, :update? do
     let(:workflow) { create :workflow }
 
     it 'denies access when not logged in' do
