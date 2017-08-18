@@ -26,6 +26,8 @@ module Extractors
         SurveyExtractor
       when "who"
         WhoExtractor
+      when "pluck_field"
+        PluckFieldExtractor
       else
         raise UnknownExtractor, "Extractor #{id} misconfigured: unknown type #{type}"
       end
