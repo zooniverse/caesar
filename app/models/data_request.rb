@@ -11,4 +11,6 @@ class DataRequest < ApplicationRecord
     extracts: 0,
     reductions: 1
   }
+
+  belongs_to :workflow
 end

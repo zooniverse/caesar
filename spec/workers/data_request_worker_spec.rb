@@ -6,10 +6,12 @@ describe DataRequestWorker do
 
   let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
 
+  let(:workflow) { build :workflow }
+
   let(:request) do
     DataRequest.new(
       user_id: 1234,
-      workflow_id: 4567,
+      workflow: workflow,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )

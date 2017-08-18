@@ -3,11 +3,11 @@ require 'spec_helper'
 describe DataRequestsController, :type => :controller do
   let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
 
-  let(:workflow_id){ 4567 }
+  let(:workflow){ create :workflow }
 
   let(:request) do
     DataRequest.new(
-      workflow_id: workflow_id,
+      workflow: workflow,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )
@@ -19,7 +19,7 @@ describe DataRequestsController, :type => :controller do
 
   describe '#request_extracts' do
     it('should require authentication') do
-      response = post :request_extracts, params: { workflow_id: workflow_id }
+      response = post :request_extracts, params: { workflow_id: workflow.id }
       expect(response.status).to eq(401)
     end
 
@@ -28,7 +28,7 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       response = post :request_extracts, params: {
-        workflow_id: workflow_id
+        workflow_id: workflow.id
       }
 
       expect(response.status).to eq(200)
@@ -41,14 +41,16 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       response = post :request_extracts, params: {
-        workflow_id: workflow_id
+        workflow_id: workflow.id
       }
 
       expect(response.status).to eq(200)
       expect(DataRequest.count).to eq(1)
 
+      workflow2 = create :workflow
+
       response = post :request_extracts, params: {
-        workflow_id: workflow_id+1
+        workflow_id: workflow2.id
       }
 
       expect(response.status).to eq(200)
@@ -60,7 +62,7 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       params = {
-        workflow_id: workflow_id
+        workflow_id: workflow.id
       }
 
       post :request_extracts, params: params
@@ -75,7 +77,7 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       params = {
-        workflow_id: workflow_id
+        workflow_id: workflow.id
       }
 
       post :request_extracts, params: params
@@ -89,7 +91,7 @@ describe DataRequestsController, :type => :controller do
 
   describe '#request_reductions' do
     it('should require authentication') do
-      response = post :request_reductions, params: { workflow_id: workflow_id }
+      response = post :request_reductions, params: { workflow_id: workflow.id }
       expect(response.status).to eq(401)
     end
 
@@ -98,7 +100,7 @@ describe DataRequestsController, :type => :controller do
       allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
 
       response = post :request_reductions, params: {
-        workflow_id: workflow_id
+        workflow_id: workflow.id
       }
 
       expect(response.status).to eq(200)

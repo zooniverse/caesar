@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.integer "workflow_id"
+    t.bigint "workflow_id"
     t.string "subgroup"
     t.integer "requested_data"
     t.string "url"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
+    t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
   end
 
   create_table "extracts", id: :serial, force: :cascade do |t|
@@ -75,10 +76,8 @@ ActiveRecord::Schema.define(version: 20170816094055) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "subgroup", default: "default"
     t.index ["subject_id"], name: "index_reductions_on_subject_id"
-    t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_id", "subgroup"], name: "index_reductions_covering", unique: true
+    t.index ["workflow_id", "subject_id", "reducer_id"], name: "index_reductions_on_workflow_id_and_subject_id_and_reducer_id", unique: true
     t.index ["workflow_id"], name: "index_reductions_on_workflow_id"
   end
 
@@ -102,6 +101,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
 
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
+  add_foreign_key "data_requests", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reductions", "subjects"
