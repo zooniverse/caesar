@@ -22,14 +22,14 @@ class ReductionsController < ApplicationController
   end
 
   def nested_update
-    reductions = reduction_params[:data].map do |key, data|
+    reductions = reduction_params[:data].to_h.map do |key, data|
       Reduction.find_or_initialize_by(
         workflow_id: workflow.id,
-        reducer_id: reducer.id,
+        reducer_key: reducer.key,
         subject_id: subject.id,
         subgroup: key
       ).tap do |item|
-        item[:data] = data.permit!
+        authorize item
         item.save
       end
     end

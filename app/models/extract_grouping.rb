@@ -24,7 +24,7 @@ class ExtractGrouping
       # group extracts by classification; then within each classification group,
       # turn the extracts into a hash keyed by extractor id
       extracts_by_classification = extracts.group_by { |extract| extract.classification_id }.map do
-        |id, classifs| Hash[classifs.map{|classif| [classif.extractor_id, classif]}]
+        |id, classifs| Hash[classifs.map{|classif| [classif.extractor_key, classif]}]
       end
 
       extracts_by_classification.each do |group|
@@ -32,7 +32,7 @@ class ExtractGrouping
         raise MissingGroupingField.new(subgroup, group.first[1].classification_id) unless group[extractor].data.key?(field)
       end
 
-      # group the extract groups by the value of "extractor_id.field_name" specified in subgroup param,
+      # group the extract groups by the value of "extractor_key.field_name" specified in subgroup param,
       # then flatten each of these groups into a basic list
       Hash[
         extracts_by_classification.group_by{|nest| nest[extractor].data[field]}.map do |subg, ex|
