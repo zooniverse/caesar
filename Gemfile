@@ -42,6 +42,7 @@ gem 'omniauth-zooniverse'
 gem 'responders'
 gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
+gem 'aws-sdk', '~> 2.4.4'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

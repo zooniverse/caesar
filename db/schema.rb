@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.integer "workflow_id", null: false
@@ -37,6 +38,19 @@ ActiveRecord::Schema.define(version: 20170816094055) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["token"], name: "index_credentials_on_token", unique: true
+  end
+
+  create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "user_id"
+    t.bigint "workflow_id", null: false
+    t.string "subgroup"
+    t.integer "requested_data"
+    t.string "url"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
+    t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
   end
 
   create_table "extracts", id: :serial, force: :cascade do |t|
@@ -87,6 +101,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
 
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
+  add_foreign_key "data_requests", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reductions", "subjects"

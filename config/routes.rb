@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   resources :workflows do
     resources :subjects, only: [:show]
+
+    resources :data_requests
   end
 
   get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'

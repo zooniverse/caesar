@@ -8,6 +8,8 @@ class Workflow < ApplicationRecord
     where(project_id: credential.project_ids)
   end
 
+  has_many :data_requests
+
   def enabled?
     extractors_config.present? || reducers_config.present? || rules_config.present?
   end
