@@ -12,5 +12,19 @@ class DataRequest < ApplicationRecord
     reductions: 1
   }
 
+  validates :status, presence: true
+  validates :requested_data, presence: true
+
   belongs_to :workflow
+
+  def as_json(options)
+    {
+      workflow_id: workflow_id,
+      user_id: user_id,
+      subgroup: subgroup,
+      status: status,
+      requested_data: requested_data,
+      url: url
+    }
+  end
 end

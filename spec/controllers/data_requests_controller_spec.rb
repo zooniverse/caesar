@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe DataRequestsController, :type => :controller do
+  before { fake_session admin: true }
+
   let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
 
   let(:workflow){ create :workflow }
 
-  let(:request) do
+  let(:data_request) do
     DataRequest.new(
       workflow: workflow,
       subgroup: nil,
@@ -14,166 +16,83 @@ describe DataRequestsController, :type => :controller do
   end
 
   let(:request_id) do
-    request.id
+    data_request.id
   end
 
-  describe '#request_extracts' do
-    it('should require authentication') do
-      response = post :request_extracts, params: { workflow_id: workflow.id }
-      expect(response.status).to eq(401)
+  describe '#create' do
+    describe 'extracts' do
+      let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'extracts'}} }
+
+      it('should produce a data request item for a new request') do
+        response = post :create, params: params, format: :json
+
+        expect(response.status).to eq(201)
+        expect(DataRequest.count).to eq(1)
+        expect(DataRequest.first.extracts?).to be(true)
+      end
     end
 
-    it('should produce a data request item for a new request') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
+    describe 'reductions' do
+      let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'reductions'}} }
 
-      response = post :request_extracts, params: {
-        workflow_id: workflow.id
-      }
+      it('should produce reduction requests instead of extract requests') do
+        response = post :create, params: params, format: :json
 
-      expect(response.status).to eq(200)
-      expect(DataRequest.count).to eq(1)
-      expect(DataRequest.first.extracts?).to be(true)
-    end
-
-    it('should store multiple data requests') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
-
-      response = post :request_extracts, params: {
-        workflow_id: workflow.id
-      }
-
-      expect(response.status).to eq(200)
-      expect(DataRequest.count).to eq(1)
-
-      workflow2 = create :workflow
-
-      response = post :request_extracts, params: {
-        workflow_id: workflow2.id
-      }
-
-      expect(response.status).to eq(200)
-      expect(DataRequest.count).to eq(2)
-    end
-
-    it('should reject duplicate requests') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
-
-      params = {
-        workflow_id: workflow.id
-      }
-
-      post :request_extracts, params: params
-      response = post :request_extracts, params: params
-
-      expect(response.status).to eq(429)
-      expect(DataRequest.count).to eq(1)
-    end
-
-    it('should restart finished requests') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
-
-      params = {
-        workflow_id: workflow.id
-      }
-
-      post :request_extracts, params: params
-      DataRequest.first.update_attribute :status, DataRequest.statuses[:complete]
-      response = post :request_extracts, params: params
-
-      expect(response.status).to eq(200)
-      expect(DataRequest.count).to eq(1)
+        expect(response.status).to eq(201)
+        expect(DataRequest.count).to eq(1)
+        expect(DataRequest.first.reductions?).to be(true)
+      end
     end
   end
 
-  describe '#request_reductions' do
-    it('should require authentication') do
-      response = post :request_reductions, params: { workflow_id: workflow.id }
-      expect(response.status).to eq(401)
-    end
+  describe '#show' do
+    let(:params) { {workflow_id: workflow.id, id: data_request.id }}
 
-    it('should produce reduction requests instead of extract requests') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
+    before { data_request.save! }
 
-      response = post :request_reductions, params: {
-        workflow_id: workflow.id
-      }
-
-      expect(response.status).to eq(200)
-      expect(DataRequest.count).to eq(1)
-      expect(DataRequest.first.reductions?).to be(true)
-    end
-  end
-
-  describe '#check_status' do
-    DataRequest.delete_all
-
-    it('should require authentication') do
-      response = get :check_status, params: { request_id: 'dsfjksdjfksaljfsad'}
-      expect(response.status).to eq(401)
+    def json_response
+      JSON.parse(response.body)
     end
 
     it('should tell us when there are no matching requests') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
-      response = get :check_status, params: { request_id: 'dsfjksdjfksaljfsad'}
-
+      response = get :show, params: params.merge(id: 123312), format: :json
       expect(response.status).to eq(404)
     end
 
     it('should return the right statuses') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
-
-      request.pending!
-      response = get :check_status, params: { request_id: request_id }
-      expect(response.status).to eq(201)
-
-      request.processing!
-      response = get :check_status, params: { request_id: request_id }
-      expect(response.status).to eq(202)
-
-      request.failed!
-      response = get :check_status, params: { request_id: request_id }
-      expect(response.status).to eq(500)
-
-      request.complete!
-      response = get :check_status, params: { request_id: request_id }
+      data_request.pending!
+      response = get :show, params: params, format: :json
       expect(response.status).to eq(200)
+      expect(json_response["status"]).to eq("pending")
+
+      data_request.processing!
+      response = get :show, params: params, format: :json
+      expect(json_response["status"]).to eq("processing")
+
+      data_request.failed!
+      response = get :show, params: params, format: :json
+      expect(json_response["status"]).to eq("failed")
+
+      data_request.complete!
+      response = get :show, params: params, format: :json
+      expect(json_response["status"]).to eq("complete")
     end
-  end
 
-  describe '#retrieve' do
     it('should return 404 if no file is ready') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
+      data_request.url = nil
+      data_request.save!
 
-      request.url = nil
-      request.save!
-
-      response = get :retrieve, params: { request_id: request_id }
-      expect(response.status).to eq(404)
+      response = get :show, params: params, format: :json
+      expect(response.status).to eq(200)
     end
 
     it('should return the url if the file is available') do
-      allow_any_instance_of(DataRequestsController).to receive(:authenticated?).and_return(true)
-      allow_any_instance_of(DataRequestsController).to receive(:authorized?).and_return(true)
+      data_request.url = 'foo'
+      data_request.save!
 
-      request.url = 'foo'
-      request.save!
-
-      response = get :retrieve, params: { request_id: request_id }
+      response = get :show, params: params, format: :json
       expect(response.status).to eq(200)
-      expect(response.body).to eq('foo')
+      expect(json_response["url"]).to eq('foo')
     end
   end
-
-  after do
-    DataRequest.delete_all
-  end
-
 end

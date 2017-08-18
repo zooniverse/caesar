@@ -15,16 +15,13 @@ Rails.application.routes.draw do
 
   resources :workflows do
     resources :subjects, only: [:show]
+
+    resources :data_requests
   end
 
   get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'
   put 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#update', defaults: { format: :json }
-  get 'workflows/:workflow_id/extractors/export', to: 'data_requests#request_extracts'
 
   get 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#index'
   put 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#update'
-  get 'workflows/:workflow_id/reducers/export', to: 'data_requests#request_reductions'
-
-  get 'data_request/:request_id', to: 'data_requests#check_status'
-  get 'data_request/:request_id/retrieve', to: 'data_requests#retrieve'
 end
