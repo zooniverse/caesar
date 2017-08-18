@@ -8,13 +8,13 @@ class ExtractsController < ApplicationController
   def update
     extract = Extract.find_or_initialize_by(workflow_id: workflow.id,
                                             extractor_id: extractor.id,
-                                            subject_id: subject.id)
+                                            classification_id: classification_id)
     extract.update! extract_params
 
     ReduceWorker.perform_async(workflow.id, subject.id) if workflow.configured?
 
     workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
-    
+
     render json: extract
   end
 
@@ -36,12 +36,16 @@ class ExtractsController < ApplicationController
     @subject ||= Subject.find(params[:extract][:subject_id])
   end
 
+  def classification_id
+    params[:extract][:classification_id]
+  end
+
   def data
     params[:extract][:data]
   end
 
   def extract_params
-    params.require(:extract).permit(:classification_id, :classification_at, :user_id, :data).tap do |whitelisted|
+    params.require(:extract).permit(:classification_id, :classification_at, :user_id, :data, :subject_id).tap do |whitelisted|
       whitelisted[:data] = params[:extract][:data].permit!
     end
   end

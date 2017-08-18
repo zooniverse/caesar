@@ -24,7 +24,7 @@ describe StreamEvents::ClassificationEvent do
   end
 
   it 'does not process when workflow has nothing configured' do
-    workflow.update! extractors_config: nil, reducers_config: nil, rules_config: nil
+    workflow.update! extractors_config: {}, reducers_config: {}, rules_config: []
     described_class.new(stream, hash).process
     expect(queue).not_to have_received(:add)
   end

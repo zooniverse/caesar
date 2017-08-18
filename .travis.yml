@@ -14,3 +14,14 @@ before_script:
   - psql -c 'create database caesar_test;' -U postgres
 
 script: "bin/rspec"
+
+after_success:
+  - "BUNDLE_GEMFILE=$PWD/docs/Gemfile bundle install && cd docs && BUNDLE_GEMFILE=$PWD/Gemfile bundle exec middleman build --clean && cd .. && ls -al docs"
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: docs/build/
+  on:
+    branch: master
