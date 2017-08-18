@@ -2,7 +2,7 @@ class CreateDataRequests < ActiveRecord::Migration[5.1]
   def change
     create_table :data_requests, id: :uuid do |t|
       t.integer :user_id
-      t.references :workflow, foreign_key: true
+      t.references :workflow, null: false, foreign_key: true
       t.string :subgroup
       t.integer :requested_data
       t.string :url

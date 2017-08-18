@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20170816094055) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.bigint "workflow_id"
+    t.bigint "workflow_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
     t.string "url"
