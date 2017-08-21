@@ -29,7 +29,7 @@ module StreamEvents
     private
 
     def enabled?
-      workflow.present? && workflow.enabled?
+      workflow.present?
     end
 
     def classification
