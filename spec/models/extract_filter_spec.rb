@@ -6,35 +6,35 @@ describe ExtractFilter do
     [
       Extract.new(
         id: 0,
-        extractor_id: "foo",
+        extractor_key: "foo",
         classification_id: 1234,
         classification_at: Date.new(2014, 12, 4),
         data: {"foo" => "bar"}
       ),
       Extract.new(
         id: 1,
-        extractor_id: "foo",
+        extractor_key: "foo",
         classification_id: 1234,
         classification_at: Date.new(2014, 12, 4),
         data: {"foo" => "baz"}
       ),
       Extract.new(
         id: 2,
-        extractor_id: "bar",
+        extractor_key: "bar",
         classification_id: 1235,
         classification_at: Date.new(1980, 10, 22),
         data: {"bar" => "baz"}
       ),
       Extract.new(
         id: 3,
-        extractor_id: "baz",
+        extractor_key: "baz",
         classification_id: 1236,
         classification_at: Date.new(2017, 2, 7),
         data: {"baz" => "bar"}
       ),
       Extract.new(
         id: 4,
-        extractor_id: "foo",
+        extractor_key: "foo",
         classification_id: 1237,
         classification_at: Date.new(2017, 2, 7),
         data: {"foo" => "fufufu"}
@@ -74,7 +74,7 @@ describe ExtractFilter do
 
   describe 'extractor filtering' do
     it 'returns extracts from the given extractor' do
-      filter = described_class.new(extracts, extractor_ids: ["foo"])
+      filter = described_class.new(extracts, extractor_keys: ["foo"])
       expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[4]])
     end
   end
@@ -95,12 +95,12 @@ describe ExtractFilter do
     describe 'set to keep first' do
       it 'keeps the first classification for a given user' do
         extracts = [
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_id: "b"),
-          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
-          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
-          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b")
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: "a"),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: "b"),
+          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: "a"),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: "b"),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: "a"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: "b")
         ]
 
         filter = described_class.new(extracts, repeated_classifications: "keep_first")
@@ -122,12 +122,12 @@ describe ExtractFilter do
     describe 'set to keep last' do
       it 'keeps the last classification for a given user' do
         extracts = [
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_id: "b"),
-          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_id: "a"),
-          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_id: "b"),
-          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_id: "a"),
-          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_id: "b")
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: "a"),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: "b"),
+          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: "a"),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: "b"),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: "a"),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: "b")
         ]
 
         filter = described_class.new(extracts, repeated_classifications: "keep_last")

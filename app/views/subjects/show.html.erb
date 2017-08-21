@@ -19,9 +19,9 @@
                     <td><%= extract.id %></td>
                     <td><%= extract.classification_id %></td>
                     <td><%= extract.user_id %></td>
-                    <td><%= extract.extractor_id %></td>
+                    <td><%= extract.extractor_key %></td>
                     <td><%= extract.updated_at %></td>
-                    
+
                     <% keys.each do |key| %>
                         <td><%= extract.data[key] %></td>
                     <% end %>
@@ -45,12 +45,12 @@
             </tr>
         </thead>
         <tbody>
-            <% reductions.sort_by(&:reducer_id).each do |reduction| %>
+            <% reductions.sort_by(&:reducer_key).each do |reduction| %>
                 <tr>
                     <td><%= reduction.id %></td>
-                    <td><%= reduction.reducer_id %></td>
+                    <td><%= reduction.reducer_key %></td>
                     <td><%= reduction.updated_at %></td>
-                    
+
                     <% keys.each do |key| %>
                         <td><%= reduction.data[key] %></td>
                     <% end %>

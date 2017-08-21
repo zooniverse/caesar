@@ -19,10 +19,10 @@ Rails.application.routes.draw do
     resources :data_requests
   end
 
-  get 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#index'
-  put 'workflows/:workflow_id/extractors/:extractor_id/extracts', to: 'extracts#update', defaults: { format: :json }
+  get 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#index'
+  put 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#update', defaults: { format: :json }
 
-  get 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#index'
+  get 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'reductions#index'
   get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'reductions#index'
-  put 'workflows/:workflow_id/reducers/:reducer_id/reductions', to: 'reductions#update'
+  put 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'reductions#update'
 end

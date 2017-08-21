@@ -31,7 +31,7 @@ class ExtractFilter
   end
 
   def to_a
-    filter_by_extractor_ids(filter_by_subrange(filter_by_repeatedness(extracts))).flat_map(&:extracts)
+    filter_by_extractor_keys(filter_by_subrange(filter_by_repeatedness(extracts))).flat_map(&:extracts)
   end
 
   private
@@ -51,12 +51,12 @@ class ExtractFilter
     extracts.sort_by(&:classification_at)[subrange]
   end
 
-  def filter_by_extractor_ids(extracts)
-    return extracts if extractor_ids.blank?
+  def filter_by_extractor_keys(extracts)
+    return extracts if extractor_keys.blank?
 
     extracts.map do |group|
       group.select do |extract|
-        extractor_ids.include?(extract.extractor_id)
+        extractor_keys.include?(extract.extractor_key)
       end
     end
   end
@@ -79,7 +79,7 @@ class ExtractFilter
     Range.new(from, to)
   end
 
-  def extractor_ids
-    filters["extractor_ids"] || []
+  def extractor_keys
+    filters["extractor_keys"] || []
   end
 end

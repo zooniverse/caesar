@@ -7,7 +7,7 @@ describe Exporters::CsvExtractExporter do
 
   let(:sample){
     Extract.new(
-      extractor_id: "x",
+      extractor_key: "x",
       classification_id: 1236,
       classification_at: DateTime.now,
       workflow_id: workflow.id,
@@ -22,7 +22,7 @@ describe Exporters::CsvExtractExporter do
     end
 
     Extract.new(
-      extractor_id: "x",
+      extractor_key: "x",
       classification_id: 1234,
       classification_at: DateTime.now,
       workflow_id: workflow.id,
@@ -30,7 +30,7 @@ describe Exporters::CsvExtractExporter do
       data: {"key1" => "val1"}
     ).save
     Extract.new(
-      extractor_id: "x",
+      extractor_key: "x",
       classification_id: 1235,
       classification_at: DateTime.now,
       workflow_id: workflow.id,
@@ -39,7 +39,7 @@ describe Exporters::CsvExtractExporter do
     ).save
     sample.save
     Extract.new(
-      extractor_id: "x",
+      extractor_key: "x",
       classification_id: 1237,
       classification_at: DateTime.now,
       workflow_id: workflow.id,
@@ -47,7 +47,7 @@ describe Exporters::CsvExtractExporter do
       data: {"key1" => "val1", "key3" => "val3" }
     ).save
     Extract.new(
-      extractor_id: "x",
+      extractor_key: "x",
       classification_id: 1238,
       classification_at: DateTime.now,
       workflow_id: create(:workflow).id,
@@ -59,7 +59,7 @@ describe Exporters::CsvExtractExporter do
   it 'should give the right header row for the csv' do
     keys = exporter.get_csv_headers
     expect(keys).to include("id")
-    expect(keys).to include("extractor_id")
+    expect(keys).to include("extractor_key")
     expect(keys).to include("classification_id")
     expect(keys).not_to include("data")
     expect(keys).not_to include("sdfjkasdfjk")
