@@ -22,12 +22,8 @@ class ReductionsController < ApplicationController
 
   private
 
-  def authorized?
-    workflow.present?
-  end
-
   def workflow
-    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
+    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
 
   def data

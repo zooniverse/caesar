@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
   helper_method :credential
 
   before_action :authenticate!
-  before_action :authorize!
 
   after_action :verify_authorized, except: :index
   after_action :verify_policy_scoped, only: :index
@@ -36,14 +35,6 @@ class ApplicationController < ActionController::Base
 
   def authenticated?
     credential.ok?
-  end
-
-  def authorize!
-    head :forbidden unless authorized?
-  end
-
-  def authorized?
-    false
   end
 
   def credential

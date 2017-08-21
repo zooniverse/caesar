@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate!
-  skip_before_action :authorize!
   skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 

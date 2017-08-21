@@ -58,12 +58,8 @@ class WorkflowsController < ApplicationController
 
   private
 
-  def authorized?
-    true
-  end
-
   def workflow
-    @workflow ||= Workflow.accessible_by(credential).find(params[:id])
+    @workflow ||= policy_scope(Workflow).find(params[:id])
   end
 
   def workflow_params

@@ -9,6 +9,9 @@ class Workflow < ApplicationRecord
   end
 
   has_many :data_requests
+  has_many :extracts
+  has_many :reductions
+  has_many :actions
 
   def subscribers?
     webhooks&.size > 0
