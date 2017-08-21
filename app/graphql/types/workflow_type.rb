@@ -50,4 +50,10 @@ Types::WorkflowType = GraphQL::ObjectType.define do
       workflow.actions.where(subject_id: args[:subject_id])
     }
   end
+
+  field :data_requests, types[Types::DataRequestType] do
+    resolve -> (workflow, args, ctx) {
+      workflow.data_requests
+    }
+  end
 end
