@@ -1,14 +1,14 @@
 class ReductionsController < ApplicationController
   def index
     reductions = Reduction.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
-    reductions = reductions.where(reducer_id: params[:reducer_id]) if params.key?(:reducer_id)
+    reductions = reductions.where(reducer_key: params[:reducer_key]) if params.key?(:reducer_key)
 
     render json: reductions
   end
 
   def update
     reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
-                                                reducer_id: reducer.id,
+                                                reducer_key: reducer.key,
                                                 subject_id: subject.id)
     reduction.update! reduction_params
 
@@ -34,7 +34,7 @@ class ReductionsController < ApplicationController
   end
 
   def reducer
-    workflow.reducers[params[:reducer_id]]
+    workflow.reducers[params[:reducer_key]]
   end
 
   def subject

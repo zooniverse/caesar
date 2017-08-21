@@ -3,13 +3,13 @@ require 'rails_helper'
 RSpec.describe ReductionsController, type: :controller do
   before { fake_session admin: true }
 
-  let(:reducer_id) { 1 }
+  let(:reducer_key) { 1 }
   let(:reducer_config) { {"type" => "external"} }
-  let(:workflow) { create(:workflow, reducers_config: {reducer_id => reducer_config}) }
+  let(:workflow) { create(:workflow, reducers_config: {reducer_key => reducer_config}) }
 
   describe "GET #index" do
     it "returns http success" do
-      get :index, params: {workflow_id: workflow.id, reducer_id: reducer_id}
+      get :index, params: {workflow_id: workflow.id, reducer_key: reducer_key}
       expect(response).to have_http_status(:success)
     end
   end
@@ -19,7 +19,7 @@ RSpec.describe ReductionsController, type: :controller do
 
     it 'creates a new reduction' do
       put :update, as: :json,
-          params: {workflow_id: workflow.id, reducer_id: reducer_id},
+          params: {workflow_id: workflow.id, reducer_key: reducer_key},
           body: {
             reduction: {
               classification_id: 123,
@@ -37,11 +37,11 @@ RSpec.describe ReductionsController, type: :controller do
     it 'updates an existing reduction' do
       Reduction.create!(workflow_id: workflow.id,
                         subject_id: subject.id,
-                        reducer_id: reducer_id,
+                        reducer_key: reducer_key,
                         data: {"foo" => 1})
 
       put :update, as: :json,
-          params: {workflow_id: workflow.id, reducer_id: reducer_id},
+          params: {workflow_id: workflow.id, reducer_key: reducer_key},
           body: {
             reduction: {
               classification_id: 123,

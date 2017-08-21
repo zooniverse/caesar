@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Conditions::Any do
-  def make_rule(reducer_id, compare_operation, compare_constant)
+  def make_rule(reducer_key, compare_operation, compare_constant)
     described_class.new(
-      reducer_id,
+      reducer_key,
       Conditions::Comparison.new(
         compare_operation, [
           Conditions::Lookup.new('value', 0),
@@ -15,8 +15,8 @@ describe Conditions::Any do
 
   let(:reductions){
     [
-      Reduction.new(reducer_id: 'savannah', data: {:serval => 1, :hippo => 1, :cerulean => 1}),
-      Reduction.new(reducer_id: 'mountain', data: {:ibis => 1, :alpaca => 1, :cerulean => 5})
+      Reduction.new(reducer_key: 'savannah', data: {:serval => 1, :hippo => 1, :cerulean => 1}),
+      Reduction.new(reducer_key: 'mountain', data: {:ibis => 1, :alpaca => 1, :cerulean => 5})
     ]
   }
 

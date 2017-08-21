@@ -47,7 +47,7 @@ Accept: application/vnd.api+json; version=1
 > And store expert-seenness in Caesar so that you can use it in the rulse
 
 ```http
-POST /workflows/WORKFLOW_ID/reducers/REDUCER_ID/reductions HTTP/1.1
+POST /workflows/WORKFLOW_ID/reducers/REDUCER_KEY/reductions HTTP/1.1
 Host: caesar-staging.zooniverse.org
 Authorization: Bearer TOKEN
 Content-Type: application/json

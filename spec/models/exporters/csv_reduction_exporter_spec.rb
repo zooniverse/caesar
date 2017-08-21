@@ -6,7 +6,7 @@ describe Exporters::CsvReductionExporter do
   let(:exporter) { described_class.new workflow_id: workflow.id }
   let(:sample){
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: subject.id,
       data: {"key1" => "val1", "key2" => "val2"}
@@ -19,32 +19,32 @@ describe Exporters::CsvReductionExporter do
     end
 
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
     sample.save
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key2" => "val2"}
     ).save
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key3" => "val3"}
     ).save
     Reduction.new(
-      reducer_id: "x",
+      reducer_key: "x",
       workflow_id: create(:workflow).id,
       subject_id: Subject.create!.id,
       data: {"key4" => "val4"}
@@ -55,7 +55,7 @@ describe Exporters::CsvReductionExporter do
   it 'should give the right header row for the csv' do
     keys = exporter.get_csv_headers
     expect(keys).to include("id")
-    expect(keys).to include("reducer_id")
+    expect(keys).to include("reducer_key")
     expect(keys).not_to include("data")
     expect(keys).not_to include("sdfjkasdfjk")
     expect(keys).to include("data.key1")

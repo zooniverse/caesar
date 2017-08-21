@@ -84,7 +84,7 @@ describe ClassificationPipeline do
   it 'does not fetch classifications when extracts already present' do
     Extract.create(
       classification_id: classification.id,
-      extractor_id: "zzz",
+      extractor_key: "zzz",
       subject_id: classification.subject_id,
       workflow_id: classification.workflow_id,
       classification_at: DateTime.now,

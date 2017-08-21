@@ -43,7 +43,7 @@ describe Conditions::FromConfig do
 
     binding = RuleBindings.new(
       [
-        Reduction.new(reducer_id: 'desert', data: {:snek => 1, :sand_cat => 1})
+        Reduction.new(reducer_key: 'desert', data: {:snek => 1, :sand_cat => 1})
       ]
     )
 
