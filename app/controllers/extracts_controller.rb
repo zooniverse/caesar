@@ -7,7 +7,7 @@ class ExtractsController < ApplicationController
 
   def update
     extract = Extract.find_or_initialize_by(workflow_id: workflow.id,
-                                            extractor_key: extractor.id,
+                                            extractor_key: extractor.key,
                                             classification_id: classification_id)
     extract.update! extract_params
 

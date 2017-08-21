@@ -8,7 +8,7 @@ class ReductionsController < ApplicationController
 
   def update
     reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
-                                                reducer_key: reducer.id,
+                                                reducer_key: reducer.key,
                                                 subject_id: subject.id)
     reduction.update! reduction_params
 

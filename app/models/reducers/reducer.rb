@@ -2,10 +2,10 @@ module Reducers
   class Reducer
     include Configurable
 
-    attr_reader :id, :filters
+    attr_reader :key, :filters
 
-    def initialize(id, config = {})
-      @id = id
+    def initialize(key, config = {})
+      @key = key
       @filters = config["filters"] || {}
       load_configuration(config)
     end

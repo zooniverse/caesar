@@ -2,10 +2,10 @@ module Extractors
   class Extractor
     include Configurable
 
-    attr_reader :id, :config
+    attr_reader :key, :config
 
-    def initialize(id, config = {})
-      @id = id
+    def initialize(key, config = {})
+      @key = key
       load_configuration(config)
     end
   end
