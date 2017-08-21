@@ -8,6 +8,6 @@ FactoryGirl.define do
     classification_id { generate :classification_id }
     classification_at Time.zone.now
 
-    extractor_id "foo"
+    extractor_key "foo"
   end
 end

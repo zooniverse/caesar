@@ -3,6 +3,6 @@ FactoryGirl.define do
     workflow
     subject
 
-    reducer_id "foo"
+    reducer_key "foo"
   end
 end
