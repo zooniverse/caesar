@@ -223,6 +223,8 @@ GEM
       pry (>= 0.10.4)
     public_suffix (2.0.5)
     puma (3.9.1)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
@@ -396,6 +398,7 @@ DEPENDENCIES
   pg (~> 0.18)
   pry-rails
   puma (~> 3.7)
+  pundit (~> 1.1.0)
   rails (~> 5.1.1)
   responders
   rest-client (> 2.0)

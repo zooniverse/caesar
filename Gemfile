@@ -44,6 +44,7 @@ gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
 gem 'aws-sdk', '~> 2.4.4'
 gem 'jsonpath'
+gem 'pundit', "~> 1.1.0"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

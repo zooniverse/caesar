@@ -1,5 +1,13 @@
 class DataRequestsController < ApplicationController
+  def show
+    data_request = workflow.data_requests.find(params[:id])
+    authorize data_request
+    respond_with data_request
+  end
+
   def create
+    skip_authorization
+
     case params[:data_request][:requested_data]
     when "extracts"
       make_request(DataRequest.requested_data[:extracts])
@@ -10,16 +18,7 @@ class DataRequestsController < ApplicationController
     end
   end
 
-  def show
-    data_request = workflow.data_requests.find(params[:id])
-    respond_with data_request
-  end
-
   private
-
-  def authorized?
-    workflow.present?
-  end
 
   def make_request(request_type)
     data_request = DataRequest.new(
@@ -38,6 +37,6 @@ class DataRequestsController < ApplicationController
   end
 
   def workflow
-    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
+    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
 end

@@ -1,7 +1,6 @@
 class ExtractsController < ApplicationController
-
   def index
-    extracts = Extract.where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
+    extracts = policy_scope(Extract).where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
     render json: extracts
   end
 
@@ -9,6 +8,8 @@ class ExtractsController < ApplicationController
     extract = Extract.find_or_initialize_by(workflow_id: workflow.id,
                                             extractor_key: extractor.key,
                                             classification_id: classification_id)
+    authorize extract
+
     extract.update! extract_params
 
     ReduceWorker.perform_async(workflow.id, subject.id) if workflow.configured?
@@ -20,12 +21,8 @@ class ExtractsController < ApplicationController
 
   private
 
-  def authorized?
-    workflow.present?
-  end
-
   def workflow
-    @workflow ||= Workflow.accessible_by(credential).find(params[:workflow_id])
+    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
 
   def extractor
