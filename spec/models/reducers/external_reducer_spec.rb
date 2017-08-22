@@ -40,17 +40,15 @@ describe Reducers::ExternalReducer do
 
     extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
     result = extractor.process(extracts)
-    expect(result).to eq({})
+    expect(result).to eq(Reducers::Reducer.NoData)
   end
 
   it 'does not post if no url is configured' do
     reducer = described_class.new("red", url: nil)
-    result = reducer.process(extracts)
 
-    expect(result).to eq({})
-    expect(a_request(:post, "example.org/post/extracts/here")
-            .with(body: extracts.to_json))
-      .not_to have_been_made
+    expect do
+      reducer.process(classification)
+    end.to raise_error(StandardError)
   end
 
 end
