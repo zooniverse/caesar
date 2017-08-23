@@ -6,7 +6,7 @@ module Extractors
 
     def process(classification)
       if url
-        response = RestClient.post(url.to_s, classification.to_json, {content_type: :json, accept: :json})
+        response = RestClient.post(url.to_s, classification.as_json.to_json, {content_type: :json, accept: :json})
 
         if response.code==204
           Extractor.NoData
