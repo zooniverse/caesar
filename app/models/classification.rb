@@ -50,7 +50,7 @@ class Classification
     attributes.fetch('expert_classifier', nil)
   end
 
-  def as_json(_options)
+  def as_json(_options = nil)
     {
       id: id,
       project_id: project_id,

@@ -16,7 +16,7 @@ describe Extractors::ExternalExtractor do
 
   before do
     stub_request(:post, "http://example.org/post/classification/here").
-      with(:body => classification.to_json,
+      with(:body => classification.as_json.to_json,
            :headers => {'Accept'=>'application/json',
                         'Content-Type'=>'application/json',
                         'Host'=>'example.org'}).
@@ -28,7 +28,7 @@ describe Extractors::ExternalExtractor do
     extractor.process(classification)
 
     expect(a_request(:post, "example.org/post/classification/here")
-             .with(body: classification.to_json))
+             .with(body: classification.as_json.to_json))
       .to have_been_made.once
   end
 
