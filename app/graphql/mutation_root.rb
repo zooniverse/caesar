@@ -1,21 +1,17 @@
 MutationRoot = GraphQL::ObjectType.define do
   name "MutationRoot"
 
-  field :updateWorkflowConfig, Types::WorkflowType do
-    description "Updates the workflow extractors/reducers/rules"
-    argument :workflowId, !types.ID
-    argument :extractorsConfig, Types::JsonType
-    argument :reducersConfig, Types::JsonType
-    argument :rulesConfig, Types::JsonType
+  field :createDataRequest, DataRequest::Type do
+    description <<-END.strip_heredoc
+      Creates a new DataRequest with the specified filters. Poll for new state and
+      when marked COMPLETE, the url property will have a link to the downloadable
+      export file.
+    END
 
-    resolve ->(obj, args, ctx) {
-      workflow = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
-      workflow.extractors_config = args[:extractorsConfig] if args[:extractorsConfig]
-      workflow.reducers_config = args[:reducersConfig] if args[:reducersConfig]
-      workflow.rules_config = args[:rulesConfig] if args[:rulesConfig]
-      workflow.save!
-      workflow
-    }
+    argument :workflowId, !types.ID
+    argument :requestedData, DataRequest::RequestedData
+    argument :subgroup, types.String
+    argument :userId, types.Int
   end
 
   field :upsertExtract, Types::ExtractType do

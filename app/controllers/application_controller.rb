@@ -38,6 +38,8 @@ class ApplicationController < ActionController::Base
   end
 
   def credential
+    return OpenStruct.new(login: 'dev', ok?: true, admin?: true) if Rails.env.development?
+
     token = session_token || bearer_token
 
     @credential ||= if token

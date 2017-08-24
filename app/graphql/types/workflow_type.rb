@@ -51,7 +51,7 @@ Types::WorkflowType = GraphQL::ObjectType.define do
     }
   end
 
-  field :data_requests, types[Types::DataRequestType] do
+  field :data_requests, types[DataRequest::Type] do
     resolve -> (workflow, args, ctx) {
       workflow.data_requests
     }
