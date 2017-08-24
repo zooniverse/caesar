@@ -7,6 +7,7 @@ class GraphqlController < ApplicationController
       # Query context goes here, for example:
       credential: credential,
     }
+    logger.info credential.inspect
     result = CaesarSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
   end
@@ -15,6 +16,11 @@ class GraphqlController < ApplicationController
 
   def authorized?
     true
+  end
+
+  def record_not_found(exception)
+    logger.info(exception.message)
+    head 404
   end
 
   # Handle form data, JSON body, or a blank value

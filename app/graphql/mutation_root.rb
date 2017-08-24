@@ -12,9 +12,25 @@ MutationRoot = GraphQL::ObjectType.define do
     argument :requestedData, DataRequest::RequestedData
     argument :subgroup, types.String
     argument :userId, types.Int
+
+    resolve ->(obj, args, ctx) {
+      workflow = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
+      data_request = workflow.data_requests.build(
+        user_id: args[:userId],
+        subgroup: args[:subgroup],
+        requested_data: args[:requestedData]
+      )
+
+      data_request.status = DataRequest.statuses[:pending]
+      data_request.url = nil
+      data_request.save!
+
+      DataRequestWorker.perform_async(data_request.workflow_id)
+      data_request
+    }
   end
 
-  field :upsertExtract, Types::ExtractType do
+  field :upsertExtract, Extract::Type do
     description <<-END.strip_heredoc
       Creates/updates the data for an reduction. Triggers evaluation of reductions and then
       rules afterwards (asynchronously).
@@ -39,7 +55,7 @@ MutationRoot = GraphQL::ObjectType.define do
     }
   end
 
-  field :upsertReduction, Types::ReductionType do
+  field :upsertReduction, Reduction::Type do
     description <<-END.strip_heredoc
       Creates/updates the data for an reduction. Triggers evaluation of the workflow rules
       afterwards (asynchronously).

@@ -2,7 +2,7 @@ QueryRoot = GraphQL::ObjectType.define do
   name "QueryRoot"
 
   field :workflow do
-    type Types::WorkflowType
+    type Workflow::Type 
     argument :id, !types.ID
     description "Find a Workflow by ID"
     resolve ->(obj, args, ctx) {
