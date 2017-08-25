@@ -11,20 +11,22 @@ class Action < ApplicationRecord
   Type = GraphQL::ObjectType.define do
     name "Action"
 
-    field :classification_id, types.String
-    field :classification_at, Types::TimeType
+    field :id, !types.ID
 
-    field :workflow_id, !types.ID
-    field :subject_id, !types.ID
-    field :effect_type, !types.String
+    field :classificationId, types.String, property: :classification_id
+    field :classificationAt, Types::TimeType, property: :classification_at
+
+    field :workflowId, !types.ID, property: :workflow_id
+    field :subjectId, !types.ID, property: :subject_id
+    field :effectType, !types.String, property: :effect_type
     field :status, !Status
 
     field :config, Types::JsonType
 
-    field :created_at, !Types::TimeType
-    field :updated_at, !Types::TimeType
-    field :attempted_at, Types::TimeType
-    field :completed_at, Types::TimeType
+    field :createdAt, !Types::TimeType, property: :created_at
+    field :updatedAt, !Types::TimeType, property: :updated_at
+    field :attemptedAt, Types::TimeType, property: :attempted_at
+    field :completedAt, Types::TimeType, property: :completed_at
   end
 
   enum status: [:pending, :completed, :failed]

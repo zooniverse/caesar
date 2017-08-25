@@ -23,7 +23,7 @@ class DataRequest < ApplicationRecord
 
     field :id, !types.ID
     field :subgroup, types.String
-    field :requested_data, RequestedData
+    field :requestedData, RequestedData, property: :requested_data
     field :url, types.String
     field :status, !Status
   end

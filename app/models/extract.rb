@@ -2,19 +2,19 @@ class Extract < ApplicationRecord
   Type = GraphQL::ObjectType.define do
     name "Extract"
 
-    field :classification_id, types.String
-    field :classification_at, Types::TimeType
+    field :classificationId, types.String, property: :classification_id
+    field :classificationAt, Types::TimeType, property: :classification_at
 
-    field :project_id, types.ID
-    field :workflow_id, !types.ID
-    field :subject_id, !types.ID
-    field :extractor_id, !types.ID
-    field :user_id, types.ID
+    field :projectId, types.ID, property: :project_id
+    field :workflowId, !types.ID, property: :workflow_id
+    field :subjectId, !types.ID, property: :subject_id
+    field :extractorId, !types.ID, property: :extractor_id
+    field :userId, types.ID, property: :user_id
 
     field :data, Types::JsonType
 
-    field :created_at, !Types::TimeType
-    field :updated_at, !Types::TimeType
+    field :createdAt, !Types::TimeType, property: :created_at
+    field :updatedAt, !Types::TimeType, property: :updated_at
   end
 
   belongs_to :workflow

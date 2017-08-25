@@ -2,15 +2,15 @@ class Reduction < ApplicationRecord
   Type = GraphQL::ObjectType.define do
     name "Reduction"
 
-    field :project_id, types.ID
-    field :workflow_id, !types.ID
-    field :subject_id, !types.ID
-    field :reducer_id, types.String
+    field :projectId, types.ID, property: :project_id
+    field :workflowId, !types.ID, property: :workflow_id
+    field :subjectId, !types.ID, property: :subject_id
+    field :reducerId, types.String, property: :reducer_id
 
     field :data, Types::JsonType
 
-    field :created_at, !Types::TimeType
-    field :updated_at, !Types::TimeType
+    field :createdAt, !Types::TimeType, property: :created_at
+    field :updatedAt, !Types::TimeType, property: :updated_at
   end
 
   belongs_to :workflow
