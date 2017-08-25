@@ -1,5 +1,7 @@
 class PanoptesAdminConstraint
   def matches?(request)
+    return true if Rails.env.development?
+
     credentials = request.session[:credentials]
     return false unless credentials
     return false unless credentials["token"]
