@@ -5,7 +5,6 @@ class Extract < ApplicationRecord
     field :classificationId, types.String, property: :classification_id
     field :classificationAt, Types::TimeType, property: :classification_at
 
-    field :projectId, types.ID, property: :project_id
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
     field :extractorId, !types.ID, property: :extractor_id

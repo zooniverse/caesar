@@ -6,6 +6,7 @@ class Workflow < ApplicationRecord
     field :createdAt, !Types::TimeType, "Timestamp when this workflow was created", property: :created_at
     field :updatedAt, !Types::TimeType, "Timestamp when this workflow was updated", property: :updated_at
 
+
     field :extracts, types[Extract::Type] do
       argument :subjectId, !types.ID, "Filter by specific subject"
       argument :extractorKey, types.String, "Filter by specific extractor"
