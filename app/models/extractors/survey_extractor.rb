@@ -6,24 +6,6 @@ module Extractors
     config :nothing_here_choice, default: nil
     config :if_missing, default: "error"
 
-    def process(classification)
-      choices = {}
-
-      values = fetch_values(classification)
-      values.each do |value|
-        value.fetch("value", []).each do |val| 
-          choices[val["choice"]] ||= 0
-          choices[val["choice"]] += 1
-        end
-      end
-
-      choices[nothing_here_choice] = 1 if choices.empty? && nothing_here_choice
-
-      choices
-    end
-
-    private
-
     def task_key
       config["task_key"]
     end
@@ -35,6 +17,24 @@ module Extractors
     def if_missing
       config["if_missing"]
     end
+
+    def process(classification)
+      choices = {}
+
+      values = fetch_values(classification)
+      values.each do |value|
+        value.fetch("value", []).each do |val|
+          choices[val["choice"]] ||= 0
+          choices[val["choice"]] += 1
+        end
+      end
+
+      choices[nothing_here_choice] = 1 if choices.empty? && nothing_here_choice
+
+      choices
+    end
+
+    private
 
     def fetch_values(classification)
       case if_missing

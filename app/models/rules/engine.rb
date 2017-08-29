@@ -7,6 +7,10 @@ module Rules
       end
     end
 
+    def all
+      @rules
+    end
+
     def process(workflow_id, subject_id, results)
       @rules.each { |rule| rule.process(workflow_id, subject_id, results) }
     end
