@@ -1,7 +1,7 @@
 FROM ruby:2.4
 WORKDIR /app
 ENV PORT=80
-ARG RAILS_ENV
+ARG RAILS_ENV=production
 
 RUN apt-get update && \
     curl https://deb.nodesource.com/setup_6.x | bash - && \
