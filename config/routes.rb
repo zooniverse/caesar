@@ -4,7 +4,7 @@ Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
 require 'panoptes_admin_constraint'
 
 Rails.application.routes.draw do
-  if Rails.env.development?
+  if Rails.env.development? || Rails.env.staging?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
 
