@@ -2,57 +2,37 @@ require 'spec_helper'
 require 'ostruct'
 
 describe ReductionsController, :type => :controller do
-  let(:reductions) {
+    let(:workflow) { create :workflow }
+    let(:subject1) { create :subject }
+    let(:subject2) { create :subject }
+    let(:reductions) {
     [
-      Reduction.create!(workflow_id: 1234, subject_id: 5678, reducer_key: 'r', data: '1'),
-      Reduction.create!(workflow_id: 1234, subject_id: 5678, reducer_key: 's', data: '2'),
-      Reduction.create!(workflow_id: 1234, subject_id: 6789, reducer_key: 'r', data: '3')
+      create(:reduction, workflow: workflow, subject: subject1, reducer_key: 'r', data: '1'),
+      create(:reduction, workflow: workflow, subject: subject1, reducer_key: 's', data: '2'),
+      create(:reduction, workflow: workflow, subject: subject2, reducer_key: 'r', data: '3')
     ]
   }
 
-  def tamper_auth
-    # i can do what i want
-    #
-    # --ron swanson
-    allow_any_instance_of(ReductionsController).to receive(:authenticated?).and_return(true)
-    # allow_any_instance_of(ReductionsController).to receive(:authorized?).and_return(true)
-    allow_any_instance_of(Credential).to receive(:logged_in?).and_return(true)
-    allow_any_instance_of(Credential).to receive(:expired?).and_return(false)
-    allow_any_instance_of(Credential).to receive(:admin?).and_return(true)
-  end
-
-  before do
-    Subject.create! id: 5678
-    Subject.create! id: 6789
-    Workflow.create! id: 1234, project_id: 12
-  end
-
-  after do
-    Reduction.delete_all
-    Subject.delete_all
-    Workflow.delete_all
-  end
+  before { fake_session(admin: true) }
 
   describe '#index' do
     it 'returns only the requested reductions' do
-      tamper_auth
       reductions
 
-      response = get :index, params: { workflow_id: 1234, reducer_key: 'r', subject_id: 5678 }
+      response = get :index, params: { workflow_id: workflow.id, reducer_key: 'r', subject_id: subject1.id }
       results = JSON.parse(response.body)
 
       expect(response).to be_success
       expect(results.size).to be(1)
-      expect(results[0]).to include("reducer_key" => "r", "subject_id" => 5678)
+      expect(results[0]).to include("reducer_key" => "r", "subject_id" => subject1.id)
       expect(results[0]).not_to include("reducer_key" => "s")
-      expect(results[0]).not_to include("subject_id" => 6789)
+      expect(results[0]).not_to include("subject_id" => subject2.id)
     end
   end
 
   describe '#update' do
     it 'updates an existing reduction' do
       r = reductions
-      tamper_auth
 
       #we don't have any real reducers configured, so work around that
       allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
@@ -60,19 +40,19 @@ describe ReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        workflow_id: 1234,
+        workflow_id: workflow.id,
         reducer_key: 'r',
         reduction: {
-          subject_id: 5678,
+          subject_id: subject1.id,
           subgroup: '_default',
           data: { blah: 10 }
         }
       }
 
       updated = Reduction.find_by(
-        workflow_id: 1234,
+        workflow_id: workflow.id,
         reducer_key: 'r',
-        subject_id: 5678
+        subject_id: subject1.id
       )
 
       expect(Reduction.count).to eq(3)
@@ -82,7 +62,6 @@ describe ReductionsController, :type => :controller do
 
     it 'creates new reductions if needed' do
       reductions
-      tamper_auth
 
       #we don't have any real reducers configured, so work around that
       allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
@@ -90,19 +69,19 @@ describe ReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        workflow_id: 1234,
+        workflow_id: workflow.id,
         reducer_key: 'q',
         reduction: {
-          subject_id: 5678,
+          subject_id: subject1.id,
           subgroup: '_default',
           data: { blah: 10 }
         }
       }
 
       updated = Reduction.find_by(
-        workflow_id: 1234,
+        workflow_id: workflow.id,
         reducer_key: 'q',
-        subject_id: 5678
+        subject_id: subject1.id
       )
 
       expect(Reduction.count).to eq(4)
@@ -112,7 +91,6 @@ describe ReductionsController, :type => :controller do
 
   describe '#nested_update' do
     it 'creates multiple reductions from the data' do
-      tamper_auth
 
       #we don't have any real reducers configured, so work around that
       allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
@@ -120,10 +98,10 @@ describe ReductionsController, :type => :controller do
       )
 
       post :nested_update, params: {
-        workflow_id: 1234,
+        workflow_id: workflow.id,
         reducer_key: 'q',
         reduction: {
-          subject_id: 5678,
+          subject_id: subject1.id,
           data: {
             group1: {
               blah: 11

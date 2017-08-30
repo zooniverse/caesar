@@ -1,23 +1,25 @@
 require 'spec_helper'
 
 describe ExtractGrouping do
-  after do
-    Extract.delete_all
-  end
-
+  let(:workflow){ create :workflow }
+  let(:subject){ create :subject }
   let(:extracts){
     [
-      Extract.new(extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { LN: 1 }),
-      Extract.new(extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { LN: 1 }),
-      Extract.new(extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { TGR: 1 }),
-      Extract.new(extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { classroom: 1 }),
-      Extract.new(extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { classroom: 1 }),
-      Extract.new(extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { classroom: 1 }),
+      # "classroom 1" extracts
+      create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }),
+      create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }),
+      create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }),
 
-      Extract.new(extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { LN: 1 }),
-      Extract.new(extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { LN: 1, BR: 1 }),
-      Extract.new(extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { classroom: 2 }),
-      Extract.new(extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { classroom: 2 })
+      create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { classroom: 1 }),
+      create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { classroom: 1 }),
+      create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { classroom: 1 }),
+
+      # "classroom 2" extracts
+      create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { LN: 1 }),
+      create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { LN: 1, BR: 1 }),
+
+      create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { classroom: 2 }),
+      create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 })
     ]
   }
 

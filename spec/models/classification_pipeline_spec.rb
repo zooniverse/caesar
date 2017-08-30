@@ -73,14 +73,6 @@ describe ClassificationPipeline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
-  after do
-    Action.delete_all
-    Extract.delete_all
-    Reduction.delete_all
-    Workflow.delete_all
-    Subject.delete_all
-  end
-
   it 'retires the image', sidekiq: :inline do
     pipeline.process(classification)
     expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
@@ -92,12 +84,12 @@ describe ClassificationPipeline do
   end
 
   it 'does not fetch classifications when extracts already present' do
-    Extract.create(
+    create(
+      :extract,
       classification_id: classification.id,
       extractor_key: "zzz",
       subject_id: classification.subject_id,
       workflow_id: classification.workflow_id,
-      classification_at: DateTime.now,
       data: {"ZZZ" => 1}
     )
 
@@ -106,27 +98,29 @@ describe ClassificationPipeline do
   end
 
   it 'groups extracts before reduction' do
-    Subject.create! id: 2345
-    Workflow.create! id: 1234, project_id: 1
+    subject = create(:subject)
+    workflow = create(:workflow)
 
-    # "classroom 1" extracts for subject 2345 in workflow 1234
-    Extract.create! extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { LN: 1 }
-    Extract.create! extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { LN: 1 }
-    Extract.create! extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { TGR: 1 }
-    Extract.create! extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 11111, classification_at: DateTime.now, data: { classroom: 1 }
-    Extract.create! extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 22222, classification_at: DateTime.now, data: { classroom: 1 }
-    Extract.create! extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 33333, classification_at: DateTime.now, data: { classroom: 1 }
+    # "classroom 1" extracts
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
 
-    # "classroom 2" extracts for subject 2345 in workflow 1234
-    Extract.create! extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { LN: 1 }
-    Extract.create! extractor_key: 's', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { LN: 1, BR: 1 }
-    Extract.create! extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 44444, classification_at: DateTime.now, data: { classroom: 2 }
-    Extract.create! extractor_key: 'g', workflow_id: 1234, subject_id: 2345, classification_id: 55555, classification_at: DateTime.now, data: { classroom: 2 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { classroom: 1 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { classroom: 1 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { classroom: 1 }
+
+    # "classroom 2" extracts
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { LN: 1, BR: 1 }
+
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { classroom: 2 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
     reducer = Reducers::StatsReducer.new("s", {"group_by" => "g.classroom"})
     pipeline = described_class.new(nil, {"s" => reducer }, nil)
-    pipeline.reduce(1234, 2345).map(&:serializable_hash)
+    pipeline.reduce(workflow.id, subject.id)
 
     expect(Reduction.count).to eq(2)
     expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
