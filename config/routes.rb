@@ -30,4 +30,5 @@ Rails.application.routes.draw do
   get 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'reductions#index'
   get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'reductions#index'
   put 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'reductions#update'
+  put 'workflows/:workflow_id/reducers/:reducer_key/reductions/nested', to: 'reductions#nested_update'
 end

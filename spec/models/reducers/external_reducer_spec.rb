@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Reducers::ExternalReducer do
+  def unwrap(reduction)
+    reduction['_default']
+  end
+
   let(:extracts) {
     [
       Extract.new(data: {"foo" => "bar"}),
@@ -31,7 +35,7 @@ describe Reducers::ExternalReducer do
   it 'passes through the result from the foreign API' do
     extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
     result = extractor.process(extracts)
-    expect(result).to eq(response_data)
+    expect(unwrap(result)).to eq(response_data)
   end
 
   it 'handles 204s' do
@@ -40,7 +44,7 @@ describe Reducers::ExternalReducer do
 
     extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
     result = extractor.process(extracts)
-    expect(result).to eq(Reducers::Reducer.NoData)
+    expect(unwrap(result)).to eq(Reducers::Reducer.NoData)
   end
 
   it 'does not post if no url is configured' do

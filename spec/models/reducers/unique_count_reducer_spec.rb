@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Reducers::UniqueCountReducer do
+  def unwrap(reduction)
+    reduction['_default']
+  end
+
   let(:reducer){ described_class.new("s",{"field" => "choices"})}
   let(:extracts){
     [
@@ -23,6 +27,6 @@ describe Reducers::UniqueCountReducer do
   }
 
   it 'counts unique things' do
-    expect(reducer.process(extracts)).to eq(2)
+    expect(unwrap(reducer.process(extracts))).to eq(2)
   end
 end

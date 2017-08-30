@@ -54,7 +54,10 @@ describe ClassificationPipeline do
   let(:workflow) do
     create :workflow, project_id: 1,
                       extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                      reducers_config: {"s" => {type: "stats"}},
+                      reducers_config: {
+                        "s" => {type: "stats"},
+                        "g" => {type: "stats", grouping: "s.LK" }
+                      },
                       rules_config: [rule]
   end
 
@@ -76,23 +79,53 @@ describe ClassificationPipeline do
   end
 
   it 'fetches classifications from panoptes when there are no other extracts' do
-    expect do
-      pipeline.process(classification)
-    end.to change(FetchClassificationsWorker.jobs, :size).by(1)
+    expect { pipeline.process(classification) }.
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
   end
 
   it 'does not fetch classifications when extracts already present' do
-    Extract.create(
+    create(
+      :extract,
       classification_id: classification.id,
       extractor_key: "zzz",
       subject_id: classification.subject_id,
       workflow_id: classification.workflow_id,
-      classification_at: DateTime.now,
       data: {"ZZZ" => 1}
     )
 
-    expect do
-      pipeline.process(classification)
-    end.not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+    expect { pipeline.process(classification) }.
+      not_to change(FetchClassificationsWorker.jobs, :size).from(0)
   end
+
+  it 'groups extracts before reduction' do
+    subject = create(:subject)
+    workflow = create(:workflow)
+
+    # "classroom 1" extracts
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
+
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { classroom: 1 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 22222, data: { classroom: 1 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { classroom: 1 }
+
+    # "classroom 2" extracts
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { LN: 1, BR: 1 }
+
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 44444, data: { classroom: 2 }
+    create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
+
+    # build a simplified pipeline to reduce these extracts
+    reducer = Reducers::StatsReducer.new("s", {"group_by" => "g.classroom"})
+    pipeline = described_class.new(nil, {"s" => reducer }, nil)
+    pipeline.reduce(workflow.id, subject.id)
+
+    expect(Reduction.count).to eq(2)
+    expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
+    expect(Reduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
+    expect(Reduction.where(subgroup: 1).first.data.keys).not_to include("classroom")
+  end
+
 end
