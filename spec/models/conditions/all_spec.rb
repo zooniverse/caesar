@@ -20,8 +20,9 @@ describe Conditions::All do
     ]
   }
 
+  let(:subject) { build_stubbed(:subject) }
   let(:bindings){
-    RuleBindings.new(reductions)
+    RuleBindings.new(reductions, subject)
   }
 
   it('throws an error on empty bindings') do
