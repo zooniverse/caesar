@@ -36,15 +36,18 @@ class Workflow < ApplicationRecord
       argument :subjectId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
-        Pundit.authorize!(ctx[:credential], workflow, :show)
-        workflow.actions.where(subject_id: args[:subjectId])
+        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(subject_id: args[:subjectId])
+        scope
       }
     end
 
     field :dataRequests, types[DataRequest::Type] do
       resolve -> (workflow, args, ctx) {
-        Pundit.authorize!(ctx[:credential], workflow, :show)
-        workflow.data_requests
+        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = scope.where(workflow_id: workflow.id)
+        scope
       }
     end
   end
