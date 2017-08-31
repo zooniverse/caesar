@@ -1,6 +1,6 @@
 module Extractors
   class WhoExtractor < Extractor
-    def process(classification)
+    def extract_data_for(classification)
       {'user_id' => classification.user_id}
     end
   end

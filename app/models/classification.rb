@@ -34,6 +34,10 @@ class Classification
     attributes.fetch('links').fetch('workflow').to_i
   end
 
+  def workflow_version
+    attributes.fetch('workflow_version', nil)
+  end
+
   def user_id
     attributes.fetch('links')['user']&.to_i
   end
@@ -55,6 +59,7 @@ class Classification
       id: id,
       project_id: project_id,
       workflow_id: workflow_id,
+      workflow_version: workflow_version,
       subject_id: subject_id,
       user_id: user_id,
       annotations: annotations,
