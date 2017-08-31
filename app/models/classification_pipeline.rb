@@ -67,7 +67,8 @@ class ClassificationPipeline
 
   def check_rules(workflow_id, subject_id)
     return unless rules.present?
-    rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id))
+    subject = Subject.find(subject_id)
+    rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id), subject)
     rules.process(workflow_id, subject_id, rule_bindings)
   end
 

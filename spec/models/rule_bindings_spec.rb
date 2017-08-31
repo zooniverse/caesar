@@ -1,13 +1,23 @@
 describe RuleBindings do
+  let(:subject) { build_stubbed(:subject) }
+
   it 'looks up by reducer id and emitted key' do
     reductions = [
       Reduction.new(reducer_key: 'count', data: {"a" => 1}),
       Reduction.new(reducer_key: 'other', data: {"b" => 2})
     ]
 
-    rule_bindings = described_class.new(reductions)
+    rule_bindings = described_class.new(reductions, Subject.new)
     expect(rule_bindings.fetch("count.a")).to eq(1)
     expect(rule_bindings.fetch("other.b")).to eq(2)
+  end
+
+  it 'exposes subject metadata' do
+    reductions = []
+    subject = build_stubbed(:subject, metadata: {"region" => "oxford"})
+
+    rule_bindings = described_class.new(reductions, subject)
+    expect(rule_bindings.fetch("subject.region")).to eq("oxford")
   end
 
   it 'handles absent keys' do
@@ -18,7 +28,7 @@ describe RuleBindings do
 
     unexpected = double
 
-    rule_bindings = described_class.new(reductions)
+    rule_bindings = described_class.new(reductions, subject)
     expect(rule_bindings.fetch("count.a")).to eq(1)
     expect(rule_bindings.fetch("count.b")).to be(nil)
     expect(rule_bindings.fetch("count.b",unexpected)).to eq(unexpected)
@@ -30,7 +40,7 @@ describe RuleBindings do
       Reduction.new(reducer_key: 'other', data: {"a" => 2})
     ]
 
-    rule_bindings = described_class.new(reductions)
+    rule_bindings = described_class.new(reductions, subject)
     expect(rule_bindings.fetch("count.a")).to eq(1)
     expect(rule_bindings.fetch("other.a")).to eq(2)
   end
