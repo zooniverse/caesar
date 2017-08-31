@@ -9,15 +9,19 @@ module Extractors
       @@NoData
     end
 
+    def initialize(key, config = {})
+      @key = key
+      @min_version = config["minimum_version"] || nil
+      load_configuration(config)
+    end
+
     def process(classification)
       return Extractor.NoData if too_old?(classification)
       extract_data_for(classification)
     end
 
-    def initialize(key, config = {})
-      @key = key
-      @min_version = config["minimum_version"] || nil
-      load_configuration(config)
+    def extract_data_for(classification)
+      raise NotImplementedError
     end
 
     private
