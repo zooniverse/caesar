@@ -8,7 +8,7 @@ module Extractors
     config :name
     config :if_missing, default: "error"
 
-    def process(classification)
+    def extract_data_for(classification)
       evaluator = JsonPath.new path
       result = evaluator.on(classification.attributes)
 

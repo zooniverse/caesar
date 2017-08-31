@@ -18,7 +18,7 @@ module Extractors
       config["if_missing"]
     end
 
-    def process(classification)
+    def extract_data_for(classification)
       choices = {}
 
       values = fetch_values(classification)

@@ -4,7 +4,7 @@ module Extractors
   class ExternalExtractor < Extractor
     config :url, default: nil
 
-    def process(classification)
+    def extract_data_for(classification)
       if url
         response = RestClient.post(url.to_s, classification.to_json, {content_type: :json, accept: :json})
 

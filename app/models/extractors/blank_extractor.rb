@@ -2,7 +2,7 @@ module Extractors
   class BlankExtractor < Extractor
     config :task_key, default: "T0"
 
-    def process(classification)
+    def extract_data_for(classification)
       {'blank' => blank?(classification)}
     end
 

@@ -2,7 +2,7 @@ module Extractors
   class QuestionExtractor < Extractor
     config :task_key, default: "T0"
 
-    def process(classification)
+    def extract_data_for(classification)
       CountingHash.build do |result|
         classification.annotations.fetch(task_key).each do |annotation|
           value = annotation.fetch("value")
