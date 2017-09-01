@@ -45,20 +45,19 @@ describe ClassificationPipeline do
   end
 
   let(:rule) do
-    {
-      if: [:gt, [:lookup, "s.LK", 0], [:const, 0]],
-      then: [{action: :retire_subject, reason: "consensus"}]
-    }
+    Rule.new(condition: [:gt, [:lookup, "s.LK", 0], [:const, 0]],
+             rule_effects: [RuleEffect.new(action: :retire_subject, config: {reason: "consensus"})])
   end
 
   let(:workflow) do
-    create :workflow, project_id: 1,
+    create(:workflow, project_id: 1,
                       extractors_config: {"s" => {type: "survey", task_key: "T1"}},
                       reducers_config: {
                         "s" => {type: "stats"},
                         "g" => {type: "stats", grouping: "s.LK" }
-                      },
-                      rules_config: [rule]
+                      }) do |w| 
+      create :rule, workflow: w, rule_effects: [build(:rule_effect, config: {reason: "consensus"})]
+    end
   end
 
   let(:subject) { Subject.create }

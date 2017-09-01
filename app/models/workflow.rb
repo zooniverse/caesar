@@ -55,6 +55,8 @@ class Workflow < ApplicationRecord
   has_many :extracts
   has_many :reductions
   has_many :actions
+  has_many :rules
+
 
   def self.accessible_by(credential)
     return none unless credential.logged_in?
@@ -84,10 +86,6 @@ class Workflow < ApplicationRecord
 
   def reducers
     Reducers::FromConfig.build_many(reducers_config)
-  end
-
-  def rules
-    Rules::Engine.new(rules_config)
   end
 
   def webhooks
