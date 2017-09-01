@@ -71,7 +71,7 @@ class ClassificationPipeline
     rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id), subject)
 
     rules.each do |rule|
-      rule.process(workflow_id, subject_id, rule_bindings)
+      rule.process(subject_id, rule_bindings)
     end
   end
 

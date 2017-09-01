@@ -6,7 +6,7 @@ class Rule < ApplicationRecord
     Conditions::FromConfig.build(self[:condition])
   end
 
-  def process(workflow_id, subject_id, bindings)
+  def process(subject_id, bindings)
     if condition.apply(bindings)
       rule_effects.each do |effect|
         pending_action = effect.prepare(workflow_id, subject_id)

@@ -12,7 +12,7 @@ RSpec.describe Rule, type: :model do
 
       allow(rule_effect).to receive(:prepare).and_call_original
 
-      rule.process(workflow.id, subject.id, {})
+      rule.process(subject.id, {})
       expect(rule_effect).to have_received(:prepare).with(workflow.id, subject.id).once
       expect(PerformActionWorker.jobs.size).to eq(1)
     end
