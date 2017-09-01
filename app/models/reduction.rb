@@ -5,7 +5,7 @@ class Reduction < ApplicationRecord
     field :projectId, types.ID, property: :project_id
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
-    field :reducerId, types.String, property: :reducer_id
+    field :reducerKey, types.String, property: :reducer_key
 
     field :data, Types::JsonType
 

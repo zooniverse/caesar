@@ -7,7 +7,7 @@ class Extract < ApplicationRecord
 
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
-    field :extractorId, !types.ID, property: :extractor_id
+    field :extractorKey, !types.String, property: :extractor_key
     field :userId, types.ID, property: :user_id
 
     field :data, Types::JsonType

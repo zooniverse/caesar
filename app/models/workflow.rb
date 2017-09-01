@@ -6,13 +6,13 @@ class Workflow < ApplicationRecord
     field :createdAt, !Types::TimeType, "Timestamp when this workflow was created", property: :created_at
     field :updatedAt, !Types::TimeType, "Timestamp when this workflow was updated", property: :updated_at
 
-
     field :extracts, types[Extract::Type] do
       argument :subjectId, !types.ID, "Filter by specific subject"
       argument :extractorKey, types.String, "Filter by specific extractor"
 
       resolve -> (workflow, args, ctx) {
-        scope = workflow.extracts
+        scope = Pundit.policy_scope!(ctx[:credential], Extract)
+        scope = scope.where(workflow_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(extractor_key: args[:extractorKey]) if args[:extractorKey]
         scope
@@ -24,7 +24,8 @@ class Workflow < ApplicationRecord
       argument :reducerKey, types.String, "Filter by specific reducer"
 
       resolve -> (workflow, args, ctx) {
-        scope = workflow.reductions
+        scope = Pundit.policy_scope!(ctx[:credential], Reduction)
+        scope = scope.where(workflow_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
         scope
@@ -35,13 +36,18 @@ class Workflow < ApplicationRecord
       argument :subjectId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
-        workflow.actions.where(subject_id: args[:subjectId])
+        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(subject_id: args[:subjectId])
+        scope
       }
     end
 
     field :dataRequests, types[DataRequest::Type] do
       resolve -> (workflow, args, ctx) {
-        workflow.data_requests
+        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = scope.where(workflow_id: workflow.id)
+        scope
       }
     end
   end

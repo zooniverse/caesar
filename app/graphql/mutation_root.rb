@@ -39,13 +39,13 @@ MutationRoot = GraphQL::ObjectType.define do
     argument :workflowId, !types.ID
     argument :subjectId, !types.ID
     argument :classificationId, !types.ID
-    argument :extractorId, !types.String
+    argument :extractorKey, !types.String
     argument :data, Types::JsonType
 
     resolve ->(obj, args, ctx) {
       workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
       subject   = Subject.find(args[:subjectId])
-      extractor = workflow.extractors[args[:extractorId]]
+      extractor = workflow.extractors[args[:extractorKey]]
       extract   = Extract.find_or_initialize_by(workflow_id: workflow.id,
                                                 extractor_id: extractor.id,
                                                 classificationId: args[:classificationId],
@@ -63,13 +63,13 @@ MutationRoot = GraphQL::ObjectType.define do
 
     argument :workflowId, !types.ID
     argument :subjectId, !types.ID
-    argument :reducerId, !types.String
+    argument :reducerKey, !types.String
     argument :data, Types::JsonType
 
     resolve ->(obj, args, ctx) {
       workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
       subject   = Subject.find(args[:subjectId])
-      reducer   = workflow.reducers[args[:reducerId]]
+      reducer   = workflow.reducers[args[:reducerKey]]
       reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
                                                   reducer_id: reducer.id,
                                                   subject_id: subject.id)
