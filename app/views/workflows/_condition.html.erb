@@ -1,0 +1,52 @@
+<% case condition %>
+<% when Conditions::Conjunction %>
+  <table class="condition">
+    <tr>
+      <td rowspan="<%= condition.operations.size %>">AND</td>
+      <td><%= render_condition condition.operations[0] %></td>
+    </tr>
+    <% condition.operations[1..-1].each do |c| %>
+      <tr><td><%= render_condition c %></td></tr>
+    <% end %>
+  </table>
+<% when Conditions::Disjunction %>
+  <table class="condition">
+    <tr>
+      <td rowspan="<%= condition.operations.size %>">OR</td>
+      <td><%= render_condition condition.operations[0] %></td>
+    </tr>
+    <% condition.operations[1..-1].each do |c| %>
+      <tr><td><%= render_condition c %></td></tr>
+    <% end %>
+  </table>
+<% when Conditions::Negation %>
+  <table class="condition">
+    <tr>
+      <td>NOT</td>
+      <td><%= render_condition condition.operation %></td>
+    </tr>
+  </table>
+<% when Conditions::Comparison %>
+  <table class="condition">
+    <tr>
+      <td rowspan="<%= condition.operations.size %>"><%= condition.type %></td>
+      <td><%= render_condition condition.operations[0] %></td>
+    </tr>
+    <% condition.operations[1..-1].each do |c| %>
+      <tr><td><%= render_condition c %></td></tr>
+    <% end %>
+  </table>
+<% when Conditions::Lookup %>
+  <div class="input-group">
+    <span class="input-group-addon">LOOKUP</span>
+    <%= text_field_tag 'lookup', condition.key, class: "form-control" %>
+    <span class="input-group-addon">default: <%= condition.absent_val %></span>
+  </div>
+<% when Conditions::Constant %>
+  <div class="input-group">
+    <span class="input-group-addon">CONST</span>
+    <%= text_field_tag 'lookup', condition.value, class: "form-control" %>
+  </div>
+<% else %>
+  <%= debug condition %>
+<% end %>

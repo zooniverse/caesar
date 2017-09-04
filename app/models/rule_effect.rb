@@ -5,6 +5,10 @@ class RuleEffect < ApplicationRecord
 
   validates :action, presence: true, inclusion: {in: RuleEffect.actions.keys}
 
+  def effect
+    @effect ||= Effects[action].new(config)
+  end
+
   def prepare(workflow_id, subject_id)
     Action.create!(effect_type: action,
                    config: config,
