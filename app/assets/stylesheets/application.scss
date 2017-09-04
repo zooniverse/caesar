@@ -18,6 +18,10 @@ $navbar-default-color: #cbcccb;
 
 @import "bootstrap";
 
+.container-fluid {
+  margin-top: 1em;
+}
+
 nav {
   font-family: "Open Sans", "Gill Sans", "Arial", "sans-serif";
   letter-spacing: 0.20em;
