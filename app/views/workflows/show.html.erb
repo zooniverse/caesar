@@ -10,12 +10,12 @@
     </tr>
   </thead>
   <tbody>
-    <% for rule in @workflow.rules_config %>
+    <% for rule in @workflow.rules %>
       <tr>
-        <td><%= debug rule["if"] %></td>
-        <td><%= debug rule["then"] %></td>
+        <td><%= debug rule.condition %></td>
+        <td><%= debug rule.rule_effects.all %></td>
         <td><!-- <button type="button" name="button">Edit</button>
-            <button type="button" name="button">Delete</button> --></td>
+                 <button type="button" name="button">Delete</button> --></td>
       </tr>
     <% end %>
   </tbody>
