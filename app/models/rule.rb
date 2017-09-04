@@ -2,6 +2,8 @@ class Rule < ApplicationRecord
   belongs_to :workflow
   has_many :rule_effects
 
+  validate :valid_condition?
+
   def condition
     Conditions::FromConfig.build(self[:condition])
   end
@@ -13,5 +15,11 @@ class Rule < ApplicationRecord
         PerformActionWorker.perform_async(pending_action.id)
       end
     end
+  end
+
+  def valid_condition?
+    condition
+  rescue Conditions::FromConfig::InvalidConfig => ex
+    errors.add(:condition, ex.message)
   end
 end

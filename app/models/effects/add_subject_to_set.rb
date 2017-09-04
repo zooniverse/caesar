@@ -14,6 +14,10 @@ module Effects
       raise unless self.class.was_duplicate(se)
     end
 
+    def valid?
+      subject_set_id.present?
+    end
+
     def subject_set_id
       config.fetch("subject_set_id")
     end

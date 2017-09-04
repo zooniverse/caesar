@@ -10,6 +10,10 @@ module Effects
       })
     end
 
+    def valid?
+      collection_id.present?
+    end
+
     def collection_id
       config.fetch("collection_id")
     end

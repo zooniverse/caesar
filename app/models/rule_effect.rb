@@ -4,6 +4,7 @@ class RuleEffect < ApplicationRecord
   enum action: [:retire_subject, :add_subject_to_set, :add_subject_to_collection]
 
   validates :action, presence: true, inclusion: {in: RuleEffect.actions.keys}
+  validate :valid_effect?
 
   def effect
     @effect ||= Effects[action].new(config)
@@ -19,5 +20,13 @@ class RuleEffect < ApplicationRecord
   def notify_subscribers(workflow_id, event_name, data)
     workflow = Workflow.find(workflow_id)
     workflow.webhooks.process(event_name, data) if workflow.subscribers?
+  end
+
+  private
+
+  def valid_effect?
+    unless effect.valid?
+      errors.add(:config, "Does not produce a valid effect")
+    end
   end
 end

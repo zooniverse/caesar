@@ -5,6 +5,13 @@ RSpec.describe Rule, type: :model do
   let(:subject) { create(:subject) }
   let(:rule_effect) { build(:rule_effect) }
 
+  describe 'validation' do
+    it 'has error when condition is not supported' do
+      rule = build :rule, condition: ["unknown_operation", 1, 2, 3]
+      expect(rule).not_to be_valid
+    end
+  end
+
   context 'if the condition is true' do
     it 'performs all the effects' do
       rule = build :rule, workflow: workflow, condition: ["const", true]
