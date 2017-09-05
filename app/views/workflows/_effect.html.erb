@@ -1,0 +1,10 @@
+<% case effect %>
+<% when Effects::AddSubjectToCollection %>
+  Add subject to collection <span class="label label-info"><%= effect.collection_id %></span>
+<% when Effects::AddSubjectToSet %>
+  Add subject to subject_set <span class="label label-info"><%= effect.subject_set_id %></span>
+<% when Effects::RetireSubject %>
+  Retire subject with reason <span class="label label-info"><%= effect.reason %></span>
+<% else %>
+  <%= debug effect %>
+<% end %>

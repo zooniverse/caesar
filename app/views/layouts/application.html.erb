@@ -12,68 +12,18 @@
   </head>
 
   <body>
-    <header>
+    <div class="container-fluid">
+      <%= render partial: 'header' %>
 
-      <nav class="navbar navbar-default navbar-toggleable-md navbar-light">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">CAESAR</a>
-          </div>
+      <% if flash[:alert] %>
+        <div class="alert"><%= flash[:alert] %></div>
+      <% end %>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="nav navbar-nav mr-auto">
-              <li>
-                <a href="https://zooniverse.org"><strong>Back to Zooniverse</strong><span class="sr-only">(current)</span></a>
-              </li>
+      <% if flash[:notice] %>
+        <div class="notice"><%= flash[:notice] %></div>
+      <% end %>
 
-              <% if credential.admin? || true %>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     <strong>Administrator</strong>
-                     <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <li><%= link_to "Sidekiq", '/sidekiq', class: 'dropdown-item' %></li>
-                    <li><%= link_to "Graphiql", '/graphiql', class: 'dropdown-item' %></li>
-                  </ul>
-                </li>
-              <% end %>
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-              <% if credential.logged_in? %>
-                <li>
-                  <span class="navbar-text mr-sm-2">
-                    <strong>Logged in as</strong> <%= credential.login %>
-                  </span>
-                </li>
-                <li>
-                  <%= button_to 'LOG OUT', session_path, method: :delete, class: 'btn btn-outline-success my-2 my-sm-0' %>
-                </li>
-              <% else %>
-                <li><%= link_to 'LOG IN', '/auth/zooniverse' %></li>
-              <% end %>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <% if flash[:alert] %>
-      <div class="alert"><%= flash[:alert] %></div>
-    <% end %>
-
-    <% if flash[:notice] %>
-      <div class="notice"><%= flash[:notice] %></div>
-    <% end %>
-
-    <%= yield %>
+      <%= yield %>
+    </div>
   </body>
 </html>

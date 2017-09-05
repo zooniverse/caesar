@@ -9,6 +9,10 @@ module Effects
       })
     end
 
+    def valid?
+      reason.present?
+    end
+
     def reason
       config["reason"] || "other"
     end

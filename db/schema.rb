@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170901114000) do
+ActiveRecord::Schema.define(version: 20170901145815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,23 @@ ActiveRecord::Schema.define(version: 20170901114000) do
     t.index ["workflow_id"], name: "index_reductions_on_workflow_id"
   end
 
+  create_table "rule_effects", force: :cascade do |t|
+    t.bigint "rule_id", null: false
+    t.integer "action", null: false
+    t.jsonb "config", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rule_id"], name: "index_rule_effects_on_rule_id"
+  end
+
+  create_table "rules", force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.jsonb "condition", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id"], name: "index_rules_on_workflow_id"
+  end
+
   create_table "subjects", id: :serial, force: :cascade do |t|
     t.jsonb "metadata"
     t.datetime "created_at", null: false
@@ -109,4 +126,6 @@ ActiveRecord::Schema.define(version: 20170901114000) do
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reductions", "subjects"
   add_foreign_key "reductions", "workflows"
+  add_foreign_key "rule_effects", "rules"
+  add_foreign_key "rules", "workflows"
 end

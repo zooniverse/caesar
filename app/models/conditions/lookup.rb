@@ -1,5 +1,7 @@
 module Conditions
   class Lookup
+    attr_reader :key, :absent_val
+
     def initialize(key, absent_val)
       @key = key
       @absent_val = absent_val

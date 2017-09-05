@@ -69,7 +69,10 @@ class ClassificationPipeline
     return unless rules.present?
     subject = Subject.find(subject_id)
     rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id), subject)
-    rules.process(workflow_id, subject_id, rule_bindings)
+
+    rules.each do |rule|
+      rule.process(subject_id, rule_bindings)
+    end
   end
 
   private
