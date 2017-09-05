@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170901145815) do
+ActiveRecord::Schema.define(version: 20170905163103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,17 @@ ActiveRecord::Schema.define(version: 20170901145815) do
     t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
   end
 
+  create_table "reducers", force: :cascade do |t|
+    t.bigint "workflow_id"
+    t.string "key"
+    t.string "type"
+    t.jsonb "config"
+    t.jsonb "filters"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
+  end
+
   create_table "reductions", id: :serial, force: :cascade do |t|
     t.string "reducer_key", null: false
     t.integer "workflow_id", null: false
@@ -124,6 +135,7 @@ ActiveRecord::Schema.define(version: 20170901145815) do
   add_foreign_key "data_requests", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
+  add_foreign_key "reducers", "workflows"
   add_foreign_key "reductions", "subjects"
   add_foreign_key "reductions", "workflows"
   add_foreign_key "rule_effects", "rules"

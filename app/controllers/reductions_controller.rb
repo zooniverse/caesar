@@ -56,7 +56,7 @@ class ReductionsController < ApplicationController
   end
 
   def reducer
-    workflow.reducers[params[:reducer_key]]
+    workflow.reducers.find_by!(key: params[:reducer_key])
   end
 
   def subject

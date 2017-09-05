@@ -24,7 +24,7 @@ describe Reducers::ExternalReducer do
   end
 
   it 'posts the extracts to a foreign API' do
-    reducer = described_class.new("red", "url" => "http://example.org/post/extracts/here")
+    reducer = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
     reducer.process(extracts)
 
     expect(a_request(:post, "example.org/post/extracts/here")
@@ -33,7 +33,7 @@ describe Reducers::ExternalReducer do
   end
 
   it 'passes through the result from the foreign API' do
-    extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
+    extractor = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
     result = extractor.process(extracts)
     expect(unwrap(result)).to eq(response_data)
   end
@@ -42,13 +42,13 @@ describe Reducers::ExternalReducer do
     stub_request(:post, "http://example.org/post/extracts/here").
       to_return(status: 204, body: "", headers: {})
 
-    extractor = described_class.new("red", "url" => "http://example.org/post/extracts/here")
+    extractor = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
     result = extractor.process(extracts)
-    expect(unwrap(result)).to eq(Reducers::Reducer.NoData)
+    expect(unwrap(result)).to eq(Reducer::NoData)
   end
 
   it 'does not post if no url is configured' do
-    reducer = described_class.new("red", url: nil)
+    reducer = described_class.new(config: {"url" => nil})
 
     expect do
       reducer.process(classification)

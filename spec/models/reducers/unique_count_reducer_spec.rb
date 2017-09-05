@@ -5,8 +5,8 @@ describe Reducers::UniqueCountReducer do
     reduction['_default']
   end
 
-  let(:reducer){ described_class.new("s",{"field" => "choices"})}
-  let(:extracts){
+  let(:reducer) { described_class.new(config: {"field" => "choices"}) }
+  let(:extracts) {
     [
       Extract.new(
         :classification_id => 1234,

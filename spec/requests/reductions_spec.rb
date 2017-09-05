@@ -4,8 +4,7 @@ RSpec.describe ReductionsController, type: :controller do
   before { fake_session admin: true }
 
   let(:reducer_key) { 1 }
-  let(:reducer_config) { {"type" => "external"} }
-  let(:workflow) { create(:workflow, reducers_config: {reducer_key => reducer_config}) }
+  let(:workflow) { create(:workflow, reducers: [build(:external_reducer, key: reducer_key)]) }
 
   describe "GET #index" do
     it "returns http success" do

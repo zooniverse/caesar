@@ -42,14 +42,14 @@ class ClassificationPipeline
   def reduce(workflow_id, subject_id)
     tries ||= 2
 
-    reducers.map do |reducer_key, reducer|
+    reducers.map do |reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
       data.map do |subgroup, datum|
         reduction = Reduction.where(
           workflow_id: workflow_id,
           subject_id: subject_id,
-          reducer_key: reducer_key,
+          reducer_key: reducer.key,
           subgroup: subgroup).first_or_initialize
 
         reduction.data = datum

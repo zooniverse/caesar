@@ -44,18 +44,17 @@ describe ClassificationPipeline do
     )
   end
 
-  let(:rule) do
-    Rule.new(condition: [:gt, [:lookup, "s.LK", 0], [:const, 0]],
-             rule_effects: [RuleEffect.new(action: :retire_subject, config: {reason: "consensus"})])
+  let(:reducers) do
+    [
+      build(:stats_reducer, key: 's'),
+      build(:stats_reducer, key: 'g', config: {"grouping" => "s.LK"})
+    ]
   end
 
   let(:workflow) do
     create(:workflow, project_id: 1,
                       extractors_config: {"s" => {type: "survey", task_key: "T1"}},
-                      reducers_config: {
-                        "s" => {type: "stats"},
-                        "g" => {type: "stats", grouping: "s.LK" }
-                      }) do |w| 
+                      reducers: reducers) do |w|
       create :rule, workflow: w, rule_effects: [build(:rule_effect, config: {reason: "consensus"})]
     end
   end
@@ -63,7 +62,7 @@ describe ClassificationPipeline do
   let(:subject) { Subject.create }
 
   let(:pipeline) do
-    workflow.classification_pipeline
+    Workflow.find(workflow.id).classification_pipeline
   end
 
   let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {}) }
@@ -117,8 +116,8 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
-    reducer = Reducers::StatsReducer.new("s", {"group_by" => "g.classroom"})
-    pipeline = described_class.new(nil, {"s" => reducer }, nil)
+    reducer = build(:stats_reducer, key: 's', config: {"group_by" => "g.classroom"})
+    pipeline = described_class.new(nil, [reducer], nil)
     pipeline.reduce(workflow.id, subject.id)
 
     expect(Reduction.count).to eq(2)

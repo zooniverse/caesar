@@ -2,14 +2,14 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
-    config :url, default: nil
+    # config :url, default: nil
 
     def reduction_data_for(extractions)
       if url
         response = RestClient.post(url.to_s, extractions.to_json, {content_type: :json, accept: :json})
 
         if response.code==204
-          Reducer.NoData
+          NoData
         elsif ([200, 201, 202].include? response.code) and response.body.present?
           JSON.parse(response.body)
         else

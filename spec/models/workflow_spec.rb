@@ -11,13 +11,4 @@ RSpec.describe Workflow, type: :model do
     expect(workflow.extractors.size).to eq(1)
     expect(workflow.extractors['s']).to be_a(Extractors::SurveyExtractor)
   end
-
-  it 'returns a list of reducers' do
-    workflow.reducers_config = {
-      "s" => {type: "stats"}
-    }
-
-    expect(workflow.reducers.size).to eq(1)
-    expect(workflow.reducers['s']).to be_a(Reducers::StatsReducer)
-  end
 end

@@ -1,6 +1,6 @@
 module Reducers
   class UniqueCountReducer < Reducer
-    config :field
+    # config :field
 
     def reduction_data_for(extracts)
       mapped = extracts.map do |extract|

@@ -5,7 +5,7 @@ describe Reducers::ConsensusReducer do
     reduction['_default']
   end
 
-  subject(:reducer) { described_class.new("s") }
+  subject(:reducer) { described_class.new }
 
   def build_extracts(choices)
     choices.map.with_index do |choice, idx|
