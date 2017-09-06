@@ -81,15 +81,6 @@ class Workflow < ApplicationRecord
     Extractors::FromConfig.build_many(extractors_config)
   end
 
-<<<<<<< c4ffefb515e04bf72e4229597dabe9e4a82ace17
-  def reducers
-    Reducers::FromConfig.build_many(reducers_config)
-=======
-  def rules
-    Rules::Engine.new(rules_config)
->>>>>>> Convert to reducer models
-  end
-
   def webhooks
     Webhooks::Engine.new(webhooks_config)
   end
