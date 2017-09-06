@@ -47,7 +47,7 @@ describe ClassificationPipeline do
   let(:reducers) do
     [
       build(:stats_reducer, key: 's'),
-      build(:stats_reducer, key: 'g', grouping: "s.LK"})
+      build(:stats_reducer, key: 'g', grouping: "s.LK")
     ]
   end
 
