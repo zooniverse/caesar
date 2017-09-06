@@ -47,7 +47,7 @@ describe ClassificationPipeline do
   let(:reducers) do
     [
       build(:stats_reducer, key: 's'),
-      build(:stats_reducer, key: 'g', config: {"grouping" => "s.LK"})
+      build(:stats_reducer, key: 'g', grouping: "s.LK"})
     ]
   end
 
@@ -116,7 +116,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
-    reducer = build(:stats_reducer, key: 's', config: {"group_by" => "g.classroom"})
+    reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
     pipeline = described_class.new(nil, [reducer], nil)
     pipeline.reduce(workflow.id, subject.id)
 

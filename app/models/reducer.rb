@@ -10,7 +10,6 @@ class Reducer < ApplicationRecord
   #     def initialize(key, config = {})
   #       @key = key
   #       @filters = config["filters"] || {}
-  #       @grouping = config["group_by"] || nil
   #       load_configuration(config)
   #     end
 
@@ -24,10 +23,6 @@ class Reducer < ApplicationRecord
 
   def config
     super || {}
-  end
-
-  def grouping
-    config["group_by"] || nil
   end
 
   def filters

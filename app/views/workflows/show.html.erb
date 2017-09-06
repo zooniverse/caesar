@@ -47,7 +47,7 @@
         <td><%= reducer.class %></td>
         <td><%= debug reducer.config %></td>
         <td><%= debug reducer.filters %></td>
-        <td><%= debug reducer.grouping %></td>
+        <td><%= reducer.grouping || "no grouping" %></td>
         <td><!--<button type="button" name="button">Edit</button> <button type="button" name="button">Delete</button> --></td>
       </tr>
     <% end %>
