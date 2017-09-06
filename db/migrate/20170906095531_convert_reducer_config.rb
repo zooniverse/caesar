@@ -5,7 +5,7 @@ class ConvertReducerConfig < ActiveRecord::Migration[5.1]
     Workflow.find_each do |workflow|
       workflow.reducers_config.each do |key, reducer_config|
         reducer = reducer_type(reducer_config).new(workflow: workflow, key: key)
-        reducer.config = reducer_config.except("filters", "grouping")
+        reducer.config = reducer_config.except("filters", "grouping", "type")
         reducer.grouping = reducer_config["grouping"] || nil
         reducer.filters = reducer_config["filters"] || {}
         reducer.save!
