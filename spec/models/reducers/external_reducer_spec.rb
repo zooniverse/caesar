@@ -23,6 +23,7 @@ describe Reducers::ExternalReducer do
       .to_return(:status => 200, :body => response_data.to_json, :headers => {})
   end
 
+
   it 'posts the extracts to a foreign API' do
     reducer = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
     reducer.process(extracts)
@@ -55,4 +56,17 @@ describe Reducers::ExternalReducer do
     end.to raise_error(StandardError)
   end
 
+  describe 'validations' do
+    it 'is not valid with a non-https url' do
+      reducer = described_class.new(config: {"url" => "http://foo.com"})
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:url]).to be_present
+    end
+
+    it 'is not valid with some strange url' do
+      reducer = described_class.new(config: {"url" => "https:\\foo+3"})
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:url]).to include("URL could not be parsed")
+    end
+  end
 end

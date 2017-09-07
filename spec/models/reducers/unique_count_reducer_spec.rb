@@ -26,6 +26,14 @@ describe Reducers::UniqueCountReducer do
     ]
   }
 
+  describe 'validations' do
+    it 'is not valid without field' do
+      reducer = described_class.new
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:unique_field]).to be_present
+    end
+  end
+
   it 'counts unique things' do
     expect(unwrap(reducer.process(extracts))).to eq(2)
   end

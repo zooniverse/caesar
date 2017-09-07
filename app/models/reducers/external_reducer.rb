@@ -4,6 +4,21 @@ module Reducers
   class ExternalReducer < Reducer
     # config :url, default: nil
 
+    validate do
+      if config['url'].present?
+        schemes = ['https']
+
+        begin
+          uri = URI.parse(config['url'])
+          unless uri && uri.host && schemes.include?(uri.scheme)
+            errors.add(:url, "URL must be one of: #{schemes.join(",")}")
+          end
+        rescue URI::InvalidURIError
+          errors.add(:url, "URL could not be parsed")
+        end
+      end
+    end
+
     def reduction_data_for(extractions)
       if url
         response = RestClient.post(url.to_s, extractions.to_json, {content_type: :json, accept: :json})
@@ -21,7 +36,7 @@ module Reducers
     end
 
     def url
-      return nil unless config['url'].present?
+      return nil if config['url'].blank?
 
       @url ||= URI(config['url'])
     end
