@@ -1,4 +1,10 @@
 class Credential < ApplicationRecord
+  Type = GraphQL::ObjectType.define do
+    name "Credential"
+    field :isLoggedIn, !types.Boolean, property: :logged_in?
+    field :isAdmin, !types.Boolean, property: :admin?
+  end
+
   before_create :set_expires_at
 
   def logged_in?
