@@ -1,43 +1,25 @@
 class ExtractFilter
-  class ExtractsForClassification
-    attr_reader :extracts
+  include ActiveModel::Validations
 
-    def initialize(extracts)
-      @extracts = extracts
-    end
+  validates :repeated_classifications, inclusion: {in: ["keep_first", "keep_last", "keep_all"]}
+  validates :from, numericality: true
+  validates :to, numericality: true
 
-    def select(&block)
-      self.class.new(extracts.select(&block))
-    end
+  attr_reader :filters
 
-    def classification_id
-      extracts.first.classification_id
-    end
-
-    def classification_at
-      extracts.first.classification_at
-    end
-
-    def user_id
-      extracts.first.user_id
-    end
-  end
-
-  attr_reader :extracts, :filters
-
-  def initialize(extracts, filters)
-    @extracts = extracts.group_by(&:classification_id).map { |_, group| ExtractsForClassification.new(group) }
+  def initialize(filters)
     @filters = filters.with_indifferent_access
   end
 
-  def to_a
+  def filter(extracts)
+    extracts = ExtractsForClassification.from(extracts)
     filter_by_extractor_keys(filter_by_subrange(filter_by_repeatedness(extracts))).flat_map(&:extracts)
   end
 
   private
 
   def filter_by_repeatedness(extracts)
-    case @filters[:repeated_classifications] || "keep_first"
+    case repeated_classifications
     when "keep_all"
       extracts
     when "keep_first"
@@ -72,14 +54,23 @@ class ExtractFilter
     end.to_a
   end
 
-  def subrange
-    from = filters["from"] || 0
-    to   = filters["to"] || -1
+  def from
+    filters["from"] || 0
+  end
 
+  def to
+    filters["to"] || -1
+  end
+
+  def subrange
     Range.new(from, to)
   end
 
   def extractor_keys
     filters["extractor_keys"] || []
+  end
+
+  def repeated_classifications
+    filters["repeated_classifications"] || "keep_first"
   end
 end

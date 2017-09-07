@@ -60,4 +60,12 @@ RSpec.describe Reducer, type: :model do
 
   #   expect(grouping_filter).to have_received(:to_h).once
   # end
+
+  describe 'validations' do
+    it 'is not valid with invalid filters' do
+      reducer = Reducer.new filters: {repeated_classifications: "something"}
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:extract_filter]).to be_present
+    end
+  end
 end
