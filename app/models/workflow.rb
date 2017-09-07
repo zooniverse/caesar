@@ -45,7 +45,7 @@ class Workflow < ApplicationRecord
 
     field :dataRequests, types[DataRequest::Type] do
       resolve -> (workflow, args, ctx) {
-        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = Pundit.policy_scope!(ctx[:credential], DataRequest)
         scope = scope.where(workflow_id: workflow.id)
         scope
       }
