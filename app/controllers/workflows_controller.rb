@@ -53,6 +53,10 @@ class WorkflowsController < ApplicationController
     authorize workflow
 
     workflow.update!(workflow_params)
+
+    Workflow::ConvertLegacyReducersConfig.new(workflow).update(workflow_params[:reducers_config])
+    Workflow::ConvertLegacyRulesConfig.new(workflow).update(workflow_params[:rules_config])
+
     respond_with workflow
   end
 

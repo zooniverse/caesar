@@ -93,5 +93,4 @@ class Workflow < ApplicationRecord
   def subscribers?
     webhooks.size > 0
   end
-
 end
