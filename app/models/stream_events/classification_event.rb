@@ -4,7 +4,6 @@ module StreamEvents
 
     def initialize(stream, hash)
       @stream = stream
-      @hash = hash
       @data = hash.fetch("data")
       @linked = StreamEvents.linked_to_hash(hash.fetch("linked"))
     end
@@ -13,8 +12,6 @@ module StreamEvents
       return unless enabled?
 
       cache_linked_models!
-
-      merge_metadata!
 
       if workflow.subscribers?
         workflow.webhooks.process "new_classification", @data.as_json
@@ -37,12 +34,6 @@ module StreamEvents
 
     def classification
       @classification ||= Classification.new(@data)
-    end
-
-    def merge_metadata!
-      classification_metadata = @data.fetch("metadata", Hash.new)
-      subject_metadata = @hash.fetch("linked")&.fetch("subjects")&.first&.fetch("metadata")&.permit! || Hash.new
-      @data["metadata"] = classification_metadata.merge(subject_metadata).permit!.to_h
     end
 
     def workflow
