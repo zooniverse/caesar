@@ -54,6 +54,7 @@ class WorkflowsController < ApplicationController
 
     workflow.update!(workflow_params)
 
+    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(workflow_params[:extractors_config])
     Workflow::ConvertLegacyReducersConfig.new(workflow).update(workflow_params[:reducers_config])
     Workflow::ConvertLegacyRulesConfig.new(workflow).update(workflow_params[:rules_config])
 
