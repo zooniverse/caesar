@@ -26,7 +26,7 @@ class ExtractsController < ApplicationController
   end
 
   def extractor
-    workflow.extractors[params[:extractor_key]]
+    workflow.extractors.find_by(key: params[:extractor_key])
   end
 
   def subject

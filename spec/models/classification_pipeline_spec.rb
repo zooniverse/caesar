@@ -53,7 +53,7 @@ describe ClassificationPipeline do
 
   let(:workflow) do
     create(:workflow, project_id: 1,
-                      extractors_config: {"s" => {type: "survey", task_key: "T1"}},
+                      extractors: [build(:survey_extractor, key: 's', config: {"task_key" => "T1"})],
                       reducers: reducers) do |w|
       create :rule, workflow: w, rule_effects: [build(:rule_effect, config: {reason: "consensus"})]
     end

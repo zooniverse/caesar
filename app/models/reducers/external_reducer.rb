@@ -2,8 +2,6 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
-    # config :url, default: nil
-
     validate do
       if config['url'].present?
         schemes = ['https']

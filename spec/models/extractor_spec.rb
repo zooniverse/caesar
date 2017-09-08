@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Extractors::Extractor do
+describe Extractor do
   let(:workflow){ create :workflow }
   let(:subject){ create :subject }
   let(:classification) do
@@ -50,7 +50,7 @@ describe Extractors::Extractor do
 
   describe '#process' do
     it 'processes normally when nothing is changed' do
-      extractor = Extractors::Extractor.new 'r', {}
+      extractor = build :extractor, key: 'r'
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extractor.process(classification)
 
@@ -58,7 +58,7 @@ describe Extractors::Extractor do
     end
 
     it 'processes classifications normally if they are new enough' do
-      extractor = Extractors::Extractor.new 'r', { "minimum_version" => '3' }
+      extractor = build :extractor, key: 'r', minimum_workflow_version: '3'
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extractor.process(classification)
 
@@ -66,12 +66,12 @@ describe Extractors::Extractor do
     end
 
     it 'returns no data when a classification is too old' do
-      extractor = Extractors::Extractor.new 'r', { "minimum_version" => '335.4.6' }
+      extractor = build :extractor, key: 'r',minimum_workflow_version: '335.4.6'
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extract = extractor.process(classification)
 
       expect(extractor).not_to have_received(:extract_data_for)
-      expect(extract).to be(Extractors::Extractor.NoData)
+      expect(extract).to be(Extractor::NoData)
     end
   end
 end

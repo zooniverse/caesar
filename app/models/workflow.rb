@@ -52,6 +52,7 @@ class Workflow < ApplicationRecord
     end
   end
 
+  has_many :extractors
   has_many :reducers
   has_many :rules
 
@@ -75,10 +76,6 @@ class Workflow < ApplicationRecord
 
   def classification_pipeline
     ClassificationPipeline.new(extractors, reducers, rules)
-  end
-
-  def extractors
-    Extractors::FromConfig.build_many(extractors_config)
   end
 
   def webhooks

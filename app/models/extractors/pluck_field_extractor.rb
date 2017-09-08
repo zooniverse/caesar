@@ -4,9 +4,9 @@ module Extractors
   class PluckFieldExtractor < Extractor
     class FailedMatch < StandardError; end
 
-    config :path
-    config :name
-    config :if_missing, default: "error"
+    validates :path, presence: true
+    validates :name, presence: true
+    validates :if_missing, presence: true
 
     def extract_data_for(classification)
       evaluator = JsonPath.new path
@@ -37,7 +37,7 @@ module Extractors
     end
 
     def if_missing
-      config["if_missing"]
+      config.fetch("if_missing", "error")
     end
   end
 end

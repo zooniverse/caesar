@@ -16,12 +16,12 @@ class ClassificationPipeline
   def extract(classification)
     tries ||= 2
 
-    extractors.each do |key, extractor|
+    extractors.each do |extractor|
       known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
-      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: key).first_or_initialize
+      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
       extract.user_id = classification.user_id
       extract.classification_at = classification.created_at
       extract.data = data

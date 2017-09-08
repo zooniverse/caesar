@@ -1,6 +1,6 @@
 module Extractors
   class QuestionExtractor < Extractor
-    config :task_key, default: "T0"
+    validates :task_key, presence: true
 
     def extract_data_for(classification)
       CountingHash.build do |result|
@@ -20,7 +20,7 @@ module Extractors
     private
 
     def task_key
-      config["task_key"]
+      config.fetch("task_key", "T0")
     end
   end
 end
