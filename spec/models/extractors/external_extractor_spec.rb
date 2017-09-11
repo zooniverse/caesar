@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Extractors::ExternalExtractor do
+  let(:subject){ create :subject }
   let(:classification) do
     Classification.new(
       "id" => "12329",
@@ -8,7 +9,7 @@ describe Extractors::ExternalExtractor do
       "metadata" => {},
       "created_at" => "",
       "updated_at" => "",
-      "links" => {"project" => "1232", "workflow" => "1021", "subjects" => ["3999"], "user" => nil}
+      "links" => {"project" => "1232", "workflow" => "1021", "subjects" => [subject.id], "user" => nil}
     )
   end
 

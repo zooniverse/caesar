@@ -10,7 +10,7 @@ module Extractors
 
     def extract_data_for(classification)
       evaluator = JsonPath.new path
-      result = evaluator.on(classification.attributes)
+      result = evaluator.on(classification.prepare)
 
       {}.tap do |hash|
         if result.size == 0

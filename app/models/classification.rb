@@ -46,6 +46,10 @@ class Classification
     attributes.fetch('links').fetch('subjects').first.to_i
   end
 
+  def subject
+    Subject.find(subject_id)
+  end
+
   def gold_standard
     attributes.fetch('gold_standard', nil)
   end
@@ -54,7 +58,7 @@ class Classification
     attributes.fetch('expert_classifier', nil)
   end
 
-  def as_json(_options)
+  def prepare
     {
       id: id,
       project_id: project_id,
@@ -64,10 +68,15 @@ class Classification
       user_id: user_id,
       annotations: annotations,
       metadata: metadata,
+      subject: subject.attributes,
       gold_standard: gold_standard,
       expert_classifier: expert_classifier,
       created_at: created_at,
       updated_at: updated_at
-    }
+    }.with_indifferent_access
+  end
+
+  def as_json(_options)
+    prepare
   end
 end

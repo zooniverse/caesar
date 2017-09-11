@@ -1,12 +1,21 @@
 require 'spec_helper'
 
 describe Extractors::PluckFieldExtractor do
+  let(:workflow){ create :workflow }
+  let(:subject){ create :subject, metadata: { "shutter_speed" => ["1/8", "1/4"] } }
   let(:classification) do
     Classification.new(
+      "id" => "5678",
       "annotations" => [{ "some_key": "some_value" }],
-      "metadata" => [{ "shutter_speed" => ["1/8", "1/4"] }],
-      "user_id" => 1234,
-      "links" => {"workflow" => "1021"}
+      "metadata" => [{ "classified_at" => "1234" }],
+      "links" => {
+        "workflow" => workflow.id,
+        "project" => workflow.project_id,
+        "user" => "1234",
+        "subjects" => [
+          subject.id
+        ]
+      }
     )
   end
 
@@ -27,7 +36,7 @@ describe Extractors::PluckFieldExtractor do
       expect(result).to be_a(Hash)
       expect(result["whodunit"]).to eq(1234)
 
-      complex = described_class.new(key: "c", config: {"name" => "how_fast", "path" => "$.metadata[0].shutter_speed"})
+      complex = described_class.new(key: "c", config: {"name" => "how_fast", "path" => "$.subject.metadata.shutter_speed"})
       result = complex.process(classification)
 
       expect(result.blank?).to be(false)
