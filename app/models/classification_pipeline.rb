@@ -16,12 +16,12 @@ class ClassificationPipeline
   def extract(classification)
     tries ||= 2
 
-    extractors.each do |key, extractor|
+    extractors.each do |extractor|
       known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
-      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: key).first_or_initialize
+      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
       extract.user_id = classification.user_id
       extract.classification_at = classification.created_at
       extract.data = data
@@ -42,14 +42,14 @@ class ClassificationPipeline
   def reduce(workflow_id, subject_id)
     tries ||= 2
 
-    reducers.map do |reducer_key, reducer|
+    reducers.map do |reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
       data.map do |subgroup, datum|
         reduction = Reduction.where(
           workflow_id: workflow_id,
           subject_id: subject_id,
-          reducer_key: reducer_key,
+          reducer_key: reducer.key,
           subgroup: subgroup).first_or_initialize
 
         reduction.data = datum

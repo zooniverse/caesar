@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Extractors::WhoExtractor do
-  let(:extractor){ described_class.new("s", {}) }
+  let(:extractor){ described_class.new(key: "s") }
   let(:classification){
     # Classification.new({userId: 5, links: []})
     Classification.new(

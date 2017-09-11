@@ -5,7 +5,7 @@ describe Reducers::StatsReducer do
     reduction['_default']
   end
 
-  subject(:reducer) { described_class.new("s") }
+  subject(:reducer) { described_class.new }
   let(:extracts){
     [
       Extract.new(
@@ -42,7 +42,7 @@ describe Reducers::StatsReducer do
     end
 
     it 'counts occurrences inside a subrange' do
-      reducer = described_class.new("s", {"filters" => {"from" => 0, "to" => 2}})
+      reducer = described_class.new(filters: {"from" => 0, "to" => 2})
       expect(unwrap(reducer.process(extracts))).to include({"NTHNGHR" => 1})
     end
 

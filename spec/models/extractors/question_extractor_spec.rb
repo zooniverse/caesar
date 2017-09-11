@@ -8,7 +8,7 @@ describe Extractors::QuestionExtractor do
     }
   end
 
-  subject(:extractor) { described_class.new("s") }
+  subject(:extractor) { described_class.new(key: "s") }
 
   describe '#process' do
     it 'extracts a value correctly' do

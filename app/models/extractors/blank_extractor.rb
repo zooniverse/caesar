@@ -1,6 +1,6 @@
 module Extractors
   class BlankExtractor < Extractor
-    config :task_key, default: "T0"
+    validates :task_key, presence: true
 
     def extract_data_for(classification)
       {'blank' => blank?(classification)}
@@ -14,8 +14,10 @@ module Extractors
       false
     end
 
+    private
+
     def task_key
-      config['task_key']
+      config.fetch('task_key', 'T0')
     end
   end
 end

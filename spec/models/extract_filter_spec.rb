@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ExtractFilter do
-
   let(:extracts) {
     [
       Extract.new(
@@ -43,39 +42,39 @@ describe ExtractFilter do
   }
 
   describe 'with no filters' do
-    let(:filter) { ExtractFilter.new(extracts, {}) }
+    let(:filter) { ExtractFilter.new({}) }
 
     it 'returns the unfiltered list of extracts, sorted by classification_at' do
-      expect(filter.to_a).to eq([extracts[2], extracts[0], extracts[1], extracts[3], extracts[4]])
+      expect(filter.filter(extracts)).to eq([extracts[2], extracts[0], extracts[1], extracts[3], extracts[4]])
     end
   end
 
   describe 'subrange filtering' do
     it 'returns extracts starting from a given index' do
-      filter = described_class.new(extracts, from: 2)
-      expect(filter.to_a).to eq([extracts[3], extracts[4]])
+      filter = described_class.new(from: 2)
+      expect(filter.filter(extracts)).to eq([extracts[3], extracts[4]])
     end
 
     it 'returns extracts up to a given index' do
-      filter = described_class.new(extracts, to: 1)
-      expect(filter.to_a).to eq([extracts[2], extracts[0], extracts[1]])
+      filter = described_class.new(to: 1)
+      expect(filter.filter(extracts)).to eq([extracts[2], extracts[0], extracts[1]])
     end
 
     it 'returns extracts except the last N' do
-      filter = described_class.new(extracts, to: -2)
-      expect(filter.to_a).to eq([extracts[2], extracts[0], extracts[1], extracts[3]])
+      filter = described_class.new(to: -2)
+      expect(filter.filter(extracts)).to eq([extracts[2], extracts[0], extracts[1], extracts[3]])
     end
 
     it 'returns extracts in a slice' do
-      filter = described_class.new(extracts, from: 1, to: 2)
-      expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[3]])
+      filter = described_class.new(from: 1, to: 2)
+      expect(filter.filter(extracts)).to eq([extracts[0], extracts[1], extracts[3]])
     end
   end
 
   describe 'extractor filtering' do
     it 'returns extracts from the given extractor' do
-      filter = described_class.new(extracts, extractor_keys: ["foo"])
-      expect(filter.to_a).to eq([extracts[0], extracts[1], extracts[4]])
+      filter = described_class.new(extractor_keys: ["foo"])
+      expect(filter.filter(extracts)).to eq([extracts[0], extracts[1], extracts[4]])
     end
   end
 
@@ -87,8 +86,9 @@ describe ExtractFilter do
           Extract.new(id: 2, user_id: 1)
         ]
 
-        filter = described_class.new(extracts, repeated_classifications: "keep_all")
-        expect(filter.to_a).to eq([extracts[0], extracts[1]])
+        filter = described_class.new(repeated_classifications: "keep_all")
+        expect(filter).to be_valid
+        expect(filter.filter(extracts)).to eq([extracts[0], extracts[1]])
       end
     end
 
@@ -103,8 +103,8 @@ describe ExtractFilter do
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: "b")
         ]
 
-        filter = described_class.new(extracts, repeated_classifications: "keep_first")
-        expect(filter.to_a).to eq(extracts[0..3])
+        filter = described_class.new(repeated_classifications: "keep_first")
+        expect(filter.filter(extracts)).to eq(extracts[0..3])
       end
 
       it 'keeps repeated anonymous classifications' do
@@ -114,8 +114,9 @@ describe ExtractFilter do
           Extract.new(id: 3, user_id: nil)
         ]
 
-        filter = described_class.new(extracts, repeated_classifications: "keep_first")
-        expect(filter.to_a).to eq(extracts)
+        filter = described_class.new(repeated_classifications: "keep_first")
+        expect(filter).to be_valid
+        expect(filter.filter(extracts)).to eq(extracts)
       end
     end
 
@@ -130,8 +131,9 @@ describe ExtractFilter do
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: "b")
         ]
 
-        filter = described_class.new(extracts, repeated_classifications: "keep_last")
-        expect(filter.to_a).to eq(extracts[2..5])
+        filter = described_class.new(repeated_classifications: "keep_last")
+        expect(filter).to be_valid
+        expect(filter.filter(extracts)).to eq(extracts[2..5])
       end
 
       it 'keeps repeated anonymous classifications' do
@@ -141,8 +143,14 @@ describe ExtractFilter do
           Extract.new(id: 3, user_id: nil)
         ]
 
-        filter = described_class.new(extracts, repeated_classifications: "keep_first")
-        expect(filter.to_a).to eq(extracts)
+        filter = described_class.new(repeated_classifications: "keep_first")
+        expect(filter).to be_valid
+        expect(filter.filter(extracts)).to eq(extracts)
+      end
+
+      it 'is not valid with other config values' do
+        filter = described_class.new(repeated_classifications: "something")
+        expect(filter).not_to be_valid
       end
     end
   end

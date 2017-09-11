@@ -35,15 +35,19 @@
       <th>Name</th>
       <th>Type</th>
       <th>Configuration</th>
+      <th>Filters</th>
+      <th>Grouping</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <% for key, reducer in @workflow.reducers_config %>
+    <% for reducer in @workflow.reducers %>
       <tr>
-        <td><%= key %></td>
-        <td><%= reducer["type"] %></td>
-        <td><%= debug reducer %></td>
+        <td><%= reducer.key %></td>
+        <td><%= reducer.class %></td>
+        <td><%= debug reducer.config %></td>
+        <td><%= debug reducer.filters %></td>
+        <td><%= reducer.grouping || "no grouping" %></td>
         <td><!--<button type="button" name="button">Edit</button> <button type="button" name="button">Delete</button> --></td>
       </tr>
     <% end %>

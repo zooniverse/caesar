@@ -5,7 +5,7 @@ describe Reducers::CountReducer do
     reduction['_default']
   end
 
-  let(:reducer) { described_class.new("s",{}) }
+  let(:reducer) { described_class.new }
 
   it 'counts classifications' do
     expect(unwrap(reducer.process([]))).to include('classifications' => 0)

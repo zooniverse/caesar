@@ -52,11 +52,14 @@ class Workflow < ApplicationRecord
     end
   end
 
+  has_many :extractors
+  has_many :reducers
+  has_many :rules
+
   has_many :extracts
   has_many :reductions
   has_many :actions
-  has_many :rules
-
+  has_many :data_requests
 
   def self.accessible_by(credential)
     return none unless credential.logged_in?
@@ -67,25 +70,12 @@ class Workflow < ApplicationRecord
     where(project_id: credential.project_ids)
   end
 
-  has_many :data_requests
-  has_many :extracts
-  has_many :reductions
-  has_many :actions
-
   def subscribers?
     webhooks&.size > 0
   end
 
   def classification_pipeline
     ClassificationPipeline.new(extractors, reducers, rules)
-  end
-
-  def extractors
-    Extractors::FromConfig.build_many(extractors_config)
-  end
-
-  def reducers
-    Reducers::FromConfig.build_many(reducers_config)
   end
 
   def webhooks
@@ -100,5 +90,4 @@ class Workflow < ApplicationRecord
   def subscribers?
     webhooks.size > 0
   end
-
 end

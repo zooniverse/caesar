@@ -85,12 +85,12 @@ RSpec.describe WorkflowsController, type: :controller do
           params: {id: workflow.id},
           body: {
             workflow: {
-              extractors_config: {"type" => "external"}
+              extractors_config: {"ext" => {"type" => "external"}}
             }
           }.to_json
 
       expect(response).to have_http_status(:success)
-      expect(workflow.reload.extractors_config).to eq("type" => "external")
+      expect(workflow.reload.extractors[0]).to be_present
     end
   end
 end

@@ -1,7 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Reducers::Reducer do
-
+RSpec.describe Reducer, type: :model do
   let(:extracts) {
     [
       Extract.new(
@@ -39,19 +38,19 @@ describe Reducers::Reducer do
       end
     end
 
-    klass.new("s")
+    klass.new
   end
 
   it 'filters extracts' do
-    extract_filter = instance_double(ExtractFilter, to_a: [])
-    expect(ExtractFilter).to receive(:new).with(extracts, {}).and_return(extract_filter)
+    extract_filter = instance_double(ExtractFilter, filter: [])
+    expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)
     subject.process(extracts)
 
-    expect(extract_filter).to have_received(:to_a).once
+    expect(extract_filter).to have_received(:filter).once
   end
 
   it 'groups extracts' do
-    instance_double(ExtractFilter, to_a: extracts)
+    instance_double(ExtractFilter, filter: extracts)
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     expect(ExtractGrouping).to receive(:new).
       with(extracts.sort_by{ |e| e.classification_at }, nil).
@@ -60,5 +59,13 @@ describe Reducers::Reducer do
     subject.process(extracts)
 
     expect(grouping_filter).to have_received(:to_h).once
+  end
+
+  describe 'validations' do
+    it 'is not valid with invalid filters' do
+      reducer = Reducer.new filters: {repeated_classifications: "something"}
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:extract_filter]).to be_present
+    end
   end
 end

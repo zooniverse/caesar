@@ -5,8 +5,8 @@ describe Reducers::UniqueCountReducer do
     reduction['_default']
   end
 
-  let(:reducer){ described_class.new("s",{"field" => "choices"})}
-  let(:extracts){
+  let(:reducer) { described_class.new(config: {"field" => "choices"}) }
+  let(:extracts) {
     [
       Extract.new(
         :classification_id => 1234,
@@ -25,6 +25,14 @@ describe Reducers::UniqueCountReducer do
       )
     ]
   }
+
+  describe 'validations' do
+    it 'is not valid without field' do
+      reducer = described_class.new
+      expect(reducer).not_to be_valid
+      expect(reducer.errors[:unique_field]).to be_present
+    end
+  end
 
   it 'counts unique things' do
     expect(unwrap(reducer.process(extracts))).to eq(2)

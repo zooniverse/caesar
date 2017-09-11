@@ -10,7 +10,7 @@ class ReduceWorker
     workflow = Workflow.find(workflow_id)
     reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id)
 
-    return if reductions == Reducers::Reducer.NoData
+    return if reductions == Reducer::NoData
 
     CheckRulesWorker.perform_async(workflow_id, subject_id)
     reductions.each do |datum|

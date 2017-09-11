@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170901145815) do
+ActiveRecord::Schema.define(version: 20170908141509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,18 @@ ActiveRecord::Schema.define(version: 20170901145815) do
     t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
   end
 
+  create_table "extractors", force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.string "key", null: false
+    t.string "type", null: false
+    t.jsonb "config", default: {}, null: false
+    t.string "minimum_workflow_version"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id", "key"], name: "index_extractors_on_workflow_id_and_key", unique: true
+    t.index ["workflow_id"], name: "index_extractors_on_workflow_id"
+  end
+
   create_table "extracts", id: :serial, force: :cascade do |t|
     t.integer "classification_id", null: false
     t.datetime "classification_at", null: false
@@ -67,6 +79,19 @@ ActiveRecord::Schema.define(version: 20170901145815) do
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
     t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
+  end
+
+  create_table "reducers", force: :cascade do |t|
+    t.bigint "workflow_id"
+    t.string "key", null: false
+    t.string "type", null: false
+    t.string "grouping"
+    t.jsonb "config", default: {}, null: false
+    t.jsonb "filters", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
+    t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
 
   create_table "reductions", id: :serial, force: :cascade do |t|
@@ -122,8 +147,10 @@ ActiveRecord::Schema.define(version: 20170901145815) do
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
   add_foreign_key "data_requests", "workflows"
+  add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
+  add_foreign_key "reducers", "workflows"
   add_foreign_key "reductions", "subjects"
   add_foreign_key "reductions", "workflows"
   add_foreign_key "rule_effects", "rules"
