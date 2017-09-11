@@ -14,7 +14,7 @@ class Workflow::ConvertLegacyExtractorsConfig
       extractor = workflow.extractors.find_by(key: key)
       extractor ||= extractor_type(config).new(workflow: workflow, key: key)
       extractor.config = config.except("minimum_version", "type")
-      extractor.minimum_workflow_version = config["min_version"] || nil
+      extractor.minimum_workflow_version = config["minimum_version"] || nil
       extractor.save!
     end
   end

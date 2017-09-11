@@ -7,7 +7,7 @@ describe Workflow::ConvertLegacyExtractorsConfig do
     extractor = create :external_extractor, key: 'blank', workflow: workflow
 
     described_class.new(workflow).update(
-      "blank" => {"a" => "b", "min_version" => "4.1"}
+      "blank" => {"a" => "b", "minimum_version" => "4.1"}
     )
 
     expect(extractor.reload.config).to eq("a" => "b")
