@@ -23,19 +23,15 @@ module Extractors
     private
 
     def fetch_annotations(classification)
+      classification.annotations.fetch(task_key)
+    rescue KeyError => ex
       case if_missing
       when "error"
-        begin
-          classification.annotations.fetch(task_key)
-        rescue KeyError
-          raise MissingAnnotation, "No annotations for task #{task_key}"
-        end
+        raise MissingAnnotation, "No annotations for task #{task_key}"
       when "ignore"
-        begin
-          classification.annotations.fetch(task_key)
-        rescue KeyError
-          []
-        end
+        []
+      else
+        raise ex
       end
     end
 
