@@ -1,6 +1,6 @@
 <h2>Extracts</h2>
 <% @extracts.group_by {|e| e.data.keys }.each do |keys, extracts| %>
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -33,7 +33,7 @@
 
 <h2>Reductions</h2>
 <% @reductions.group_by {|e| e.data.keys }.each do |keys, reductions| %>
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
