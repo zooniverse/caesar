@@ -7,7 +7,7 @@ describe Extractors::PluckFieldExtractor do
     Classification.new(
       "id" => "5678",
       "annotations" => [{ "some_key": "some_value" }],
-      "metadata" => [{ "classified_at" => "1234" }],
+      "metadata" => { "classified_at" => "1234" },
       "links" => {
         "workflow" => workflow.id,
         "project" => workflow.project_id,

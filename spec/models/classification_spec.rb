@@ -17,4 +17,16 @@ describe Classification do
       expect(classification.user_id).to be_nil
     end
   end
+
+  describe '#workflow_version' do
+    it 'loads workflow version' do
+      classification = Classification.new("metadata" => {"workflow_version" => "18.53"})
+      expect(classification.workflow_version).to eq("18.53")
+    end
+
+    it 'returns nil if no version' do
+      classification = Classification.new()
+      expect(classification.workflow_version).to eq(nil)
+    end
+  end
 end

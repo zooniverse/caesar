@@ -35,7 +35,7 @@ class Classification
   end
 
   def workflow_version
-    attributes.fetch('workflow_version', nil)
+    metadata.fetch('workflow_version', nil)
   end
 
   def user_id
