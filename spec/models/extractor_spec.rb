@@ -65,6 +65,15 @@ describe Extractor do
       expect(extractor).to have_received(:extract_data_for)
     end
 
+    it 'processes classifications normally if workflow version is unknown' do
+      allow(classification).to receive(:workflow_version).and_return(nil)
+      extractor = build :extractor, key: 'r', minimum_workflow_version: '3'
+      allow(extractor).to receive(:extract_data_for).and_return(nil)
+      extractor.process(classification)
+
+      expect(extractor).to have_received(:extract_data_for)
+    end
+
     it 'returns no data when a classification is too old' do
       extractor = build :extractor, key: 'r',minimum_workflow_version: '335.4.6'
       allow(extractor).to receive(:extract_data_for).and_return(nil)

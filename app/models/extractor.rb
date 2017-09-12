@@ -17,6 +17,7 @@ class Extractor < ApplicationRecord
   private
 
   def too_old?(classification)
+    return false unless classification.workflow_version.present?
     Gem::Version.new(minimum_workflow_version) > Gem::Version.new(classification.workflow_version)
   end
 end
