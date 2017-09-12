@@ -1,10 +1,13 @@
 module Extractors
   class QuestionExtractor < Extractor
+    class MissingAnnotation < StandardError; end
+
     validates :task_key, presence: true
+    validates :if_missing, presence: true, inclusion: {in: ["error", "ignore"]}
 
     def extract_data_for(classification)
       CountingHash.build do |result|
-        classification.annotations.fetch(task_key).each do |annotation|
+        fetch_annotations(classification).each do |annotation|
           value = annotation.fetch("value")
 
           case value
@@ -19,8 +22,25 @@ module Extractors
 
     private
 
+    def fetch_annotations(classification)
+      classification.annotations.fetch(task_key)
+    rescue KeyError => ex
+      case if_missing
+      when "error"
+        raise MissingAnnotation, "No annotations for task #{task_key}"
+      when "ignore"
+        []
+      else
+        raise ex
+      end
+    end
+
     def task_key
       config.fetch("task_key", "T0")
+    end
+
+    def if_missing
+      config["if_missing"] || "error"
     end
   end
 end

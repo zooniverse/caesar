@@ -30,7 +30,21 @@ describe Extractors::QuestionExtractor do
       classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
 
       expect(extractor.process(classification)).to eq({"0" => 1, "1" => 1})
+    end
 
+    it 'errors if annotations are missing' do
+      annotations = []
+      classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
+
+      expect { extractor.process(classification) }.to raise_error(described_class::MissingAnnotation)
+    end
+
+    it 'returns nothing if annotations are missing when configured' do
+      annotations = []
+      classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
+
+      extractor = described_class.new(config: {"if_missing" => "ignore"})
+      expect(extractor.process(classification)).to eq({})
     end
   end
 
