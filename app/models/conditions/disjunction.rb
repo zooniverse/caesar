@@ -1,5 +1,7 @@
 module Conditions
   class Disjunction
+    attr_reader :operations
+
     def initialize(operations)
       @operations = operations
     end
