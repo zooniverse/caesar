@@ -32,6 +32,8 @@ class Workflow::ConvertLegacyReducersConfig
       Reducers::ConsensusReducer
     when "unique_count"
       Reducers::UniqueCountReducer
+    when "first_extract"
+      Reducers::FirstExtractReducer
     else
       raise "Reducer misconfigured: unknown type #{config["type"]}"
     end
