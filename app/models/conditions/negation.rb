@@ -1,5 +1,7 @@
 module Conditions
   class Negation
+    attr_reader :operation
+
     def initialize(operation)
       @operation = operation
     end
