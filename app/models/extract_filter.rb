@@ -13,7 +13,7 @@ class ExtractFilter
 
   def filter(extracts)
     extracts = ExtractsForClassification.from(extracts)
-    filter_by_extractor_keys(filter_by_subrange(filter_by_repeatedness(extracts))).flat_map(&:extracts)
+    filter_by_subrange(filter_by_extractor_keys(filter_by_repeatedness(extracts))).flat_map(&:extracts)
   end
 
   private
@@ -30,7 +30,9 @@ class ExtractFilter
   end
 
   def filter_by_subrange(extracts)
-    extracts.sort_by(&:classification_at)[subrange]
+    extracts.select do |extract_group|
+      extract_group.extracts.length > 0
+    end.sort_by(&:classification_at)[subrange]
   end
 
   def filter_by_extractor_keys(extracts)
