@@ -15,7 +15,15 @@ module Extractors
       end
     end
 
-    def extract_one(classification, path)
+    def extract_one(classification, details)
+      if(details.class == String)
+        path = details
+        after = "itself"
+      else
+        path = details["path"]
+        after = details["transform"]
+      end
+
       evaluator = JsonPath.new path
       result = evaluator.on(classification.prepare)
 
@@ -26,9 +34,9 @@ module Extractors
           nil
         end
       elsif result.size==1
-        result[0]
+        result[0].send(after)
       else
-        result
+        result.send(after)
       end
 
     end
