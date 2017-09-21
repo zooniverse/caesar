@@ -34,18 +34,17 @@ class Reducer < ApplicationRecord
 
   def process(extracts)
     light = Stoplight("reducer-#{id}") do
-      filtered_extracts = extract_filter.filter(extracts)
-      grouped_extracts = ExtractGrouping.new(filtered_extracts, grouping).to_h
+      grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
 
       grouped_extracts.map do |key, grouped|
-        [key, reduction_data_for(grouped)]
+        [key, reduction_data_for(extract_filter.filter(grouped))]
       end.to_h
     end
 
     light.run
   end
 
-  def reduction_data_for(grouped)
+  def reduction_data_for(extracts)
     raise NotImplementedError
   end
 

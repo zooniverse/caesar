@@ -36,16 +36,8 @@ class ExtractGrouping
       # then flatten each of these groups into a basic list
       Hash[
         extracts_by_classification.group_by{|nest| nest[extractor].data[field]}.map do |subg, ex|
-          [subg, ex.map{|x| x.map{|k,v| pluck_data_key v, field}}.flatten] end
+          [subg, ex.map{|x| x.map{|k,v| v}}.flatten] end
       ]
-    end
-  end
-
-  private
-
-  def pluck_data_key(extract, key)
-    extract.tap do |extr|
-      extr.data.except!(key)
     end
   end
 end
