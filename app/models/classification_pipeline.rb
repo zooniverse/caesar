@@ -45,7 +45,11 @@ class ClassificationPipeline
     reducers.map do |reducer|
       data = reducer.process(extracts(workflow_id, subject_id))
 
+      return if data == Reducer::NoData
+
       data.map do |subgroup, datum|
+        next if data == Reducer::NoData
+
         reduction = Reduction.where(
           workflow_id: workflow_id,
           subject_id: subject_id,

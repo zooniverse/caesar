@@ -34,6 +34,8 @@ class Workflow::ConvertLegacyReducersConfig
       Reducers::UniqueCountReducer
     when "first_extract"
       Reducers::FirstExtractReducer
+    when "placeholder"
+      Reducers::PlaceholderReducer
     else
       raise "Reducer misconfigured: unknown type #{config["type"]}"
     end
