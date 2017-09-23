@@ -2,6 +2,7 @@ class Extractor < ApplicationRecord
   belongs_to :workflow
 
   validates :workflow, presence: true
+  validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
 
   NoData = Class.new
 
@@ -19,5 +20,24 @@ class Extractor < ApplicationRecord
   def too_old?(classification)
     return false unless classification.workflow_version.present?
     Gem::Version.new(minimum_workflow_version) > Gem::Version.new(classification.workflow_version)
+  end
+
+  def self.of_type(type)
+    case type.to_s
+    when "blank"
+      Extractors::BlankExtractor
+    when "external"
+      Extractors::ExternalExtractor
+    when "question"
+      Extractors::QuestionExtractor
+    when "survey"
+      Extractors::SurveyExtractor
+    when "who"
+      Extractors::WhoExtractor
+    when "pluck_field"
+      Extractors::PluckFieldExtractor
+    else
+      raise "Unknown type #{type}"
+    end
   end
 end

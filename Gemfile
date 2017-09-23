@@ -44,6 +44,7 @@ gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
 gem 'aws-sdk', '~> 2.4.4'
 gem 'jsonpath'
+gem 'simple_form'
 gem 'pundit', "~> 1.1.0"
 gem 'graphql'
 gem 'graphiql-rails'

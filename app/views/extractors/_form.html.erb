@@ -1,0 +1,9 @@
+<%= simple_form_for @extractor, as: :extractor, url: [@workflow, @extractor.becomes(Extractor)], html: { class: 'form-vertical' } do |f| %>
+  <%= f.hidden_field :type, value: params[:extractor][:type] || params[:type] %>
+
+  <%= f.input :key %>
+  <%= f.input :config, as: :text %>
+  <%= f.input :minimum_workflow_version %>
+
+  <%= f.submit class: 'btn btn-submit' %>
+<% end %>

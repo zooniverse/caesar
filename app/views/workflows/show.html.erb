@@ -1,4 +1,22 @@
 <h2>Extractors</h2>
+
+<!-- Single button -->
+<div class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Create <span class="caret"></span>
+  </button>
+
+  <ul class="dropdown-menu">
+    <li><%= link_to "Blank", new_workflow_extractor_path(@workflow, type: 'blank') %></li>
+    <li><%= link_to "External", new_workflow_extractor_path(@workflow, type: 'external') %></li>
+    <li><%= link_to "Pluck field", new_workflow_extractor_path(@workflow, type: 'pluck_field') %></li>
+    <li><%= link_to "Question", new_workflow_extractor_path(@workflow, type: 'question') %></li>
+    <li><%= link_to "Survey", new_workflow_extractor_path(@workflow, type: 'survey') %></li>
+    <li><%= link_to "Who", new_workflow_extractor_path(@workflow, type: 'who') %></li>
+  </ul>
+</div>
+
+
 <!-- <button type="button" name="button">Add New</button> -->
 <table class="table table-hover table table-sm">
   <thead>
@@ -18,7 +36,9 @@
         <td><%= extractor.class %></td>
         <td><%= debug extractor.config %></td>
         <td><%= extractor.minimum_workflow_version || "any" %></td>
-        <td><!-- <button type="button" name="button">Edit</button> <button type="button" name="button">Delete</button> --></td>
+        <td>
+          <%= link_to "Edit", [:edit, @workflow, extractor.becomes(Extractor)], class: 'btn btn-primary' %>
+          <%= link_to "Destroy", [@workflow, extractor.becomes(Extractor)], method: :delete, confirm: "Are you sure?", class: 'btn btn-danger' %>
       </tr>
     <% end %>
   </tbody>
