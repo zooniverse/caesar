@@ -6,8 +6,15 @@ class Extractor < ApplicationRecord
   NoData = Class.new
 
   def process(classification)
-    return NoData if too_old?(classification)
-    extract_data_for(classification)
+    light = Stoplight("extractor-#{id}") do
+      if too_old?(classification)
+        NoData
+      else
+        extract_data_for(classification)
+      end
+    end
+
+    light.run
   end
 
   def extract_data_for(classification)

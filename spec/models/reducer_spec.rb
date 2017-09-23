@@ -61,6 +61,18 @@ RSpec.describe Reducer, type: :model do
     expect(grouping_filter).to have_received(:to_h).once
   end
 
+  it 'does not attempt reduction on repeated failures' do
+    reducer= build :reducer
+    allow(reducer).to receive(:reduction_data_for) { raise 'failure' }
+
+    expect { reducer.process(extracts) }.to raise_error('failure')
+    expect { reducer.process(extracts) }.to raise_error('failure')
+    expect { reducer.process(extracts) }.to raise_error('failure')
+
+    expect(reducer).not_to receive(:reduction_data_for)
+    expect { reducer.process(extracts) }.to raise_error(Stoplight::Error::RedLight)
+  end
+
   describe 'validations' do
     it 'is not valid with invalid filters' do
       reducer = Reducer.new filters: {repeated_classifications: "something"}

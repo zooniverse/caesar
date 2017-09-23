@@ -82,5 +82,17 @@ describe Extractor do
       expect(extractor).not_to have_received(:extract_data_for)
       expect(extract).to be(Extractor::NoData)
     end
+
+    it 'does not attempt extraction on repeated failures' do
+      extractor = build :extractor
+      allow(extractor).to receive(:extract_data_for) { raise 'failure' }
+
+      expect { extractor.process(classification) }.to raise_error('failure')
+      expect { extractor.process(classification) }.to raise_error('failure')
+      expect { extractor.process(classification) }.to raise_error('failure')
+
+      expect(extractor).not_to receive(:extract_data_for)
+      expect { extractor.process(classification) }.to raise_error(Stoplight::Error::RedLight)
+    end
   end
 end

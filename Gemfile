@@ -47,6 +47,7 @@ gem 'jsonpath'
 gem 'pundit', "~> 1.1.0"
 gem 'graphql'
 gem 'graphiql-rails'
+gem 'stoplight'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
