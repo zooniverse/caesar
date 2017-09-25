@@ -44,6 +44,6 @@ class Extractor < ApplicationRecord
   end
 
   def nilify_empty_fields
-    self.minimum_workflow_version = nil if minimum_workflow_version.empty?
+    self.minimum_workflow_version = nil if minimum_workflow_version.blank?
   end
 end
