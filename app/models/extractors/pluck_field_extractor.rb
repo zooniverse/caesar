@@ -1,4 +1,11 @@
+require 'json'
 require 'jsonpath'
+
+class String
+  def parse_json
+    JSON.parse(self)
+  end
+end
 
 module Extractors
   class PluckFieldExtractor < Extractor
