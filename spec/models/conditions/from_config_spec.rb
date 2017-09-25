@@ -49,4 +49,8 @@ describe Conditions::FromConfig do
     expect(condition.apply(binding)).to be(false)
   end
 
+  it 'builds text transformations' do
+    condition = described_class.build([:upcase, [:const, "foo"]])
+    expect(condition.apply({})).to eq("FOO")
+  end
 end
