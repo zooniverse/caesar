@@ -30,7 +30,7 @@ describe Reducers::UniqueCountReducer do
     it 'is not valid without field' do
       reducer = described_class.new
       expect(reducer).not_to be_valid
-      expect(reducer.errors[:unique_field]).to be_present
+      expect(reducer.errors[:field]).to be_present
     end
   end
 

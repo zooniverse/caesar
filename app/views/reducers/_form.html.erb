@@ -1,0 +1,19 @@
+<%= simple_form_for @reducer, as: :reducer, url: [@workflow, @reducer.becomes(Reducer)], html: { class: 'form-vertical' } do |f| %>
+  <%= f.hidden_field :type, value: params.dig(:reducer, :type) || params[:type] %>
+
+  <%= f.input :key %>
+
+  <% @reducer.class.configuration_fields.each do |key, options| %>
+    <% if options.key?(:enum) %>
+      <%= f.input key, collection: options[:enum] %>
+    <% else %>
+      <%= f.input key %>
+    <% end %>
+  <% end %>
+
+  <%= f.input :grouping %>
+
+  <%= f.input :filters, as: :text %>
+
+  <%= f.submit class: 'btn btn-submit' %>
+<% end %>

@@ -2,12 +2,14 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
+    config_field :url, default: nil
+
     validate do
-      if config['url'].present?
+      if url.present?
         schemes = ['https']
 
         begin
-          uri = URI.parse(config['url'])
+          uri = URI.parse(url)
           unless uri && uri.host && schemes.include?(uri.scheme)
             errors.add(:url, "URL must be one of: #{schemes.join(",")}")
           end
@@ -19,9 +21,9 @@ module Reducers
 
     def reduction_data_for(extractions)
       if url
-        response = RestClient.post(url.to_s, extractions.to_json, {content_type: :json, accept: :json})
+        response = RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
 
-        if response.code==204
+        if response.code == 204
           NoData
         elsif ([200, 201, 202].include? response.code) and response.body.present?
           JSON.parse(response.body)
@@ -31,12 +33,6 @@ module Reducers
       else
         raise StandardError.new "External extractor improperly configured: no URL"
       end
-    end
-
-    def url
-      return nil if config['url'].blank?
-
-      @url ||= URI(config['url'])
     end
   end
 end
