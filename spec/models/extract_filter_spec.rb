@@ -41,6 +41,21 @@ describe ExtractFilter do
     ]
   }
 
+  describe 'extractor AND subrange filtering' do
+    it 'filters by extractor first' do
+      extracts = [
+        build(:extract, extractor_key: 'foo', classification_at: Date.new(2017, 9, 1), data: {}),
+        build(:extract, extractor_key: 'foo', classification_at: Date.new(2017, 9, 2), data: {}),
+        build(:extract, extractor_key: 'bar', classification_at: Date.new(2017, 9, 3), data: {}),
+      ]
+
+      # if we filtered by subrange/index before extractor key, then we would discard the only
+      # extract produced by the 'bar' extractor
+      filter = described_class.new(from: 0, to: 0, extractor_keys: ["bar"])
+      expect(filter.filter(extracts)).not_to be_empty
+    end
+  end
+
   describe 'with no filters' do
     let(:filter) { ExtractFilter.new({}) }
 
