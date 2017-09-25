@@ -1,3 +1,5 @@
+require 'json'
+
 module Conditions
   class TextTransform
     attr_reader :transform, :operation
@@ -16,6 +18,12 @@ module Conditions
         value.upcase
       when :downcase
         value.downcase
+      when :to_i
+        value.to_i
+      when :to_f
+        value.to_f
+      when :json
+        JSON.parse(value)
       else
         value
       end
