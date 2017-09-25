@@ -13,7 +13,20 @@
 
   <%= f.input :grouping %>
 
-  <%= f.input :filters, as: :text %>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Filters</div>
+    <div class="panel-body">
+      <p>Using filters it is possible to limit which extracts this reducer works on.
+      <%= f.simple_fields_for :filters do |filters| %>
+        <%= filters.input :from %>
+        <%= filters.input :to %>
+        <%= filters.input :extractor_keys %>
+        <%= filters.input :repeated_classifications, collection: ExtractFilter::REPEATED_CLASSIFICATIONS %>
+      <% end %>
+    </div>
+  </div>
+
 
   <%= f.submit class: 'btn btn-submit' %>
 <% end %>
