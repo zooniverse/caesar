@@ -2,8 +2,9 @@ module Extractors
   class SurveyExtractor < Extractor
     class MissingAnnotation < StandardError; end
 
-    validates :task_key, presence: true
-    validates :if_missing, presence: true, inclusion: {in: ["error", "ignore", "nothing_here"]}
+    config_field :task_key, default: 'T0'
+    config_field :if_missing, enum: ['error', 'ignore', 'nothing_here'], default: 'error'
+    config_field :nothing_here_choice, default: nil
 
     def extract_data_for(classification)
       choices = {}
@@ -40,18 +41,6 @@ module Extractors
           raise MissingAnnotation, "No annotations for task #{task_key}"
         end
       end
-    end
-
-    def task_key
-      config.fetch("task_key", "T0")
-    end
-
-    def nothing_here_choice
-      config["nothing_here_choice"]
-    end
-
-    def if_missing
-      config["if_missing"] || "error"
     end
   end
 end

@@ -1,4 +1,6 @@
 class Extractor < ApplicationRecord
+  include Configurable
+
   def self.of_type(type)
     case type.to_s
     when "blank"

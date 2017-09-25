@@ -6,7 +6,9 @@ class ExtractorsController < ApplicationController
 
   def create
     authorize workflow
-    @extractor = Extractor.of_type(params[:extractor][:type]).new(extractor_params)
+
+    extractor_class = Extractor.of_type(params[:extractor][:type])
+    @extractor = extractor_class.new(extractor_params(extractor_class))
 
     if @extractor.save
       redirect_to workflow, success: 'Extractor created'
@@ -24,7 +26,7 @@ class ExtractorsController < ApplicationController
     authorize workflow
     @extractor = workflow.extractors.find(params[:id])
 
-    if @extractor.update(extractor_params)
+    if @extractor.update(extractor_params(@extractor.class))
       redirect_to workflow, success: 'Extractor created'
     else
       render action: :update
@@ -47,10 +49,11 @@ class ExtractorsController < ApplicationController
     @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
 
-  def extractor_params
+  def extractor_params(klass)
     params.require(:extractor).permit(
       :key,
       :minimum_workflow_version,
+      *klass.configuration_fields.keys,
       config: {},
     ).merge(workflow_id: workflow.id)
   end

@@ -4,8 +4,8 @@ module Extractors
   class PluckFieldExtractor < Extractor
     class FailedMatch < StandardError; end
 
-    validates :field_map, presence: true
-    validates :if_missing, presence: true
+    config_field :field_map
+    config_field :if_missing, default: 'error'
 
     def extract_data_for(classification)
       Hash.new.tap do |hash|
@@ -19,28 +19,18 @@ module Extractors
       evaluator = JsonPath.new path
       result = evaluator.on(classification.prepare)
 
-      if result.size == 0
-        if if_missing=="error"
-          raise FailedMatch.new
+      case result.size
+      when 0
+        if if_missing == "error"
+          raise FailedMatch
         else
           nil
         end
-      elsif result.size==1
+      when 1
         result[0]
       else
         result
       end
-
-    end
-
-    private
-
-    def field_map
-      config["field_map"]
-    end
-
-    def if_missing
-      config.fetch("if_missing", "error")
     end
   end
 end
