@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe Extractors::PluckFieldExtractor do
   let(:workflow){ create :workflow }
-  let(:subject){ create :subject, metadata: {
-    "shutter_speed" => ["1/8", "1/4"],
-    "badmatch" => "SERVAL"
-  } }
+  let(:subject){ create :subject, metadata: { "shutter_speed" => ["1/8", "1/4"] } }
   let(:classification) do
     Classification.new(
       "id" => "5678",
@@ -58,18 +55,6 @@ describe Extractors::PluckFieldExtractor do
       expect(result["whodunit"]).to eq(1234)
       expect(result["how_fast"]).to be_a(Array)
       expect(result["how_fast"]).to eq(["1/8", "1/4"])
-    end
-
-    it 'applies transformations if asked' do
-      extractor = described_class.new(key: "c", config: { "field_map" => {
-        "num" => {"path"=> "$.user_id", "transform" => "to_i" },
-        "what" => {"path"=> "$.subject.metadata.badmatch", "transform" => "downcase" }
-      }})
-
-      result = extractor.process(classification)
-      expect(result).to be_a(Hash)
-      expect(result['what']).to eq("serval")
-      expect(result['num']).to eq(1234)
     end
 
     it 'throws an error if the path is not matched' do
