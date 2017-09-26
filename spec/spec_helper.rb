@@ -53,8 +53,14 @@ RSpec.configure do |config|
 
   config.example_status_persistence_file_path = File.expand_path(File.join(__FILE__, "..", "..", "tmp", "spec_status.txt"))
 
+  config.before(:suite) do
+    Stoplight::Light.default_error_notifier = -> _ {}
+    Stoplight::Light.default_notifiers = []
+  end
+
   config.before(:each) do |example|
     Sidekiq::Worker.clear_all
+    Stoplight::Light.default_data_store = Stoplight::DataStore::Memory.new
 
     case example.metadata[:sidekiq]
     when :fake
