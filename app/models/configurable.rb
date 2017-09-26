@@ -1,26 +1,32 @@
 module Configurable
   extend ActiveSupport::Concern
 
-  def load_configuration(config)
-    @config = {}
+  class_methods do
+    def config_field(key, options = {})
+      @configuration_fields ||= {}
+      @configuration_fields[key] = options
 
-    self.class.configuration_fields.each do |key, options|
-      unless config.key?(key) || options.key?(:default)
-        raise ArgumentError, "Unconfigured #{key} and no default set" 
+      validates key, presence: {allow_nil: (options.key?(:default) && options[:default].nil?)}
+
+      if options.key?(:enum)
+        validates key, inclusion: {in: options[:enum]}
       end
 
-      @config[key] = config.key?(key) ? config[key] : options[:default]
-    end
-  end
+      define_method key do
+        if options.key?(:default)
+          config.fetch(key.to_s, options[:default])
+        else
+          config[key.to_s]
+        end
+      end
 
-  included do
-    attr_reader :config
-  end
-
-  class_methods do
-    def config(key, options = {})
-      @configuration_fields ||= {}
-      @configuration_fields[key.to_s] = options
+      define_method :"#{key}=" do |value|
+        if value.present?
+          self.config[key.to_s] = value
+        else
+          self.config.delete(key.to_s)
+        end
+      end
     end
 
     def configuration_fields

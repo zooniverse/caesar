@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   post 'kinesis', to: 'kinesis#create'
 
   resources :workflows do
+    resources :extractors, only: [:new, :create, :edit, :update, :destroy]
     resources :subjects, only: [:show]
 
     resources :data_requests

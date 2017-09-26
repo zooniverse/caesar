@@ -1,0 +1,17 @@
+<%= simple_form_for @extractor, as: :extractor, url: [@workflow, @extractor.becomes(Extractor)], html: { class: 'form-vertical' } do |f| %>
+  <%= f.hidden_field :type, value: params.dig(:extractor, :type) || params[:type] %>
+
+  <%= f.input :key %>
+
+  <% @extractor.class.configuration_fields.each do |key, options| %>
+    <% if options.key?(:enum) %>
+      <%= f.input key, collection: options[:enum] %>
+    <% else %>
+      <%= f.input key %>
+    <% end %>
+  <% end %>
+
+  <%= f.input :minimum_workflow_version %>
+
+  <%= f.submit class: 'btn btn-submit' %>
+<% end %>

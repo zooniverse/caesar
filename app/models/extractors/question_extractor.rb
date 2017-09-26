@@ -2,8 +2,8 @@ module Extractors
   class QuestionExtractor < Extractor
     class MissingAnnotation < StandardError; end
 
-    validates :task_key, presence: true
-    validates :if_missing, presence: true, inclusion: {in: ["error", "ignore"]}
+    config_field :task_key, default: 'T0'
+    config_field :if_missing, enum: ['error', 'ignore'], default: 'error'
 
     def extract_data_for(classification)
       CountingHash.build do |result|
@@ -33,14 +33,6 @@ module Extractors
       else
         raise ex
       end
-    end
-
-    def task_key
-      config.fetch("task_key", "T0")
-    end
-
-    def if_missing
-      config["if_missing"] || "error"
     end
   end
 end
