@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   resources :workflows do
     resources :extractors, only: [:new, :create, :edit, :update, :destroy]
-    resources :subjects, only: [:show]
+    resources :subjects, only: [:index, :show]
 
     resources :data_requests
   end

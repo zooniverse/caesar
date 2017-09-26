@@ -1,0 +1,25 @@
+<h2>Actions</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Type</th>
+      <th>Config</th>
+      <th>Status</th>
+      <th>Attempted</th>
+      <th>Completed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @actions.each do |action| %>
+      <tr>
+        <td><%= action.id %></td>
+        <td><%= action.effect_type %></td>
+        <td><%= action.config %></td>
+        <td><%= action.status %></td>
+        <td><%= action.attempted_at %></td>
+        <td><%= action.completed_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
