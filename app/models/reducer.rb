@@ -7,6 +7,8 @@ class Reducer < ApplicationRecord
       Reducers::ConsensusReducer
     when "count"
       Reducers::CountReducer
+    when 'placeholder'
+      Reducers::PlaceholderReducer
     when "external"
       Reducers::ExternalReducer
     when "first_extract"
