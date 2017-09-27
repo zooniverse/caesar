@@ -1,5 +1,3 @@
-require 'json'
-
 module Conditions
   class TextTransform
     attr_reader :transform, :operation
@@ -22,8 +20,6 @@ module Conditions
         value.to_i
       when :to_f
         value.to_f
-      when :json
-        JSON.parse(value)
       else
         value
       end
