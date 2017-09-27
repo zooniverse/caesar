@@ -16,6 +16,10 @@ module Conditions
         value.upcase
       when :downcase
         value.downcase
+      when :to_i
+        value.to_i
+      when :to_f
+        value.to_f
       else
         value
       end
