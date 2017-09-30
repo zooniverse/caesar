@@ -1,0 +1,29 @@
+<h2>Reductions</h2>
+<% @reductions.group_by {|e| e.reducer_key }.each do |reducer_key, reductions| %>
+  <% keys = reductions.map(&:data).flat_map(&:keys).uniq %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Reducer</th>
+        <th>Timestamp</th>
+        <% keys.each do |key| %>
+          <th><%= key %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% reductions.sort_by(&:reducer_key).each do |reduction| %>
+        <tr>
+          <td><%= reduction.id %></td>
+          <td><%= reduction.reducer_key %></td>
+          <td><%= reduction.updated_at %></td>
+
+          <% keys.each do |key| %>
+            <td><%= reduction.data[key] %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

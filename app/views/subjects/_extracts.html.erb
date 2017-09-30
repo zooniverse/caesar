@@ -1,0 +1,34 @@
+<h2>Extracts</h2>
+<% @extracts.group_by {|e| e.extractor_key }.each do |extractor_key, extracts| %>
+  <% keys = extracts.map(&:data).flat_map(&:keys).uniq %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Classification</th>
+        <th>User</th>
+        <th>Extractor</th>
+        <th>Timestamp</th>
+        <% keys.each do |key| %>
+          <th><%= key %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% extracts.each do |extract| %>
+        <tr>
+          <td><%= extract.id %></td>
+          <td><%= extract.classification_id %></td>
+          <td><%= extract.user_id %></td>
+          <td><%= extract.extractor_key %></td>
+          <td><%= extract.updated_at %></td>
+
+          <% keys.each do |key| %>
+            <td><%= extract.data[key] %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

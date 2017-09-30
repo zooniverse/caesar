@@ -1,0 +1,16 @@
+<h1>Recently processed subjects</h1>
+
+<% @extracts.in_groups_of(4) do |group| %>
+  <div class="row">
+    <% group.each do |extract| %>
+      <div class="col-md-3">
+        <% if extract %>
+          <%= link_to workflow_subject_path(extract.workflow, extract.subject) do %>
+            <%= image_tag(extract.subject.thumbnail, class: 'img-responsive') if extract.subject.thumbnail %>
+            <%= extract.subject_id %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
