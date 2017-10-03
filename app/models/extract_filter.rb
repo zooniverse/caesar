@@ -1,7 +1,9 @@
 class ExtractFilter
   include ActiveModel::Validations
 
-  validates :repeated_classifications, inclusion: {in: ["keep_first", "keep_last", "keep_all"]}
+  REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
+
+  validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
   validates :from, numericality: true
   validates :to, numericality: true
 

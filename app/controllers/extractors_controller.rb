@@ -29,7 +29,7 @@ class ExtractorsController < ApplicationController
     if @extractor.update(extractor_params(@extractor.class))
       redirect_to workflow, success: 'Extractor created'
     else
-      render action: :update
+      render action: :edit
     end
   end
 

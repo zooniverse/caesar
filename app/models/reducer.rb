@@ -1,7 +1,34 @@
 class Reducer < ApplicationRecord
+  include Configurable
+
+  def self.of_type(type)
+    case type.to_s
+    when "consensus"
+      Reducers::ConsensusReducer
+    when "count"
+      Reducers::CountReducer
+    when 'placeholder'
+      Reducers::PlaceholderReducer
+    when "external"
+      Reducers::ExternalReducer
+    when "first_extract"
+      Reducers::FirstExtractReducer
+    when "stats"
+      Reducers::StatsReducer
+    when "unique_count"
+      Reducers::UniqueCountReducer
+    else
+      raise "Unknown type #{type}"
+    end
+  end
+
   belongs_to :workflow
 
+  validates :workflow, presence: true
+  validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
   validates_associated :extract_filter
+
+  before_validation :nilify_empty_fields
 
   NoData = Class.new
 
@@ -32,5 +59,9 @@ class Reducer < ApplicationRecord
 
   def filters
     super || {}
+  end
+
+  def nilify_empty_fields
+    self.grouping = nil if grouping.blank?
   end
 end

@@ -5,7 +5,7 @@ module Extractors
     class FailedMatch < StandardError; end
 
     config_field :field_map
-    config_field :if_missing, default: 'error'
+    config_field :if_missing, default: 'error', enum: ['error', 'ignore']
 
     def extract_data_for(classification)
       Hash.new.tap do |hash|

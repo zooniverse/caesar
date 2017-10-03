@@ -19,6 +19,22 @@ en:
     #       email: 'E-mail to sign in.'
     #     edit:
     #       email: 'E-mail.'
+    hints:
+      extractor:
+        key: 'Must be unique for this workflow, but does not impact anything beyond that.'
+        minimum_workflow_version: 'If you change your workflow during your project, you might make it impossible for Caesar to be compatible with all the versions of your workflow. This lets you specify a minimum version, classifications made on older workflow versions will be ignored. Workflow version numbers look like 4.69 where the first number increments with task changes, and the minor number after the decimal increments with textual changes.'
+        task_key: 'Specify which task to extract.'
+        if_missing: 'What to do when a value cannot be found. By default Caesar will error on the classification.'
+        nothing_here_choice: 'Set this to the value for your "nothing here" choice (if you have one). Usually something like "NOTHING_HERE". When set and a classification has no annotations at all, Caesar will extract that classification as if an annotation for nothing-here was chosen.'
+        url: 'Sends classifications to given URL. Your web service should return either an HTTP 204 status (No Content) or an HTTP 200 status with the extract data in the response body encoded as JSON. Caesar will retry failures outmatically, albeit with a delay.'
+      reducer:
+        key: 'Must be unique for this workflow. Gets reused in the rules whe n you try to look up reduced data with the "LOOKUP" operation.'
+        field: 'Field to count the number of unique values of.'
+      filters:
+        from: "Counts based on classifications in chronological order. Zero-based. A value of 2 would ignore the first two classifications made for a subject."
+        to: "Counts based on classifications in chronological order. Zero-based. A value of 2 would ignore all classifications after the first two for a subject. Supports negative numbers, which count from the end, such that -2 would ignore the last classification, and -1 (default) will not ignore any classifications. When using negative numbers, keep in mind that the meaning of 'the last classification' changes when another classification is made."
+        extractor_keys: "Whitelist of keys of extractors. Ignores extracts from non-whitelisted extractors. Does nothing if left completely empty."
+        repeated_classifications: "What to do when a user makes multiple classifications for a subject. Usually you'll want to ensure that classifications are made independently without prior knowledge, so the default is to keep the first classification made, and ignore others from that user (per subject)."
     # hints:
     #   defaults:
     #     username: 'User name to sign in.'

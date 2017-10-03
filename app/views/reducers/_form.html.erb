@@ -1,0 +1,32 @@
+<%= simple_form_for @reducer, as: :reducer, url: [@workflow, @reducer.becomes(Reducer)], html: { class: 'form-vertical' } do |f| %>
+  <%= f.hidden_field :type, value: params.dig(:reducer, :type) || params[:type] %>
+
+  <%= f.input :key %>
+
+  <% @reducer.class.configuration_fields.each do |key, options| %>
+    <% if options.key?(:enum) %>
+      <%= f.input key, collection: options[:enum] %>
+    <% else %>
+      <%= f.input key %>
+    <% end %>
+  <% end %>
+
+  <%= f.input :grouping %>
+
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Filters</div>
+    <div class="panel-body">
+      <p>Using filters it is possible to limit which extracts this reducer works on.
+      <%= f.simple_fields_for :filters do |filters| %>
+        <%= filters.input :from %>
+        <%= filters.input :to %>
+        <%= filters.input :extractor_keys %>
+        <%= filters.input :repeated_classifications, collection: ExtractFilter::REPEATED_CLASSIFICATIONS %>
+      <% end %>
+    </div>
+  </div>
+
+
+  <%= f.submit class: 'btn btn-submit' %>
+<% end %>

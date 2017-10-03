@@ -1,19 +1,15 @@
 module Reducers
   class UniqueCountReducer < Reducer
-    validates :unique_field, presence: true
+    config_field :field
 
     def reduction_data_for(extracts)
       mapped = extracts.map do |extract|
-        if extract.data.key?(unique_field)
-          extract.data[unique_field]
+        if extract.data.key?(field)
+          extract.data[field]
         end
       end
 
       mapped.uniq.size
-    end
-
-    def unique_field
-      config["field"]
     end
   end
 end
