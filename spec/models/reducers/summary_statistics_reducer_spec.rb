@@ -178,6 +178,13 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["variance"]).to be_within(0.0001).of(1.16333)
     end
 
+    it 'computes sse correctly' do
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["sse"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["sse"]).to be_present
+      expect(result["sse"]).to be_within(0.0001).of(2.32666)
+    end
+
     it 'computes stdev correctly' do
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["stdev"]})
       result = reducer.reduction_data_for(extracts)

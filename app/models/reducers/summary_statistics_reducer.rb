@@ -9,6 +9,7 @@ module Reducers
       "sum",
       "product",
       "mean",
+      "sse",
       "variance",
       "stdev",
       "first",
@@ -98,10 +99,16 @@ module Reducers
       @mean
     end
 
-    def variance
-      @variance ||= values.map do |value|
+    def sse
+      @sse ||= values.map do |value|
         (value-mean)**2
-      end.reduce(:+) / (count-1)
+      end.reduce(:+)
+
+      @sse
+    end
+
+    def variance
+      @variance ||= sse / (count-1)
 
       @variance
     end
