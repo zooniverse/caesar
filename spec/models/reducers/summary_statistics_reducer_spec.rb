@@ -187,5 +187,19 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["product"]).to eq(70.5)
     end
 
+    it 'computes average correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["average"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["average"]).to be_present
+      expect(result["average"]).to be_within(0.0001).of(4.2333)
+    end
+
   end
 end

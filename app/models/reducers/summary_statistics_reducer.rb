@@ -49,40 +49,68 @@ module Reducers
 
     def reduction_data_for(extracts)
       @extracts = extracts
-      result = {}
+      {}.tap do |result|
+        if operations.include? "count"
+          result["count"] = count
+        end
 
-      values = relevant_extracts.map do |extract|
+        if operations.include? "min"
+          result["min"] = min
+        end
+
+        if operations.include? "max"
+          result["max"] = max
+        end
+
+        if operations.include? "sum"
+          result["sum"] = sum
+        end
+
+        if operations.include? "product"
+          result["product"] = product
+        end
+
+        if operations.include? "average"
+          result["average"] = average
+        end
+      end
+    end
+
+    private
+
+    def count
+      values.count
+    end
+
+    def min
+      values.min
+    end
+
+    def max
+      values.max
+    end
+
+    def sum
+      values.reduce(:+)
+    end
+
+    def product
+      values.reduce(:*)
+    end
+
+    def average
+      sum / count
+    end
+
+    def values
+      relevant_extracts.map do |extract|
         if extract.data[field_name].present?
           extract.data[field_name].to_f
         else
           nil
         end
       end.select{ |value| not value.nil? }
-
-      if operations.include? "count"
-        result["count"] = values.count
-      end
-
-      if operations.include? "min"
-        result["min"] = values.min
-      end
-
-      if operations.include? "max"
-        result["max"] = values.max
-      end
-
-      if operations.include? "sum"
-        result["sum"] = values.reduce(:+)
-      end
-
-      if operations.include? "product"
-        result["product"] = values.reduce(:*)
-      end
-
-      result
     end
-
-    private
 
     def relevant_extracts
       return extracts if extractor_name.blank?
