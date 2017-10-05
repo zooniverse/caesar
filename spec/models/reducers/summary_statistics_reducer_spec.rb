@@ -158,7 +158,34 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["count"]).to be_present
       expect(result["count"]).to eq(4)
     end
+
+    it 'computes sum correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["sum"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["sum"]).to be_present
+      expect(result["sum"]).to eq(12.7)
+    end
+
+    it 'computes product correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["product"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["product"]).to be_present
+      expect(result["product"]).to eq(70.5)
+    end
+
   end
-
-
 end

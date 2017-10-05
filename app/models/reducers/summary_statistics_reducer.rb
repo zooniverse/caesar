@@ -62,11 +62,21 @@ module Reducers
       if operations.include? "count"
         result["count"] = values.count
       end
+
       if operations.include? "min"
         result["min"] = values.min
       end
+
       if operations.include? "max"
         result["max"] = values.max
+      end
+
+      if operations.include? "sum"
+        result["sum"] = values.reduce(:+)
+      end
+
+      if operations.include? "product"
+        result["product"] = values.reduce(:*)
       end
 
       result
