@@ -9,7 +9,7 @@ module Reducers
         "max",
         "sum",
         "product",
-        "average",
+        "mean",
         "stdev"
       ]
 
@@ -70,8 +70,8 @@ module Reducers
           result["product"] = product
         end
 
-        if operations.include? "average"
-          result["average"] = average
+        if operations.include? "mean"
+          result["mean"] = mean
         end
       end
     end
@@ -79,27 +79,33 @@ module Reducers
     private
 
     def count
-      values.count
+      @count ||= values.count
+      @count
     end
 
     def min
-      values.min
+      @min ||= values.min
+      @min
     end
 
     def max
-      values.max
+      @max ||= values.max
+      @max
     end
 
     def sum
-      values.reduce(:+)
+      @sum ||= values.reduce(:+)
+      @sum
     end
 
     def product
-      values.reduce(:*)
+      @product ||= values.reduce(:*)
+      @product
     end
 
-    def average
-      sum / count
+    def mean
+      @mean ||= sum / count
+      @mean
     end
 
     def values

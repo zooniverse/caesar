@@ -67,7 +67,7 @@ describe Reducers::SummaryStatisticsReducer do
       r9.validate
       expect(r9.errors[:operations]).to be_present
 
-      r10 = described_class.new(workflow_id: workflow.id, config: {"operations" => ["sum", "average"]})
+      r10 = described_class.new(workflow_id: workflow.id, config: {"operations" => ["sum", "mean"]})
       r10.validate
       expect(r10.errors[:operations]).not_to be_present
 
@@ -87,8 +87,8 @@ describe Reducers::SummaryStatisticsReducer do
       expect(r1.send(:field_name)).to eq("simple_field")
       expect(r2.send(:field_name)).to eq("field")
 
-      r3 = described_class.new(workflow_id: workflow.id, config: {"operations" => ["sum", "average"]})
-      expect(r3.send(:operations)).to eq(["sum", "average"])
+      r3 = described_class.new(workflow_id: workflow.id, config: {"operations" => ["sum", "mean"]})
+      expect(r3.send(:operations)).to eq(["sum", "mean"])
 
       r4 = described_class.new(workflow_id: workflow.id, config: {"operations" => "sum"})
       expect(r4.send(:operations)).to eq(["sum"])
@@ -187,7 +187,7 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["product"]).to eq(70.5)
     end
 
-    it 'computes average correctly' do
+    it 'computes mean correctly' do
       extracts = [
         create(:extract, data: {"some_field" => 4.7}),
         create(:extract, data: {"some_field" => "5"}),
@@ -195,10 +195,10 @@ describe Reducers::SummaryStatisticsReducer do
         create(:extract, data: {"some_other_field" => 2})
       ]
 
-      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["average"]})
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["mean"]})
       result = reducer.reduction_data_for(extracts)
-      expect(result["average"]).to be_present
-      expect(result["average"]).to be_within(0.0001).of(4.2333)
+      expect(result["mean"]).to be_present
+      expect(result["mean"]).to be_within(0.0001).of(4.2333)
     end
 
   end
