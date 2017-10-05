@@ -10,6 +10,7 @@ module Reducers
         "sum",
         "product",
         "mean",
+        "variance",
         "stdev"
       ]
 
@@ -73,6 +74,14 @@ module Reducers
         if operations.include? "mean"
           result["mean"] = mean
         end
+
+        if operations.include? "variance"
+          result["variance"] = variance
+        end
+
+        if operations.include? "stdev"
+          result["stdev"] = stdev
+        end
       end
     end
 
@@ -106,6 +115,19 @@ module Reducers
     def mean
       @mean ||= sum / count
       @mean
+    end
+
+    def variance
+      @variance ||= values.map do |value|
+        (value-mean)**2
+      end.reduce(:+) / (count-1)
+
+      @variance
+    end
+
+    def stdev
+      @stdev ||= Math.sqrt(variance)
+      @stdev
     end
 
     def values
