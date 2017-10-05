@@ -2,18 +2,20 @@ module Reducers
   class SummaryStatisticsReducer < Reducer
     attr_reader :extracts
 
-    validate do
-      valid_operations = [
-        "count",
-        "min",
-        "max",
-        "sum",
-        "product",
-        "mean",
-        "variance",
-        "stdev"
-      ]
+    @@valid_operations = [
+      "count",
+      "min",
+      "max",
+      "sum",
+      "product",
+      "mean",
+      "variance",
+      "stdev",
+      "first",
+      "median"
+    ]
 
+    validate do
       unless config["summarize_field"].present?
         errors.add("summarize_field", "No field specified for operations")
       else
@@ -30,7 +32,7 @@ module Reducers
           errors.add("operations", "Invalid operations specification")
         else
           if(operations.is_a? String)
-            unless valid_operations.include? operations
+            unless @@valid_operations.include? operations
               errors.add("operations", "Invalid operation '#{operations}'")
             end
           end
@@ -39,7 +41,7 @@ module Reducers
               errors.add("operations", "No operation(s) specified")
             end
             operations.each do |operation|
-              unless operation.is_a? String and valid_operations.include? operation
+              unless operation.is_a? String and @@valid_operations.include? operation
                 errors.add("operations", "Invalid operation #{operation}")
               end
             end
@@ -51,44 +53,10 @@ module Reducers
     def reduction_data_for(extracts)
       @extracts = extracts
       {}.tap do |result|
-        if operations.include? "count"
-          result["count"] = count
-        end
-
-        if operations.include? "min"
-          result["min"] = min
-        end
-
-        if operations.include? "max"
-          result["max"] = max
-        end
-
-        if operations.include? "sum"
-          result["sum"] = sum
-        end
-
-        if operations.include? "product"
-          result["product"] = product
-        end
-
-        if operations.include? "mean"
-          result["mean"] = mean
-        end
-
-        if operations.include? "variance"
-          result["variance"] = variance
-        end
-
-        if operations.include? "stdev"
-          result["stdev"] = stdev
-        end
-
-        if operations.include? "median"
-          result["median"] = median
-        end
-
-        if operations.include? "first"
-          result["first"] = first
+        operations.each do |operation|
+          if @@valid_operations.include? operation
+            result[operation] = self.send(operation)
+          end
         end
       end
     end
