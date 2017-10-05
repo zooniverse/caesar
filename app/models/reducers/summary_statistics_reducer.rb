@@ -13,7 +13,8 @@ module Reducers
       "variance",
       "stdev",
       "first",
-      "median"
+      "median",
+      "mode"
     ]
 
     validate do
@@ -121,6 +122,11 @@ module Reducers
     def median
       @median ||= (sorted_values[(count - 1) / 2] + sorted_values[count / 2]) / 2.0
       @median
+    end
+
+    def mode
+      @mode ||= values.group_by{|i| i}.sort_by{|key, group| group.count}.last.first
+      @mode
     end
 
     def sorted_values

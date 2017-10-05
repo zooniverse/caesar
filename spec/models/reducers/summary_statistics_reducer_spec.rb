@@ -199,6 +199,21 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["median"]).to eq(4.7)
     end
 
+    it 'computes mode correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["mode"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["mode"]).to be_present
+      expect(result["mode"]).to eq(4.7)
+    end
+
     it 'computes first correctly' do
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["first"]})
       result = reducer.reduction_data_for(extracts)
