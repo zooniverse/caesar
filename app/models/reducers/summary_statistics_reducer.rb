@@ -4,12 +4,12 @@ module Reducers
 
     validate do
       valid_operations = [
-        "sum",
+        "count",
         "min",
         "max",
+        "sum",
         "product",
         "average",
-        "count",
         "stdev"
       ]
 
@@ -49,6 +49,27 @@ module Reducers
 
     def reduction_data_for(extracts)
       @extracts = extracts
+      result = {}
+
+      values = relevant_extracts.map do |extract|
+        if extract.data[field_name].present?
+          extract.data[field_name].to_f
+        else
+          nil
+        end
+      end.select{ |value| not value.nil? }
+
+      if operations.include? "count"
+        result["count"] = values.count
+      end
+      if operations.include? "min"
+        result["min"] = values.min
+      end
+      if operations.include? "max"
+        result["max"] = values.max
+      end
+
+      result
     end
 
     private

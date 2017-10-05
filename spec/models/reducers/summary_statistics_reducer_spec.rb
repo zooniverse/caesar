@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe Reducers::SummaryStatisticsReducer do
 
+  def unwrap(hash)
+    hash["_default"]
+  end
+
   let(:workflow){ create :workflow }
 
   describe '#configuration' do
@@ -111,15 +115,50 @@ describe Reducers::SummaryStatisticsReducer do
       expect(r2.send(:relevant_extracts)).not_to eq(extracts)
       expect(r2.send(:relevant_extracts).count).to eq(3)
     end
+
+    it 'computes minimum correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["min"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["min"]).to be_present
+      expect(result["min"]).to eq(3)
+    end
+
+    it 'computes maximum correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["max"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["max"]).to be_present
+      expect(result["max"]).to eq(5)
+    end
+
+    it 'counts correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["count"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["count"]).to be_present
+      expect(result["count"]).to eq(4)
+    end
   end
 
-  describe '#summarize_field' do
-  end
-
-  describe '#extractor_name' do
-  end
-
-  describe '#field_name' do
-  end
 
 end
