@@ -92,6 +92,9 @@ describe Reducers::SummaryStatisticsReducer do
 
       r4 = described_class.new(workflow_id: workflow.id, config: {"operations" => "sum"})
       expect(r4.send(:operations)).to eq(["sum"])
+
+      r5 = described_class.new(workflow_id: workflow.id, config: {"operations" => ["sum","sum"]})
+      expect(r5.send(:operations)).to eq(["sum"])
     end
   end
 

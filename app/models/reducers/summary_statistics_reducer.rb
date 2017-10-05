@@ -151,7 +151,7 @@ module Reducers
 
     def operations
       if config['operations'].is_a? Array
-        config['operations']
+        config['operations'].uniq
       else
         [config['operations']]
       end
