@@ -86,6 +86,10 @@ module Reducers
         if operations.include? "median"
           result["median"] = median
         end
+
+        if operations.include? "first"
+          result["first"] = first
+        end
       end
     end
 
@@ -104,6 +108,11 @@ module Reducers
     def max
       @max ||= values.max
       @max
+    end
+
+    def first
+      @first ||= values.first
+      @first
     end
 
     def sum

@@ -2,11 +2,13 @@ require 'spec_helper'
 
 describe Reducers::SummaryStatisticsReducer do
 
-  def unwrap(hash)
-    hash["_default"]
-  end
-
   let(:workflow){ create :workflow }
+  let(:extracts){[
+    create(:extract, data: {"some_field" => 4.7}),
+    create(:extract, data: {"some_field" => "5"}),
+    create(:extract, data: {"some_field" => 3}),
+    create(:extract, data: {"some_other_field" => 2})
+  ]}
 
   describe '#configuration' do
     it 'requires configuration fields' do
@@ -120,13 +122,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes minimum correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["min"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["min"]).to be_present
@@ -134,13 +129,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes maximum correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["max"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["max"]).to be_present
@@ -163,13 +151,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes sum correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["sum"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["sum"]).to be_present
@@ -177,13 +158,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes product correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["product"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["product"]).to be_present
@@ -191,13 +165,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes mean correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["mean"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["mean"]).to be_present
@@ -205,13 +172,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes variance correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["variance"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["variance"]).to be_present
@@ -219,13 +179,6 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes stdev correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["stdev"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["stdev"]).to be_present
@@ -233,17 +186,17 @@ describe Reducers::SummaryStatisticsReducer do
     end
 
     it 'computes median correctly' do
-      extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
-      ]
-
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["median"]})
       result = reducer.reduction_data_for(extracts)
       expect(result["median"]).to be_present
       expect(result["median"]).to eq(4.7)
+    end
+
+    it 'computes first correctly' do
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["first"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["first"]).to be_present
+      expect(result["first"]).to eq(4.7)
     end
 
   end
