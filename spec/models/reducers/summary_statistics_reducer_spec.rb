@@ -232,5 +232,19 @@ describe Reducers::SummaryStatisticsReducer do
       expect(result["stdev"]).to be_within(0.0001).of(1.07857)
     end
 
+    it 'computes median correctly' do
+      extracts = [
+        create(:extract, data: {"some_field" => 4.7}),
+        create(:extract, data: {"some_field" => "5"}),
+        create(:extract, data: {"some_field" => 3}),
+        create(:extract, data: {"some_other_field" => 2})
+      ]
+
+      reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["median"]})
+      result = reducer.reduction_data_for(extracts)
+      expect(result["median"]).to be_present
+      expect(result["median"]).to eq(4.7)
+    end
+
   end
 end

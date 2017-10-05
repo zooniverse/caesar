@@ -82,6 +82,10 @@ module Reducers
         if operations.include? "stdev"
           result["stdev"] = stdev
         end
+
+        if operations.include? "median"
+          result["median"] = median
+        end
       end
     end
 
@@ -130,14 +134,25 @@ module Reducers
       @stdev
     end
 
+    def median
+      @median ||= (sorted_values[(count - 1) / 2] + sorted_values[count / 2]) / 2.0
+      @median
+    end
+
+    def sorted_values
+      @sorted_values ||= values.sort
+      @sorted_values
+    end
+
     def values
-      relevant_extracts.map do |extract|
+      @values ||= relevant_extracts.map do |extract|
         if extract.data[field_name].present?
           extract.data[field_name].to_f
         else
           nil
         end
       end.select{ |value| not value.nil? }
+      @values
     end
 
     def relevant_extracts
