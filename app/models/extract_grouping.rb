@@ -20,32 +20,33 @@ class ExtractGrouping
       { '_default' => extracts }
     else
       extractor, field = subgroup.split('.')
-
-      # group extracts by classification; then within each classification group,
-      # turn the extracts into a hash keyed by extractor id
-      extracts_by_classification = extracts.group_by { |extract| extract.classification_id }.map do
-        |id, classifs| Hash[classifs.map{|classif| [classif.extractor_key, classif]}]
-      end
-
-      extracts_by_classification.each do |group|
-        raise MissingGroupingField.new(subgroup, group.first[1].classification_id) unless group.key?(extractor)
-        raise MissingGroupingField.new(subgroup, group.first[1].classification_id) unless group[extractor].data.key?(field)
-      end
-
-      # group the extract groups by the value of "extractor_key.field_name" specified in subgroup param,
-      # then flatten each of these groups into a basic list
-      Hash[
-        extracts_by_classification.group_by{|nest| nest[extractor].data[field]}.map do |subg, ex|
-          [subg, ex.map{|x| x.map{|k,v| pluck_data_key v, field}}.flatten] end
-      ]
+      extracts_by_classification = group_extracts_by_classification_and_extractor
+      validate_key_present extracts_by_classification, extractor, field
+      extracts_by_subgroup = group_extracts_by_subgroup(extracts_by_classification, extractor, field)
+      flatten_extract_groups(extracts_by_subgroup)
     end
   end
 
   private
 
-  def pluck_data_key(extract, key)
-    extract.tap do |extr|
-      extr.data.except!(key)
+  def validate_key_present(extracts_hash, extractor, field)
+      extracts_hash.each do |group|
+        raise MissingGroupingField.new(subgroup, group.first[1].classification_id) unless group.key?(extractor)
+        raise MissingGroupingField.new(subgroup, group.first[1].classification_id) unless group[extractor].data.key?(field)
+      end
+  end
+
+  def group_extracts_by_classification_and_extractor
+    extracts.group_by { |extract| extract.classification_id }.map do
+      |id, classifs| Hash[classifs.map{|classif| [classif.extractor_key, classif]}]
     end
+  end
+
+  def group_extracts_by_subgroup(extract_groups, extractor, field)
+    extract_groups.group_by { |extract_hash| extract_hash[extractor].data[field] }
+  end
+
+  def flatten_extract_groups(extract_groups)
+    Hash[ extract_groups.map { |subg, ex| [subg, ex.map(&:values).flatten] } ]
   end
 end

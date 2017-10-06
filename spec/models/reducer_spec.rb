@@ -53,7 +53,7 @@ RSpec.describe Reducer, type: :model do
     instance_double(ExtractFilter, filter: extracts)
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     expect(ExtractGrouping).to receive(:new).
-      with(extracts.sort_by{ |e| e.classification_at }, nil).
+      with(extracts, nil).
       and_return(grouping_filter)
 
     subject.process(extracts)
@@ -71,6 +71,28 @@ RSpec.describe Reducer, type: :model do
 
     expect(reducer).not_to receive(:reduction_data_for)
     expect { reducer.process(extracts) }.to raise_error(Stoplight::Error::RedLight)
+  end
+
+  it 'composes grouping and filtering correctly' do
+    fancy_extracts = [
+      build(:extract, extractor_key: 'votes', classification_id: 1, subject_id: 1234, user_id: 5680, data: {"T0" => "ARAI"}),
+      build(:extract, extractor_key: 'votes', classification_id: 2, subject_id: 1234, user_id: 5681, data: {"T0" => "ARAI"}),
+      build(:extract, extractor_key: 'votes', classification_id: 3, subject_id: 1234, user_id: 5678, data: {"T0" => "ARAI"}),
+      build(:extract, extractor_key: 'votes', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"T0" => "ARAI"}),
+
+      build(:extract, extractor_key: 'user_group', classification_id: 1, subject_id: 1234, user_id: 5680, data: {"id"=>"33"}),
+      build(:extract, extractor_key: 'user_group', classification_id: 2, subject_id: 1234, user_id: 5681, data: {"id"=>"34"}),
+      build(:extract, extractor_key: 'user_group', classification_id: 3, subject_id: 1234, user_id: 5678, data: {"id"=>"33"}),
+      build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
+    ]
+
+    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}
+    allow(reducer).to receive(:reduction_data_for){ |reduce_me| reduce_me.map(&:data) }
+    reductions = reducer.process(fancy_extracts)
+
+    expect(reductions).to include("33", "34")
+    expect(reductions['33'].count).to eq(3)
+    expect(reductions['34'].count).to eq(1)
   end
 
   describe 'validations' do
