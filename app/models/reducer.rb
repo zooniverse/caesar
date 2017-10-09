@@ -15,6 +15,8 @@ class Reducer < ApplicationRecord
       Reducers::FirstExtractReducer
     when "stats"
       Reducers::StatsReducer
+    when "summary_stats"
+      Reducers::SummaryStatisticsReducer
     when "unique_count"
       Reducers::UniqueCountReducer
     else

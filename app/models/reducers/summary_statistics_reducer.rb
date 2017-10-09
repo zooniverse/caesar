@@ -1,5 +1,8 @@
 module Reducers
   class SummaryStatisticsReducer < Reducer
+    config_field :summarize_field
+    config_field :operations
+
     attr_reader :extracts
 
     @@valid_operations = [

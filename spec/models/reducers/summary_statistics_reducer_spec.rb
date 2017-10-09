@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe Reducers::SummaryStatisticsReducer do
 
-  let(:workflow){ create :workflow }
+  let(:workflow){ build_stubbed :workflow }
   let(:extracts){[
-    create(:extract, data: {"some_field" => 4.7}),
-    create(:extract, data: {"some_field" => "5"}),
-    create(:extract, data: {"some_field" => 3}),
-    create(:extract, data: {"some_other_field" => 2})
+    build_stubbed(:extract, workflow_id: workflow.id, data: {"some_field" => 4.7}),
+    build_stubbed(:extract, workflow_id: workflow.id, data: {"some_field" => "5"}),
+    build_stubbed(:extract, workflow_id: workflow.id, data: {"some_field" => 3}),
+    build_stubbed(:extract, workflow_id: workflow.id, data: {"some_other_field" => 2})
   ]}
 
   describe '#configuration' do
@@ -106,11 +106,11 @@ describe Reducers::SummaryStatisticsReducer do
       r2 = described_class.new(workflow_id: workflow.id, config: {"summarize_field" => "complex.field"})
 
       extracts = [
-        create(:extract, extractor_key: "foo"),
-        create(:extract, extractor_key: "complex"),
-        create(:extract, extractor_key: "foo"),
-        create(:extract, extractor_key: "complex"),
-        create(:extract, extractor_key: "complex")
+        build_stubbed(:extract, extractor_key: "foo"),
+        build_stubbed(:extract, extractor_key: "complex"),
+        build_stubbed(:extract, extractor_key: "foo"),
+        build_stubbed(:extract, extractor_key: "complex"),
+        build_stubbed(:extract, extractor_key: "complex")
       ]
 
       allow(r1).to receive(:extracts).and_return(extracts)
@@ -137,11 +137,11 @@ describe Reducers::SummaryStatisticsReducer do
 
     it 'counts correctly' do
       extracts = [
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
+        build_stubbed(:extract, data: {"some_field" => 4.7}),
+        build_stubbed(:extract, data: {"some_field" => 4.7}),
+        build_stubbed(:extract, data: {"some_field" => "5"}),
+        build_stubbed(:extract, data: {"some_field" => 3}),
+        build_stubbed(:extract, data: {"some_other_field" => 2})
       ]
 
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["count"]})
@@ -201,11 +201,11 @@ describe Reducers::SummaryStatisticsReducer do
 
     it 'computes mode correctly' do
       extracts = [
-        create(:extract, data: {"some_field" => "5"}),
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => 4.7}),
-        create(:extract, data: {"some_field" => 3}),
-        create(:extract, data: {"some_other_field" => 2})
+        build_stubbed(:extract, data: {"some_field" => "5"}),
+        build_stubbed(:extract, data: {"some_field" => 4.7}),
+        build_stubbed(:extract, data: {"some_field" => 4.7}),
+        build_stubbed(:extract, data: {"some_field" => 3}),
+        build_stubbed(:extract, data: {"some_other_field" => 2})
       ]
 
       reducer = described_class.new(config: {"summarize_field" => "some_field", "operations" => ["mode"]})
