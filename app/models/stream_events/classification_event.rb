@@ -33,10 +33,9 @@ module StreamEvents
     end
 
     def classification
-      data = @data
-      data = data.permit(:annotations, :metadata, :links, :created_at, :updated_at)
+      data = @data.permit(:workflow_version, :created_at, :updated_at, annotations: {}, metadata: {}, links: {})
 
-      @classification ||= Classification.new(data)
+      @classification ||= Classification.create!(data)
     end
 
     def workflow

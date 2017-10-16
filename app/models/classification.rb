@@ -44,6 +44,10 @@ class Classification < ApplicationRecord
   # end
 
   def links=(hash)
+    if hash["project"].present?
+      self.project_id = hash["project"]
+    end
+
     if hash["workflow"].present?
       self.workflow_id = hash["workflow"]
     end

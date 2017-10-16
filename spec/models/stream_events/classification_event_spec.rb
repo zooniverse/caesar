@@ -4,15 +4,18 @@ describe StreamEvents::ClassificationEvent do
   let(:queue) { double(add: nil) }
   let(:stream) { double(KinesisStream, queue: queue) }
   let(:workflow) { create :workflow }
+
   let(:hash) do
     {
-      "data" => ActionController::Parameters.new("links" => {"workflow" => workflow.id, "subjects" => ["123"]}),
+      "data" => ActionController::Parameters.new(
+        "workflow_version" => "1.2",
+        "links" => {"project" => workflow.project_id, "workflow" => workflow.id, "subjects" => ["123"]}
+      ),
       "linked" => {"subjects" => [{"id" => "123"}]}
     }
   end
 
   it 'processes an event' do
-    workflow.update! extractors_config: {"ext" => {type: "external"}}
     described_class.new(stream, hash).process
     expect(queue).to have_received(:add).once
   end
