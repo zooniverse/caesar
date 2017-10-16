@@ -6,8 +6,8 @@ describe StreamEvents::ClassificationEvent do
   let(:workflow) { create :workflow }
   let(:hash) do
     {
-      "data" => ActionController::Parameters.new("links" => {"workflow" => workflow.id}),
-      "linked" => {"subjects" => {}}
+      "data" => ActionController::Parameters.new("links" => {"workflow" => workflow.id, "subjects" => ["123"]}),
+      "linked" => {"subjects" => [{"id" => "123"}]}
     }
   end
 

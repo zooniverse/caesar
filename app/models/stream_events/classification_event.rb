@@ -33,12 +33,20 @@ module StreamEvents
     end
 
     def classification
-      @classification ||= Classification.new(@data)
+      data = @data
+      data = data.permit(:annotations, :metadata, :links, :created_at, :updated_at)
+
+      @classification ||= Classification.new(data)
     end
 
     def workflow
       workflow_id = @data.fetch("links").fetch("workflow")
       Workflow.find_by(id: workflow_id)
+    end
+
+    def subject
+      subject_id = @data.fetch("links").fetch("subjects")[0]
+      Subject.find(subject_id)
     end
 
     def linked_subjects

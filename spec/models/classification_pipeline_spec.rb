@@ -4,10 +4,7 @@ describe ClassificationPipeline do
       "id"=>"12281870",
       "created_at"=>"2016-05-16T09:34:23.682Z",
       "updated_at"=>"2016-05-16T09:34:23.750Z",
-      "user_ip"=>"1.2.3.4",
       "workflow_version"=>"332.94",
-      "gold_standard"=>nil,
-      "expert_classifier"=>nil,
       "annotations"=>[
         {
           "task"=>"T1",
@@ -33,7 +30,6 @@ describe ClassificationPipeline do
         ],
         "workflow_version"=>"332.94"
       },
-      "href"=>"/classifications/12281870",
       "links"=>{
         "project"=>"2439",
         "user"=>"1",

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170908141509) do
+ActiveRecord::Schema.define(version: 20171016163559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,20 @@ ActiveRecord::Schema.define(version: 20170908141509) do
     t.datetime "updated_at", null: false
     t.index ["subject_id"], name: "index_actions_on_subject_id"
     t.index ["workflow_id"], name: "index_actions_on_workflow_id"
+  end
+
+  create_table "classifications", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "workflow_id", null: false
+    t.integer "user_id"
+    t.integer "subject_id", null: false
+    t.string "workflow_version", null: false
+    t.jsonb "annotations", default: {}, null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "received_at", default: "2017-10-16 17:07:35", null: false
+    t.datetime "processed_at"
   end
 
   create_table "credentials", force: :cascade do |t|
@@ -146,6 +160,8 @@ ActiveRecord::Schema.define(version: 20170908141509) do
 
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
+  add_foreign_key "classifications", "subjects"
+  add_foreign_key "classifications", "workflows"
   add_foreign_key "data_requests", "workflows"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
