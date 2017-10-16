@@ -36,6 +36,8 @@ class Workflow::ConvertLegacyReducersConfig
       Reducers::FirstExtractReducer
     when "placeholder"
       Reducers::PlaceholderReducer
+    when "summary_stats"
+      Reducers::SummaryStatisticsReducer
     else
       raise "Reducer misconfigured: unknown type #{config["type"]}"
     end
