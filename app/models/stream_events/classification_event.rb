@@ -17,7 +17,7 @@ module StreamEvents
         workflow.webhooks.process "new_classification", @data.as_json
       end
 
-      stream.queue.add(ExtractWorker, classification.workflow_id, @data.to_unsafe_h)
+      stream.queue.add(ExtractWorker, classification.id)
     end
 
     def cache_linked_models!
@@ -33,7 +33,7 @@ module StreamEvents
     end
 
     def classification
-      data = @data.permit(:workflow_version, :created_at, :updated_at, annotations: {}, metadata: {}, links: {})
+      data = @data.permit(:id, :workflow_version, :created_at, :updated_at, annotations: {}, metadata: {}, links: {})
 
       @classification ||= Classification.create!(data)
     end
