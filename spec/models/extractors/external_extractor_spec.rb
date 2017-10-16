@@ -51,8 +51,6 @@ describe Extractors::ExternalExtractor do
   it 'does not post if no url is configured' do
     extractor = described_class.new(key: "ext")
 
-    expect do
-      extractor.process(classification)
-    end.to raise_error(StandardError)
+    expect(extractor.process(classification)).to eq({})
   end
 end

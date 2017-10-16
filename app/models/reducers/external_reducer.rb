@@ -31,7 +31,7 @@ module Reducers
           raise StandardError.new 'Remote reducer failed'
         end
       else
-        raise StandardError.new "External extractor improperly configured: no URL"
+        {}
       end
     end
   end

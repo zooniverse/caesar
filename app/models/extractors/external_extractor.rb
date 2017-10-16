@@ -31,7 +31,7 @@ module Extractors
           raise StandardError.new 'Remote extractor failed'
         end
       else
-        raise StandardError.new "External extractor improperly configured: no URL"
+        {}
       end
     end
   end
