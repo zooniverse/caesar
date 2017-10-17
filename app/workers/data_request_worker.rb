@@ -10,8 +10,7 @@ class DataRequestWorker
   attr_accessor :path
 
   def perform(request_id)
-    request = DataRequest.find(request_id)
-    # return unless request.status == DataRequest::PENDING
+    request = DataRequest.where(id: request_id).first
     return unless request.pending?
 
     self.path = "tmp/#{request.id}.csv"
@@ -38,6 +37,7 @@ class DataRequestWorker
       request.complete!
     rescue
       request.failed!
+      raise
     end
   end
 end
