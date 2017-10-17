@@ -11,7 +11,7 @@ class DataRequestWorker
 
   def perform(request_id)
     request = DataRequest.where(id: request_id).first
-    return unless request.pending?
+    return unless request.present? && request.pending?
 
     self.path = "tmp/#{request.id}.csv"
 
