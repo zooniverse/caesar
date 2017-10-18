@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20171016163559) do
     t.index ["workflow_id"], name: "index_actions_on_workflow_id"
   end
 
-  create_table "classifications", force: :cascade do |t|
+  create_table "classifications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "workflow_id", null: false
     t.integer "user_id"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20171016163559) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "received_at", default: "2017-10-16 17:07:35", null: false
+    t.datetime "received_at", default: -> { "now()" }, null: false
     t.datetime "processed_at"
   end
 
