@@ -11,8 +11,12 @@ class FetchClassificationsWorker
   def process_classifications(workflow_id, classifications)
     return unless classifications
 
-    classifications.each do |classification|
-      ExtractWorker.perform_async(workflow_id, classification)
+    classifications.each do |attributes|
+      classification = Classification.find_or_initialize_by(id: attributes["id"])
+      classification.attributes = attributes
+      classification.save!
+
+      ExtractWorker.perform_async(classification.id)
     end
   end
 end
