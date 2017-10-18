@@ -2,46 +2,14 @@ class Classification < ApplicationRecord
   belongs_to :workflow
   belongs_to :subject
 
-  # def id
-  #   attributes.fetch('id')
-  # end
-
-  # def created_at
-  #   attributes.fetch('created_at', nil)
-  # end
-
-  # def updated_at
-  #   attributes.fetch('updated_at', attributes.fetch('created_at', nil))
-  # end
-
   def annotations=(val)
     write_attribute(:annotations,
                     val.group_by { |ann| ann['task'] })
   end
 
-  # def metadata
-  #   attributes.fetch('metadata', {})
-  # end
-
-  # def project_id
-  #   attributes.fetch('links').fetch('project').to_i
-  # end
-
-  # def workflow_id
-  #   attributes.fetch('links').fetch('workflow').to_i
-  # end
-
   def workflow_version
     metadata.fetch('workflow_version', nil)
   end
-
-  # def user_id
-  #   attributes.fetch('links')['user']&.to_i
-  # end
-
-  # def subject_id
-  #   attributes.fetch('links').fetch('subjects').first.to_i
-  # end
 
   def links=(hash)
     if hash["project"].present?
