@@ -11,15 +11,7 @@ RSpec.describe ExtractWorker, type: :worker do
   end
 
   it 'works with classification ids' do
-    classification = Classification.create!(
-      "workflow_version" => "1.2",
-      "links" => {
-        "project" => workflow.project_id,
-        "workflow" => workflow.id,
-        "subjects" => [subject.id]
-      }
-    )
-
+    classification = create :classification, workflow: workflow, subject: subject
     described_class.new.perform(classification.id)
   end
 end
