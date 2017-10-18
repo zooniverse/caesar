@@ -17,6 +17,8 @@ class ExtractWorker
     extracts = workflow.classification_pipeline.extract(classification)
     extracts = extracts.select { |extract| extract != Extractor::NoData }
 
+    classification.update!(processed_at: Time.zone.now)
+
     if extracts.present?
       ReduceWorker.perform_async(classification.workflow_id, classification.subject_id)
     end

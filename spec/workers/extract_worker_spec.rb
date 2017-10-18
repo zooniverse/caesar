@@ -14,4 +14,11 @@ RSpec.describe ExtractWorker, type: :worker do
     classification = create :classification, workflow: workflow, subject: subject
     described_class.new.perform(classification.id)
   end
+
+  it 'marks the classification as processed' do
+    classification = create :classification, workflow: workflow, subject: subject
+    expect do
+      described_class.new.perform(classification.id)
+    end.to change { classification.reload.processed_at }.from(nil)
+  end
 end
