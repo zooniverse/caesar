@@ -71,7 +71,7 @@ class ApplicationController < ActionController::Base
     request.headers['Authorization'].match(/\ABearer (?<token>.*)\Z/)["token"]
   end
 
-  def record_not_found
-    head 404
+  def record_not_found(exception)
+    render json: {error: exception.message}, status: 404
   end
 end
