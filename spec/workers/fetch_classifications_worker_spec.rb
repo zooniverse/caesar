@@ -35,17 +35,6 @@ describe FetchClassificationsWorker do
   end
 
   def classification(id)
-    {
-      "id" => id,
-      "annotations" => {},
-      "metadata" => {},
-      "workflow_version" => "1.1",
-      "links" => {
-        "project" => workflow.project_id,
-        "workflow" => workflow.id,
-        "subjects" => [subject.id]
-      }
-    }
+    build(:classification_event, id: id, workflow: workflow, subject: subject)
   end
-
 end

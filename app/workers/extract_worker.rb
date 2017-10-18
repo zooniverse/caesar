@@ -7,29 +7,24 @@ class ExtractWorker
 
   # second param accepted for backwards compat reasons, remove later
   def perform(classification_or_legacy_workflow_id, legacy_classification_data=nil)
-    if legacy_classification_data.present?
-      workflow_id = classification_or_legacy_workflow_id
-      classification_data = legacy_classification_data
-
-      workflow = Workflow.find(workflow_id)
-      classification = Classification.new(classification_data)
-      extract = workflow.classification_pipeline.extract(classification)
-
-      return if extract == Extractor::NoData
-
-      ReduceWorker.perform_async(workflow_id, classification.subject_id)
-      workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
+    classification = if legacy_classification_data.present?
+      Classification.upsert(legacy_classification_data)
     else
-      classification_id = classification_or_legacy_workflow_id
+      Classification.find(classification_or_legacy_workflow_id)
+    end
 
-      classification = Classification.find(classification_id)
-      workflow = classification.workflow
-      extract = workflow.classification_pipeline.extract(classification)
+    workflow = classification.workflow
+    extracts = workflow.classification_pipeline.extract(classification)
+    extracts = extracts.select { |extract| extract != Extractor::NoData }
 
-      return if extract == Extractor::NoData
+    if extracts.present?
+      ReduceWorker.perform_async(classification.workflow_id, classification.subject_id)
+    end
 
-      ReduceWorker.perform_async(workflow_id, classification.subject_id)
-      workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
+    if workflow.subscribers?
+      extracts.each do |extract|
+        workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
+      end
     end
   end
 end

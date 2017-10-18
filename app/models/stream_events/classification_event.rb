@@ -33,9 +33,7 @@ module StreamEvents
     end
 
     def classification
-      data = @data.permit(:id, :workflow_version, :created_at, :updated_at, annotations: {}, metadata: {}, links: {})
-
-      @classification ||= Classification.create!(data)
+      @classification ||= Classification.upsert(@data.to_unsafe_h)
     end
 
     def workflow

@@ -2,6 +2,17 @@ class Classification < ApplicationRecord
   belongs_to :workflow
   belongs_to :subject
 
+  def self.upsert(data)
+    classification = Classification.find_or_initialize_by(id: data.fetch("id"))
+    classification.annotations = data.fetch("annotations")
+    classification.metadata = data.fetch("metadata")
+    classification.workflow_version = data.fetch("workflow_version")
+    classification.created_at = data.fetch("created_at")
+    classification.updated_at = data.fetch("updated_at")
+    classification.links = data.fetch("links")
+    classification.tap(&:save!)
+  end
+
   def annotations=(val)
     write_attribute(:annotations,
                     val.group_by { |ann| ann['task'] })

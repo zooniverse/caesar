@@ -12,10 +12,7 @@ class FetchClassificationsWorker
     return unless classifications
 
     classifications.each do |attributes|
-      classification = Classification.find_or_initialize_by(id: attributes["id"])
-      classification.attributes = attributes
-      classification.save!
-
+      classification = Classification.upsert(attributes)
       ExtractWorker.perform_async(classification.id)
     end
   end
