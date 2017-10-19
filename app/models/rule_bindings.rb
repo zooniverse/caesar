@@ -8,7 +8,7 @@ class RuleBindings
 
     def data
       return {} unless @subject
-      @subject.metadata
+      @data ||= @subject.metadata.merge("zooniverse_subject_id" => @subject.id)
     end
   end
 

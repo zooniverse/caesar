@@ -39,7 +39,6 @@ describe Conditions::Calculator do
     end
   end
 
-
   def const(val)
     Conditions::Constant.new(val)
   end
