@@ -8,9 +8,10 @@ module Reducers
       end
 
       most_likely, num_votes = counter.max
-      agreement = num_votes.to_f / counter.sum
 
       if num_votes > 0
+        agreement = num_votes.to_f / counter.sum
+
         {
           "most_likely" => most_likely.sort.join("+"),
           "num_votes" => num_votes,
