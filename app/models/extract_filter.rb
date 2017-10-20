@@ -2,8 +2,10 @@ class ExtractFilter
   include ActiveModel::Validations
 
   REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
+  EMPTY_EXTRACTS = ["keep_all", "ignore_empty"]
 
   validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
+  validates :empty_extracts, inclusion: {in: EMPTY_EXTRACTS}
   validates :from, numericality: true
   validates :to, numericality: true
 
@@ -15,7 +17,7 @@ class ExtractFilter
 
   def filter(extracts)
     extracts = ExtractsForClassification.from(extracts)
-    filter_by_subrange(filter_by_extractor_keys(filter_by_repeatedness(extracts))).flat_map(&:extracts)
+    filter_by_subrange(filter_by_emptyness(filter_by_extractor_keys(filter_by_repeatedness(extracts)))).flat_map(&:extracts)
   end
 
   private
@@ -43,6 +45,17 @@ class ExtractFilter
     extracts.map do |group|
       group.select do |extract|
         extractor_keys.include?(extract.extractor_key)
+      end
+    end
+  end
+
+  def filter_by_emptyness(extracts)
+    case empty_extracts
+    when "keep_all"
+      extracts
+    when "ignore_empty"
+      extracts.map do |extract_group|
+        extract_group.select { |extract| extract.data.present? }
       end
     end
   end
@@ -76,5 +89,9 @@ class ExtractFilter
 
   def repeated_classifications
     filters["repeated_classifications"] || "keep_first"
+  end
+
+  def empty_extracts
+    filters["empty_extracts"] || "keep_all"
   end
 end
