@@ -18,6 +18,8 @@ module Conditions
         Comparison.new(config[0], build_many(config[1..-1]))
       when 'const'
         Constant.new(config[1])
+      when '+', '-', '*', '/', '%'
+        Calculator.new(config[0], build_many(config[1..-1]))
       when 'lookup'
         raise InvalidConfig, "Not enough arguments given to lookup" unless config[1..-1].size == 2
         Lookup.new(config[1], config[2])

@@ -12,6 +12,14 @@ describe RuleBindings do
     expect(rule_bindings.fetch("other.b")).to eq(2)
   end
 
+  it 'exposes subject id' do
+    reductions = []
+    subject = build_stubbed(:subject, id: 1234, metadata: {})
+
+    rule_bindings = described_class.new(reductions, subject)
+    expect(rule_bindings.fetch("subject.zooniverse_subject_id")).to eq(1234)
+  end
+
   it 'exposes subject metadata' do
     reductions = []
     subject = build_stubbed(:subject, metadata: {"region" => "oxford"})
