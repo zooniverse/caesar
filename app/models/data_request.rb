@@ -46,7 +46,7 @@ class DataRequest < ApplicationRecord
 
   belongs_to :workflow
 
-  def as_json(options)
+  def as_json(options = {})
     {
       workflow_id: workflow_id,
       user_id: user_id,
