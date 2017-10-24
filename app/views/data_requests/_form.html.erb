@@ -1,0 +1,6 @@
+<% data_request = @workflow.data_requests.build %>
+
+<%= simple_form_for [@workflow, data_request], html: { class: 'form-vertical' } do |f| %>
+  <%= f.input :requested_data, collection: DataRequest.requested_data.keys %>
+  <%= f.submit class: 'btn btn-submit' %>
+<% end %>
