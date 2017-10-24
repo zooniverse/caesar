@@ -29,7 +29,9 @@ module StreamEvents
     private
 
     def enabled?
-      workflow.present?
+      Rails.cache.fetch("workflows/#{workflow_id}/enabled?", expires_in: 5.minutes) do
+        workflow.present?
+      end
     end
 
     def classification
@@ -37,13 +39,16 @@ module StreamEvents
     end
 
     def workflow
-      workflow_id = @data.fetch("links").fetch("workflow")
       Workflow.find_by(id: workflow_id)
     end
 
     def subject
       subject_id = @data.fetch("links").fetch("subjects")[0]
       Subject.find(subject_id)
+    end
+    
+    def workflow_id
+      @data.fetch("links").fetch("workflow")
     end
 
     def linked_subjects

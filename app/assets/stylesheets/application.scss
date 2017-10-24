@@ -40,3 +40,8 @@ table.condition td {
   border: 1px solid black;
   padding: 5px;
 }
+
+
+.data-request-failed { background-color: #AA3E39; color: white; }
+.data-request-processing { background-color: #D3E08D; }
+.data-request-complete { background-color: #7C9208; }

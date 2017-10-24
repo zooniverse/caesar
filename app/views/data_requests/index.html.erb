@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <%= render partial: 'form' %>
+  </div>
+</div>
+
+<table class="table table-hover table table-sm">
+  <thead>
+     <thead class="thead-inverse" >
+    <tr>
+      <th>Requested at</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @data_requests.each do |data_request| %>
+      <tr class="data-request-<%= data_request.status %>">
+        <td><%= data_request.created_at %></td>
+        <td><%= data_request.requested_data %></td>
+        <td><%= data_request.status%></td>
+        <td><%= data_request.url %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

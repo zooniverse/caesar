@@ -19,6 +19,19 @@ describe DataRequestsController, :type => :controller do
     data_request.id
   end
 
+  describe '#index' do
+    let(:params) { {workflow_id: workflow.id} }
+
+    it 'returns data requests for workflow' do
+      data_request1 = create(:data_request, workflow: workflow, created_at: 5.days.ago)
+      data_request2 = create(:data_request, workflow: workflow, created_at: 2.days.ago)
+
+      response = get :index, params: params, format: :json
+      expect(json_response).to eq([data_request2.as_json.stringify_keys,
+                                   data_request1.as_json.stringify_keys])
+    end
+  end
+
   describe '#create' do
     describe 'extracts' do
       let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'extracts'}} }
@@ -49,10 +62,6 @@ describe DataRequestsController, :type => :controller do
     let(:params) { {workflow_id: workflow.id, id: data_request.id }}
 
     before { data_request.save! }
-
-    def json_response
-      JSON.parse(response.body)
-    end
 
     it('should tell us when there are no matching requests') do
       response = get :show, params: params.merge(id: 123312), format: :json

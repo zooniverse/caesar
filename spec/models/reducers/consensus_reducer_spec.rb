@@ -10,7 +10,7 @@ describe Reducers::ConsensusReducer do
   def build_extracts(choices)
     choices.map.with_index do |choice, idx|
       vals = Array.wrap(choice)
-      data = vals.map { |val| {val => 1} }.reduce(:merge)
+      data = vals.map { |val| {val => 1} }.reduce(:merge) || {}
 
       Extract.new(
         classification_id: idx,
@@ -22,7 +22,7 @@ describe Reducers::ConsensusReducer do
 
   describe '#process' do
     it 'processes when there are no classifications' do
-      expect(unwrap(reducer.process([]))).to eq({})
+      expect(unwrap(reducer.process([]))).to eq({"num_votes" => 0})
     end
 
     it 'returns the most likely' do

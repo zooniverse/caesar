@@ -1,4 +1,9 @@
 class DataRequestsController < ApplicationController
+  def index
+    @data_requests = workflow.data_requests.order(created_at: :desc)
+    respond_with @data_requests
+  end
+
   def show
     data_request = workflow.data_requests.find(params[:id])
     authorize data_request
@@ -32,8 +37,11 @@ class DataRequestsController < ApplicationController
     data_request.url = nil
     data_request.save!
 
-    DataRequestWorker.perform_async(data_request.workflow_id)
-    respond_with workflow, data_request
+    DataRequestWorker.perform_async(data_request.id)
+    respond_to do |format|
+      format.html { redirect_to [workflow, :data_requests] }
+      format.json { respond_with workflow, data_request }
+    end
   end
 
   def workflow
