@@ -20,7 +20,7 @@
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data %></td>
         <td><%= data_request.status%></td>
-        <td><%= data_request.url %></td>
+        <td><%= link_to "Download", data_request.url %></td>
       </tr>
     <% end %>
   </tbody>
