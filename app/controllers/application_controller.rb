@@ -19,18 +19,9 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate!
-    head :unauthorized unless authenticated?
+    handle_unauthenticated_request("Login required.") unless authenticated?
   rescue JWT::ExpiredSignature
-    respond_to do |format|
-      format.html do
-        reset_session
-        redirect_to session_path, alert: "Session expired"
-      end
-
-      format.json do
-        head :unauthorized
-      end
-    end
+    handle_unauthenticated_request("Session expired. Please log in again.")
   end
 
   def authenticated?
@@ -74,4 +65,18 @@ class ApplicationController < ActionController::Base
   def record_not_found
     head 404
   end
+
+  def handle_unauthenticated_request(message)
+    respond_to do |format|
+      format.html do
+        reset_session
+        redirect_to session_path, alert: message
+      end
+
+      format.json do
+        head :unauthorized
+      end
+    end
+  end
+
 end
