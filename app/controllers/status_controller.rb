@@ -1,6 +1,7 @@
 class StatusController < ApplicationController
   def show
     skip_authorization
-    render text: 'ok'
+    @status = ApplicationStatus.new
+    respond_with @status
   end
 end
