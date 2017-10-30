@@ -160,12 +160,11 @@ describe DataRequestsController, :type => :controller do
     end
 
     it('should return the url if the file is available') do
-      data_request.url = 'foo'
-      data_request.save!
+      data_request.complete!
 
       response = get :show, params: params, format: :json
       expect(response.status).to eq(200)
-      expect(json_response["url"]).to eq('foo')
+      expect(json_response["url"]).to be_present
     end
   end
 end

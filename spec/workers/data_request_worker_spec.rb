@@ -1,10 +1,9 @@
 require 'spec_helper'
-require 'uploader'
 
 describe DataRequestWorker do
   let(:worker) { described_class.new }
 
-  let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
+  let(:stored_export) { double("StoredExport", "download_url" => "hi", "upload" => nil)}
 
   let(:workflow) { build :workflow }
 
@@ -22,7 +21,7 @@ describe DataRequestWorker do
   end
 
   before do
-    allow(Uploader).to receive(:new).and_return(uploader)
+    allow(StoredExport).to receive(:new).and_return(stored_export)
     request.status = DataRequest.statuses[:pending]
     request.url = nil
     request.save!
@@ -42,7 +41,7 @@ describe DataRequestWorker do
 
     it 'uploads the file' do
       worker.perform(request_id)
-      expect(uploader).to have_received(:upload)
+      expect(stored_export).to have_received(:upload)
     end
   end
 

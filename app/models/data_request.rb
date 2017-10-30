@@ -46,6 +46,16 @@ class DataRequest < ApplicationRecord
 
   belongs_to :workflow
 
+  def stored_export
+    raise "DataRequest needs to be saved to database first" unless id.present?
+    @stored_export ||= StoredExport.new("#{id}.csv")
+  end
+
+  def url
+    return nil unless complete?
+    stored_export.download_url
+  end
+
   def as_json(options = {})
     {
       id: id,
