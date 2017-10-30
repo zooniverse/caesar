@@ -10,7 +10,7 @@ class Uploader
 
   def upload
     ::File.open(local_file.path, 'rb') do |stream|
-      remote_file.upload_file stream, content_type: mime_type
+      remote_file.upload_file stream, content_type: mime_type, content_disposition: content_disposition
     end
   end
 
@@ -26,5 +26,9 @@ class Uploader
 
   def upload_path
     "data-exports.zooniverse.org/caesar/#{ ::File.basename(local_file) }".gsub /\/{2,}/, '/'
+  end
+
+  def content_disposition
+    "attachment; filename=\"#{::File.basename(local_file)}\""
   end
 end
