@@ -8,7 +8,6 @@ class StoredExport
 
   def initialize(filename)
     self.filename = filename
-    self.remote_file = ::Aws::S3::Object.new bucket_name: BUCKET_NAME, key: upload_path
   end
 
   def upload(file)
@@ -31,6 +30,10 @@ class StoredExport
     `file --brief --mime #{ file.to_s }`.chomp.split(';').first
   rescue
     'text/plain'
+  end
+
+  def remote_file
+    @remote_file ||= ::Aws::S3::Object.new bucket_name: BUCKET_NAME, key: upload_path
   end
 
   def upload_path
