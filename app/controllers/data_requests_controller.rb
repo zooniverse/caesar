@@ -10,7 +10,7 @@ class DataRequestsController < ApplicationController
     respond_with data_request
   end
 
-  def create
+  def new
     skip_authorization
 
     case params[:data_request][:requested_data]

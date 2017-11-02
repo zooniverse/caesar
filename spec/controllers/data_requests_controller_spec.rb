@@ -32,12 +32,12 @@ describe DataRequestsController, :type => :controller do
     end
   end
 
-  describe '#create' do
+  describe '#new' do
     describe 'extracts' do
       let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'extracts'}} }
 
       it('should produce a data request item for a new request') do
-        response = post :create, params: params, format: :json
+        response = post :new, params: params, format: :json
 
         expect(response.status).to eq(201)
         expect(DataRequest.count).to eq(1)
@@ -49,7 +49,7 @@ describe DataRequestsController, :type => :controller do
       let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'reductions'}} }
 
       it('should produce reduction requests instead of extract requests') do
-        response = post :create, params: params, format: :json
+        response = post :new, params: params, format: :json
 
         expect(response.status).to eq(201)
         expect(DataRequest.count).to eq(1)
