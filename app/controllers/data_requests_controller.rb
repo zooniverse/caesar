@@ -13,13 +13,16 @@ class DataRequestsController < ApplicationController
   def create
     skip_authorization
 
-    case params[:data_request][:requested_data]
+    data_request = params[:data_request] || {}
+    requested_data = data_request[:requested_data] || nil
+
+    case requested_data
     when "extracts"
       make_request(DataRequest.requested_data[:extracts])
     when "reductions"
       make_request(DataRequest.requested_data[:reductions])
     else
-      head 404
+      head 422
     end
   end
 

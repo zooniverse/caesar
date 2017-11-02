@@ -33,6 +33,16 @@ describe DataRequestsController, :type => :controller do
   end
 
   describe '#create' do
+    describe 'malformed' do
+      let(:params) { {workflow_id: workflow.id, data_request: {}} }
+
+      it('responds with the right error code') do
+        response = post :create, params: params, format: :json
+
+        expect(response.status).to eq(422)
+      end
+    end
+
     describe 'extracts' do
       let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'extracts'}} }
 
