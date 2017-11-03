@@ -1,6 +1,9 @@
 class ApplicationOperation
   include Pundit
 
+  # Our GraphQL API uses Javascript style camelCase, this class exists to convert that into snake_case.
+  # There's some discussion of adding this converter directly into graphql-ruby, so before the resolve
+  # function gets called. If that happens, we could get rid of this class.
   class GraphQLWrapper
     def initialize(klass)
       @klass = klass
