@@ -13,14 +13,7 @@ MutationRoot = GraphQL::ObjectType.define do
     argument :subgroup, types.String
     argument :userId, types.Int
 
-    resolve ->(obj, args, ctx) {
-      CreatesDataRequests.call(obj, {
-                                 workflow_id: args[:workflowId],
-                                 requested_data: args[:requestedData],
-                                 subgroup: args[:subgroup],
-                                 user_id: args[:user_id]
-                               }, ctx)
-    }
+    resolve CreatesDataRequests.graphql
   end
 
   field :upsertExtract, Extract::Type do
