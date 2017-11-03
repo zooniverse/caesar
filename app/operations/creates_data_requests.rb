@@ -9,6 +9,7 @@ class CreatesDataRequests < ApplicationOperation
 
     authorize(data_request, :create?)
 
+    data_request.public = data_request.workflow.public_data?(data_request.requested_data)
     data_request.status = DataRequest.statuses[:pending]
     data_request.url = nil
     data_request.save!

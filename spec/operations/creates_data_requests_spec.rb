@@ -19,6 +19,12 @@ describe CreatesDataRequests do
       expect(DataRequest.first.extracts?).to be(true)
     end
 
+    it 'creates public requests when data is public' do
+      workflow.update! public_extracts: true
+      response = described_class.call(obj, args, ctx)
+      expect(response).to be_public
+    end
+
     context 'when not a project collaborator' do
       let(:credential) { build :credential, workflows: [] }
 
