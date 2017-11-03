@@ -91,7 +91,7 @@ describe DataRequestsController, :type => :controller do
       end
 
       context 'when not a project collaborator' do
-        it 'returns 404 when workflow does not expose reductions publicly' do
+        it 'returns 401 when workflow does not expose reductions publicly' do
           fake_session(admin: false)
           response = post :create, params: params, format: :json
           expect(response.status).to eq(401)
