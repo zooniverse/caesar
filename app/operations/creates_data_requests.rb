@@ -1,7 +1,5 @@
-class CreatesDataRequests
-  def self.call(obj, args, ctx)
-    credential = ctx[:credential]
-
+class CreatesDataRequests < ApplicationOperation
+  def call(obj, args)
     data_request = DataRequest.new(
       workflow_id: args[:workflow_id],
       user_id: args[:user_id],
@@ -9,7 +7,7 @@ class CreatesDataRequests
       requested_data: args[:requested_data]
     )
 
-    Pundit.authorize(credential, data_request, :create?)
+    authorize(data_request, :create?)
 
     data_request.status = DataRequest.statuses[:pending]
     data_request.url = nil

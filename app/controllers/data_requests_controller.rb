@@ -17,7 +17,7 @@ class DataRequestsController < ApplicationController
       ctx = {credential: credential}
 
       data_request = CreatesDataRequests.call(obj, args, ctx)
-      authorize data_request
+      skip_authorization # operations do this themselves and raise if needed
 
       respond_to do |format|
         format.html { redirect_to [data_request.workflow, :data_requests] }
