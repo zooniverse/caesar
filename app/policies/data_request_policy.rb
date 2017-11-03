@@ -4,7 +4,7 @@ class DataRequestPolicy < ApplicationPolicy
       workflow_ids = Pundit.policy_scope!(credential, Workflow).pluck(:id)
 
       scope = self.scope.joins(:workflow).references(:workflows)
-      scope.where(workflow_id: workflow_ids)
+      scope.where(workflow_id: workflow_ids).or(scope.where(public: true))
     end
   end
 

@@ -1,11 +1,11 @@
 class DataRequestsController < ApplicationController
   def index
-    @data_requests = workflow.data_requests.order(created_at: :desc)
+    @data_requests = scope.order(created_at: :desc)
     respond_with @data_requests
   end
 
   def show
-    data_request = workflow.data_requests.find(params[:id])
+    data_request = scope.find(params[:id])
     authorize data_request
     respond_with data_request
   end
@@ -49,5 +49,9 @@ class DataRequestsController < ApplicationController
 
   def workflow
     @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+  end
+
+  def scope
+    policy_scope(DataRequest).where(workflow_id: params[:workflow_id])
   end
 end

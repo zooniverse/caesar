@@ -26,9 +26,18 @@ describe DataRequestsController, :type => :controller do
       data_request1 = create(:data_request, workflow: workflow, created_at: 5.days.ago)
       data_request2 = create(:data_request, workflow: workflow, created_at: 2.days.ago)
 
-      response = get :index, params: params, format: :json
+      get :index, params: params, format: :json
       expect(json_response).to eq([data_request2.as_json.stringify_keys,
                                    data_request1.as_json.stringify_keys])
+    end
+
+    it 'returns public requests for unauthorized users' do
+      fake_session(logged_in: false)
+      data_request1 = create(:data_request, workflow: workflow, created_at: 5.days.ago, public: true)
+      data_request2 = create(:data_request, workflow: workflow, created_at: 2.days.ago)
+
+      get :index, params: params, format: :json
+      expect(json_response).to eq([data_request1.as_json.stringify_keys])
     end
   end
 
@@ -76,6 +85,21 @@ describe DataRequestsController, :type => :controller do
     it('should tell us when there are no matching requests') do
       response = get :show, params: params.merge(id: 123312), format: :json
       expect(response.status).to eq(404)
+    end
+
+    context 'when not a project collaborator' do
+      it 'returns 404 for private requests' do
+        fake_session(admin: false)
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns public requests for unauthorized users' do
+        fake_session(admin: false)
+        data_request.update! public: true
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(200)
+      end
     end
 
     it('should return the right statuses') do
