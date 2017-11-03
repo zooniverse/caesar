@@ -11,8 +11,6 @@ class DataRequestsController < ApplicationController
   end
 
   def create
-    skip_authorization
-
     data_request = params[:data_request] || {}
     requested_data = data_request[:requested_data] || nil
 
@@ -22,6 +20,7 @@ class DataRequestsController < ApplicationController
     when "reductions"
       make_request(DataRequest.requested_data[:reductions])
     else
+      skip_authorization
       head 422
     end
   end
@@ -31,10 +30,11 @@ class DataRequestsController < ApplicationController
   def make_request(request_type)
     data_request = DataRequest.new(
       user_id: params[:user_id],
-      workflow_id: workflow.id,
+      workflow_id: params[:workflow_id],
       subgroup: params[:subgroup],
       requested_data: request_type
     )
+    authorize data_request
 
     data_request.status = DataRequest.statuses[:pending]
     data_request.url = nil
@@ -42,13 +42,9 @@ class DataRequestsController < ApplicationController
 
     DataRequestWorker.perform_async(data_request.id)
     respond_to do |format|
-      format.html { redirect_to [workflow, :data_requests] }
-      format.json { respond_with workflow, data_request }
+      format.html { redirect_to [data_request.workflow, :data_requests] }
+      format.json { respond_with data_request.workflow, data_request }
     end
-  end
-
-  def workflow
-    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
 
   def scope

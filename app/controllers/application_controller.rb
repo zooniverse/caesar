@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   respond_to :html, :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from Pundit::NotAuthorizedError, with: :not_authorized
 
   private
 
@@ -64,6 +65,10 @@ class ApplicationController < ActionController::Base
 
   def record_not_found
     head 404
+  end
+
+  def not_authorized
+    head 401
   end
 
   def handle_unauthenticated_request(message)

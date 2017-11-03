@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe DataRequestsController, :type => :controller do
-  before { fake_session admin: true }
+  before { fake_session project_ids: [workflow.project_id] }
 
   let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
 
-  let(:workflow){ create :workflow }
+  let(:workflow) { create :workflow }
 
   let(:data_request) do
     DataRequest.new(
@@ -62,6 +62,21 @@ describe DataRequestsController, :type => :controller do
         expect(DataRequest.count).to eq(1)
         expect(DataRequest.first.extracts?).to be(true)
       end
+
+      context 'when not a project collaborator' do
+        it 'returns 401 when workflow does not expose extracts publicly' do
+          fake_session(admin: false)
+          response = post :create, params: params, format: :json
+          expect(response.status).to eq(401)
+        end
+
+        it 'allows creating request when workflow exposes extracts publicly' do
+          fake_session(admin: false)
+          workflow.update! public_extracts: true
+          response = post :create, params: params, format: :json
+          expect(response.status).to eq(201)
+        end
+      end
     end
 
     describe 'reductions' do
@@ -73,6 +88,21 @@ describe DataRequestsController, :type => :controller do
         expect(response.status).to eq(201)
         expect(DataRequest.count).to eq(1)
         expect(DataRequest.first.reductions?).to be(true)
+      end
+
+      context 'when not a project collaborator' do
+        it 'returns 404 when workflow does not expose reductions publicly' do
+          fake_session(admin: false)
+          response = post :create, params: params, format: :json
+          expect(response.status).to eq(401)
+        end
+
+        it 'allows creating request when workflow exposes reductions publicly' do
+          fake_session(admin: false)
+          workflow.update! public_reductions: true
+          response = post :create, params: params, format: :json
+          expect(response.status).to eq(201)
+        end
       end
     end
   end

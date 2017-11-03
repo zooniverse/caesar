@@ -9,11 +9,16 @@ class DataRequestPolicy < ApplicationPolicy
   end
 
   def create?
-    update?
+    return true if credential.admin?
+    return true if record.extracts? && record.workflow.public_extracts
+    return true if record.reductions? && record.workflow.public_reductions
+
+    credential.project_ids.include?(record.workflow.project_id)
   end
 
   def update?
     return true if credential.admin?
+
     credential.project_ids.include?(record.workflow.project_id)
   end
 
