@@ -12,7 +12,6 @@ class CreateClassifications < ActiveRecord::Migration[5.1]
 
       t.timestamps
       t.timestamp :received_at, null: false, default: -> { 'CURRENT_TIMESTAMP' }
-      t.timestamp :processed_at
     end
 
     add_foreign_key :classifications, :workflows

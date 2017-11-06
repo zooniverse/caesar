@@ -19,6 +19,6 @@ RSpec.describe ExtractWorker, type: :worker do
     classification = create :classification, workflow: workflow, subject: subject
     expect do
       described_class.new.perform(classification.id)
-    end.to change { classification.reload.processed_at }.from(nil)
+    end.to change { Classification.count }.from(1).to(0)
   end
 end
