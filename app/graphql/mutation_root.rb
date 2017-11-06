@@ -13,21 +13,7 @@ MutationRoot = GraphQL::ObjectType.define do
     argument :subgroup, types.String
     argument :userId, types.Int
 
-    resolve ->(obj, args, ctx) {
-      workflow = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
-      data_request = workflow.data_requests.build(
-        user_id: args[:userId],
-        subgroup: args[:subgroup],
-        requested_data: args[:requestedData]
-      )
-
-      data_request.status = DataRequest.statuses[:pending]
-      data_request.url = nil
-      data_request.save!
-
-      DataRequestWorker.perform_async(data_request.workflow_id)
-      data_request
-    }
+    resolve CreatesDataRequests.graphql
   end
 
   field :upsertExtract, Extract::Type do

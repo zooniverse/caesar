@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170908141509) do
+ActiveRecord::Schema.define(version: 20171103091757) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20170908141509) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "public", default: false, null: false
     t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
     t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
   end
