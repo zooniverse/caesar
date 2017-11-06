@@ -22,6 +22,12 @@ RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
 RUN (cd /app && mkdir -p tmp/pids)
 RUN (cd /app && bundle exec rails assets:precompile)
 
+RUN mkdir -p log && \
+    ln -sf /dev/stdout log/production.log && \
+    ln -sf /dev/stdout log/staging.log && \
+    ln -sf /dev/stdout log/sidekiq.log && \
+    ln -sf /dev/stdout log/newrelic_agent.log
+
 EXPOSE 80
 
 CMD ["bash", "/app/docker/start.sh"]

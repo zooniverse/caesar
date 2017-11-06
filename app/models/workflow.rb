@@ -87,6 +87,17 @@ class Workflow < ApplicationRecord
       (rules&.present? and subscribers?)
   end
 
+  def public_data?(type)
+    case type
+    when 'extracts'
+      public_extracts?
+    when 'reductions'
+      public_reductions?
+    else
+      false
+    end
+  end
+
   def subscribers?
     webhooks.size > 0
   end
