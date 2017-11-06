@@ -111,11 +111,12 @@ RSpec.describe DataRequestPolicy do
       expect(subject).to permit(credential, data_request)
     end
 
-    it 'does not let non-collaborators update public data requests' do
-      workflow.update! public_extracts: true
-      data_request = build(:data_request, workflow: workflow, public: true)
-      credential = build(:credential, workflows: [])
-      expect(subject).not_to permit(credential, data_request)
+    it 'can request reduction exports if reductions are public' do
+      special_request = create(:data_request, requested_data: "reductions" )
+      special_request.workflow.public_reductions = true
+
+      credential = build(:credential)
+      expect(subject).to permit(credential, special_request)
     end
   end
 

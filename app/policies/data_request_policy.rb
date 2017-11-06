@@ -19,7 +19,13 @@ class DataRequestPolicy < ApplicationPolicy
   def update?
     return true if credential.admin?
 
-    credential.project_ids.include?(record.workflow.project_id)
+    return true if(record.requested_data == "extracts" &&
+      record.workflow&.public_extracts?)
+
+    return true if(record.requested_data == "reductions" &&
+      record.workflow&.public_reductions?)
+
+    credential.project_ids.include?(record.workflow&.project_id)
   end
 
   def destroy?
