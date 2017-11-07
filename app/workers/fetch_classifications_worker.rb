@@ -11,8 +11,9 @@ class FetchClassificationsWorker
   def process_classifications(workflow_id, classifications)
     return unless classifications
 
-    classifications.each do |classification|
-      ExtractWorker.perform_async(workflow_id, classification)
+    classifications.each do |attributes|
+      classification = Classification.upsert(attributes)
+      ExtractWorker.perform_async(classification.id)
     end
   end
 end

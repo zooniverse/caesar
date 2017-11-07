@@ -30,6 +30,19 @@ ActiveRecord::Schema.define(version: 20171103091757) do
     t.index ["workflow_id"], name: "index_actions_on_workflow_id"
   end
 
+  create_table "classifications", id: :integer, default: nil, force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "workflow_id", null: false
+    t.integer "user_id"
+    t.integer "subject_id", null: false
+    t.string "workflow_version", null: false
+    t.jsonb "annotations", default: {}, null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "received_at", default: -> { "now()" }, null: false
+  end
+
   create_table "credentials", force: :cascade do |t|
     t.text "token", null: false
     t.string "refresh"
@@ -147,6 +160,8 @@ ActiveRecord::Schema.define(version: 20171103091757) do
 
   add_foreign_key "actions", "subjects"
   add_foreign_key "actions", "workflows"
+  add_foreign_key "classifications", "subjects"
+  add_foreign_key "classifications", "workflows"
   add_foreign_key "data_requests", "workflows"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"

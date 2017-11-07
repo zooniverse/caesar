@@ -17,7 +17,7 @@ module StreamEvents
         workflow.webhooks.process "new_classification", @data.as_json
       end
 
-      stream.queue.add(ExtractWorker, classification.workflow_id, @data.to_unsafe_h)
+      stream.queue.add(ExtractWorker, classification.id)
     end
 
     def cache_linked_models!
@@ -35,15 +35,20 @@ module StreamEvents
     end
 
     def classification
-      @classification ||= Classification.new(@data)
+      @classification ||= Classification.upsert(@data.to_unsafe_h)
     end
 
     def workflow
       Workflow.find_by(id: workflow_id)
     end
 
+    def subject
+      subject_id = @data.fetch("links").fetch("subjects")[0]
+      Subject.find(subject_id)
+    end
+    
     def workflow_id
-      workflow_id = @data.fetch("links").fetch("workflow")
+      @data.fetch("links").fetch("workflow")
     end
 
     def linked_subjects

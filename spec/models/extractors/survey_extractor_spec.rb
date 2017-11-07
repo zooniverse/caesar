@@ -13,7 +13,7 @@ describe Extractors::SurveyExtractor do
   let(:annotations) { [make_annotation("OTHER")] }
 
   let(:classification) do
-    Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
+    Classification.new(annotations: annotations)
   end
 
   subject(:extractor) { described_class.new(key: 's') }
