@@ -12,6 +12,7 @@ class FetchClassificationsWorker
     return unless classifications
 
     classifications.each do |attributes|
+      attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
       classification = Classification.upsert(attributes)
       ExtractWorker.perform_async(classification.id)
     end

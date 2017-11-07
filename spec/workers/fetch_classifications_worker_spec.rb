@@ -35,6 +35,8 @@ describe FetchClassificationsWorker do
   end
 
   def classification(id)
-    build(:classification_event, id: id, workflow: workflow, subject: subject)
+    classification = build(:classification_event, id: id, workflow: workflow, subject: subject)
+    classification["metadata"]["workflow_version"] = classification.delete("workflow_version")
+    classification
   end
 end
