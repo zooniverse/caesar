@@ -24,5 +24,20 @@ class ExtractWorker
         workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
       end
     end
+  rescue ActiveRecord::RecordNotFound => e
+    if Extract.where(classification_id: classification_id).any?
+      # This will sometimes happen in the following sequence of events:
+      #
+      # A: ExtractWorker begins
+      # B: FetchClassificationsWorker begins
+      # B: FetchClassificationsWorker upserts fetched classification (with same ID)
+      # A: ExtractWorker finishes and deletes classification
+      # B: FetchClassificationsWorker enqueues ExtractWorker
+      #
+      # This specific sequence is harmless and should be ignored.
+      true
+    else
+      raise e
+    end
   end
 end
