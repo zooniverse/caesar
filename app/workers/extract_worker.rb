@@ -6,12 +6,8 @@ class ExtractWorker
   end
 
   # second param accepted for backwards compat reasons, remove later
-  def perform(classification_or_legacy_workflow_id, legacy_classification_data=nil)
-    classification = if legacy_classification_data.present?
-      Classification.upsert(legacy_classification_data)
-    else
-      Classification.find(classification_or_legacy_workflow_id)
-    end
+  def perform(classification_id)
+    classification = Classification.find(classification_id)
 
     workflow = classification.workflow
     extracts = workflow.classification_pipeline.extract(classification)
