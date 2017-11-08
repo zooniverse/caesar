@@ -5,7 +5,6 @@ class ExtractWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  # second param accepted for backwards compat reasons, remove later
   def perform(classification_id)
     classification = Classification.find(classification_id)
 
