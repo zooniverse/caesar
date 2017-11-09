@@ -6,9 +6,11 @@ class Workflow::ConvertLegacyRulesConfig
   end
 
   def update(config)
+    return if config.nil?
+
     workflow.rules.delete_all
 
-    workflow.rules_config.each do |rule_config|
+    config.each do |rule_config|
       rule = workflow.rules.build(condition: rule_config["if"])
 
       rule_config["then"].each do |effect|
