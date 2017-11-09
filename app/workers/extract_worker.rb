@@ -5,13 +5,8 @@ class ExtractWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  # second param accepted for backwards compat reasons, remove later
-  def perform(classification_or_legacy_workflow_id, legacy_classification_data=nil)
-    classification = if legacy_classification_data.present?
-      Classification.upsert(legacy_classification_data)
-    else
-      Classification.find(classification_or_legacy_workflow_id)
-    end
+  def perform(classification_id)
+    classification = Classification.find(classification_id)
 
     workflow = classification.workflow
     extracts = workflow.classification_pipeline.extract(classification)
@@ -27,6 +22,21 @@ class ExtractWorker
       extracts.each do |extract|
         workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
       end
+    end
+  rescue ActiveRecord::RecordNotFound => e
+    if Extract.where(classification_id: classification_id).any?
+      # This will sometimes happen in the following sequence of events:
+      #
+      # A: ExtractWorker begins
+      # B: FetchClassificationsWorker begins
+      # B: FetchClassificationsWorker upserts fetched classification (with same ID)
+      # A: ExtractWorker finishes and deletes classification
+      # B: FetchClassificationsWorker enqueues ExtractWorker
+      #
+      # This specific sequence is harmless and should be ignored.
+      true
+    else
+      raise e
     end
   end
 end
