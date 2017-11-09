@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171103091757) do
+ActiveRecord::Schema.define(version: 20171109143953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,9 +150,6 @@ ActiveRecord::Schema.define(version: 20171103091757) do
     t.integer "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "extractors_config", default: {}, null: false
-    t.jsonb "reducers_config", default: {}, null: false
-    t.jsonb "rules_config", default: [], null: false
     t.jsonb "webhooks_config", default: [], null: false
     t.boolean "public_extracts", default: false, null: false
     t.boolean "public_reductions", default: false, null: false
