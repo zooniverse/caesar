@@ -14,7 +14,7 @@ class CreatesDataRequests < ApplicationOperation
     data_request.url = nil
     data_request.save!
 
-    DataRequestWorker.perform_async(data_request.workflow_id)
+    DataRequestWorker.perform_async(data_request.id)
     data_request
   end
 end
