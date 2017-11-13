@@ -10,14 +10,14 @@ class DataRequestWorker
   attr_accessor :path
 
   def perform(request_id)
-    request = DataRequest.where(id: request_id).first
-    return unless request.present? && request.pending?
-
-    self.path = "tmp/#{request.id}.csv"
-
-    request.processing!
-
     begin
+      request = DataRequest.find(request_id)
+      return unless request.pending?
+
+      self.path = "tmp/#{request.id}.csv"
+
+      request.processing!
+
       exporter = if request.extracts?
         Exporters::CsvExtractExporter
       elsif request.reductions?
