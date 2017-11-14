@@ -54,9 +54,9 @@ class WorkflowsController < ApplicationController
 
     workflow.update!(workflow_params)
 
-    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(workflow_params[:extractors_config])
-    Workflow::ConvertLegacyReducersConfig.new(workflow).update(workflow_params[:reducers_config])
-    Workflow::ConvertLegacyRulesConfig.new(workflow).update(workflow_params[:rules_config])
+    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
+    Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
+    Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
 
     respond_with workflow
   end
@@ -69,9 +69,7 @@ class WorkflowsController < ApplicationController
 
   def workflow_params
     params.require(:workflow).permit(
-      extractors_config: {},
-      reducers_config: {},
-      rules_config: {}
+      webhooks_config: {}
     )
   end
 end
