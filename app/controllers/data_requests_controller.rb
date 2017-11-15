@@ -1,6 +1,11 @@
 class DataRequestsController < ApplicationController
   def index
     @data_requests = scope.order(created_at: :desc)
+
+    if(params.has_key?(:subgroup))
+      @data_requests = @data_requests.where(subgroup: params[:subgroup])
+    end
+
     respond_with @data_requests
   end
 
