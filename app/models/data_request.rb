@@ -49,12 +49,13 @@ class DataRequest < ApplicationRecord
   def as_json(options = {})
     {
       id: id,
-      workflow_id: workflow_id,
+      workflow_id: workflow_id.to_s,
       user_id: user_id,
       subgroup: subgroup,
       status: status,
       requested_data: requested_data,
-      url: url
+      url: url,
+      updated_at: updated_at.to_s
     }
   end
 end
