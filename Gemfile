@@ -63,13 +63,12 @@ group :development, :test do
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
-  gem 'rspec-rails', '~> 3.5'
+  gem 'rspec-rails', '~> 3.7'
   gem 'pry-rails'
   gem 'dotenv-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
   gem 'rubocop'
-  gem 'mutant-rspec'
   gem 'factory_girl_rails'
 end
 
