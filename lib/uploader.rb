@@ -1,4 +1,4 @@
-require 'aws-sdk'
+require 'aws-sdk-s3'
 
 class Uploader
   attr_accessor :local_file, :remote_file
