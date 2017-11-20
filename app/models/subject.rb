@@ -4,5 +4,6 @@ class Subject < ApplicationRecord
     subject = Subject.where(id: attributes[:id]).first_or_initialize
     subject.metadata = attributes[:metadata]
     subject.save!
+    subject
   end
 end
