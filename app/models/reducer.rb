@@ -1,6 +1,11 @@
 class Reducer < ApplicationRecord
   include Configurable
 
+  enum reduce_by: {
+    subject: 0,
+    user: 1
+  }
+
   def self.of_type(type)
     case type.to_s
     when "consensus"
@@ -60,6 +65,17 @@ class Reducer < ApplicationRecord
 
   def filters
     super || {}
+  end
+
+  def reduce_by
+    value = super || 'subject'
+
+    case value
+    when 'subject'
+      reduce_by.subject
+    when 'user'
+      reduce_by.user
+    end
   end
 
   def nilify_empty_fields

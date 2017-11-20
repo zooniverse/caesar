@@ -9,7 +9,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id)
+    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id)
   end
 
@@ -18,6 +18,7 @@ class ClassificationPipeline
 
     extractors.each do |extractor|
       known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
+      known_user = Extract.exists?(user_id: classification.user_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
@@ -31,6 +32,10 @@ class ClassificationPipeline
         FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
       end
 
+      unless known_user
+        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+      end
+
       extract
     end
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
@@ -39,11 +44,13 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id)
+  def reduce(workflow_id, subject_id, user_id)
     tries ||= 2
 
+    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
+
     reducers.map do |reducer|
-      data = reducer.process(extracts(workflow_id, subject_id))
+      data = reducer.process(extracts.subject_extracts)
 
       return if data == Reducer::NoData
 
@@ -80,10 +87,6 @@ class ClassificationPipeline
   end
 
   private
-
-  def extracts(workflow_id, subject_id)
-    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc)
-  end
 
   def reductions(workflow_id, subject_id)
     Reduction.where(workflow_id: workflow_id, subject_id: subject_id)

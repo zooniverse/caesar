@@ -35,6 +35,7 @@ class FetchClassificationsWorker
     return unless classifications
 
     classifications.each do |attributes|
+      # todo: probably don't re-extract if the classification hasn't changed
       attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
       classification = Classification.upsert(attributes)
       ExtractWorker.perform_async(classification.id)

@@ -61,7 +61,11 @@ describe ClassificationPipeline do
     Workflow.find(workflow.id).classification_pipeline
   end
 
-  let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {}) }
+  let(:panoptes) { instance_double(Panoptes::Client,
+    retire_subject: true,
+    get_subject_classifications: {},
+    get_user_classifications: {}) 
+  }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
@@ -74,7 +78,7 @@ describe ClassificationPipeline do
 
   it 'fetches classifications from panoptes when there are no other extracts' do
     expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
+      to change(FetchClassificationsWorker.jobs, :size).by(2)
   end
 
   it 'does not fetch classifications when extracts already present' do
@@ -88,7 +92,8 @@ describe ClassificationPipeline do
     )
 
     expect { pipeline.process(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
+    # only change size by one because it's only fetching user classifications
   end
 
   it 'groups extracts before reduction' do
@@ -114,7 +119,7 @@ describe ClassificationPipeline do
     # build a simplified pipeline to reduce these extracts
     reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
     pipeline = described_class.new(nil, [reducer], nil)
-    pipeline.reduce(workflow.id, subject.id)
+    pipeline.reduce(workflow.id, subject.id, 1234)
 
     expect(Reduction.count).to eq(2)
     expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})

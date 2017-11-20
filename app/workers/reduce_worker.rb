@@ -6,9 +6,9 @@ class ReduceWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  def perform(workflow_id, subject_id)
+  def perform(workflow_id, subject_id, user_id)
     workflow = Workflow.find(workflow_id)
-    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id)
+    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id)
 
     return if reductions == Reducer::NoData
 
