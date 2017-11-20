@@ -28,7 +28,7 @@ class ClassificationPipeline
       extract.save!
 
       unless known_subject
-        FetchClassificationsWorker.perform_async(classification.subject_id, classification.workflow_id)
+        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
       end
 
       extract

@@ -82,7 +82,7 @@ MutationRoot = GraphQL::ObjectType.define do
       workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
       subject   = Subject.find(args[:subjectId])
 
-      !!FetchClassificationsWorker.perform_async(subject.id, workflow.id)
+      !!FetchClassificationsWorker.perform_async(workflow.id, subject.id, FetchClassificationsWorker.fetch_for_subject)
     }
   end
 end
