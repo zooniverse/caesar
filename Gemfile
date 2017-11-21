@@ -8,6 +8,7 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.1'
+gem 'dotenv-rails', require: 'dotenv/rails-now'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
@@ -51,7 +52,6 @@ gem 'pundit', "~> 1.1.0"
 gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
-gem 'dotenv-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
