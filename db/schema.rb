@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.jsonb "filters", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "topic", default: 0
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
@@ -117,10 +118,12 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subgroup", default: "_default", null: false
+    t.integer "user_id"
     t.index ["subject_id"], name: "index_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
+    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
     t.index ["workflow_id", "subject_id"], name: "index_reductions_on_workflow_id_and_subject_id"
+    t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_reductions_user_covering"
     t.index ["workflow_id"], name: "index_reductions_on_workflow_id"
   end
 
