@@ -51,6 +51,7 @@ gem 'pundit', "~> 1.1.0"
 gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
+gem 'dotenv-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -65,7 +66,6 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'rspec-rails', '~> 3.7'
   gem 'pry-rails'
-  gem 'dotenv-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
   gem 'rubocop'
