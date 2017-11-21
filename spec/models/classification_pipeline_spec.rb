@@ -64,7 +64,7 @@ describe ClassificationPipeline do
   let(:panoptes) { instance_double(Panoptes::Client,
     retire_subject: true,
     get_subject_classifications: {},
-    get_user_classifications: {}) 
+    get_user_classifications: {})
   }
 
   before do
@@ -96,6 +96,27 @@ describe ClassificationPipeline do
     # only change size by one because it's only fetching user classifications
   end
 
+  it 'reduces by user instead of subject if we tell it to' do
+    workflow = create(:workflow)
+    subject = create(:subject)
+    other_subject = create(:subject)
+
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1234, subject_id: other_subject.id, classification_id: 22222, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
+
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user])
+
+    pipeline = described_class.new(nil, [reducer], nil)
+    pipeline.reduce(workflow.id, nil, 1234)
+
+    expect(Reduction.count).to eq(1)
+    expect(Reduction.first.user_id).to eq(1234)
+    expect(Reduction.first.subject_id).to be(nil)
+    expect(Reduction.first.data).to eq({"LN" => 2})
+  end
+
   it 'groups extracts before reduction' do
     subject = create(:subject)
     workflow = create(:workflow)
@@ -122,6 +143,8 @@ describe ClassificationPipeline do
     pipeline.reduce(workflow.id, subject.id, 1234)
 
     expect(Reduction.count).to eq(2)
+    expect(Reduction.first.user_id).to be(nil)
+    expect(Reduction.first.subject_id).to eq(subject.id)
     expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
     expect(Reduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
   end

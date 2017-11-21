@@ -65,7 +65,8 @@ class ClassificationPipeline
 
         reduction = Reduction.where(
           workflow_id: workflow_id,
-          subject_id: subject_id,
+          subject_id: if reducer.reduce_by_subject? then subject_id else nil end,
+          user_id: if reducer.reduce_by_user? then user_id else nil end,
           reducer_key: reducer.key,
           subgroup: subgroup).first_or_initialize
 

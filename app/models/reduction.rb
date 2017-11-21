@@ -15,5 +15,5 @@ class Reduction < ApplicationRecord
   end
 
   belongs_to :workflow
-  belongs_to :subject
+  belongs_to :subject, optional: true
 end
