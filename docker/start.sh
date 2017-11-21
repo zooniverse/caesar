@@ -20,6 +20,11 @@ else
     git pull
   fi
 
+  if [ -f /run/secrets/environment ]
+  then
+      source /run/secrets/environment
+  fi
+
   bin/rails db:migrate
 
   if [ -f "commit_id.txt" ]
