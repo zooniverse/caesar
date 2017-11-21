@@ -32,10 +32,10 @@ class Action < ApplicationRecord
   enum status: [:pending, :completed, :failed]
 
   belongs_to :workflow
-  belongs_to :subject
+  belongs_to :subject, optional: true
 
   def perform
-    effect.perform(workflow_id, subject_id)
+    effect.perform(workflow_id, subject_id, user_id)
     update! status: :completed, completed_at: Time.zone.now
   rescue StandardError
     update! status: :failed

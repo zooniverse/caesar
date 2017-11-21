@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 20171122160848) do
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.integer "workflow_id", null: false
-    t.integer "subject_id", null: false
+    t.integer "subject_id"
     t.string "effect_type", null: false
     t.jsonb "config", default: {}, null: false
     t.integer "status", default: 0, null: false
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rule_id"
+    t.integer "user_id"
     t.index ["subject_id"], name: "index_actions_on_subject_id"
     t.index ["workflow_id"], name: "index_actions_on_workflow_id"
   end
@@ -141,6 +142,7 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.jsonb "condition", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "topic", default: 0
     t.index ["workflow_id"], name: "index_rules_on_workflow_id"
   end
 

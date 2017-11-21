@@ -14,13 +14,13 @@ describe Effects::AddSubjectToSet do
   end
 
   it 'adds the given subject to a given subject set' do
-    effect.perform(workflow_id, subject_id)
+    effect.perform(workflow_id, subject_id, nil)
     expect(panoptes).to have_received(:add_subjects_to_subject_set)
       .with(subject_set_id, [subject_id])
   end
 
   it 'notifies subscribers' do
-    effect.perform(workflow_id, subject_id)
+    effect.perform(workflow_id, subject_id, nil)
     expect(effect).to have_received(:notify_subscribers).once
   end
 

@@ -6,7 +6,7 @@ RSpec.describe Action, type: :model do
     let(:subject) { Subject.create! }
 
     it 'performs the effect' do
-      expect_any_instance_of(Effects::RetireSubject).to receive(:perform).with(workflow.id, subject.id)
+      expect_any_instance_of(Effects::RetireSubject).to receive(:perform).with(workflow.id, subject.id, nil)
 
       action = Action.new(effect_type: 'retire_subject', workflow_id: workflow.id, subject_id: subject.id)
       action.perform

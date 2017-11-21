@@ -10,7 +10,7 @@ class ClassificationPipeline
   def process(classification)
     extract(classification)
     reduce(classification.workflow_id, classification.subject_id, classification.user_id)
-    check_rules(classification.workflow_id, classification.subject_id)
+    check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
   def extract(classification)
@@ -83,19 +83,24 @@ class ClassificationPipeline
     raise
   end
 
-  def check_rules(workflow_id, subject_id)
+  def check_rules(workflow_id, subject_id, user_id)
     return unless rules.present?
-    subject = Subject.find(subject_id)
-    rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id), subject)
+
+    proxy = ReductionFetcher.new(workflow_id, subject_id, user_id)
 
     rules.each do |rule|
-      rule.process(subject_id, rule_bindings)
+      subject = if rule.for_users? then nil elsif rule.for_subjects? then Subject.find(subject_id) else nil end
+
+      reductions = if rule.for_users?
+        proxy.user_reductions
+      elsif rule.for_subjects?
+        proxy.subject_reductions
+      else
+        nil
+      end
+
+      rule_bindings = RuleBindings.new(reductions, subject)
+      rule.process(subject_id, user_id, rule_bindings)
     end
-  end
-
-  private
-
-  def reductions(workflow_id, subject_id)
-    Reduction.where(workflow_id: workflow_id, subject_id: subject_id)
   end
 end

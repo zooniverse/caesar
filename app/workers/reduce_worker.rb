@@ -12,7 +12,7 @@ class ReduceWorker
 
     return if reductions == Reducer::NoData
 
-    CheckRulesWorker.perform_async(workflow_id, subject_id)
+    CheckRulesWorker.perform_async(workflow_id, subject_id, user_id)
     reductions.each do |datum|
       workflow.webhooks.process(:new_reduction, datum) if workflow.subscribers?
     end
