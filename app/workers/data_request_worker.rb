@@ -1,5 +1,3 @@
-require 'uploader'
-
 class DataRequestWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
@@ -14,7 +12,7 @@ class DataRequestWorker
       request = DataRequest.find(request_id)
       return unless request.pending?
 
-      self.path = "tmp/#{request.id}.csv"
+      self.path = Rails.root.join("tmp", "#{request.id}.csv")
 
       request.processing!
 
@@ -29,15 +27,14 @@ class DataRequestWorker
       )
 
       exporter.dump(path)
-      uploader = ::Uploader.new ::File.new(path)
-      uploader.upload
-      ::File.unlink path
 
-      request.url = uploader.url
+      request.stored_export.upload(path)
       request.complete!
     rescue
       request.failed!
       raise
+    ensure
+      ::File.unlink path
     end
   end
 end

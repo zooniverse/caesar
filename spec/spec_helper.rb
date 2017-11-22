@@ -56,6 +56,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     Stoplight::Light.default_error_notifier = -> _ {}
     Stoplight::Light.default_notifiers = []
+    Aws.config.update(stub_responses: true)
   end
 
   config.before(:each) do |example|
