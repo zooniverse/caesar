@@ -47,6 +47,14 @@
     <span class="input-group-addon">CONST</span>
     <%= text_field_tag 'lookup', condition.value, class: "form-control" %>
   </div>
+<% when Conditions::TextTransform %>
+  <table class="condition">
+    <tr>
+      <td>TRANSFORM</td>
+      <td><%= condition.transform %></td>
+      <td><%= render_condition condition.operation %></td>
+    </tr>
+  </table>
 <% else %>
   <%= debug condition %>
 <% end %>
