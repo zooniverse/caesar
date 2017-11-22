@@ -1,24 +1,27 @@
 <div class="row status-table">
-  <div class="col-md-3"><div class="panel panel-default"><div class="panel-body">
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
+    Commit ID
+    <br />
+    <%= @status.commit_id %>
+  </div></div></div>
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
     Jobs
     <br />
     <%= @status.sidekiq_queue_size %>
   </div></div></div>
-
-  <div class="col-md-3"><div class="panel panel-default"><div class="panel-body">
-
+</div>
+<div class="row status-table">
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
     Newest extract
     <br />
     <%= @status.newest_extract_date %>
   </div></div></div>
-
-  <div class="col-md-3"><div class="panel panel-default"><div class="panel-body">
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
     Newest reduction
     <br />
     <%= @status.newest_reduction_date %>
   </div></div></div>
-
-  <div class="col-md-3"><div class="panel panel-default"><div class="panel-body">
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
     Newest action
     <br />
     <%= @status.newest_action_date %>
