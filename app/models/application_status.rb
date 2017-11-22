@@ -15,12 +15,22 @@ class ApplicationStatus
     Action.order(id: :desc).first&.created_at
   end
 
+  def commit_id
+    path = Rails.root.join("commit_id.txt")
+    if File.exist? path
+      File.read(path)
+    else
+      'your commit id here'
+    end
+  end
+
   def as_json(options = {})
     {
       sidekiq_queue_size: sidekiq_queue_size,
       newest_extract_date: newest_extract_date,
       newest_reduction_date: newest_reduction_date,
-      newest_action_date: newest_action_date
+      newest_action_date: newest_action_date,
+      commit_id: commit_id
     }
   end
 end
