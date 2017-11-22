@@ -99,36 +99,36 @@ module Reducers
     end
 
     def mean
-      @mean ||= sum / count
+      @mean ||= if sum.blank? then nil elsif count.blank? then nil else sum / count end
       @mean
     end
 
     def sse
-      @sse ||= values.map do |value|
+      @sse ||= if mean.blank? then nil else values.map do |value|
         (value-mean)**2
-      end.reduce(:+)
+      end.reduce(:+) end
 
       @sse
     end
 
     def variance
-      @variance ||= sse / (count-1)
+      @variance ||= if sse.blank? then nil elsif count < 2 then nil else sse / (count-1) end
 
       @variance
     end
 
     def stdev
-      @stdev ||= Math.sqrt(variance)
+      @stdev ||= if variance.blank? then nil else Math.sqrt(variance) end
       @stdev
     end
 
     def median
-      @median ||= (sorted_values[(count - 1) / 2] + sorted_values[count / 2]) / 2.0
+      @median ||= if count < 1 then nil else (sorted_values[(count - 1) / 2] + sorted_values[count / 2]) / 2.0 end
       @median
     end
 
     def mode
-      @mode ||= values.group_by{|i| i}.sort_by{|key, group| group.count}.last.first
+      @mode ||= if count < 1 then nil else values.group_by{|i| i}.sort_by{|key, group| group.count}.last.first end
       @mode
     end
 
