@@ -10,9 +10,10 @@ class RuleEffect < ApplicationRecord
     @effect ||= Effects[action].new(config)
   end
 
-  def prepare(workflow_id, subject_id)
+  def prepare(rule_id, workflow_id, subject_id)
     Action.create!(effect_type: action,
                    config: config,
+                   rule_id: rule_id,
                    workflow_id: workflow_id,
                    subject_id: subject_id)
   end
