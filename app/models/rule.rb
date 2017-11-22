@@ -11,7 +11,7 @@ class Rule < ApplicationRecord
   def process(subject_id, bindings)
     if condition.apply(bindings)
       rule_effects.each do |effect|
-        pending_action = effect.prepare(workflow_id, subject_id)
+        pending_action = effect.prepare(id, workflow_id, subject_id)
         PerformActionWorker.perform_async(pending_action.id)
       end
     end
