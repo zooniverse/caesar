@@ -12,7 +12,6 @@ class DataRequestWorker
       request = DataRequest.find(request_id)
       return unless request.pending?
 
-      self.path = "tmp/#{request.id}.csv"
       self.path = Rails.root.join("tmp", "#{request.id}.csv")
 
       request.processing!
