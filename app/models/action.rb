@@ -18,6 +18,7 @@ class Action < ApplicationRecord
 
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
+    field :userId, !types.ID, property: :user_id
     field :effectType, !types.String, property: :effect_type
     field :status, !Status
 
