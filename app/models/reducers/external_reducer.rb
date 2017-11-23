@@ -34,9 +34,9 @@ module Reducers
         end
       else
         raise StandardError.new "External extractor improperly configured: no URL"
-      rescue RestClient::InternalServerError
-        raise ExternalReducerFailed
       end
+    rescue RestClient::InternalServerError
+      raise ExternalReducerFailed
     end
   end
 end
