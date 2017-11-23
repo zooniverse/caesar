@@ -3,6 +3,10 @@ class ApplicationStatus
     Sidekiq::Queue.new.size
   end
 
+  def classification_queue_size
+    Classification.count
+  end
+
   def newest_extract_date
     Extract.order(id: :desc).first&.created_at
   end
@@ -27,6 +31,7 @@ class ApplicationStatus
   def as_json(options = {})
     {
       sidekiq_queue_size: sidekiq_queue_size,
+      classification_queue_size: classification_queue_size,
       newest_extract_date: newest_extract_date,
       newest_reduction_date: newest_reduction_date,
       newest_action_date: newest_action_date,
