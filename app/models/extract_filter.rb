@@ -72,11 +72,11 @@ class ExtractFilter
   end
 
   def from
-    filters["from"] || 0
+    (filters["from"] || 0).to_i
   end
 
   def to
-    filters["to"] || -1
+    (filters["to"] || -1).to_i
   end
 
   def subrange
@@ -84,7 +84,7 @@ class ExtractFilter
   end
 
   def extractor_keys
-    filters["extractor_keys"] || []
+    Array.wrap(filters["extractor_keys"] || [])
   end
 
   def repeated_classifications

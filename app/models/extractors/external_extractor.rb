@@ -2,6 +2,8 @@ require 'uri'
 
 module Extractors
   class ExternalExtractor < Extractor
+    class ExternalExtractorFailed < StandardError; end
+
     config_field :url, default: nil
 
     validate do
@@ -33,6 +35,8 @@ module Extractors
       else
         raise StandardError.new "External extractor improperly configured: no URL"
       end
+    rescue RestClient::InternalServerError
+      raise ExternalExtractorFailed
     end
   end
 end

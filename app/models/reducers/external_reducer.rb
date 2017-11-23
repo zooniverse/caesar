@@ -2,6 +2,8 @@ require 'uri'
 
 module Reducers
   class ExternalReducer < Reducer
+    class ExternalReducerFailed < StandardError; end
+
     config_field :url, default: nil
 
     validate do
@@ -33,6 +35,8 @@ module Reducers
       else
         raise StandardError.new "External extractor improperly configured: no URL"
       end
+    rescue RestClient::InternalServerError
+      raise ExternalReducerFailed
     end
   end
 end
