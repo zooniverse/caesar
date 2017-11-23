@@ -9,6 +9,11 @@
     <br />
     <%= @status.sidekiq_queue_size %>
   </div></div></div>
+  <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
+    Classifications (queued + permafailed)
+    <br />
+    <%= @status.classification_queue_size %>
+  </div></div></div>
 </div>
 <div class="row status-table">
   <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
