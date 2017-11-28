@@ -1,5 +1,6 @@
 class DataRequestsController < ApplicationController
   def index
+    @workflow = policy_scope(Workflow).find(params[:workflow_id])
     @data_requests = scope.order(created_at: :desc)
 
     if(params.has_key?(:subgroup))
