@@ -11,7 +11,12 @@ class SessionsController < ApplicationController
 
   def create
     session[:credentials] = request.env["omniauth.auth"]["credentials"]
-    redirect_to session_path, notice: "Logged in"
+
+    if session[:return_to]
+      redirect_to session[:return_to]
+    else
+      redirect_to session_path, notice: "Logged in"
+    end
   end
 
   def destroy

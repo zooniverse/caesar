@@ -80,7 +80,8 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html do
         reset_session
-        redirect_to session_path, alert: message
+        session[:return_to] = request.url
+        redirect_to '/auth/zooniverse', alert: message
       end
 
       format.json do
