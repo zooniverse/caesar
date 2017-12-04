@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204192922) do
+ActiveRecord::Schema.define(version: 20171204222551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 20171204192922) do
     t.jsonb "filters", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "topic", default: 0, null: false
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
