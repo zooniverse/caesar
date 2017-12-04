@@ -1,15 +1,15 @@
 require 'spec_helper'
 require 'ostruct'
 
-describe ReductionsController, :type => :controller do
+describe SubjectReductionsController, :type => :controller do
     let(:workflow) { create :workflow }
     let(:subject1) { create :subject }
     let(:subject2) { create :subject }
     let(:reductions) {
     [
-      create(:reduction, workflow: workflow, subject: subject1, reducer_key: 'r', data: '1'),
-      create(:reduction, workflow: workflow, subject: subject1, reducer_key: 's', data: '2'),
-      create(:reduction, workflow: workflow, subject: subject2, reducer_key: 'r', data: '3')
+      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 'r', data: '1'),
+      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 's', data: '2'),
+      create(:subject_reduction, workflow: workflow, subject: subject2, reducer_key: 'r', data: '3')
     ]
   }
 
@@ -35,7 +35,7 @@ describe ReductionsController, :type => :controller do
       r = reductions
 
       #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
+      allow_any_instance_of(SubjectReductionsController).to receive(:reducer).and_return(
         OpenStruct.new(key: 'r')
       )
 
@@ -49,13 +49,13 @@ describe ReductionsController, :type => :controller do
         }
       }
 
-      updated = Reduction.find_by(
+      updated = SubjectReduction.find_by(
         workflow_id: workflow.id,
         reducer_key: 'r',
         subject_id: subject1.id
       )
 
-      expect(Reduction.count).to eq(3)
+      expect(SubjectReduction.count).to eq(3)
       expect(updated.id).to eq(r[0].id)
       expect(updated.data).to eq("blah" => "10")
     end
@@ -64,7 +64,7 @@ describe ReductionsController, :type => :controller do
       reductions
 
       #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
+      allow_any_instance_of(SubjectReductionsController).to receive(:reducer).and_return(
         OpenStruct.new(key: 'q')
       )
 
@@ -78,13 +78,13 @@ describe ReductionsController, :type => :controller do
         }
       }
 
-      updated = Reduction.find_by(
+      updated = SubjectReduction.find_by(
         workflow_id: workflow.id,
         reducer_key: 'q',
         subject_id: subject1.id
       )
 
-      expect(Reduction.count).to eq(4)
+      expect(SubjectReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => "10")
     end
   end
@@ -93,7 +93,7 @@ describe ReductionsController, :type => :controller do
     it 'creates multiple reductions from the data' do
 
       #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(ReductionsController).to receive(:reducer).and_return(
+      allow_any_instance_of(SubjectReductionsController).to receive(:reducer).and_return(
         OpenStruct.new(key: 'q')
       )
 
@@ -113,10 +113,10 @@ describe ReductionsController, :type => :controller do
         }
       }
 
-      expect(Reduction.count).to eq(2)
-      expect(Reduction.exists?(subgroup: 'group1')).to be(true)
-      expect(Reduction.exists?(subgroup: 'group2')).to be(true)
-      expect(Reduction.exists?(subgroup: '_default')).to be(false)
+      expect(SubjectReduction.count).to eq(2)
+      expect(SubjectReduction.exists?(subgroup: 'group1')).to be(true)
+      expect(SubjectReduction.exists?(subgroup: 'group2')).to be(true)
+      expect(SubjectReduction.exists?(subgroup: '_default')).to be(false)
     end
   end
 end

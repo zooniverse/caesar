@@ -11,8 +11,8 @@ class ApplicationStatus
     Extract.order(id: :desc).first&.created_at
   end
 
-  def newest_reduction_date
-    Reduction.order(id: :desc).first&.created_at
+  def newest_subject_reduction_date
+    SubjectReduction.order(id: :desc).first&.created_at
   end
 
   def newest_action_date

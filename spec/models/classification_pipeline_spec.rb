@@ -116,9 +116,9 @@ describe ClassificationPipeline do
     pipeline = described_class.new(nil, [reducer], nil)
     pipeline.reduce(workflow.id, subject.id)
 
-    expect(Reduction.count).to eq(2)
-    expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
-    expect(Reduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
+    expect(SubjectReduction.count).to eq(2)
+    expect(SubjectReduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
+    expect(SubjectReduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
   end
 
 end

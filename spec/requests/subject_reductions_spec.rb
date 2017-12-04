@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ReductionsController, type: :controller do
+RSpec.describe SubjectReductionsController, type: :controller do
   before { fake_session admin: true }
 
   let(:reducer_key) { 1 }
@@ -30,11 +30,11 @@ RSpec.describe ReductionsController, type: :controller do
           }.to_json
 
       expect(response).to have_http_status(:success)
-      expect(Reduction.count).to eq(1)
+      expect(SubjectReduction.count).to eq(1)
     end
 
     it 'updates an existing reduction' do
-      Reduction.create!(workflow_id: workflow.id,
+      SubjectReduction.create!(workflow_id: workflow.id,
                         subject_id: subject.id,
                         reducer_key: reducer_key,
                         data: {"foo" => 1})
@@ -52,8 +52,8 @@ RSpec.describe ReductionsController, type: :controller do
           }.to_json
 
       expect(response).to have_http_status(:success)
-      expect(Reduction.count).to eq(1)
-      expect(Reduction.first.data).to eq("foo" => 2)
+      expect(SubjectReduction.count).to eq(1)
+      expect(SubjectReduction.first.data).to eq("foo" => 2)
     end
   end
 end

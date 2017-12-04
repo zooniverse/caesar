@@ -50,7 +50,7 @@ class ClassificationPipeline
       data.map do |subgroup, datum|
         next if data == Reducer::NoData
 
-        reduction = Reduction.where(
+        reduction = SubjectReduction.where(
           workflow_id: workflow_id,
           subject_id: subject_id,
           reducer_key: reducer.key,
@@ -86,6 +86,6 @@ class ClassificationPipeline
   end
 
   def reductions(workflow_id, subject_id)
-    Reduction.where(workflow_id: workflow_id, subject_id: subject_id)
+    SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
   end
 end

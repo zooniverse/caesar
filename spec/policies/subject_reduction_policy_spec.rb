@@ -1,34 +1,34 @@
 require 'rails_helper'
 
-RSpec.describe ReductionPolicy do
+RSpec.describe SubjectReductionPolicy do
   subject { described_class }
 
   permissions ".scope" do
-    let!(:reductions) { create_list :reduction, 4 }
+    let!(:reductions) { create_list :subject_reduction, 4 }
 
     it 'returns no records when not logged in' do
       credential = build(:credential, :not_logged_in)
-      expect(records_for(credential)).to match_array(Reduction.none)
+      expect(records_for(credential)).to match_array(SubjectReduction.none)
     end
 
     it 'returns all records for an admin' do
       credential = build(:credential, :admin, project_ids: [])
-      expect(records_for(credential)).to match_array(Reduction.all)
+      expect(records_for(credential)).to match_array(SubjectReduction.all)
     end
 
     it 'returns no records when not a collaborator on any project' do
       credential = build(:credential, project_ids: [])
-      expect(records_for(credential)).to match_array(Reduction.none)
+      expect(records_for(credential)).to match_array(SubjectReduction.none)
     end
 
     it 'returns records that the user is a collaborator on' do
       credential = build(:credential, project_ids: [])
-      expect(records_for(credential)).to match_array(Reduction.none)
+      expect(records_for(credential)).to match_array(SubjectReduction.none)
     end
   end
 
   permissions :show? do
-    let(:reduction) { create :reduction }
+    let(:reduction) { create :subject_reduction }
 
     it 'denies access when not logged in' do
       credential = build(:credential, :not_logged_in)
@@ -64,7 +64,7 @@ RSpec.describe ReductionPolicy do
   end
 
   permissions :update? do
-    let(:reduction) { create :reduction }
+    let(:reduction) { create :subject_reduction }
 
     it 'grants access to an admin' do
       credential = build(:credential, :admin, workflows: [])
@@ -85,7 +85,7 @@ RSpec.describe ReductionPolicy do
 
   permissions :destroy? do
     it 'allows admin to destroy records' do
-      reduction = create :reduction
+      reduction = create :subject_reduction
       credential = build(:credential, :admin)
       expect(subject).to permit(credential, reduction)
     end

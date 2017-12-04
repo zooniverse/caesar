@@ -1,6 +1,6 @@
-class Reduction < ApplicationRecord
+class SubjectReduction < ApplicationRecord
   Type = GraphQL::ObjectType.define do
-    name "Reduction"
+    name "SubjectReduction"
 
     field :projectId, types.ID, property: :project_id
     field :workflowId, !types.ID, property: :workflow_id

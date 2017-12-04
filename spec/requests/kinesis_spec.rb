@@ -30,7 +30,7 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
     expect(response.status).to eq(204)
     expect(Workflow.count).to eq(1)
     expect(Extract.count).to eq(1)
-    expect(Reduction.count).to eq(1)
+    expect(SubjectReduction.count).to eq(1)
     expect(Effects.panoptes).to have_received(:retire_subject).once
   end
 

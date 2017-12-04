@@ -19,12 +19,12 @@ class Workflow < ApplicationRecord
       }
     end
 
-    field :reductions, types[Reduction::Type] do
+    field :subject_reductions, types[SubjectReduction::Type] do
       argument :subjectId, !types.ID, "Filter by specific subject"
       argument :reducerKey, types.String, "Filter by specific reducer"
 
       resolve -> (workflow, args, ctx) {
-        scope = Pundit.policy_scope!(ctx[:credential], Reduction)
+        scope = Pundit.policy_scope!(ctx[:credential], SubjectReduction)
         scope = scope.where(workflow_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
@@ -57,7 +57,7 @@ class Workflow < ApplicationRecord
   has_many :rules
 
   has_many :extracts
-  has_many :reductions
+  has_many :subject_reductions
   has_many :actions
   has_many :data_requests
 
