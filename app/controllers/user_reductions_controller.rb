@@ -1,0 +1,2 @@
+class UserReductionsController < ApplicationController
+end

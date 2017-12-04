@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204173218) do
+ActiveRecord::Schema.define(version: 20171204192922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -145,6 +145,20 @@ ActiveRecord::Schema.define(version: 20171204173218) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_reductions", force: :cascade do |t|
+    t.string "reducer_key"
+    t.integer "workflow_id", null: false
+    t.integer "user_id", null: false
+    t.jsonb "data"
+    t.string "subgroup", default: "_default", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_reductions_on_user_id"
+    t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
+    t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
+    t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
   end
 
   create_table "workflows", id: :serial, force: :cascade do |t|
