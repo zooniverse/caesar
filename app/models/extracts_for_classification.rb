@@ -26,4 +26,8 @@ class ExtractsForClassification
   def user_id
     extracts.first.user_id
   end
+
+  def subject_id
+    extracts.first.subject_id
+  end
 end

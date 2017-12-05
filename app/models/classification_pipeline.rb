@@ -50,18 +50,34 @@ class ClassificationPipeline
     extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
 
     reducers.map do |reducer|
-      data = reducer.process(extracts.subject_extracts)
+      data = if reducer.reduce_by_subject?
+        reducer.process(extracts.subject_extracts)
+      elsif reducer.reduce_by_user?
+        reducer.process(extracts.user_extracts)
+      else
+        Reducer::NoData
+      end
 
       return if data == Reducer::NoData
 
       data.map do |subgroup, datum|
         next if data == Reducer::NoData
 
-        reduction = SubjectReduction.where(
-          workflow_id: workflow_id,
-          subject_id: subject_id,
-          reducer_key: reducer.key,
-          subgroup: subgroup).first_or_initialize
+        reduction = if reducer.reduce_by_subject?
+            SubjectReduction.where(
+              workflow_id: workflow_id,
+              subject_id: subject_id,
+              reducer_key: reducer.key,
+              subgroup: subgroup).first_or_initialize
+          elsif reducer.reduce_by_user?
+            UserReduction.where(
+              workflow_id: workflow_id,
+              user_id: user_id,
+              reducer_key: reducer.key,
+              subgroup: subgroup).first_or_initialize
+          else
+            nil
+          end
 
         reduction.data = datum
         reduction.subgroup = subgroup

@@ -117,10 +117,12 @@ describe ExtractFilter do
     end
 
     it 'filters repeats before filtering emptyness' do
+      subject = create :subject
+
       extracts = [
-        build(:extract, user_id: 1, classification_at: 5.minutes.ago, data: {a: 1}),
-        build(:extract, user_id: 1, classification_at: 2.minutes.ago, data: {}),
-        build(:extract, user_id: 2, classification_at: 1.minutes.ago, data: {a: 1})
+        build(:extract, subject_id: subject.id, user_id: 1, classification_at: 5.minutes.ago, data: {a: 1}),
+        build(:extract, subject_id: subject.id, user_id: 1, classification_at: 2.minutes.ago, data: {}),
+        build(:extract, subject_id: subject.id, user_id: 2, classification_at: 1.minutes.ago, data: {a: 1})
       ]
 
       filter = described_class.new(empty_extracts: "ignore_empty", repeated_classifications: "keep_last")
