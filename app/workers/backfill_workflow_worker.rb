@@ -8,7 +8,7 @@ class BackfillWorkflowWorker
       page["subjects"].each do |attrs|
         subject = Subject.update_cache(attrs)
         delay = rand(duration.to_i).seconds
-        FetchClassificationsWorker.perform_in(delay, subject.id, workflow.id)
+        FetchClassificationsWorker.perform_in(delay, workflow.id, subject.id, FetchClassificationsWorker.fetch_for_subject)
       end
     end
   end

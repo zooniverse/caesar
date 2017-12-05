@@ -61,7 +61,14 @@ describe ClassificationPipeline do
     Workflow.find(workflow.id).classification_pipeline
   end
 
-  let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {}) }
+  let(:panoptes) {
+    instance_double(
+      Panoptes::Client,
+      retire_subject: true,
+      get_subject_classifications: {},
+      get_user_classifications: {}
+    )
+  }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
@@ -74,10 +81,10 @@ describe ClassificationPipeline do
 
   it 'fetches classifications from panoptes when there are no other extracts' do
     expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
+      to change(FetchClassificationsWorker.jobs, :size).by(2)
   end
 
-  it 'does not fetch classifications when extracts already present' do
+  it 'does not fetch subject classifications when extracts already present' do
     create(
       :extract,
       classification_id: classification.id,
@@ -88,7 +95,7 @@ describe ClassificationPipeline do
     )
 
     expect { pipeline.process(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
   end
 
   it 'groups extracts before reduction' do
