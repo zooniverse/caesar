@@ -21,6 +21,7 @@
     <thead class="thead-inverse">
       <tr>
         <th>Name</th>
+        <th>Topic</th>
         <th>Type</th>
         <th>Configuration</th>
         <th>Filters</th>
@@ -32,6 +33,7 @@
       <% for reducer in @workflow.reducers %>
         <tr>
           <td><%= reducer.key %></td>
+          <td><%= reducer.topic %></td>
           <td><%= reducer.class %></td>
           <td><%= debug reducer.config %></td>
           <td><%= debug reducer.filters %></td>
