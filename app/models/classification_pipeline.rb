@@ -9,7 +9,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id)
+    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id)
   end
 
@@ -44,11 +44,13 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id)
+  def reduce(workflow_id, subject_id, user_id)
     tries ||= 2
 
+    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
+
     reducers.map do |reducer|
-      data = reducer.process(extracts(workflow_id, subject_id))
+      data = reducer.process(extracts.subject_extracts)
 
       return if data == Reducer::NoData
 
@@ -85,10 +87,6 @@ class ClassificationPipeline
   end
 
   private
-
-  def extracts(workflow_id, subject_id)
-    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc)
-  end
 
   def reductions(workflow_id, subject_id)
     SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
