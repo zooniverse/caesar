@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  sequence :classification_id { |n| n }
+  sequence(:classification_id) { |n| n }
 
   factory :extract do
     workflow
