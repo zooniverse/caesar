@@ -10,9 +10,7 @@ fi
 mkdir -p tmp/pids/
 rm -f tmp/pids/*.pid
 
-if [ "$RAILS_ENV" == "development" ]; then
-  exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
-else
+if [ "$RAILS_ENV" -ne "development" ]; then
   USER_DATA=$(curl --fail http://169.254.169.254/latest/user-data || echo "")
 
   if [ "$USER_DATA" == "EMERGENCY_MODE" ]
@@ -31,6 +29,6 @@ else
   then
     cp commit_id.txt public/
   fi
-
-  exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 fi
+
+exec bundle exec sidekiq
