@@ -55,6 +55,7 @@ class Workflow < ApplicationRecord
   has_many :extractors
   has_many :reducers
   has_many :subject_rules
+  has_many :user_rules
 
   has_many :extracts
   has_many :subject_reductions
