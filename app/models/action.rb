@@ -18,6 +18,7 @@ class Action < ApplicationRecord
 
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
+    field :userId, !types.ID, property: :user_id
     field :effectType, !types.String, property: :effect_type
     field :status, !Status
 
@@ -32,10 +33,10 @@ class Action < ApplicationRecord
   enum status: [:pending, :completed, :failed]
 
   belongs_to :workflow
-  belongs_to :subject
+  belongs_to :subject, optional: true
 
   def perform
-    effect.perform(workflow_id, subject_id)
+    effect.perform(workflow_id, subject_id, user_id)
     update! status: :completed, completed_at: Time.zone.now
   rescue StandardError
     update! status: :failed

@@ -1,10 +1,33 @@
+require 'active_record/enum'
+
 class FetchClassificationsWorker
   include Sidekiq::Worker
 
+  # note: because this isn't an ApplicationRecord subclass,
+  # we can't simply use enum
+  @@FetchForSubject = 0.freeze
+  @@FetchForUser = 1.freeze
+
+  def self.fetch_for_subject
+    @@FetchForSubject
+  end
+
+  def self.fetch_for_user
+    @@FetchForUser
+  end
+
   sidekiq_options unique: :until_executing unless Rails.env.test?
 
-  def perform(subject_id, workflow_id)
-    classifications = Effects.panoptes.get_subject_classifications(subject_id, workflow_id)["classifications"]
+  def perform(workflow_id, object_id, object_type)
+    classifications = case object_type
+    when @@FetchForSubject
+      Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
+    when @@FetchForUser
+      Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
+    else
+      nil
+    end
+
     process_classifications(workflow_id, classifications)
   end
 
@@ -12,6 +35,7 @@ class FetchClassificationsWorker
     return unless classifications
 
     classifications.each do |attributes|
+      # todo: probably don't re-extract if the classification hasn't changed
       attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
       classification = Classification.upsert(attributes)
       ExtractWorker.perform_async(classification.id)

@@ -1,4 +1,9 @@
 class Rule < ApplicationRecord
+  enum topic: {
+    for_subjects: 0,
+    for_users: 1
+  }
+
   belongs_to :workflow
   has_many :rule_effects
 
@@ -8,10 +13,10 @@ class Rule < ApplicationRecord
     Conditions::FromConfig.build(self[:condition])
   end
 
-  def process(subject_id, bindings)
+  def process(subject_id, user_id, bindings)
     if condition.apply(bindings)
       rule_effects.each do |effect|
-        pending_action = effect.prepare(id, workflow_id, subject_id)
+        pending_action = effect.prepare(id, workflow_id, subject_id, user_id)
         PerformActionWorker.perform_async(pending_action.id)
       end
     end

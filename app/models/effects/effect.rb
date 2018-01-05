@@ -10,11 +10,12 @@ module Effects
       raise NotImplementedError
     end
 
-    def prepare(workflow_id, subject_id)
+    def prepare(workflow_id, subject_id, user_id)
       Action.create!(effect_type: self.class.name.demodulize.underscore,
                      config: config,
                      workflow_id: workflow_id,
-                     subject_id: subject_id)
+                     subject_id: subject_id,
+                     user_id: user_id)
     end
 
     def notify_subscribers(workflow_id, event_name, data)

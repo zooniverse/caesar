@@ -61,7 +61,11 @@ describe ClassificationPipeline do
     Workflow.find(workflow.id).classification_pipeline
   end
 
-  let(:panoptes) { instance_double(Panoptes::Client, retire_subject: true, get_subject_classifications: {}) }
+  let(:panoptes) { instance_double(Panoptes::Client,
+    retire_subject: true,
+    get_subject_classifications: {},
+    get_user_classifications: {})
+  }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
@@ -74,7 +78,7 @@ describe ClassificationPipeline do
 
   it 'fetches classifications from panoptes when there are no other extracts' do
     expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
+      to change(FetchClassificationsWorker.jobs, :size).by(2)
   end
 
   it 'does not fetch classifications when extracts already present' do
@@ -88,7 +92,29 @@ describe ClassificationPipeline do
     )
 
     expect { pipeline.process(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size).from(0)
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
+    # only change size by one because it's only fetching user classifications
+  end
+
+  it 'reduces by user instead of subject if we tell it to' do
+    workflow = create(:workflow)
+    subject = create(:subject)
+    other_subject = create(:subject)
+
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1234, subject_id: other_subject.id, classification_id: 22222, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
+
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user])
+
+    pipeline = described_class.new(nil, [reducer], nil)
+    pipeline.reduce(workflow.id, nil, 1234)
+
+    expect(Reduction.count).to eq(1)
+    expect(Reduction.first.user_id).to eq(1234)
+    expect(Reduction.first.subject_id).to be(nil)
+    expect(Reduction.first.data).to eq({"LN" => 2})
   end
 
   it 'groups extracts before reduction' do
@@ -114,9 +140,11 @@ describe ClassificationPipeline do
     # build a simplified pipeline to reduce these extracts
     reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
     pipeline = described_class.new(nil, [reducer], nil)
-    pipeline.reduce(workflow.id, subject.id)
+    pipeline.reduce(workflow.id, subject.id, 1234)
 
     expect(Reduction.count).to eq(2)
+    expect(Reduction.first.user_id).to be(nil)
+    expect(Reduction.first.subject_id).to eq(subject.id)
     expect(Reduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
     expect(Reduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
   end

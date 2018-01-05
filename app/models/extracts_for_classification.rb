@@ -23,6 +23,10 @@ class ExtractsForClassification
     extracts.first.classification_at
   end
 
+  def subject_id
+    extracts.first.subject_id
+  end
+
   def user_id
     extracts.first.user_id
   end

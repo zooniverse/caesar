@@ -4,6 +4,7 @@
   <thead>
     <thead class="thead-inverse">
       <tr>
+        <th>Topic</th>
         <th>If</th>
         <th>Then</th>
         <th>Actions</th>
@@ -12,6 +13,7 @@
     <tbody>
       <% for rule in @workflow.rules %>
         <tr>
+          <td><%= rule.topic %></td>
           <td><%= render_condition rule.condition %></td>
           <td>
             <ul>

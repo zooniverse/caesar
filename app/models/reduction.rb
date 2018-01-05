@@ -4,6 +4,7 @@ class Reduction < ApplicationRecord
 
     field :projectId, types.ID, property: :project_id
     field :workflowId, !types.ID, property: :workflow_id
+    field :userId, !types.ID, property: :user_id
     field :subjectId, !types.ID, property: :subject_id
     field :reducerKey, types.String, property: :reducer_key
 
@@ -14,5 +15,5 @@ class Reduction < ApplicationRecord
   end
 
   belongs_to :workflow
-  belongs_to :subject
+  belongs_to :subject, optional: true
 end

@@ -1,6 +1,6 @@
 module Effects
   class AddSubjectToCollection < Effect
-    def perform(workflow_id, subject_id)
+    def perform(workflow_id, subject_id, user_id)
       Effects.panoptes.add_subjects_to_collection(collection_id, [subject_id])
 
       notify_subscribers(workflow_id, :subject_added_to_collection, {

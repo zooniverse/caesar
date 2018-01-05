@@ -61,12 +61,18 @@ class ExtractFilter
   end
 
   def keep_first_classification(extracts)
-    user_ids ||= Set.new
+    subjects ||= Hash.new
 
     extracts.select do |extracts_for_classification|
+      subject_id = extracts_for_classification.subject_id
+      user_id = extracts_for_classification.user_id
+
+      subjects[subject_id] = Set.new unless subjects.has_key? subject_id
+      id_list = subjects[subject_id]
+
       next true unless extracts_for_classification.user_id
-      next false if user_ids.include?(extracts_for_classification.user_id)
-      user_ids << extracts_for_classification.user_id
+      next false if id_list.include?(user_id)
+      id_list << user_id
       true
     end.to_a
   end

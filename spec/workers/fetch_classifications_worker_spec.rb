@@ -4,14 +4,14 @@ describe FetchClassificationsWorker do
   let(:workflow) { create :workflow }
   let(:subject)  { create :subject }
 
-  let(:panoptes) { double("PanoptesAdapter", get_subject_classifications: {"classifications" => []}) }
+  let(:panoptes) { double("PanoptesAdapter", get_subject_classifications: {"classifications" => []}, get_user_classifications: {"classifications" => []}) }
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
   it 'calls the API' do
-    FetchClassificationsWorker.new.perform(1234,5678)
+    FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     expect(panoptes).to have_received(:get_subject_classifications)
       .with(1234,5678)
   end
@@ -21,7 +21,7 @@ describe FetchClassificationsWorker do
     allow(panoptes).to receive(:get_subject_classifications).and_return("classifications" => classifications)
 
     expect do
-      FetchClassificationsWorker.new.perform(1234, 5678)
+      FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     end.to change(Classification, :count).by(3)
   end
 
@@ -30,8 +30,14 @@ describe FetchClassificationsWorker do
     allow(panoptes).to receive(:get_subject_classifications).and_return("classifications" => classifications)
 
     expect do
-      FetchClassificationsWorker.new.perform(1234, 5678)
+      FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     end.to change(ExtractWorker.jobs, :size).by(3)
+  end
+
+  it 'can try to fetch classifications by user' do
+    FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_user)
+    expect(panoptes).to have_received(:get_user_classifications)
+      .with(1234,5678)
   end
 
   def classification(id)
