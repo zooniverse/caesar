@@ -16,6 +16,8 @@ module Effects
       Effects::AddSubjectToSet
     when "add_subject_to_collection"
       Effects::AddSubjectToCollection
+    when "promote_user"
+      Effects::PromoteUser
     else
       raise UnknownEffect, "Don't know what to do with #{effect_type}"
     end
