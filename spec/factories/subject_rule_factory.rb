@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :rule do
+  factory :subject_rule do
     condition [:const, true]
   end
 end

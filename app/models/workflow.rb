@@ -54,7 +54,7 @@ class Workflow < ApplicationRecord
 
   has_many :extractors
   has_many :reducers
-  has_many :rules
+  has_many :subject_rules
 
   has_many :extracts
   has_many :subject_reductions
@@ -76,7 +76,7 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors, reducers, rules)
+    ClassificationPipeline.new(extractors, reducers, subject_rules)
   end
 
   def webhooks
@@ -85,7 +85,7 @@ class Workflow < ApplicationRecord
 
   def configured?
     (not (extractors&.empty? and reducers&.empty?)) and
-      (rules&.present? and subscribers?)
+      (subject_rules&.present? and subscribers?)
   end
 
   def public_data?(type)

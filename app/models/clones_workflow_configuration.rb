@@ -22,12 +22,12 @@ class ClonesWorkflowConfiguration < ApplicationOperation
                             filters: reducer.filters)
     end
 
-    from.rules.each do |rule|
-      rule_copy = Rule.create!(workflow: to,
+    from.subject_rules.each do |rule|
+      rule_copy = SubjectRule.create!(workflow: to,
                                condition: rule[:condition])
 
-      rule.rule_effects.each do |rule_effect|
-        RuleEffect.create!(rule: rule_copy,
+      rule.subject_rule_effects.each do |rule_effect|
+        SubjectRuleEffect.create!(subject_rule: rule_copy,
                            action: rule_effect.action,
                            config: rule_effect.config)
       end
