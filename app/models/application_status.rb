@@ -15,8 +15,8 @@ class ApplicationStatus
     SubjectReduction.order(id: :desc).first&.created_at
   end
 
-  def newest_action_date
-    Action.order(id: :desc).first&.created_at
+  def newest_subject_action_date
+    SubjectAction.order(id: :desc).first&.created_at
   end
 
   def commit_id

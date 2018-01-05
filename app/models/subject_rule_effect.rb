@@ -11,7 +11,7 @@ class SubjectRuleEffect < ApplicationRecord
   end
 
   def prepare(rule_id, workflow_id, subject_id)
-    Action.create!(effect_type: action,
+    SubjectAction.create!(effect_type: action,
                    config: config,
                    rule_id: rule_id,
                    workflow_id: workflow_id,

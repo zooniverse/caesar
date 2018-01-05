@@ -28,7 +28,7 @@ describe ApplicationStatus, sidekiq: :inline do
     it_behaves_like("application status most recent model creation") { let(:model_type) { :subject_reduction} }
   end
 
-  describe 'newest_extract_date' do
-    it_behaves_like("application status most recent model creation") { let(:model_type) { :action} }
+  describe 'newest_action_date' do
+    it_behaves_like("application status most recent model creation") { let(:model_type) { :subject_action} }
   end
 end

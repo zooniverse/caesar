@@ -1,4 +1,4 @@
-class Action < ApplicationRecord
+class SubjectAction < ApplicationRecord
   Status = GraphQL::EnumType.define do
     name "ActionStatus"
     description "Status of a pending or performed action"

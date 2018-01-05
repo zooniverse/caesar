@@ -10,26 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105204734) do
+ActiveRecord::Schema.define(version: 20180105222831) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
-
-  create_table "actions", id: :serial, force: :cascade do |t|
-    t.integer "workflow_id", null: false
-    t.integer "subject_id", null: false
-    t.string "effect_type", null: false
-    t.jsonb "config", default: {}, null: false
-    t.integer "status", default: 0, null: false
-    t.datetime "attempted_at"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "rule_id"
-    t.index ["subject_id"], name: "index_actions_on_subject_id"
-    t.index ["workflow_id"], name: "index_actions_on_workflow_id"
-  end
 
   create_table "classifications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "project_id", null: false
@@ -108,6 +93,21 @@ ActiveRecord::Schema.define(version: 20180105204734) do
     t.integer "topic", default: 0, null: false
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
+  end
+
+  create_table "subject_actions", id: :serial, force: :cascade do |t|
+    t.integer "workflow_id", null: false
+    t.integer "subject_id", null: false
+    t.string "effect_type", null: false
+    t.jsonb "config", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "attempted_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "rule_id"
+    t.index ["subject_id"], name: "index_subject_actions_on_subject_id"
+    t.index ["workflow_id"], name: "index_subject_actions_on_workflow_id"
   end
 
   create_table "subject_reductions", id: :serial, force: :cascade do |t|
@@ -189,8 +189,6 @@ ActiveRecord::Schema.define(version: 20180105204734) do
     t.boolean "public_reductions", default: false, null: false
   end
 
-  add_foreign_key "actions", "subjects"
-  add_foreign_key "actions", "workflows"
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
   add_foreign_key "data_requests", "workflows"
@@ -198,6 +196,8 @@ ActiveRecord::Schema.define(version: 20180105204734) do
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reducers", "workflows"
+  add_foreign_key "subject_actions", "subjects"
+  add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
   add_foreign_key "subject_reductions", "workflows"
   add_foreign_key "subject_rule_effects", "subject_rules"

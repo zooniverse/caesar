@@ -32,7 +32,7 @@ class Workflow < ApplicationRecord
       }
     end
 
-    field :actions, types[Action::Type] do
+    field :subject_actions, types[SubjectAction::Type] do
       argument :subjectId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
@@ -60,7 +60,7 @@ class Workflow < ApplicationRecord
   has_many :extracts
   has_many :subject_reductions
   has_many :user_reductions
-  has_many :actions
+  has_many :subject_actions
   has_many :data_requests
 
   def self.accessible_by(credential)
