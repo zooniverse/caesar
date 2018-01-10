@@ -21,7 +21,7 @@ RSpec.describe SubjectRule, type: :model do
 
       rule.process(subject.id, {})
       expect(rule_effect).to have_received(:prepare).with(123, workflow.id, subject.id).once
-      expect(PerformActionWorker.jobs.size).to eq(1)
+      expect(PerformSubjectActionWorker.jobs.size).to eq(1)
     end
   end
 end

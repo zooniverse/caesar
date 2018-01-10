@@ -120,7 +120,7 @@ describe ClassificationPipeline do
 
     # build a simplified pipeline to reduce these extracts
     reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
-    pipeline = described_class.new(nil, [reducer], nil)
+    pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, subject.id, nil)
 
     expect(SubjectReduction.count).to eq(2)
@@ -140,11 +140,26 @@ describe ClassificationPipeline do
 
     reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user])
 
-    pipeline = described_class.new(nil, [reducer], nil)
+    pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)
 
     expect(UserReduction.count).to eq(1)
     expect(UserReduction.first.user_id).to eq(1234)
     expect(UserReduction.first.data).to eq({"LN" => 2})
+  end
+
+  it 'calls both user rules and subject rules' do
+    user_rule = instance_double( UserRule, process: true)
+    subject_rule = instance_double( SubjectRule, process: true)
+
+    workflow = create :workflow
+    subject = create :subject
+    user_id = 1234
+
+    pipeline = described_class.new(nil, nil, [subject_rule], [user_rule])
+    pipeline.check_rules(workflow.id, subject.id, user_id)
+
+    expect(user_rule).to have_received(:process).with(user_id, any_args).once
+    expect(subject_rule).to have_received(:process).with(subject.id, any_args).once
   end
 end

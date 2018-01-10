@@ -1,4 +1,4 @@
-class PerformActionWorker
+class PerformSubjectActionWorker
   include Sidekiq::Worker
 
   def perform(action_id)

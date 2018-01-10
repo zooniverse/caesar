@@ -61,6 +61,7 @@ class Workflow < ApplicationRecord
   has_many :subject_reductions
   has_many :user_reductions
   has_many :subject_actions
+  has_many :user_actions
   has_many :data_requests
 
   def self.accessible_by(credential)
@@ -77,7 +78,7 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors, reducers, subject_rules)
+    ClassificationPipeline.new(extractors, reducers, subject_rules, user_rules)
   end
 
   def webhooks

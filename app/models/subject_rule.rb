@@ -17,7 +17,7 @@ class SubjectRule < ApplicationRecord
     if condition.apply(bindings)
       subject_rule_effects.each do |effect|
         pending_action = effect.prepare(id, workflow_id, subject_id)
-        PerformActionWorker.perform_async(pending_action.id)
+        PerformSubjectActionWorker.perform_async(pending_action.id)
       end
     end
   end

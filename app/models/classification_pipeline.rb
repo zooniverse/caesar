@@ -1,16 +1,17 @@
 class ClassificationPipeline
-  attr_reader :extractors, :reducers, :rules
+  attr_reader :extractors, :reducers, :subject_rules, :user_rules
 
-  def initialize(extractors, reducers, rules)
+  def initialize(extractors, reducers, subject_rules, user_rules)
     @extractors = extractors
     @reducers = reducers
-    @rules = rules
+    @subject_rules = subject_rules
+    @user_rules = user_rules
   end
 
   def process(classification)
     extract(classification)
     reduce(classification.workflow_id, classification.subject_id, classification.user_id)
-    check_rules(classification.workflow_id, classification.subject_id)
+    check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
   def extract(classification)
@@ -92,13 +93,18 @@ class ClassificationPipeline
     raise
   end
 
-  def check_rules(workflow_id, subject_id)
-    return unless rules.present?
+  def check_rules(workflow_id, subject_id, user_id)
+    return unless subject_rules.present? or (user_rules.present? and not user_id.blank?)
+
     subject = Subject.find(subject_id)
     rule_bindings = RuleBindings.new(reductions(workflow_id, subject_id), subject)
 
-    rules.each do |rule|
+    subject_rules.each do |rule|
       rule.process(subject_id, rule_bindings)
+    end
+
+    user_rules.each do |rule|
+      rule.process(user_id, rule_bindings)
     end
   end
 

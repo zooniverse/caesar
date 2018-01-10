@@ -14,14 +14,14 @@ RSpec.describe UserRule, type: :model do
 
   context 'if the condition is true' do
     it 'performs all the effects' do
-      rule = build :subject_rule, workflow: workflow, condition: ["const", true], id: 123
-      rule_effect = rule.subject_rule_effects.build(action: :retire_subject)
+      rule = build :user_rule, workflow: workflow, condition: ["const", true], id: 123
+      rule_effect = rule.user_rule_effects.build(action: :promote_user)
 
       allow(rule_effect).to receive(:prepare).and_call_original
 
       rule.process(subject.id, {})
       expect(rule_effect).to have_received(:prepare).with(123, workflow.id, subject.id).once
-      expect(PerformActionWorker.jobs.size).to eq(1)
+      expect(PerformUserActionWorker.jobs.size).to eq(1)
     end
   end
 end

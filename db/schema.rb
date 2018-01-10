@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105222831) do
+ActiveRecord::Schema.define(version: 20180110201730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,21 @@ ActiveRecord::Schema.define(version: 20180105222831) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_actions", force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.integer "user_id", null: false
+    t.string "effect_type", null: false
+    t.jsonb "config", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "attempted_at"
+    t.datetime "completed_at"
+    t.integer "rule_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_subject_actions_on_user_id"
+    t.index ["workflow_id"], name: "index_user_actions_on_workflow_id"
+  end
+
   create_table "user_reductions", force: :cascade do |t|
     t.string "reducer_key"
     t.integer "workflow_id", null: false
@@ -165,7 +180,7 @@ ActiveRecord::Schema.define(version: 20180105222831) do
 
   create_table "user_rule_effects", force: :cascade do |t|
     t.integer "action"
-    t.jsonb "config"
+    t.jsonb "config", default: {}, null: false
     t.bigint "user_rule_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -202,6 +217,7 @@ ActiveRecord::Schema.define(version: 20180105222831) do
   add_foreign_key "subject_reductions", "workflows"
   add_foreign_key "subject_rule_effects", "subject_rules"
   add_foreign_key "subject_rules", "workflows"
+  add_foreign_key "user_actions", "workflows"
   add_foreign_key "user_rule_effects", "user_rules"
   add_foreign_key "user_rules", "workflows"
 end
