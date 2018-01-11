@@ -11,7 +11,15 @@ describe ApplicationStatus, sidekiq: :inline do
   shared_examples_for "application status most recent model creation" do
     it 'returns the date of latest extract that was created' do
       date = Time.local(2017, 4, 1, 2, 5, 2)
-      create(model_type, created_at: date)
+
+      create_type = case model_type
+      when :action
+        :subject_action
+      else
+        model_type
+      end
+
+      create(create_type, created_at: date)
       expect(status.public_send("newest_#{model_type}_date")).to eq(date)
     end
 
@@ -29,6 +37,6 @@ describe ApplicationStatus, sidekiq: :inline do
   end
 
   describe 'newest_action_date' do
-    it_behaves_like("application status most recent model creation") { let(:model_type) { :subject_action} }
+    it_behaves_like("application status most recent model creation") { let(:model_type) { :action} }
   end
 end
