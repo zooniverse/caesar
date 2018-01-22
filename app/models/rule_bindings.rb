@@ -14,7 +14,7 @@ class RuleBindings
 
   def initialize(reductions, subject)
     @reductions = reductions.index_by(&:reducer_key)
-    @reductions.merge!("subject" => SubjectBindings.new(subject))
+    @reductions.merge!("subject" => SubjectBindings.new(subject)) unless subject.blank?
   end
 
   def fetch(key, defaultVal=nil)

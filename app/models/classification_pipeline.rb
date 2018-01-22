@@ -103,7 +103,7 @@ class ClassificationPipeline
       rule.process(subject_id, rule_bindings)
     end
 
-    rule_bindings = RuleBindings.new(user_reductions(workflow_id, subject_id), nil)
+    rule_bindings = RuleBindings.new(user_reductions(workflow_id, user_id), nil)
     user_rules.each do |rule|
       rule.process(user_id, rule_bindings)
     end
