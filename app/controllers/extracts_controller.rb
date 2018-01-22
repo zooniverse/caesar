@@ -12,7 +12,7 @@ class ExtractsController < ApplicationController
 
     extract.update! extract_params
 
-    ReduceWorker.perform_async(workflow.id, subject.id) if workflow.configured?
+    ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
 
     workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
 
@@ -35,6 +35,10 @@ class ExtractsController < ApplicationController
 
   def classification_id
     params[:extract][:classification_id]
+  end
+
+  def user_id
+    params[:extract][:user_id]
   end
 
   def data

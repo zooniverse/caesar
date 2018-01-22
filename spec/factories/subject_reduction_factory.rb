@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :reduction do
+  factory :subject_reduction do
     workflow
     subject
 

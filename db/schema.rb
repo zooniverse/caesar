@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122160848) do
+ActiveRecord::Schema.define(version: 20171204222551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,23 +105,9 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.jsonb "filters", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "topic", default: 0, null: false
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
-  end
-
-  create_table "reductions", id: :serial, force: :cascade do |t|
-    t.string "reducer_key", null: false
-    t.integer "workflow_id", null: false
-    t.integer "subject_id", null: false
-    t.jsonb "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "subgroup", default: "_default", null: false
-    t.index ["subject_id"], name: "index_reductions_on_subject_id"
-    t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
-    t.index ["workflow_id", "subject_id"], name: "index_reductions_on_workflow_id_and_subject_id"
-    t.index ["workflow_id"], name: "index_reductions_on_workflow_id"
   end
 
   create_table "rule_effects", force: :cascade do |t|
@@ -141,10 +127,39 @@ ActiveRecord::Schema.define(version: 20171122160848) do
     t.index ["workflow_id"], name: "index_rules_on_workflow_id"
   end
 
+  create_table "subject_reductions", id: :serial, force: :cascade do |t|
+    t.string "reducer_key", null: false
+    t.integer "workflow_id", null: false
+    t.integer "subject_id", null: false
+    t.jsonb "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "subgroup", default: "_default", null: false
+    t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
+    t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
+    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
+    t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
+    t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
+  end
+
   create_table "subjects", id: :serial, force: :cascade do |t|
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_reductions", force: :cascade do |t|
+    t.string "reducer_key"
+    t.integer "workflow_id", null: false
+    t.integer "user_id", null: false
+    t.jsonb "data"
+    t.string "subgroup", default: "_default", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_reductions_on_user_id"
+    t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
+    t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
+    t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
   end
 
   create_table "workflows", id: :serial, force: :cascade do |t|
@@ -165,8 +180,8 @@ ActiveRecord::Schema.define(version: 20171122160848) do
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reducers", "workflows"
-  add_foreign_key "reductions", "subjects"
-  add_foreign_key "reductions", "workflows"
   add_foreign_key "rule_effects", "rules"
   add_foreign_key "rules", "workflows"
+  add_foreign_key "subject_reductions", "subjects"
+  add_foreign_key "subject_reductions", "workflows"
 end

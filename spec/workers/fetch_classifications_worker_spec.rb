@@ -11,7 +11,7 @@ describe FetchClassificationsWorker do
   end
 
   it 'calls the API' do
-    FetchClassificationsWorker.new.perform(1234,5678)
+    FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     expect(panoptes).to have_received(:get_subject_classifications)
       .with(1234,5678)
   end
@@ -21,7 +21,7 @@ describe FetchClassificationsWorker do
     allow(panoptes).to receive(:get_subject_classifications).and_return("classifications" => classifications)
 
     expect do
-      FetchClassificationsWorker.new.perform(1234, 5678)
+      FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     end.to change(Classification, :count).by(3)
   end
 
@@ -30,7 +30,7 @@ describe FetchClassificationsWorker do
     allow(panoptes).to receive(:get_subject_classifications).and_return("classifications" => classifications)
 
     expect do
-      FetchClassificationsWorker.new.perform(1234, 5678)
+      FetchClassificationsWorker.new.perform(5678, 1234, FetchClassificationsWorker.fetch_for_subject)
     end.to change(ExtractWorker.jobs, :size).by(3)
   end
 

@@ -1,6 +1,11 @@
 class Reducer < ApplicationRecord
   include Configurable
 
+  enum topic: {
+    reduce_by_subject: 0,
+    reduce_by_user: 1
+  }
+
   def self.of_type(type)
     case type.to_s
     when "consensus"
@@ -28,6 +33,7 @@ class Reducer < ApplicationRecord
 
   validates :workflow, presence: true
   validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
+  validates :topic, presence: true
   validates_associated :extract_filter
 
   before_validation :nilify_empty_fields

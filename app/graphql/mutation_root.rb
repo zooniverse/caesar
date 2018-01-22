@@ -41,7 +41,7 @@ MutationRoot = GraphQL::ObjectType.define do
     }
   end
 
-  field :upsertReduction, Reduction::Type do
+  field :upsertReduction, SubjectReduction::Type do
     description <<-END.strip_heredoc
       Creates/updates the data for an reduction. Triggers evaluation of the workflow rules
       afterwards (asynchronously).
@@ -56,7 +56,7 @@ MutationRoot = GraphQL::ObjectType.define do
       workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
       subject   = Subject.find(args[:subjectId])
       reducer   = workflow.reducers[args[:reducerKey]]
-      reduction = Reduction.find_or_initialize_by(workflow_id: workflow.id,
+      reduction = SubjectReduction.find_or_initialize_by(workflow_id: workflow.id,
                                                   reducer_id: reducer.id,
                                                   subject_id: subject.id)
       reduction.update! data: args[:data]
@@ -82,7 +82,7 @@ MutationRoot = GraphQL::ObjectType.define do
       workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
       subject   = Subject.find(args[:subjectId])
 
-      !!FetchClassificationsWorker.perform_async(subject.id, workflow.id)
+      !!FetchClassificationsWorker.perform_async(workflow.id, subject.id, FetchClassificationsWorker.fetch_for_subject)
     }
   end
 end

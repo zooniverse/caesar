@@ -15,8 +15,8 @@ describe Conditions::Any do
 
   let(:reductions){
     [
-      Reduction.new(reducer_key: 'savannah', data: {:serval => 1, :hippo => 1, :cerulean => 1}),
-      Reduction.new(reducer_key: 'mountain', data: {:ibis => 1, :alpaca => 1, :cerulean => 5})
+      SubjectReduction.new(reducer_key: 'savannah', data: {:serval => 1, :hippo => 1, :cerulean => 1}),
+      SubjectReduction.new(reducer_key: 'mountain', data: {:ibis => 1, :alpaca => 1, :cerulean => 5})
     ]
   }
 

@@ -9,7 +9,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id)
+    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id)
   end
 
@@ -18,6 +18,7 @@ class ClassificationPipeline
 
     extractors.each do |extractor|
       known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
+      known_user = Extract.exists?(user_id: classification.subject_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
@@ -28,7 +29,11 @@ class ClassificationPipeline
       extract.save!
 
       unless known_subject
-        FetchClassificationsWorker.perform_async(classification.subject_id, classification.workflow_id)
+        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
+      end
+
+      unless known_user
+        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
       end
 
       extract
@@ -39,22 +44,40 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id)
+  def reduce(workflow_id, subject_id, user_id)
     tries ||= 2
 
+    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
+
     reducers.map do |reducer|
-      data = reducer.process(extracts(workflow_id, subject_id))
+      data = if reducer.reduce_by_subject?
+        reducer.process(extracts.subject_extracts)
+      elsif reducer.reduce_by_user?
+        reducer.process(extracts.user_extracts)
+      else
+        Reducer::NoData
+      end
 
       return if data == Reducer::NoData
 
       data.map do |subgroup, datum|
         next if data == Reducer::NoData
 
-        reduction = Reduction.where(
-          workflow_id: workflow_id,
-          subject_id: subject_id,
-          reducer_key: reducer.key,
-          subgroup: subgroup).first_or_initialize
+        reduction = if reducer.reduce_by_subject?
+            SubjectReduction.where(
+              workflow_id: workflow_id,
+              subject_id: subject_id,
+              reducer_key: reducer.key,
+              subgroup: subgroup).first_or_initialize
+          elsif reducer.reduce_by_user?
+            UserReduction.where(
+              workflow_id: workflow_id,
+              user_id: user_id,
+              reducer_key: reducer.key,
+              subgroup: subgroup).first_or_initialize
+          else
+            nil
+          end
 
         reduction.data = datum
         reduction.subgroup = subgroup
@@ -81,11 +104,7 @@ class ClassificationPipeline
 
   private
 
-  def extracts(workflow_id, subject_id)
-    Extract.where(workflow_id: workflow_id, subject_id: subject_id).order(classification_at: :desc)
-  end
-
   def reductions(workflow_id, subject_id)
-    Reduction.where(workflow_id: workflow_id, subject_id: subject_id)
+    SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
   end
 end

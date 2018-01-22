@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Exporters::CsvReductionExporter do
+describe Exporters::CsvSubjectReductionExporter do
   let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
   let(:exporter) { described_class.new workflow_id: workflow.id }
   let(:sample){
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: subject.id,
@@ -18,32 +18,32 @@ describe Exporters::CsvReductionExporter do
       File.delete("tmp/reductions_#{workflow.id}.csv")
     end
 
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
     sample.save
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key2" => "val2"}
     ).save
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key3" => "val3"}
     ).save
-    Reduction.new(
+    SubjectReduction.new(
       reducer_key: "x",
       workflow_id: create(:workflow).id,
       subject_id: Subject.create!.id,
@@ -77,10 +77,10 @@ describe Exporters::CsvReductionExporter do
 
   it 'should create the right file' do
     exporter.dump
-    expect(File.exist?("tmp/reductions_#{workflow.id}.csv")).to be(true)
+    expect(File.exist?("tmp/subject_reductions_#{workflow.id}.csv")).to be(true)
   end
 
   after do
-    Reduction.delete_all
+    SubjectReduction.delete_all
   end
 end

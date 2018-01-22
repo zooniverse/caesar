@@ -1,4 +1,4 @@
-class ReductionPolicy < ApplicationPolicy
+class UserReductionPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       workflow_ids = Pundit.policy_scope!(credential, Workflow).pluck(:id)
