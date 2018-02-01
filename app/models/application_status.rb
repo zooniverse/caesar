@@ -17,7 +17,7 @@ class ApplicationStatus
 
   def newest_action_date
     [SubjectAction.order(id: :desc).first&.created_at].concat(
-    [UserAction.order(id: :desc).first&.created_at ]).reject{|e| e.blank?}.min
+    [UserAction.order(id: :desc).first&.created_at ]).compact.min
   end
 
   def commit_id

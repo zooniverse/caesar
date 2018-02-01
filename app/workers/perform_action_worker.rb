@@ -1,0 +1,2 @@
+class PerformActionWorker < PerformSubjectActionWorker
+end
