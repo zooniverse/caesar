@@ -94,7 +94,14 @@ class ClassificationPipeline
   end
 
   def check_rules(workflow_id, subject_id, user_id)
-    return unless subject_rules.present? or (user_rules.present? and not user_id.blank?)
+    check_subject_rules(workflow_id, subject_id)
+    check_user_rules(workflow_id, user_id)
+  end
+
+  private
+
+  def check_subject_rules(workflow_id, subject_id)
+    return unless subject_rules.present?
 
     subject = Subject.find(subject_id)
 
@@ -102,14 +109,16 @@ class ClassificationPipeline
     subject_rules.each do |rule|
       rule.process(subject_id, rule_bindings)
     end
+  end
+
+  def check_user_rules(workflow_id, user_id)
+    return unless (user_rules.present? and not user_id.blank?)
 
     rule_bindings = RuleBindings.new(user_reductions(workflow_id, user_id), nil)
     user_rules.each do |rule|
       rule.process(user_id, rule_bindings)
     end
   end
-
-  private
 
   def user_reductions(workflow_id, user_id)
     UserReduction.where(workflow_id: workflow_id, user_id: user_id)
