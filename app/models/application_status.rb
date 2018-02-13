@@ -16,7 +16,8 @@ class ApplicationStatus
   end
 
   def newest_action_date
-    Action.order(id: :desc).first&.created_at
+    [SubjectAction.order(id: :desc).first&.created_at].concat(
+    [UserAction.order(id: :desc).first&.created_at ]).compact.min
   end
 
   def commit_id

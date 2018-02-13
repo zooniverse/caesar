@@ -1,8 +1,13 @@
-class Rule < ApplicationRecord
+class SubjectRule < ApplicationRecord
   belongs_to :workflow
-  has_many :rule_effects
+  has_many :subject_rule_effects
 
   validate :valid_condition?
+
+  enum topic: {
+    evaluate_by_subject: 0,
+    evaluate_by_user: 1
+  }
 
   def condition
     Conditions::FromConfig.build(self[:condition])
@@ -10,9 +15,9 @@ class Rule < ApplicationRecord
 
   def process(subject_id, bindings)
     if condition.apply(bindings)
-      rule_effects.each do |effect|
+      subject_rule_effects.each do |effect|
         pending_action = effect.prepare(id, workflow_id, subject_id)
-        PerformActionWorker.perform_async(pending_action.id)
+        PerformSubjectActionWorker.perform_async(pending_action.id)
       end
     end
   end

@@ -32,7 +32,7 @@ class Workflow < ApplicationRecord
       }
     end
 
-    field :actions, types[Action::Type] do
+    field :subject_actions, types[SubjectAction::Type] do
       argument :subjectId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
@@ -54,12 +54,14 @@ class Workflow < ApplicationRecord
 
   has_many :extractors
   has_many :reducers
-  has_many :rules
+  has_many :subject_rules
+  has_many :user_rules
 
   has_many :extracts
   has_many :subject_reductions
   has_many :user_reductions
-  has_many :actions
+  has_many :subject_actions
+  has_many :user_actions
   has_many :data_requests
 
   def self.accessible_by(credential)
@@ -76,7 +78,7 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors, reducers, rules)
+    ClassificationPipeline.new(extractors, reducers, subject_rules, user_rules)
   end
 
   def webhooks
@@ -85,7 +87,7 @@ class Workflow < ApplicationRecord
 
   def configured?
     (not (extractors&.empty? and reducers&.empty?)) and
-      (rules&.present? and subscribers?)
+      (subject_rules&.present? and subscribers?)
   end
 
   def public_data?(type)

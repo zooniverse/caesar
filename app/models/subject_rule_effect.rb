@@ -1,9 +1,9 @@
-class RuleEffect < ApplicationRecord
-  belongs_to :rule
+class SubjectRuleEffect < ApplicationRecord
+  belongs_to :subject_rule
 
   enum action: [:retire_subject, :add_subject_to_set, :add_subject_to_collection]
 
-  validates :action, presence: true, inclusion: {in: RuleEffect.actions.keys}
+  validates :action, presence: true, inclusion: {in: SubjectRuleEffect.actions.keys}
   validate :valid_effect?
 
   def effect
@@ -11,7 +11,7 @@ class RuleEffect < ApplicationRecord
   end
 
   def prepare(rule_id, workflow_id, subject_id)
-    Action.create!(effect_type: action,
+    SubjectAction.create!(effect_type: action,
                    config: config,
                    rule_id: rule_id,
                    workflow_id: workflow_id,

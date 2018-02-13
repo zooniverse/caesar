@@ -24,12 +24,12 @@ describe ClonesWorkflowConfiguration do
   end
 
   it 'copies rules' do
-    rule = create :rule, workflow: workflow
-    create :rule_effect, rule: rule
+    rule = create :subject_rule, workflow: workflow
+    create :subject_rule_effect, subject_rule: rule
 
     copier.copy
 
-    expect(destination.rules.count).to eq(1)
-    expect(destination.rules.first.rule_effects.first.action).to eq("retire_subject")
+    expect(destination.subject_rules.count).to eq(1)
+    expect(destination.subject_rules.first.subject_rule_effects.first.action).to eq("retire_subject")
   end
 end

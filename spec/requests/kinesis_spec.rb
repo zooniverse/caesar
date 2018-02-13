@@ -19,13 +19,13 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
   end
 
   it 'processes the stream events' do
-    rule_effect = build(:rule_effect, action: :retire_subject, config: {"reason": "flagged"})
-    rule = build(:rule, condition: ["gte", ["lookup", "s.VHCL", 0], ["const", 1]],
-                  rule_effects: [rule_effect])
+    rule_effect = build(:subject_rule_effect, action: :retire_subject, config: {"reason": "flagged"})
+    rule = build(:subject_rule, condition: ["gte", ["lookup", "s.VHCL", 0], ["const", 1]],
+                  subject_rule_effects: [rule_effect])
     workflow = create(:workflow, id: 338,
                       extractors: [build(:survey_extractor, key: 's')],
                       reducers: [build(:stats_reducer, key: 's')],
-                      rules: [rule])
+                      subject_rules: [rule])
 
     post "/kinesis",
          headers: {"CONTENT_TYPE" => "application/json"},

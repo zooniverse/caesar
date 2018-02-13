@@ -10,26 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204222551) do
+ActiveRecord::Schema.define(version: 20180110201730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
-
-  create_table "actions", id: :serial, force: :cascade do |t|
-    t.integer "workflow_id", null: false
-    t.integer "subject_id", null: false
-    t.string "effect_type", null: false
-    t.jsonb "config", default: {}, null: false
-    t.integer "status", default: 0, null: false
-    t.datetime "attempted_at"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "rule_id"
-    t.index ["subject_id"], name: "index_actions_on_subject_id"
-    t.index ["workflow_id"], name: "index_actions_on_workflow_id"
-  end
 
   create_table "classifications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "project_id", null: false
@@ -110,21 +95,19 @@ ActiveRecord::Schema.define(version: 20171204222551) do
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
 
-  create_table "rule_effects", force: :cascade do |t|
-    t.bigint "rule_id", null: false
-    t.integer "action", null: false
+  create_table "subject_actions", id: :serial, force: :cascade do |t|
+    t.integer "workflow_id", null: false
+    t.integer "subject_id", null: false
+    t.string "effect_type", null: false
     t.jsonb "config", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "attempted_at"
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["rule_id"], name: "index_rule_effects_on_rule_id"
-  end
-
-  create_table "rules", force: :cascade do |t|
-    t.bigint "workflow_id", null: false
-    t.jsonb "condition", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["workflow_id"], name: "index_rules_on_workflow_id"
+    t.integer "rule_id"
+    t.index ["subject_id"], name: "index_subject_actions_on_subject_id"
+    t.index ["workflow_id"], name: "index_subject_actions_on_workflow_id"
   end
 
   create_table "subject_reductions", id: :serial, force: :cascade do |t|
@@ -142,10 +125,43 @@ ActiveRecord::Schema.define(version: 20171204222551) do
     t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
 
+  create_table "subject_rule_effects", force: :cascade do |t|
+    t.bigint "subject_rule_id", null: false
+    t.integer "action", null: false
+    t.jsonb "config", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subject_rule_id"], name: "index_subject_rule_effects_on_subject_rule_id"
+  end
+
+  create_table "subject_rules", force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.jsonb "condition", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "topic", default: 0, null: false
+    t.index ["workflow_id"], name: "index_subject_rules_on_workflow_id"
+  end
+
   create_table "subjects", id: :serial, force: :cascade do |t|
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_actions", force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.integer "user_id", null: false
+    t.string "effect_type", null: false
+    t.jsonb "config", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "attempted_at"
+    t.datetime "completed_at"
+    t.integer "rule_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_subject_actions_on_user_id"
+    t.index ["workflow_id"], name: "index_user_actions_on_workflow_id"
   end
 
   create_table "user_reductions", force: :cascade do |t|
@@ -162,6 +178,23 @@ ActiveRecord::Schema.define(version: 20171204222551) do
     t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
   end
 
+  create_table "user_rule_effects", force: :cascade do |t|
+    t.integer "action"
+    t.jsonb "config", default: {}, null: false
+    t.bigint "user_rule_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_rule_id"], name: "index_user_rule_effects_on_user_rule_id"
+  end
+
+  create_table "user_rules", force: :cascade do |t|
+    t.jsonb "condition"
+    t.bigint "workflow_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workflow_id"], name: "index_user_rules_on_workflow_id"
+  end
+
   create_table "workflows", id: :serial, force: :cascade do |t|
     t.integer "project_id", null: false
     t.datetime "created_at", null: false
@@ -171,8 +204,6 @@ ActiveRecord::Schema.define(version: 20171204222551) do
     t.boolean "public_reductions", default: false, null: false
   end
 
-  add_foreign_key "actions", "subjects"
-  add_foreign_key "actions", "workflows"
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
   add_foreign_key "data_requests", "workflows"
@@ -180,8 +211,13 @@ ActiveRecord::Schema.define(version: 20171204222551) do
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
   add_foreign_key "reducers", "workflows"
-  add_foreign_key "rule_effects", "rules"
-  add_foreign_key "rules", "workflows"
+  add_foreign_key "subject_actions", "subjects"
+  add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
   add_foreign_key "subject_reductions", "workflows"
+  add_foreign_key "subject_rule_effects", "subject_rules"
+  add_foreign_key "subject_rules", "workflows"
+  add_foreign_key "user_actions", "workflows"
+  add_foreign_key "user_rule_effects", "user_rules"
+  add_foreign_key "user_rules", "workflows"
 end
