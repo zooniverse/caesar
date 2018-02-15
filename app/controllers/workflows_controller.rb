@@ -42,11 +42,11 @@ class WorkflowsController < ApplicationController
       return
     end
 
-    @workflow = Workflow.new(id: params[:workflow][:id], project_id: workflow_hash["links"]["project"])
+    @workflow = Workflow.new(workflow_params.merge(id: params[:workflow][:id],
+                                                   project_id: workflow_hash["links"]["project"]))
 
-    if @workflow.save
-      redirect_to workflow
-    end
+    @workflow.save
+    respond_with @workflow
   end
 
   def update
@@ -69,7 +69,9 @@ class WorkflowsController < ApplicationController
 
   def workflow_params
     params.require(:workflow).permit(
-      webhooks_config: {}
+      :public_extracts,
+      :public_reductions,
+      webhooks_config: {},
     )
   end
 end

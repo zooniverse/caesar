@@ -62,9 +62,13 @@ RSpec.describe WorkflowsController, type: :controller do
                               .with(workflow_hash["id"])
                               .and_return(workflow_hash)
 
-      post :create, params: {workflow: {id: workflow_hash["id"], project_id: workflow_hash["links"]["project_id"]}}
+      post :create, params: {workflow: {id: workflow_hash["id"],
+                                        project_id: workflow_hash["links"]["project_id"],
+                                        public_reductions: true}}
+
       expect(response).to redirect_to(action: :show, id: workflow_hash["id"])
       expect(Workflow.find(workflow_hash["id"])).to be_present
+      expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
     end
 
     it 'returns 403 for a project the user does not have access to' do
