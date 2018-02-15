@@ -9,6 +9,29 @@ describe ReducersController, :type => :controller do
     create :external_reducer, workflow: workflow
   end
 
+  describe '#index' do
+    it 'lists reducers for a workflow' do
+      reducers = [create(:external_reducer, workflow: workflow),
+                  create(:stats_reducer, workflow: workflow)]
+      get :index, params: {workflow_id: workflow.id}, format: :json
+      json_response = JSON.parse(response.body)
+      expect(json_response.map { |i| i["id"] }).to match_array(reducers.map(&:id))
+    end
+
+    it 'returns empty list when there are no reducers' do
+      get :index, params: {workflow_id: workflow.id}, format: :json
+      json_response = JSON.parse(response.body)
+      expect(json_response).to eq([])
+    end
+  end
+
+  describe '#show' do
+    it 'returns a reducer' do
+      get :show, params: {workflow_id: workflow.id, id: reducer.id}, format: :json
+      expect(response.body).to eq(reducer.to_json)
+    end
+  end
+
   describe '#new' do
     it 'renders when given a type' do
       get :new, params: {workflow_id: workflow.id, type: 'external'}
