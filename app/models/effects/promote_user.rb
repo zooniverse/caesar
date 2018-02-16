@@ -2,11 +2,11 @@ module Effects
   class PromoteUser < Effect
     def perform(workflow_id, user_id)
       project_id = Workflow.find(workflow_id).project_id
-      Effects.panoptes.promote_user_to_workflow(user_id, project_id, workflow_id)
+      Effects.panoptes.promote_user_to_workflow(user_id, project_id, target_workflow_id)
 
       notify_subscribers(workflow_id, :user_promoted, {
         "user_id" => user_id,
-        "target_workflow_id" => workflow_id
+        "target_workflow_id" => target_workflow_id
       })
     end
 
