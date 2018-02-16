@@ -1,11 +1,12 @@
 class ClassificationPipeline
-  attr_reader :extractors, :reducers, :subject_rules, :user_rules
+  attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied
 
-  def initialize(extractors, reducers, subject_rules, user_rules)
+  def initialize(extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
     @extractors = extractors
     @reducers = reducers
     @subject_rules = subject_rules
     @user_rules = user_rules
+    @rules_applied = rules_applied
   end
 
   def process(classification)
@@ -104,10 +105,17 @@ class ClassificationPipeline
     return unless subject_rules.present?
 
     subject = Subject.find(subject_id)
-
     rule_bindings = RuleBindings.new(subject_reductions(workflow_id, subject_id), subject)
-    subject_rules.each do |rule|
-      rule.process(subject_id, rule_bindings)
+
+    case rules_applied.to_s
+    when 'all_matching_rules'
+      subject_rules.each do |rule|
+        rule.process(subject_id, rule_bindings)
+      end
+    when 'first_matching_rule'
+      subject_rules.find do |rule|
+        rule.process(subject_id, rule_bindings)
+      end
     end
   end
 
@@ -115,8 +123,15 @@ class ClassificationPipeline
     return unless (user_rules.present? and not user_id.blank?)
 
     rule_bindings = RuleBindings.new(user_reductions(workflow_id, user_id), nil)
-    user_rules.each do |rule|
-      rule.process(user_id, rule_bindings)
+    case rules_applied.to_s
+    when 'all_matching_rules'
+      user_rules.each do |rule|
+        rule.process(user_id, rule_bindings)
+      end
+    when 'first_matching_rule'
+      user_rules.find do |rule|
+        rule.process(user_id, rule_bindings)
+      end
     end
   end
 

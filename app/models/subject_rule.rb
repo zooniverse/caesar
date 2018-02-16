@@ -1,6 +1,6 @@
 class SubjectRule < ApplicationRecord
   include RankedModel
-  ranks :row_order
+  ranks :row_order, with_same: :workflow_id
 
   belongs_to :workflow
   has_many :subject_rule_effects
@@ -22,6 +22,8 @@ class SubjectRule < ApplicationRecord
         pending_action = effect.prepare(id, workflow_id, subject_id)
         PerformSubjectActionWorker.perform_async(pending_action.id)
       end
+    else
+      false
     end
   end
 
