@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180110201730) do
+ActiveRecord::Schema.define(version: 20180216164047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(version: 20180110201730) do
     t.string "subgroup", default: "_default", null: false
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
+    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
     t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
     t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(version: 20180110201730) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "topic", default: 0, null: false
+    t.integer "row_order"
     t.index ["workflow_id"], name: "index_subject_rules_on_workflow_id"
   end
 
@@ -192,6 +193,7 @@ ActiveRecord::Schema.define(version: 20180110201730) do
     t.bigint "workflow_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "row_order"
     t.index ["workflow_id"], name: "index_user_rules_on_workflow_id"
   end
 

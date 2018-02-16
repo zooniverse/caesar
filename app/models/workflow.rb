@@ -78,7 +78,10 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors, reducers, subject_rules, user_rules)
+    ClassificationPipeline.new(extractors,
+                               reducers,
+                               subject_rules.rank(:row_order),
+                               user_rules.rank(:row_order))
   end
 
   def webhooks

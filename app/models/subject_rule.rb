@@ -1,4 +1,7 @@
 class SubjectRule < ApplicationRecord
+  include RankedModel
+  ranks :row_order
+
   belongs_to :workflow
   has_many :subject_rule_effects
 

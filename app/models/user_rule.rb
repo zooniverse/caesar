@@ -1,4 +1,7 @@
 class UserRule < ApplicationRecord
+  include RankedModel
+  ranks :row_order
+
   belongs_to :workflow
   has_many :user_rule_effects
 
