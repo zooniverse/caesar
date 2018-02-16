@@ -3,5 +3,18 @@ FactoryGirl.define do
     id { generate :classification_id }
     project_id { workflow&.project_id || 1 }
     workflow_version "1.1"
+
+    trait :survey_task do
+      annotations do
+        [
+          {
+            "task"=>"T0",
+            "value"=>[
+              {"choice"=>"LK", "answers"=>{"BHVR"=>["RSTNG"], "DLTS"=>"1", "CLLRPRSNT"=>"S"}, "filters"=>{}}
+            ]
+          }
+        ]
+      end
+    end
   end
 end

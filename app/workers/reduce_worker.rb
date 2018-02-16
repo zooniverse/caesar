@@ -8,7 +8,7 @@ class ReduceWorker
 
   def perform(workflow_id, subject_id, user_id)
     workflow = Workflow.find(workflow_id)
-    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id)
+    reductions = PerformReduction.new(workflow).reduce(subject_id, user_id)
 
     return if reductions == Reducer::NoData
 
