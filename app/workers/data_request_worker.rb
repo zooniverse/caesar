@@ -1,6 +1,7 @@
 class DataRequestWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
+  sidekiq_options queue: 'batch'
   sidekiq_retry_in do |count|
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
