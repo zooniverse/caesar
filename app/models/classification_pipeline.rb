@@ -35,7 +35,7 @@ class ClassificationPipeline
       end
 
       unless known_user
-        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+        # FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
       end
 
       extract
