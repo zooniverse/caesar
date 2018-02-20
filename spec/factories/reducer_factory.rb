@@ -1,7 +1,11 @@
 FactoryGirl.define do
+  sequence :key do |n|
+    "key#{n}"
+  end
+
   factory :reducer do
     workflow nil
-    key "MyString"
+    key { generate(:key) }
     config { {} }
 
     factory :stats_reducer, class: Reducers::StatsReducer

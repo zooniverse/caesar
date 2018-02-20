@@ -1,7 +1,27 @@
 class ReducersController < ApplicationController
+  def index
+    authorize workflow
+
+    respond_to do |format|
+      format.html { redirect_to workflow }
+      format.json { render json: workflow.reducers }
+    end
+  end
+
+  def show
+    authorize workflow
+    @reducer = workflow.reducers.find(params[:id])
+    respond_with @reducer
+  end
+
   def new
     authorize workflow
     @reducer = Reducer.of_type(params[:type]).new(workflow: workflow)
+  end
+
+  def edit
+    authorize workflow
+    @reducer = workflow.reducers.find(params[:id])
   end
 
   def create
@@ -11,15 +31,10 @@ class ReducersController < ApplicationController
     @reducer = reducer_class.new(reducer_params(reducer_class))
 
     if @reducer.save
-      redirect_to workflow, success: 'Reducer created'
-    else
-      render action: :new
+      flash[:success] = 'Reducer created'
     end
-  end
 
-  def edit
-    authorize workflow
-    @reducer = workflow.reducers.find(params[:id])
+    respond_with @reducer, location: [workflow]
   end
 
   def update
@@ -27,20 +42,26 @@ class ReducersController < ApplicationController
     @reducer = workflow.reducers.find(params[:id])
 
     if @reducer.update(reducer_params(@reducer.class))
-      redirect_to workflow, success: 'Reducer created'
+      respond_to do |format|
+        format.html { redirect_to workflow, success: 'Reducer created' }
+        format.json { respond_with @reducer }
+      end
     else
-      render action: :edit
+      respond_with @reducer
     end
   end
 
   def destroy
     authorize workflow
+    reducer = workflow.reducers.find(params[:id])
 
-    if workflow.reducers.find(params[:id]).destroy
-      redirect_to workflow, success: 'Reducer deleted'
+    if reducer.destroy
+      flash[:success] = 'Reducer deleted'
     else
-      redirect_to workflow, error: 'Could not delete reducer'
+      flash[:error] = 'Could not delete reducer'
     end
+
+    respond_with reducer, location: [workflow]
   end
 
   private

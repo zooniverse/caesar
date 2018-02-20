@@ -1,7 +1,27 @@
 class ExtractorsController < ApplicationController
+  def index
+    authorize workflow
+
+    respond_to do |format|
+      format.html { redirect_to workflow }
+      format.json { render json: workflow.extractors }
+    end
+  end
+
+  def show
+    authorize workflow
+    @extractor = workflow.extractors.find(params[:id])
+    respond_with @extractor
+  end
+
   def new
     authorize workflow
     @extractor = Extractor.of_type(params[:type]).new(workflow: workflow)
+  end
+
+  def edit
+    authorize workflow
+    @extractor = workflow.extractors.find(params[:id])
   end
 
   def create
@@ -11,15 +31,10 @@ class ExtractorsController < ApplicationController
     @extractor = extractor_class.new(extractor_params(extractor_class))
 
     if @extractor.save
-      redirect_to workflow, success: 'Extractor created'
-    else
-      render action: :new
+      flash[:success] = 'Extractor created'
     end
-  end
 
-  def edit
-    authorize workflow
-    @extractor = workflow.extractors.find(params[:id])
+    respond_with @extractor, location: [workflow]
   end
 
   def update
@@ -27,20 +42,26 @@ class ExtractorsController < ApplicationController
     @extractor = workflow.extractors.find(params[:id])
 
     if @extractor.update(extractor_params(@extractor.class))
-      redirect_to workflow, success: 'Extractor created'
+      respond_to do |format|
+        format.html { redirect_to workflow, success: 'Extractor created' }
+        format.json { respond_with @extractor }
+      end
     else
-      render action: :edit
+      respond_with @extractor
     end
   end
 
   def destroy
     authorize workflow
+    extractor = workflow.extractors.find(params[:id])
 
-    if workflow.extractors.find(params[:id]).destroy
-      redirect_to workflow, success: 'Extractor deleted'
+    if extractor.destroy
+      flash[:success] = 'Extractor deleted'
     else
-      redirect_to workflow, error: 'Could not delete extractor'
+      flash[:error] = 'Could not delete extractor'
     end
+
+    respond_with extractor, location: [workflow]
   end
 
   private

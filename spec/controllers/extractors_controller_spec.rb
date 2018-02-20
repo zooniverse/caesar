@@ -9,6 +9,28 @@ describe ExtractorsController, :type => :controller do
     create :external_extractor, workflow: workflow
   end
 
+  describe '#index' do
+    it 'lists extractors for a workflow' do
+      extractors = [create(:external_extractor, workflow: workflow),
+                    create(:survey_extractor, workflow: workflow)]
+      get :index, params: {workflow_id: workflow.id}, format: :json
+      json_response = JSON.parse(response.body)
+      expect(json_response.map { |i| i["id"] }).to match_array(extractors.map(&:id))
+    end
+
+    it 'returns empty list when there are no extractors' do
+      get :index, params: {workflow_id: workflow.id}, format: :json
+      json_response = JSON.parse(response.body)
+      expect(json_response).to eq([])
+    end
+  end
+
+  describe '#show' do
+    it 'returns a extractor' do
+      get :show, params: {workflow_id: workflow.id, id: extractor.id}, format: :json
+      expect(response.body).to eq(extractor.to_json)
+    end
+  end
   describe '#new' do
     it 'renders when given a type' do
       get :new, params: {workflow_id: workflow.id, type: 'external'}
