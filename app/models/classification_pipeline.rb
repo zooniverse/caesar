@@ -20,7 +20,7 @@ class ClassificationPipeline
 
     extractors.each do |extractor|
       known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
-      known_user = Extract.exists?(user_id: classification.subject_id, workflow_id: classification.workflow_id)
+      known_user = classification.user_id.blank? or Extract.exists?(user_id: classification.user_id, workflow_id: classification.workflow_id)
 
       data = extractor.process(classification)
 
