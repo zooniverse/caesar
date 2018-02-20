@@ -64,6 +64,8 @@ class Workflow < ApplicationRecord
   has_many :user_actions
   has_many :data_requests
 
+  enum rules_applied: [:all_matching_rules, :first_matching_rule]
+
   def self.accessible_by(credential)
     return none unless credential.logged_in?
     return none if credential.expired?
@@ -78,7 +80,11 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors, reducers, subject_rules, user_rules)
+    ClassificationPipeline.new(extractors,
+                               reducers,
+                               subject_rules.rank(:row_order),
+                               user_rules.rank(:row_order),
+                               rules_applied)
   end
 
   def webhooks

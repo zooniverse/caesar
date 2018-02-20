@@ -1,4 +1,7 @@
 class UserRule < ApplicationRecord
+  include RankedModel
+  ranks :row_order, with_same: :workflow_id
+
   belongs_to :workflow
   has_many :user_rule_effects
 
@@ -14,6 +17,8 @@ class UserRule < ApplicationRecord
         pending_action = effect.prepare(id, workflow_id, user_id)
         PerformUserActionWorker.perform_async(pending_action.id)
       end
+    else
+      false
     end
   end
 

@@ -162,4 +162,33 @@ describe ClassificationPipeline do
     expect(user_rule).to have_received(:process).with(user_id, any_args).once
     expect(subject_rule).to have_received(:process).with(subject.id, any_args).once
   end
+
+  it 'stops at first matching subject rule' do
+    subject_rule1 = instance_double(SubjectRule, process: true)
+    subject_rule2 = instance_double(SubjectRule, process: true)
+
+    workflow = create :workflow
+    subject = create :subject
+
+    pipeline = described_class.new(nil, nil, [subject_rule1, subject_rule2], [], :first_matching_rule)
+    pipeline.check_rules(workflow.id, subject.id, nil)
+
+    expect(subject_rule1).to have_received(:process).with(subject.id, any_args).once
+    expect(subject_rule2).not_to have_received(:process)
+  end
+
+  it 'stops at first matching user rule' do
+    user_rule1 = instance_double(UserRule, process: true)
+    user_rule2 = instance_double(UserRule, process: true)
+
+    workflow = create :workflow
+    subject = create :subject
+    user_id = 1234
+
+    pipeline = described_class.new(nil, nil, [], [user_rule1, user_rule2], :first_matching_rule)
+    pipeline.check_rules(workflow.id, subject.id, user_id)
+
+    expect(user_rule1).to have_received(:process).with(user_id, any_args).once
+    expect(user_rule2).not_to have_received(:process)
+  end
 end
