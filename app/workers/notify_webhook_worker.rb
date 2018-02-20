@@ -2,6 +2,7 @@ require 'uri'
 
 class NotifyWebhookWorker
   include Sidekiq::Worker
+  sidekiq_options queue: 'external'
 
   def perform(endpoint, event_name, data)
     return if endpoint.nil? or endpoint.empty?

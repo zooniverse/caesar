@@ -1,5 +1,6 @@
 class FetchClassificationsWorker
   include Sidekiq::Worker
+  sidekiq_options queue: 'batch'
 
  # note: because this isn't an ApplicationRecord subclass,
   # we can't simply use enum

@@ -1,5 +1,6 @@
 class BackfillWorkflowWorker
   include Sidekiq::Worker
+  sidekiq_options queue: 'batch'
 
   def perform(workflow_id, duration = 24.hours)
     workflow = Workflow.find(workflow_id)
