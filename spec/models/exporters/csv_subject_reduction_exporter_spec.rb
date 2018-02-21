@@ -9,7 +9,7 @@ describe Exporters::CsvSubjectReductionExporter do
       reducer_key: "x",
       workflow_id: workflow.id,
       subject_id: subject.id,
-      data: {"key1" => "val1", "key2" => "val2"}
+      data: {"key1" => "val1", "key2" => "val2", "key5" => {"foo" => "bar"}, "key6" => ["foo", "bar"]}
     )
   }
 
@@ -72,6 +72,8 @@ describe Exporters::CsvSubjectReductionExporter do
     expect(row).to include("val2")
     expect(row).to include("")
     expect(row).not_to include("val3")
+    expect(row).to include({"foo" => "bar"}.to_json)
+    expect(row).to include(["foo", "bar"].to_json)
     expect(row).to include(workflow.id)
   end
 
