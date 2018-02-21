@@ -19,8 +19,10 @@ class ClassificationPipeline
     tries ||= 2
 
     extractors.each do |extractor|
-      known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
-      known_user = classification.user_id.blank? or Extract.exists?(user_id: classification.user_id, workflow_id: classification.workflow_id)
+      workflow = Workflow.find(classification.workflow_id)
+
+      novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
+      novel_user = classification.user_id.present? and Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
       data = extractor.process(classification)
 
@@ -30,12 +32,12 @@ class ClassificationPipeline
       extract.data = data
       extract.save!
 
-      unless known_subject
+      if workflow.concerns_subjects? and novel_subject
         FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
       end
 
-      unless known_user
-        # FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+      if workflow.concerns_users? and novel_user
+        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
       end
 
       extract

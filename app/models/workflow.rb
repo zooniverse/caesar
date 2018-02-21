@@ -123,4 +123,12 @@ class Workflow < ApplicationRecord
   def subscribers?
     webhooks.size > 0
   end
+
+  def concerns_subjects?
+    subject_rules.present? or reducers.where(topic: 'reduce_by_subject').present?
+  end
+
+  def concerns_users?
+    user_rules.present? or reducers.where(topic: 'reduce_by_user').present?
+  end
 end
