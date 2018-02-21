@@ -15,6 +15,8 @@ describe ApplicationStatus, sidekiq: :inline do
       create_type = case model_type
       when :action
         :subject_action
+      when :reduction
+        :subject_reduction
       else
         model_type
       end
@@ -33,7 +35,7 @@ describe ApplicationStatus, sidekiq: :inline do
   end
 
   describe 'newest_reduction_date' do
-    it_behaves_like("application status most recent model creation") { let(:model_type) { :subject_reduction} }
+    it_behaves_like("application status most recent model creation") { let(:model_type) { :reduction} }
   end
 
   describe 'newest_action_date' do
