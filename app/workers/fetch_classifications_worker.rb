@@ -22,8 +22,7 @@ class FetchClassificationsWorker
     when @@FetchForSubject
       Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
     when @@FetchForUser
-      # Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
-      nil
+      Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
     else
       nil
     end
