@@ -15,7 +15,7 @@
           <td><%= render_condition rule.condition %></td>
           <td>
             <ul>
-              <% rule.rule_effects.each do |rule_effect| %>
+              <% rule.subject_rule_effects.each do |rule_effect| %>
                 <li><%= render partial: 'effect', locals: {effect: rule_effect.effect} %></li>
               <% end %>
             </ul>
@@ -44,7 +44,7 @@
           <td><%= render_condition rule.condition %></td>
           <td>
             <ul>
-              <% rule.rule_effects.each do |rule_effect| %>
+              <% rule.user_rule_effects.each do |rule_effect| %>
                 <li><%= render partial: 'effect', locals: {effect: rule_effect.effect} %></li>
               <% end %>
             </ul>
