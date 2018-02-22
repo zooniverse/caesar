@@ -20,7 +20,7 @@ class DataRequestWorker
       exporter = if request.extracts?
         Exporters::CsvExtractExporter
       elsif request.reductions?
-        Exporters::CsvReductionExporter
+        Exporters::CsvSubjectReductionExporter
       end.new(
         :workflow_id => request.workflow_id,
         :user_id => request.user_id,
