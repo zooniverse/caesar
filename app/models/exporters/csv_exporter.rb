@@ -37,12 +37,23 @@ module Exporters
       json_cols = get_unique_json_cols
 
       string_source = source_row.attributes.stringify_keys
-      model_values = model_cols.map{|col| string_source[col] || ""}
-      json_values = json_cols.map{|col| source_row[:data][col] || ""}
+      model_values = model_cols.map{ |col| format_item(string_source[col]) }
+      json_values = json_cols.map{ |col| format_item(source_row[:data][col]) }
       model_values + json_values
     end
 
     private
+
+    def format_item(item)
+      return "" unless item.present?
+
+      case item
+        when Integer then item
+        when String then item
+        when Array then item.to_json
+        when Hash then item.to_json
+      end
+    end
 
     def get_items
       find_hash = { :workflow_id => workflow_id }
