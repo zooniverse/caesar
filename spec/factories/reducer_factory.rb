@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :reducer do
-    workflow nil
+    configurable nil
     key "MyString"
     config { {} }
 

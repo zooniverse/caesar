@@ -44,7 +44,7 @@ class DataRequest < ApplicationRecord
   validates :status, presence: true
   validates :requested_data, presence: true
 
-  belongs_to :workflow
+  belongs_to :configurable, polymorphic: true
 
   def stored_export
     raise "DataRequest needs to be saved to database first" unless id.present?
@@ -59,7 +59,7 @@ class DataRequest < ApplicationRecord
   def as_json(options = {})
     {
       id: id,
-      workflow_id: workflow_id.to_s,
+      configurable_id: configurable_id.to_s,
       user_id: user_id,
       subgroup: subgroup,
       status: status,

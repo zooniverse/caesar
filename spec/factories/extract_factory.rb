@@ -2,7 +2,7 @@ FactoryGirl.define do
   sequence(:classification_id) { |n| n }
 
   factory :extract do
-    workflow
+    configurable { |e| e.association(:workflow) }
     subject
 
     classification_id { generate :classification_id }

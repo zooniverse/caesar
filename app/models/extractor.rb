@@ -20,10 +20,10 @@ class Extractor < ApplicationRecord
     end
   end
 
-  belongs_to :workflow
+  belongs_to :configurable, polymorphic: true
 
-  validates :workflow, presence: true
-  validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
+  validates :configurable, presence: true
+  validates :key, presence: true, uniqueness: {scope: [:configurable_id]}
 
   before_validation :nilify_empty_fields
 

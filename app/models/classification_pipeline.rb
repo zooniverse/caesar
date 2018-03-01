@@ -10,31 +10,46 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
-    check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
+    reduce(classification.configurable_id, classification.subject_id, classification.user_id)
+    check_rules(classification.configurable_id, classification.subject_id, classification.user_id)
   end
 
   def extract(classification)
     tries ||= 2
 
     extractors.each do |extractor|
-      known_subject = Extract.exists?(subject_id: classification.subject_id, workflow_id: classification.workflow_id)
-      known_user = Extract.exists?(user_id: classification.subject_id, workflow_id: classification.workflow_id)
+      known_subject = Extract.exists?(
+        subject_id: classification.subject_id,
+        configurable_id: classification.configurable_id,
+        configurable_type: "workflow"
+      )
+      known_user = Extract.exists?(
+        user_id: classification.subject_id,
+        configurable_id: classification.configurable_id,
+        configurable_type: "workflow"
+      )
 
       data = extractor.process(classification)
 
-      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
+      extract = Extract.where(
+        configurable_id: classification.configurable_id,
+        configurable_type: "workflow",
+        subject_id: classification.subject_id,
+        classification_id: classification.id,
+        extractor_key: extractor.key
+      ).first_or_initialize
+
       extract.user_id = classification.user_id
       extract.classification_at = classification.created_at
       extract.data = data
       extract.save!
 
       unless known_subject
-        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
+        FetchClassificationsWorker.perform_async(classification.configurable_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
       end
 
       unless known_user
-        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+        FetchClassificationsWorker.perform_async(classification.configurable_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
       end
 
       extract

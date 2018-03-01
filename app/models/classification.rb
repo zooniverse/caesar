@@ -1,6 +1,8 @@
 class Classification < ApplicationRecord
-  belongs_to :workflow
+  belongs_to :configurable, polymorphic: true
   belongs_to :subject
+
+  validates :configurable, presence: true
 
   def self.upsert(data)
     classification = Classification.find_or_initialize_by(id: data.fetch("id"))

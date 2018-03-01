@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :extractor do
-    workflow nil
+    configurable nil
     key "MyString"
     config { {} }
     minimum_workflow_version nil

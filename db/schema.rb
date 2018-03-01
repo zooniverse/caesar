@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180110201730) do
+ActiveRecord::Schema.define(version: 20180221190503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20180110201730) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.bigint "workflow_id", null: false
+    t.bigint "configurable_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
     t.string "url"
@@ -49,40 +49,54 @@ ActiveRecord::Schema.define(version: 20180110201730) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: false, null: false
-    t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
-    t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
+    t.string "configurable_type"
+    t.index ["configurable_id"], name: "index_data_requests_on_configurable_id"
+    t.index ["user_id", "configurable_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
   end
 
   create_table "extractors", force: :cascade do |t|
-    t.bigint "workflow_id", null: false
+    t.bigint "configurable_id", null: false
     t.string "key", null: false
     t.string "type", null: false
     t.jsonb "config", default: {}, null: false
     t.string "minimum_workflow_version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["workflow_id", "key"], name: "index_extractors_on_workflow_id_and_key", unique: true
-    t.index ["workflow_id"], name: "index_extractors_on_workflow_id"
+    t.string "configurable_type"
+    t.index ["configurable_id", "key"], name: "index_extractors_on_configurable_id_and_key", unique: true
+    t.index ["configurable_id"], name: "index_extractors_on_configurable_id"
   end
 
   create_table "extracts", id: :serial, force: :cascade do |t|
     t.integer "classification_id", null: false
     t.datetime "classification_at", null: false
     t.string "extractor_key", null: false
-    t.integer "workflow_id", null: false
+    t.integer "configurable_id", null: false
     t.integer "user_id"
     t.integer "subject_id", null: false
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "configurable_type"
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
+    t.index ["configurable_id"], name: "index_extracts_on_configurable_id"
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
-    t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.jsonb "reducers_config"
+    t.jsonb "extractors_config"
+    t.jsonb "rules_config"
+    t.jsonb "webhooks"
+    t.boolean "public_extracts", default: false, null: false
+    t.boolean "public_reductions", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reducers", force: :cascade do |t|
-    t.bigint "workflow_id"
+    t.bigint "configurable_id"
     t.string "key", null: false
     t.string "type", null: false
     t.string "grouping"
@@ -91,8 +105,9 @@ ActiveRecord::Schema.define(version: 20180110201730) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "topic", default: 0, null: false
-    t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
-    t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
+    t.string "configurable_type"
+    t.index ["configurable_id", "key"], name: "index_reducers_on_configurable_id_and_key", unique: true
+    t.index ["configurable_id"], name: "index_reducers_on_configurable_id"
   end
 
   create_table "subject_actions", id: :serial, force: :cascade do |t|
@@ -206,11 +221,11 @@ ActiveRecord::Schema.define(version: 20180110201730) do
 
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
-  add_foreign_key "data_requests", "workflows"
-  add_foreign_key "extractors", "workflows"
+  add_foreign_key "data_requests", "workflows", column: "configurable_id"
+  add_foreign_key "extractors", "workflows", column: "configurable_id"
   add_foreign_key "extracts", "subjects"
-  add_foreign_key "extracts", "workflows"
-  add_foreign_key "reducers", "workflows"
+  add_foreign_key "extracts", "workflows", column: "configurable_id"
+  add_foreign_key "reducers", "workflows", column: "configurable_id"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
