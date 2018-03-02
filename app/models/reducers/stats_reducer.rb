@@ -1,6 +1,6 @@
 module Reducers
   class StatsReducer < Reducer
-    def reduction_data_for(extractions)
+    def reduction_data_for(extractions, reduction)
       CountingHash.build do |results|
         extractions.each do |extraction|
           extraction.data.each do |key, value|

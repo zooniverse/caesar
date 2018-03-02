@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Reducers::CountReducer do
   def unwrap(reduction)
-    reduction['_default']
+    reduction[0][:data]
   end
 
   let(:reducer) { described_class.new }

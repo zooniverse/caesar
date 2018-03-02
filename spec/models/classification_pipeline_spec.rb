@@ -80,14 +80,11 @@ describe ClassificationPipeline do
   end
 
   it 'fetches classifications from panoptes when there are no other extracts' do
-    pending
-    expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(2)
+    expect { pipeline.extract(classification) }.
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
   end
 
   it 'does not fetch subject classifications when extracts already present' do
-    pending
-
     create(
       :extract,
       classification_id: classification.id,
@@ -98,7 +95,7 @@ describe ClassificationPipeline do
     )
 
     expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
+      not_to change(FetchClassificationsWorker.jobs, :size)
   end
 
   it 'groups extracts before reduction' do

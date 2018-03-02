@@ -1,6 +1,6 @@
 module Reducers
   class ConsensusReducer < Reducer
-    def reduction_data_for(extractions)
+    def reduction_data_for(extractions, reduction)
       counter = CountingHash.new
 
       extractions.each do |extraction|

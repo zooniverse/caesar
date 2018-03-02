@@ -7,11 +7,16 @@ class ReduceWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  def perform(workflow_id, subject_id, user_id)
+  def perform(workflow_id, subject_id, user_id, extract_ids = [])
     workflow = Workflow.find(workflow_id)
-    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id)
+    begin
+      reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
+    rescue ClassificationPipeline::ReductionConflict
+      ReduceWorker.perform_async(workflow_id, subject_id, user_id, extract_ids)
+      return
+    end
 
-    return if reductions == Reducer::NoData
+    return if reductions == Reducer::NoData or reductions.reject{ |r| r==Reducer::NoData }.empty?
 
     CheckRulesWorker.perform_async(workflow_id, subject_id, user_id)
     reductions.each do |datum|

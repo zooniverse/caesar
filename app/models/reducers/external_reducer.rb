@@ -21,7 +21,8 @@ module Reducers
       end
     end
 
-    def reduction_data_for(extractions)
+    def reduction_data_for(extractions, reduction)
+      #TODO: is this the right idea here?
       if url
         response = RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
 

@@ -55,7 +55,7 @@ module Reducers
       end
     end
 
-    def reduction_data_for(extracts)
+    def reduction_data_for(extracts, reduction=nil)
       @extracts = extracts
       {}.tap do |result|
         operations.each do |operation|

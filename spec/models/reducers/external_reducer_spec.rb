@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Reducers::ExternalReducer do
   def unwrap(reduction)
-    reduction['_default']
+    reduction[0][:data]
   end
 
   let(:extracts) {

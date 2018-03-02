@@ -2,7 +2,7 @@ module Reducers
   class UniqueCountReducer < Reducer
     config_field :field
 
-    def reduction_data_for(extracts)
+    def reduction_data_for(extracts, reduction)
       mapped = extracts.map do |extract|
         if extract.data.key?(field)
           extract.data[field]

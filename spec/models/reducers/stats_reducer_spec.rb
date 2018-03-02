@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Reducers::StatsReducer do
   def unwrap(reduction)
-    reduction['_default']
+    reduction[0][:data]
   end
 
   subject(:reducer) { described_class.new }

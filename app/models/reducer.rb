@@ -45,20 +45,36 @@ class Reducer < ApplicationRecord
 
   NoData = Class.new
 
-  def process(extracts)
+  def process(extracts, reductions=nil)
     light = Stoplight("reducer-#{id}") do
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
 
-      grouped_extracts.map do |key, grouped|
-        [key, reduction_data_for(extract_filter.filter(grouped))]
-      end.to_h
+      grouped_extracts.map do |group_key, grouped|
+        reduction = if reductions.nil? then nil else reductions.where(subgroup: group_key, reducer_key: key).first_or_initialize end
+        filtered = extract_filter.filter(grouped)
+        reduction_data = reduction_data_for(filtered, reduction)
+
+        { data: reduction_data, reduction: reduction, group_key: group_key }
+      end
     end
 
     light.run
   end
 
-  def reduction_data_for(extracts)
+  def reduction_data_for(extracts, reduction)
     raise NotImplementedError
+  end
+
+  def get_reductions(keys)
+    newkey = keys.merge(reducer_key: key).compact
+
+    if reduce_by_subject?
+      SubjectReduction.where(newkey.except(:user_id))
+    elsif reduce_by_user?
+      UserReduction.where(newkey.except(:subject_id))
+    else
+      nil
+    end
   end
 
   def extract_filter

@@ -1,4 +1,6 @@
 class ClassificationPipeline
+  class ReductionConflict < StandardError; end
+
   attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied
 
   def initialize(extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
@@ -52,50 +54,50 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id, user_id)
+  def reduce(workflow_id, subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
-
     tries ||= 2
 
-    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
+    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id, extract_ids)
 
-    reducers.map do |reducer|
-      data = if reducer.reduce_by_subject?
-        reducer.process(extracts.subject_extracts)
-      elsif reducer.reduce_by_user?
-        reducer.process(extracts.user_extracts)
-      else
-        Reducer::NoData
+    # prefetch all reductions to avoid race conditions with optimistic locking
+    subject_reductions = SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
+    user_reductions = UserReduction.where(workflow_id: workflow_id, user_id: user_id)
+
+    reduction_data = reducers.map do |reducer|
+      inputs = nil
+      priors = nil
+
+      if reducer.reduce_by_user?
+        inputs = extracts.user_extracts
+        priors = user_reductions.where(reducer_key: reducer.key)
+      elsif reducer.reduce_by_subject?
+        inputs = extracts.subject_extracts
+        priors = subject_reductions.where(reducer_key: reducer.key)
       end
 
-      return if data == Reducer::NoData
-
-      data.map do |subgroup, datum|
-        next if data == Reducer::NoData
-
-        reduction = if reducer.reduce_by_subject?
-            SubjectReduction.where(
-              workflow_id: workflow_id,
-              subject_id: subject_id,
-              reducer_key: reducer.key,
-              subgroup: subgroup).first_or_initialize
-          elsif reducer.reduce_by_user?
-            UserReduction.where(
-              workflow_id: workflow_id,
-              user_id: user_id,
-              reducer_key: reducer.key,
-              subgroup: subgroup).first_or_initialize
-          else
-            nil
-          end
-
-        reduction.data = datum
-        reduction.subgroup = subgroup
-        reduction.save!
-
-        reduction
+      if reducer.running_reduction? and priors.present?
+        inputs = extracts.exact_extracts
       end
+
+      reducer.process(inputs, priors)
     end.flatten
+
+    return if reduction_data == Reducer::NoData or reduction_data.reject{|reduction| reduction[:data] == Reducer::NoData}.empty?
+
+    Workflow.transaction do
+      reduction_data.each do |r|
+        next if r[:data] == Reducer::NoData
+
+        reduction = r[:reduction]
+        reduction.data = r[:data]
+        reduction.save!
+      end
+    end
+
+    reduction_data
+  rescue ActiveRecord::StaleObjectError
+    raise ReductionConflict "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
     retry unless (tries-=1).zero?

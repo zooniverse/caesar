@@ -33,7 +33,7 @@ RSpec.describe Reducer, type: :model do
 
   subject(:reducer) do
     klass = Class.new(described_class) do
-      def reduction_data_for(extracts)
+      def reduction_data_for(extracts, reductions=nil)
         extracts
       end
     end
@@ -90,9 +90,10 @@ RSpec.describe Reducer, type: :model do
     allow(reducer).to receive(:reduction_data_for){ |reduce_me| reduce_me.map(&:data) }
     reductions = reducer.process(fancy_extracts)
 
-    expect(reductions).to include("33", "34")
-    expect(reductions['33'].count).to eq(3)
-    expect(reductions['34'].count).to eq(1)
+    expect(reductions[0][:group_key]).to eq("33")
+    expect(reductions[0][:data].count).to eq(3)
+    expect(reductions[1][:group_key]).to eq("34")
+    expect(reductions[1][:data].count).to eq(1)
   end
 
   describe 'validations' do
