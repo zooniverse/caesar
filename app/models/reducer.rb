@@ -6,6 +6,11 @@ class Reducer < ApplicationRecord
     reduce_by_user: 1
   }
 
+  enum reduction_mode: {
+    default_reduction: 0,
+    running_reduction: 1
+  }
+
   def self.of_type(type)
     case type.to_s
     when "consensus"
