@@ -23,7 +23,7 @@ class ClassificationPipeline
     workflow = Workflow.find(classification.workflow_id)
 
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
-    novel_user = classification.user_id.present? and Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
+    novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
     extracts = extractors.map do |extractor|
       data = extractor.process(classification)
@@ -53,6 +53,8 @@ class ClassificationPipeline
   end
 
   def reduce(workflow_id, subject_id, user_id)
+    return [] unless reducers&.present?
+
     tries ||= 2
 
     extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
