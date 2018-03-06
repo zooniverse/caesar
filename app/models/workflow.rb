@@ -105,8 +105,7 @@ class Workflow < ApplicationRecord
   end
 
   def configured?
-    (not (extractors&.empty? and reducers&.empty?)) and
-      (subject_rules&.present? and subscribers?)
+    (not (extractors&.empty? and reducers&.empty?))
   end
 
   def public_data?(type)

@@ -18,16 +18,20 @@ class FetchClassificationsWorker
   sidekiq_options unique: :until_executing unless Rails.env.test?
 
   def perform(workflow_id, object_id, object_type)
-    classifications = case object_type
-    when @@FetchForSubject
-      Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
-    when @@FetchForUser
-      Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
-    else
-      nil
+    light = Stoplight("fetch-classifications-#{workflow_id}-#{object_type}") do
+      classifications = case object_type
+      when @@FetchForSubject
+        Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
+      when @@FetchForUser
+        Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
+      else
+        nil
+      end
+
+      process_classifications(workflow_id, classifications)
     end
 
-    process_classifications(workflow_id, classifications)
+    light.run
   end
 
   def process_classifications(workflow_id, classifications)
