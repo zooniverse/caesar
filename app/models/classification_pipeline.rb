@@ -16,6 +16,8 @@ class ClassificationPipeline
   end
 
   def extract(classification)
+    return [] unless extractors&.present?
+
     tries ||= 2
 
     workflow = Workflow.find(classification.workflow_id)
@@ -23,7 +25,7 @@ class ClassificationPipeline
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
     novel_user = classification.user_id.present? and Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
-    extracts = extractors.each do |extractor|
+    extracts = extractors.map do |extractor|
       data = extractor.process(classification)
 
       extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
