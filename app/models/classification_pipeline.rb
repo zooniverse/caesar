@@ -18,12 +18,12 @@ class ClassificationPipeline
   def extract(classification)
     tries ||= 2
 
-    extractors.each do |extractor|
-      workflow = Workflow.find(classification.workflow_id)
+    workflow = Workflow.find(classification.workflow_id)
 
-      novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
-      novel_user = classification.user_id.present? and Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
+    novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
+    novel_user = classification.user_id.present? and Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
+    extracts = extractors.each do |extractor|
       data = extractor.process(classification)
 
       extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
@@ -32,16 +32,18 @@ class ClassificationPipeline
       extract.data = data
       extract.save!
 
-      if workflow.concerns_subjects? and novel_subject
-        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
-      end
-
-      if workflow.concerns_users? and novel_user
-        FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
-      end
-
       extract
     end
+
+    if workflow.concerns_subjects? and novel_subject
+      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
+    end
+
+    if workflow.concerns_users? and novel_user
+      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+    end
+
+    extracts
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
     retry unless (tries-=1).zero?
