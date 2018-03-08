@@ -1,6 +1,6 @@
 class ReductionFetcher
   attr_accessor :topic
-  def initialize(keys)
+  def initialize(keys, reducible_class)
     @keys = keys
     @subject_reductions = SubjectReduction.where(keys.except(:user_id))
     @user_reductions = UserReduction.where(keys.except(:subject_id))

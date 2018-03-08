@@ -11,8 +11,9 @@ class ReduceWorker
     [args[0], args[1], args[2]]
   end
 
-  def perform(workflow_id, subject_id, user_id, extract_ids = [])
-    workflow = Workflow.find(workflow_id)
+  def perform(reducible_class, reducible_id, subject_id, user_id, extract_ids = [])
+    reducible = reducible_class.find(reducible_id)
+    reductions = reducible.classification_pipeline.reduce(reducible_id, reducible_class, subject_id, user_id, extract_ids)
 
     reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
 

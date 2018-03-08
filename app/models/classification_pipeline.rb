@@ -3,7 +3,8 @@ class ClassificationPipeline
 
   attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied
 
-  def initialize(extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
+  def initialize(reducible_class, extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
+    @reducible_class = reducible_class
     @extractors = extractors
     @reducers = reducers
     @subject_rules = subject_rules
@@ -72,9 +73,17 @@ class ClassificationPipeline
     return [] unless reducers&.present?
     retries ||= 2
 
-    filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
+    filter = case reducible_class
+             when Workflow
+               { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
+             when Project
+               workflow = Workflow.find(workflow_id)
+               workflow_ids = workflow.where(project_id: workflow.project_id).pluck(:id)
+               { workflow_id: workflow_ids, subject_id: subject_id, user_id: user_id }
+             end
+
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
-    reduction_fetcher = ReductionFetcher.new(filter)
+    reduction_fetcher = ReductionFetcher.new(reducible_class, filter)
 
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }
@@ -89,6 +98,32 @@ class ClassificationPipeline
     new_reductions = reducers.map do |reducer|
       reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for!(reducer.topic))
     end.flatten
+#      return if data == Reducer::NoData
+#
+#      data.map do |subgroup, datum|
+#        next if data == Reducer::NoData
+#
+#        reduction = if reducer.reduce_by_subject?
+#            SubjectReduction.where(
+#              reducible_id: reducer.reducible_id,
+#              reducible_type: reducer.reducible_type,
+#              subject_id: subject_id,
+#              reducer_key: reducer.key,
+#              subgroup: subgroup).first_or_initialize
+#          elsif reducer.reduce_by_user?
+#            UserReduction.where(
+#              reducible_id: reducer.reducible_id,
+#              reducible_type: reducer.reducible_type,
+#              user_id: user_id,
+#              reducer_key: reducer.key,
+#              subgroup: subgroup).first_or_initialize
+#          else
+#            nil
+#          end
+#
+#        reduction.data = datum
+#        reduction.subgroup = subgroup
+#        reduction.save!
 
     Workflow.transaction do
       new_reductions.each do |reduction|
