@@ -13,6 +13,6 @@ class SubjectReduction < ApplicationRecord
     field :updatedAt, !Types::TimeType, property: :updated_at
   end
 
-  belongs_to :workflow
+  belongs_to :reducible, polymorphic: true
   belongs_to :subject
 end

@@ -75,13 +75,16 @@ class ClassificationPipeline
 
         reduction = if reducer.reduce_by_subject?
             SubjectReduction.where(
-              workflow_id: workflow_id,
+
+              reducible_id: reducer.reducible_id,
+              reducible_type: reducer.reducible_type,
               subject_id: subject_id,
               reducer_key: reducer.key,
               subgroup: subgroup).first_or_initialize
           elsif reducer.reduce_by_user?
             UserReduction.where(
-              workflow_id: workflow_id,
+              reducible_id: reducer.reducible_id,
+              reducible_type: reducer.reducible_type,
               user_id: user_id,
               reducer_key: reducer.key,
               subgroup: subgroup).first_or_initialize
