@@ -53,5 +53,23 @@ describe Reducers::StatsReducer do
       extracts = [Extract.new(data: {'blank' => true}), Extract.new(data: {'blank' => false})]
       expect(unwrap(reducer.process(extracts))).to eq('blank' => 1)
     end
+
+    it 'works in default aggregation mode' do
+      running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
+      reduction = SubjectReduction.create data: {"NTHNGHR" => 1, "RCCN" => 2}
+
+      result = running_reducer.reduction_data_for(extracts, reduction)
+      expect(result).to include({"NTHNGHR" => 2})
+      expect(result).to include({"RCCN" => 3})
+    end
+
+    it 'works in running aggregation mode' do
+      running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:running_reduction])
+      reduction = SubjectReduction.create data: {"NTHNGHR" => 1, "RCCN" => 2}
+
+      result = running_reducer.reduction_data_for(extracts, reduction)
+      expect(result).to include({"NTHNGHR" => 3})
+      expect(result).to include({"RCCN" => 5})
+    end
   end
 end

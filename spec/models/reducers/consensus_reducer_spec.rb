@@ -22,7 +22,7 @@ describe Reducers::ConsensusReducer do
 
   describe '#process' do
     it 'processes when there are no classifications' do
-      expect(unwrap(reducer.process([]))).to eq({"num_votes" => 0})
+      expect(unwrap(reducer.process([]))).to include({"num_votes" => 0})
     end
 
     it 'returns the most likely' do
@@ -32,10 +32,39 @@ describe Reducers::ConsensusReducer do
     end
 
     it 'handles multiple species' do
-      extracts = build_extracts([["ZEBRA", "BIRD"], ["ZEBRA", "BIRD"]])
+      extracts = build_extracts([["ZEBRA", "BIRD"], ["BIRD", "ZEBRA"]])
       expect(unwrap(reducer.process(extracts)))
         .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0, "num_votes" => 2})
 
     end
   end
+
+  describe 'aggregation modes' do
+    it 'works in default aggregation mode' do
+      default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
+
+      reduction = create :subject_reduction, store: {"RCCN" => 4}
+      result = default_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA", "ZEBRA"]), reduction)
+      expect(result).to include({"most_likely" => "ZEBRA"})
+      expect(result).to include({"num_votes" => 3})
+
+      result = default_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA"]), reduction)
+      expect(result).to include({"most_likely" => "ZEBRA"})
+      expect(result).to include({"num_votes" => 2})
+    end
+
+    it 'works in running aggregation mode' do
+      running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:running_reduction])
+
+      reduction = create :subject_reduction, store: {"RCCN" => 4}
+      result = running_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA", "ZEBRA"]), reduction)
+      expect(result).to include({"most_likely" => "RCCN"})
+      expect(result).to include({"num_votes" => 4})
+
+      result = running_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA"]), reduction)
+      expect(result).to include({"most_likely" => "ZEBRA"})
+      expect(result).to include({"num_votes" => 5})
+    end
+  end
+
 end
