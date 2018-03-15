@@ -16,7 +16,11 @@ class ExtractWorker
     classification.destroy
 
     if extracts.present?
-      ReduceWorker.perform_async(classification.workflow_id, classification.subject_id, classification.user_id)
+      ReduceWorker.perform_async(Workflow, classification.workflow_id, classification.subject_id, classification.user_id)
+
+      if workflow.project.has_reducers?
+        ReduceWorker.perform_async(Project, classification.project_id, classification.subject_id, classification.user_id)
+      end
     end
 
     if workflow.subscribers?

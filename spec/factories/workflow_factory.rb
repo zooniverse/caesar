@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :workflow do
-    project_id 123
+    project
   end
 end

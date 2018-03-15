@@ -65,6 +65,8 @@ class Workflow < ApplicationRecord
     end
   end
 
+  belongs_to :project
+
   has_many :extractors
   has_many :reducers, as: :reducible
   has_many :subject_rules

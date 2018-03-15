@@ -21,7 +21,7 @@ class Project < ApplicationRecord
                                rules_applied)
   end
 
-  def configured?
-    (not (extractors&.empty? and reducers&.empty?))
+  def has_reducers?
+    !reducers&.empty?
   end
 end
