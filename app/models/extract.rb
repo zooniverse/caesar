@@ -18,6 +18,6 @@ class Extract < ApplicationRecord
 
   belongs_to :workflow
   belongs_to :subject
-  has_and_belongs_to_many :subject_reduction
-  has_and_belongs_to_many :user_reduction
+  has_and_belongs_to_many_with_deferred_save :subject_reduction
+  has_and_belongs_to_many_with_deferred_save :user_reduction
 end

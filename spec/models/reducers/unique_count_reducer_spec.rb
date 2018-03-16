@@ -43,10 +43,11 @@ describe Reducers::UniqueCountReducer do
       default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction], config: {"field" => "choices"})
 
       extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
-      reduction = create :subject_reduction, store: ["A", "B"]
+      reduction = create :subject_reduction, store: {}
 
       expect(default_reducer.reduction_data_for(extracts, reduction)).to eq(2)
-      expect(default_reducer.reduction_data_for(extracts, reduction)).to eq(2)
+
+      reduction.store = {}
       expect(default_reducer.reduction_data_for([extracts[0]], reduction)).to eq(1)
     end
 
@@ -54,7 +55,7 @@ describe Reducers::UniqueCountReducer do
       running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:running_reduction], config: {"field" => "choices"})
 
       extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
-      reduction = create :subject_reduction, store: ["A", "B"]
+      reduction = create :subject_reduction, store: { "items" => ["A", "B"] }
 
       expect(running_reducer.reduction_data_for(extracts, reduction)).to eq(3)
       expect(running_reducer.reduction_data_for([extracts[0]], reduction)).to eq(3)

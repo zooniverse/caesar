@@ -191,4 +191,14 @@ describe ClassificationPipeline do
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once
     expect(user_rule2).not_to have_received(:process)
   end
+
+  describe 'running/online aggregation mode' do
+    xit 'selects the proper extracts for processing' do
+      raise NotImplementedError
+    end
+
+    xit 'detects synchronization problems' do
+      raise NotImplementedError
+    end
+  end
 end

@@ -16,7 +16,7 @@ class ReduceWorker
       return
     end
 
-    return if reductions == Reducer::NoData or reductions.reject{ |r| r==Reducer::NoData }.empty?
+    return if reductions == Reducer::NoData || reductions.reject{ |r| r==Reducer::NoData }.empty?
 
     CheckRulesWorker.perform_async(workflow_id, subject_id, user_id)
     reductions.each do |datum|

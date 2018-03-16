@@ -1,8 +1,7 @@
 module Reducers
   class ConsensusReducer < Reducer
     def reduction_data_for(extractions, reduction)
-      store_value = {}
-      store_value = reduction.store if running_reduction? && reduction&.store.present?
+      store_value = reduction&.store || {}
       counter = CountingHash.new(store_value)
 
       extractions.each do |extraction|

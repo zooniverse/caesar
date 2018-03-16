@@ -3,17 +3,17 @@ module Reducers
     config_field :field
 
     def reduction_data_for(extracts, reduction)
-      initial_value = []
-      initial_value = reduction.store if running_reduction? && reduction&.store.present?
+      store = reduction&.store || {}
+      store["items"] = [] unless store.key? "items"
 
-      mapped = (initial_value + extracts.map do |extract|
+      mapped = (store["items"] + extracts.map do |extract|
         if extract.data.key?(field)
           val = extract.data[field]
           if val.respond_to?('sort') && val.respond_to?('join') then val.sort.join('+') else val end
         end
       end).uniq
 
-      reduction.store = mapped if reduction.present?
+      reduction.store["items"] = mapped if reduction.present?
 
       mapped.size
     end

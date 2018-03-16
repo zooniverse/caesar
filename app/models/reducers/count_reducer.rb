@@ -8,8 +8,7 @@
 module Reducers
   class CountReducer < Reducer
     def reduction_data_for(extracts, reduction)
-      data = {}
-      data = reduction.data if running_reduction? && reduction&.data.present?
+      data = reduction&.data || {}
 
       classifications_count = data.fetch("classifications", 0)
       extracts_count = data.fetch("extracts",0)

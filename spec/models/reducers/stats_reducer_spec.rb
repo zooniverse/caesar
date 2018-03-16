@@ -56,7 +56,7 @@ describe Reducers::StatsReducer do
 
     it 'works in default aggregation mode' do
       running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
-      reduction = SubjectReduction.create data: {"NTHNGHR" => 1, "RCCN" => 2}
+      reduction = SubjectReduction.create
 
       result = running_reducer.reduction_data_for(extracts, reduction)
       expect(result).to include({"NTHNGHR" => 2})

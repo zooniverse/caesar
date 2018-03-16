@@ -132,7 +132,7 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing min' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction, store: { "min" => 4 }
+        reduction = create :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["min"]},
@@ -172,8 +172,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing first' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["first"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -181,10 +179,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["first"]).to be_present
         expect(result["first"]).to eq(4.7)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["first"]).to be_present
         expect(result["first"]).to eq(3)
@@ -212,8 +212,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing max' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction, store: { }
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["max"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -221,10 +219,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["max"]).to be_present
         expect(result["max"]).to eq(5)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["max"]).to be_present
         expect(result["max"]).to eq(3)
@@ -252,8 +252,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing count' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction, store: { "count" => 5 }
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["count"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -261,10 +259,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["count"]).to be_present
         expect(result["count"]).to eq(2)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["count"]).to be_present
         expect(result["count"]).to eq(1)
@@ -292,7 +292,7 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing sum' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction, store: { "sum" => 5 }
+        reduction = create :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["sum"]},
@@ -305,6 +305,7 @@ describe Reducers::SummaryStatisticsReducer do
         expect(result["sum"]).to be_present
         expect(result["sum"]).to eq(9.7)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["sum"]).to be_present
         expect(result["sum"]).to eq(3)
@@ -332,8 +333,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing product' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["product"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -341,10 +340,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["product"]).to be_present
         expect(result["product"]).to eq(23.5)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["product"]).to be_present
         expect(result["product"]).to eq(3)
@@ -372,8 +373,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing mean' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["mean"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -381,10 +380,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["mean"]).to be_present
         expect(result["mean"]).to eq(4.85)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["mean"]).to be_present
         expect(result["mean"]).to eq(3)
@@ -412,8 +413,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing sse' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["sse"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -421,10 +420,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["sse"]).to be_present
         expect(result["sse"]).to be_within(0.0001).of(0.045)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["sse"]).to be_present
         expect(result["sse"]).to eq(0)
@@ -452,8 +453,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing variance' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["variance"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -461,10 +460,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["variance"]).to be_present
         expect(result["variance"]).to be_within(0.0001).of(0.045)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result.key?("variance")).to be(true)
         expect(result["variance"]).to eq(nil)
@@ -492,8 +493,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing stdev' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["stdev"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -501,10 +500,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["stdev"]).to be_present
         expect(result["stdev"]).to be_within(0.0001).of(0.2121)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result.key?("stdev")).to be(true)
         expect(result["stdev"]).to eq(nil)
@@ -532,8 +533,6 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing median' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["median"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -541,10 +540,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(extracts1, reduction)
         expect(result["median"]).to be_present
         expect(result["median"]).to be_within(0.0001).of(4.85)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(extracts2, reduction)
         expect(result["median"]).to eq(3)
       end
@@ -582,8 +583,6 @@ describe Reducers::SummaryStatisticsReducer do
       ]}
 
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction, store: { "frequencies": { "4.7" => 2 } }
-
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["mode"]},
           reduction_mode: Reducer.reduction_modes[:default_reduction]
@@ -591,10 +590,12 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
+        reduction = create :subject_reduction
         result = reducer1.reduction_data_for(mode_extracts1, reduction)
         expect(result["mode"]).to be_present
         expect(result["mode"]).to eq(4.7)
 
+        reduction = create :subject_reduction
         result = reducer2.reduction_data_for(mode_extracts2, reduction)
         expect(result["mode"]).to be_present
         expect(result["mode"]).to eq(5)

@@ -65,22 +65,7 @@ class ClassificationPipeline
     user_reductions = UserReduction.where(workflow_id: workflow_id, user_id: user_id)
 
     new_reductions = reducers.map do |reducer|
-      inputs = nil
-      priors = nil
-
-      if reducer.reduce_by_user?
-        inputs = extracts.user_extracts
-        priors = user_reductions.where(reducer_key: reducer.key)
-      elsif reducer.reduce_by_subject?
-        inputs = extracts.subject_extracts
-        priors = subject_reductions.where(reducer_key: reducer.key)
-      end
-
-      if reducer.running_reduction? and priors.present?
-        inputs = extracts.exact_extracts
-      end
-
-      reducer.process(inputs, priors)
+      execute_single_reducer(reducer, extracts, subject_reductions, user_reductions)
     end.flatten
 
     return if new_reductions == Reducer::NoData or new_reductions.reject{|reduction| reduction == Reducer::NoData}.empty?
@@ -107,6 +92,24 @@ class ClassificationPipeline
   end
 
   private
+
+  def execute_single_reducer(reducer, extracts, subject_reductions, user_reductions)
+    inputs = nil
+    priors = nil
+
+    inputs = if reducer.running_reduction?
+      extracts.exact_extracts
+    elsif reducer.reduce_by_user?
+      extracts.user_extracts
+    elsif reducer.reduce_by_subject?
+      extracts.subject_extracts
+    end
+
+    priors = user_reductions.where(reducer_key: reducer.key) if reducer.reduce_by_user?
+    priors = subject_reductions.where(reducer_key: reducer.key) if reducer.reduce_by_subject?
+
+    reducer.process(inputs, priors)
+  end
 
   def check_subject_rules(workflow_id, subject_id)
     return unless subject_rules.present?

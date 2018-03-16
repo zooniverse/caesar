@@ -58,17 +58,15 @@ class Reducer < ApplicationRecord
       new_reductions = grouped_extracts.map do |group_key, grouped|
         keys[:subgroup] = group_key
 
-        reduction = if reductions.present?
-          reductions.where(keys).first_or_initialize
-        else
-          factory.new(keys)
-        end
-
-        filtered_extracts = extract_filter.filter(grouped)
+        reduction = prepare_reduction(reductions, keys, factory)
+        filtered_extracts = prepare_extracts(grouped, reduction)
 
         reduction_data = reduction_data_for(filtered_extracts, reduction)
         reduction.data = reduction_data if reduction.present?
-        reduction.extract << filtered_extracts
+
+        # note that because we use deferred associations, this won't actually hit the database
+        # until the reduction is saved, meaning it happens inside the transaction
+        associate_extracts(reduction, filtered_extracts) if running_reduction?
 
         if reduction_data == NoData
           Reducer::NoData
@@ -85,6 +83,41 @@ class Reducer < ApplicationRecord
     end
 
     light.run
+  end
+
+  def prepare_reduction(reductions, keys, factory)
+    reduction = reductions&.where(keys)&.first_or_initialize
+    reduction ||= factory.new(keys)
+
+    # if reductions.present?
+    #   reductions.where(keys).first_or_initialize
+    # else
+    #   factory.new(keys)
+    # end.tap do |reduction|
+    if running_reduction?
+      reduction.data = {}
+      reduction.store = {}
+    else
+      reduction.data ||= {}
+      reduction.store ||= {}
+    end
+    # end
+    reduction
+  end
+
+  def prepare_extracts(extract_group, reduction)
+    filtered_extracts = extract_filter.filter(extract_group)
+    seen_ids = reduction.extract_ids
+
+    if running_reduction?
+      filtered_extracts.reject{ |extract| seen_ids.include? extract.id }
+    else
+      filtered_extracts
+    end
+  end
+
+  def associate_extracts(reduction, extracts)
+    reduction.extract << extracts
   end
 
   def reduction_data_for(extracts, reduction)

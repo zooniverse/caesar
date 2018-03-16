@@ -29,7 +29,7 @@ describe Reducers::FirstExtractReducer do
   it 'works correctly in default aggregation mode' do
     s = Subject.create!
     default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
-    reduction = SubjectReduction.create subject_id: s.id, reducer_key: 'data', subgroup: '_default', data: { 'value' => 'first' }
+    reduction = SubjectReduction.create subject_id: s.id, reducer_key: 'data', subgroup: '_default'
 
     expect(default_reducer.reduction_data_for(extracts, reduction)).to eq({"foo" => "bar", "bar" => "baz"})
   end

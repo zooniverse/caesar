@@ -7,11 +7,7 @@
 module Reducers
   class FirstExtractReducer < Reducer
     def reduction_data_for(extractions, reduction)
-      if running_reduction? && reduction&.data.present?
-        reduction.data
-      else
-        extractions&.fetch(0, nil)&.data || {}
-      end
+      if reduction&.data.blank? then (extractions&.fetch(0, nil)&.data || {}) else reduction.data end
     end
   end
 end

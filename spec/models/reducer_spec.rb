@@ -104,4 +104,105 @@ RSpec.describe Reducer, type: :model do
       expect(reducer.errors[:extract_filter]).to be_present
     end
   end
+
+  describe 'running/online aggregation' do
+    it 'tracks the extracts associated with a reduction' do
+      workflow = create :workflow
+      subject = create :subject
+
+      extract1 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extract2 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extracts_double = instance_double(ActiveRecord::Relation)
+
+      subject_reduction_double = instance_double(SubjectReduction,
+        workflow_id: workflow.id,
+        subject_id: subject.id,
+        reducer_key: 'aaa',
+        extract_ids: [],
+        extract: extracts_double
+      )
+
+      running_reducer = create :reducer,
+        key: 'aaa',
+        type: 'Reducers::PlaceholderReducer',
+        topic: Reducer.topics[:reduce_by_subject],
+        reduction_mode: Reducer.reduction_modes[:running_reduction],
+        workflow_id: workflow.id
+
+      allow(running_reducer).to receive(:prepare_reduction).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:associate_extracts)
+      allow(running_reducer).to receive(:reduction_data_for)
+      allow(subject_reduction_double).to receive(:data=)
+
+      running_reducer.process([extract1, extract2], [subject_reduction_double])
+      expect(running_reducer).to have_received(:associate_extracts).with(subject_reduction_double, [extract1, extract2])
+    end
+
+    it 'includes a given extract in a running reduction only once' do
+      workflow = create :workflow
+      subject = create :subject
+
+      extract1 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extract2 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extracts_double = instance_double(ActiveRecord::Relation)
+
+      subject_reduction_double = instance_double(SubjectReduction,
+        workflow_id: workflow.id,
+        subject_id: subject.id,
+        reducer_key: 'aaa',
+        extract_ids: [extract1.id],
+        extract: extracts_double
+      )
+
+      running_reducer = create :reducer,
+        key: 'aaa',
+        type: 'Reducers::PlaceholderReducer',
+        topic: Reducer.topics[:reduce_by_subject],
+        reduction_mode: Reducer.reduction_modes[:running_reduction],
+        workflow_id: workflow.id
+
+      allow(running_reducer).to receive(:prepare_reduction).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:associate_extracts)
+      allow(running_reducer).to receive(:reduction_data_for)
+      allow(subject_reduction_double).to receive(:data=)
+
+      running_reducer.process([extract1, extract2], [subject_reduction_double])
+      expect(running_reducer).to have_received(:reduction_data_for).with([extract2], subject_reduction_double)
+    end
+
+    it 'finds and passes along the correct reduction to reduction_data_for' do
+      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
+      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
+      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
+      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
+
+      reducer = described_class.new
+
+      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
+      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
+      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
+      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
+      reducer.prepare_reduction(reductions_double, {foo: 'bar'}, sr_class_double)
+      expect(reductions_double).to have_received(:where).with({foo: 'bar'})
+      expect(sr_class_double).not_to have_received(:new)
+      expect(ur_class_double).not_to have_received(:new)
+
+      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
+      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
+      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
+      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
+      reducer.prepare_reduction(nil, {foo: 'bar'}, sr_class_double)
+      expect(reductions_double).not_to have_received(:where)
+      expect(sr_class_double).to have_received(:new)
+      expect(ur_class_double).not_to have_received(:new)
+    end
+  end
 end

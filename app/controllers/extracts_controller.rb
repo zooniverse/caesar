@@ -10,7 +10,11 @@ class ExtractsController < ApplicationController
                                             classification_id: classification_id)
     authorize extract
 
-    extract.update! extract_params
+    Workflow.transaction do
+      SubjectReduction.delete(extract.subject_reduction_ids)
+      UserReduction.delete(extract.user_reduction_ids)
+      extract.update! extract_params
+    end
 
     ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
 

@@ -56,11 +56,10 @@ module Reducers
     end
 
     def reduction_data_for(extracts, reduction=nil)
-      @old_store = {}
+      @old_store = reduction&.store || {}
       @new_store = {}
 
       @extracts = extracts
-      @old_store = reduction.store if running_reduction? && reduction&.store.present?
 
       hash = {}.tap do |result|
         operations.each do |operation|
@@ -137,27 +136,22 @@ module Reducers
       unless @sse.present?
         local_sse = get_store("sse", 0)
 
-        if running_reduction?
-          # perform online computation to update SSE without old values present
-          # online SSE algorithm given by https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
-          local_count = get_store("count", 0)
-          local_mean = get_store("mean", 0)
+        # perform online computation to update SSE without old values present
+        # online SSE algorithm given by https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+        local_count = get_store("count", 0)
+        local_mean = get_store("mean", 0)
 
-          values.each do |new_value|
-            local_count = local_count + 1
-            delta = new_value - local_mean
-            local_mean = local_mean + (delta / local_count)
-            delta2 = new_value - local_mean
-            local_sse = local_sse + (delta * delta2)
-          end
-
-          # store intermediate values if they weren't already being computed
-          set_store("count", count) unless @new_store.key?("count")
-          set_store("mean", mean) unless @new_store.key("mean")
-        else
-          # perform simpler calculation if all values are present
-          local_sse = values.map{ |val| (val-mean)**2 }.reduce(:+)
+        values.each do |new_value|
+          local_count = local_count + 1
+          delta = new_value - local_mean
+          local_mean = local_mean + (delta / local_count)
+          delta2 = new_value - local_mean
+          local_sse = local_sse + (delta * delta2)
         end
+
+        # store intermediate values if they weren't already being computed
+        set_store("count", count) unless @new_store.key?("count")
+        set_store("mean", mean) unless @new_store.key("mean")
 
         @sse = local_sse
       end

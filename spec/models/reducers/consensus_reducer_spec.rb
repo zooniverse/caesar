@@ -43,11 +43,12 @@ describe Reducers::ConsensusReducer do
     it 'works in default aggregation mode' do
       default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
 
-      reduction = create :subject_reduction, store: {"RCCN" => 4}
+      reduction = create :subject_reduction
       result = default_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA", "ZEBRA"]), reduction)
       expect(result).to include({"most_likely" => "ZEBRA"})
       expect(result).to include({"num_votes" => 3})
 
+      reduction = create :subject_reduction
       result = default_reducer.reduction_data_for(build_extracts(["ZEBRA", "ZEBRA"]), reduction)
       expect(result).to include({"most_likely" => "ZEBRA"})
       expect(result).to include({"num_votes" => 2})
