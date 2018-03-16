@@ -64,9 +64,11 @@ class Reducer < ApplicationRecord
           factory.new(keys)
         end
 
-        filtered = extract_filter.filter(grouped)
-        reduction_data = reduction_data_for(filtered, reduction)
+        filtered_extracts = extract_filter.filter(grouped)
+
+        reduction_data = reduction_data_for(filtered_extracts, reduction)
         reduction.data = reduction_data if reduction.present?
+        reduction.extract << filtered_extracts
 
         if reduction_data == NoData
           Reducer::NoData
