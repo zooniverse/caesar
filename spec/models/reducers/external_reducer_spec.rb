@@ -45,7 +45,7 @@ describe Reducers::ExternalReducer do
 
     extractor = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
     result = extractor.process(extracts)
-    expect(unwrap(result)).to eq(Reducer::NoData)
+    expect(result).to eq(Reducer::NoData)
   end
 
   it 'does not post if no url is configured' do

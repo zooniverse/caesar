@@ -64,7 +64,7 @@ class ClassificationPipeline
     subject_reductions = SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
     user_reductions = UserReduction.where(workflow_id: workflow_id, user_id: user_id)
 
-    reduction_data = reducers.map do |reducer|
+    new_reductions = reducers.map do |reducer|
       inputs = nil
       priors = nil
 
@@ -83,19 +83,16 @@ class ClassificationPipeline
       reducer.process(inputs, priors)
     end.flatten
 
-    return if reduction_data == Reducer::NoData or reduction_data.reject{|reduction| reduction[:data] == Reducer::NoData}.empty?
+    return if new_reductions == Reducer::NoData or new_reductions.reject{|reduction| reduction == Reducer::NoData}.empty?
 
     Workflow.transaction do
-      reduction_data.each do |r|
-        next if r[:data] == Reducer::NoData
-
-        reduction = r[:reduction]
-        reduction.data = r[:data]
+      new_reductions.each do |reduction|
+        next if reduction == Reducer::NoData
         reduction.save!
       end
     end
 
-    reduction_data
+    new_reductions
   rescue ActiveRecord::StaleObjectError
     raise ReductionConflict "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation

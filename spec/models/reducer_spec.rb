@@ -74,6 +74,7 @@ RSpec.describe Reducer, type: :model do
   end
 
   it 'composes grouping and filtering correctly' do
+    workflow = build :workflow
     fancy_extracts = [
       build(:extract, extractor_key: 'votes', classification_id: 1, subject_id: 1234, user_id: 5680, data: {"T0" => "ARAI"}),
       build(:extract, extractor_key: 'votes', classification_id: 2, subject_id: 1234, user_id: 5681, data: {"T0" => "ARAI"}),
@@ -86,13 +87,13 @@ RSpec.describe Reducer, type: :model do
       build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
     ]
 
-    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}
+    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
     allow(reducer).to receive(:reduction_data_for){ |reduce_me| reduce_me.map(&:data) }
     reductions = reducer.process(fancy_extracts)
 
-    expect(reductions[0][:group_key]).to eq("33")
+    expect(reductions[0][:subgroup]).to eq("33")
     expect(reductions[0][:data].count).to eq(3)
-    expect(reductions[1][:group_key]).to eq("34")
+    expect(reductions[1][:subgroup]).to eq("34")
     expect(reductions[1][:data].count).to eq(1)
   end
 

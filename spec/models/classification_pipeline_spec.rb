@@ -119,7 +119,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
-    reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
+    reducer = build(:stats_reducer, key: 's', grouping: "g.classroom", workflow_id: workflow.id)
     pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, subject.id, nil)
 
@@ -138,7 +138,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
 
-    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user])
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], workflow_id: workflow.id)
 
     pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)
