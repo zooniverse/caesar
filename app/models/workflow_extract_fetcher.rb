@@ -1,4 +1,4 @@
-class ExtractFetcher
+class WorkflowExtractFetcher
   def initialize(workflow_id, subject_id, user_id)
     @workflow_id = workflow_id
     @subject_id = subject_id

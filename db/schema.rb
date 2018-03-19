@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180220111809) do
+ActiveRecord::Schema.define(version: 20180221190503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20180220111809) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.bigint "workflow_id", null: false
+    t.bigint "reducible_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
     t.string "url"
@@ -49,8 +49,9 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: false, null: false
-    t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
-    t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
+    t.string "reducible_type"
+    t.index ["reducible_id"], name: "index_data_requests_on_reducible_id"
+    t.index ["user_id", "reducible_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
   end
 
   create_table "extractors", force: :cascade do |t|
@@ -81,8 +82,17 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
   end
 
+  create_table "projects", force: :cascade do |t|
+    t.jsonb "reducers_config"
+    t.jsonb "rules_config"
+    t.jsonb "webhooks"
+    t.boolean "public_reductions", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "reducers", force: :cascade do |t|
-    t.bigint "workflow_id"
+    t.bigint "reducible_id"
     t.string "key", null: false
     t.string "type", null: false
     t.string "grouping"
@@ -91,8 +101,9 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "topic", default: 0, null: false
-    t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
-    t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
+    t.string "reducible_type"
+    t.index ["reducible_id", "key"], name: "index_reducers_on_reducible_id_and_key", unique: true
+    t.index ["reducible_id"], name: "index_reducers_on_reducible_id"
   end
 
   create_table "subject_actions", id: :serial, force: :cascade do |t|
@@ -112,17 +123,18 @@ ActiveRecord::Schema.define(version: 20180220111809) do
 
   create_table "subject_reductions", id: :serial, force: :cascade do |t|
     t.string "reducer_key", null: false
-    t.integer "workflow_id", null: false
+    t.integer "reducible_id", null: false
     t.integer "subject_id", null: false
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subgroup", default: "_default", null: false
+    t.string "reducible_type"
+    t.index ["reducible_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
+    t.index ["reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
+    t.index ["reducible_id", "subject_id"], name: "index_subject_reductions_on_reducible_id_and_subject_id"
+    t.index ["reducible_id"], name: "index_subject_reductions_on_reducible_id"
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
-    t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
-    t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
-    t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
 
   create_table "subject_rule_effects", force: :cascade do |t|
@@ -167,16 +179,17 @@ ActiveRecord::Schema.define(version: 20180220111809) do
 
   create_table "user_reductions", force: :cascade do |t|
     t.string "reducer_key"
-    t.integer "workflow_id", null: false
+    t.integer "reducible_id", null: false
     t.integer "user_id", null: false
     t.jsonb "data"
     t.string "subgroup", default: "_default", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "reducible_type"
+    t.index ["reducible_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
+    t.index ["reducible_id", "user_id"], name: "index_user_reductions_on_reducible_id_and_user_id"
+    t.index ["reducible_id"], name: "index_user_reductions_on_reducible_id"
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
-    t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
-    t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
-    t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
   end
 
   create_table "user_rule_effects", force: :cascade do |t|
@@ -209,15 +222,15 @@ ActiveRecord::Schema.define(version: 20180220111809) do
 
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
-  add_foreign_key "data_requests", "workflows"
+  add_foreign_key "data_requests", "workflows", column: "reducible_id"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
-  add_foreign_key "reducers", "workflows"
+  add_foreign_key "reducers", "workflows", column: "reducible_id"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
-  add_foreign_key "subject_reductions", "workflows"
+  add_foreign_key "subject_reductions", "workflows", column: "reducible_id"
   add_foreign_key "subject_rule_effects", "subject_rules"
   add_foreign_key "subject_rules", "workflows"
   add_foreign_key "user_actions", "workflows"

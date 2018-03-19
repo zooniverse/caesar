@@ -1,7 +1,8 @@
 class ClassificationPipeline
   attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied
 
-  def initialize(extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
+  def initialize(reducible_class, extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
+    @reducible_class = reducible_class
     @extractors = extractors
     @reducers = reducers
     @subject_rules = subject_rules
@@ -11,7 +12,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
+    reduce(classification)
     check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
@@ -52,12 +53,22 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id, user_id)
+  def reduce(classification)
+    workflow_id = classification.workflow_id
+    subject_id = classification.subject_id
+    user_id = classification.user_id
+    project_id = classification.project_id
+
     return [] unless reducers&.present?
 
     tries ||= 2
 
-    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id)
+    extracts = case reducible_class
+    when Workflow
+        WorkflowExtractFetcher.new(workflow_id, subject_id, user_id)
+    when Project
+        ProjectExtractFetcher.new(project_id, subject_id, user_id)
+    end
 
     reducers.map do |reducer|
       data = if reducer.reduce_by_subject?
@@ -75,13 +86,15 @@ class ClassificationPipeline
 
         reduction = if reducer.reduce_by_subject?
             SubjectReduction.where(
-              workflow_id: workflow_id,
+              reducible_id: reducer.reducible_id,
+              reducible_type: reducer.reducible_type,
               subject_id: subject_id,
               reducer_key: reducer.key,
               subgroup: subgroup).first_or_initialize
           elsif reducer.reduce_by_user?
             UserReduction.where(
-              workflow_id: workflow_id,
+              reducible_id: reducer.reducible_id,
+              reducible_type: reducer.reducible_type,
               user_id: user_id,
               reducer_key: reducer.key,
               subgroup: subgroup).first_or_initialize

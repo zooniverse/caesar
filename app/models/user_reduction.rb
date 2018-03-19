@@ -13,5 +13,5 @@ class UserReduction < ApplicationRecord
     field :updatedAt, !Types::TimeType, property: :updated_at
   end
 
-  belongs_to :workflow
+  belongs_to :reducible, polymorphic: true
 end
