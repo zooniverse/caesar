@@ -45,31 +45,32 @@ class Reducer < ApplicationRecord
 
   NoData = Class.new
 
-  def process(extracts, reductions=nil)
+  # def process(extracts, reductions=nil)
+  def process(extract_fetcher, reduction_fetcher)
     light = Stoplight("reducer-#{id}") do
-      grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
+      # if any of the reductions that this reducer cares about have expired, we're
+      # going to need to fetch all of the relevant extracts in order to rebuild them
+      if reduction_fetcher.has_expired?
+        extract_fetcher.strategy! :fetch_all
+      end
 
-      keys = { workflow_id: workflow_id, reducer_key: key }
-      keys[:subject_id] = extracts.first&.subject_id if reduce_by_subject?
-      keys[:user_id] = extracts.first&.user_id if reduce_by_user?
-
-      factory = if reduce_by_subject? then SubjectReduction elsif reduce_by_user? then UserReduction else nil end
+      grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
       new_reductions = grouped_extracts.map do |group_key, grouped|
-        keys[:subgroup] = group_key
 
-        reduction = prepare_reduction(reductions, keys, factory)
-        filtered_extracts = prepare_extracts(grouped, reduction)
+        reduction = get_reduction(reduction_fetcher, group_key)
+        extracts = filter_extracts(grouped, reduction)
 
-        reduction_data = reduction_data_for(filtered_extracts, reduction)
+        reduction_data = reduction_data_for(extracts, reduction)
         reduction.data = reduction_data if reduction.present?
+        reduction.expired = false
 
         # note that because we use deferred associations, this won't actually hit the database
         # until the reduction is saved, meaning it happens inside the transaction
-        associate_extracts(reduction, filtered_extracts) if running_reduction?
+        associate_extracts(reduction, extracts) if running_reduction?
 
         if reduction_data == NoData
-          Reducer::NoData
+          NoData
         else
           reduction
         end
@@ -85,55 +86,27 @@ class Reducer < ApplicationRecord
     light.run
   end
 
-  def prepare_reduction(reductions, keys, factory)
-    reduction = reductions&.where(keys)&.first_or_initialize
-    reduction ||= factory.new(keys)
-
-    # if reductions.present?
-    #   reductions.where(keys).first_or_initialize
-    # else
-    #   factory.new(keys)
-    # end.tap do |reduction|
-    if running_reduction?
-      reduction.data = {}
-      reduction.store = {}
-    else
-      reduction.data ||= {}
-      reduction.store ||= {}
+  def get_reduction(reduction_fetcher, group_key)
+    reduction_fetcher.subgroup(group_key).first_or_initialize.tap do |r|
+      r.reducer_key = key
+      r.subgroup = group_key
+      r.data = if running_reduction? then (r.data || {}) else {} end
+      r.store = if running_reduction? then (r.store || {}) else {} end
     end
-    # end
-    reduction
   end
 
-  def prepare_extracts(extract_group, reduction)
-    filtered_extracts = extract_filter.filter(extract_group)
-    seen_ids = reduction.extract_ids
-
-    if running_reduction?
-      filtered_extracts.reject{ |extract| seen_ids.include? extract.id }
-    else
-      filtered_extracts
-    end
+  def filter_extracts(extracts, reduction)
+    extracts = extracts.reject{ |extract| reduction.extract_ids.include? extract.id }
+    extract_filter.filter(extracts)
   end
 
   def associate_extracts(reduction, extracts)
+    reduction.extract.delete_all
     reduction.extract << extracts
   end
 
   def reduction_data_for(extracts, reduction)
     raise NotImplementedError
-  end
-
-  def get_reductions(keys)
-    newkey = keys.merge(reducer_key: key).compact
-
-    if reduce_by_subject?
-      SubjectReduction.where(newkey.except(:user_id))
-    elsif reduce_by_user?
-      UserReduction.where(newkey.except(:subject_id))
-    else
-      nil
-    end
   end
 
   def extract_filter

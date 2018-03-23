@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Reducers::StatsReducer do
-  def unwrap(reduction)
-    reduction[0][:data]
-  end
-
   subject(:reducer) { described_class.new }
   let(:extracts){
     [
@@ -33,25 +29,23 @@ describe Reducers::StatsReducer do
 
   describe '#process' do
     it 'processes when there are no classifications' do
-      expect(unwrap(reducer.process([]))).to eq({})
+      expect(reducer.reduction_data_for([], nil)).to eq({})
     end
 
     it 'counts occurrences of species' do
-      expect(unwrap(reducer.process(extracts)))
+      # expect(unwrap(reducer.process(extracts)))
+      expect(reducer.reduction_data_for(extracts, nil))
         .to include({"NTHNGHR" => 2, "RCCN" => 3, "BBN" => 1})
-    end
-
-    it 'counts occurrences inside a subrange' do
-      reducer = described_class.new(filters: {"from" => 0, "to" => 2})
-      expect(unwrap(reducer.process(extracts))).to include({"NTHNGHR" => 1})
     end
 
     it 'counts booleans as 1' do
       extracts = [Extract.new(data: {'blank' => false})]
-      expect(unwrap(reducer.process(extracts))).to eq('blank' => 0)
+      expect(reducer.reduction_data_for(extracts, nil)).to eq('blank' => 0)
+      # expect(unwrap(reducer.process(extracts))).to eq('blank' => 0)
 
       extracts = [Extract.new(data: {'blank' => true}), Extract.new(data: {'blank' => false})]
-      expect(unwrap(reducer.process(extracts))).to eq('blank' => 1)
+      expect(reducer.reduction_data_for(extracts, nil)).to eq('blank' => 1)
+      # expect(unwrap(reducer.process(extracts))).to eq('blank' => 1)
     end
 
     it 'works in default aggregation mode' do

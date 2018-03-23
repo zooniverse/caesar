@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Reducers::ConsensusReducer do
-  def unwrap(reduction)
-    reduction[0][:data]
-  end
-
   subject(:reducer) { described_class.new }
 
   def build_extracts(choices)
@@ -22,20 +18,19 @@ describe Reducers::ConsensusReducer do
 
   describe '#process' do
     it 'processes when there are no classifications' do
-      expect(unwrap(reducer.process([]))).to include({"num_votes" => 0})
+      expect(reducer.reduction_data_for([],nil)).to include({"num_votes" => 0})
     end
 
     it 'returns the most likely' do
       extracts = build_extracts(["ZEBRA", "ZEBRA", "ZEBRA", ["ZEBRA", "BIRD"]])
-      expect(unwrap(reducer.process(extracts)))
+      expect(reducer.reduction_data_for(extracts, nil))
         .to include({"most_likely" => "ZEBRA", "agreement" => 0.75, "num_votes" => 3})
     end
 
     it 'handles multiple species' do
       extracts = build_extracts([["ZEBRA", "BIRD"], ["BIRD", "ZEBRA"]])
-      expect(unwrap(reducer.process(extracts)))
+      expect(reducer.reduction_data_for(extracts,nil))
         .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0, "num_votes" => 2})
-
     end
   end
 

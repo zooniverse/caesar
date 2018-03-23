@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180302171103) do
+ActiveRecord::Schema.define(version: 20180321162724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20180302171103) do
     t.string "subgroup", default: "_default", null: false
     t.integer "lock_version", default: 0, null: false
     t.jsonb "store"
+    t.boolean "expired", default: false
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
     t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
@@ -188,6 +189,7 @@ ActiveRecord::Schema.define(version: 20180302171103) do
     t.datetime "updated_at", null: false
     t.integer "lock_version", default: 0, null: false
     t.jsonb "store"
+    t.boolean "expired", default: false
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
     t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
     t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"

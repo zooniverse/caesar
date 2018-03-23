@@ -44,37 +44,43 @@ RSpec.describe Reducer, type: :model do
   it 'filters extracts' do
     extract_filter = instance_double(ExtractFilter, filter: [])
     expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)
-    subject.process(extracts)
-
+    subject.filter_extracts(extracts, create(:subject_reduction))
     expect(extract_filter).to have_received(:filter).once
   end
 
   it 'groups extracts' do
-    instance_double(ExtractFilter, filter: extracts)
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
+    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
+
     expect(ExtractGrouping).to receive(:new).
       with(extracts, nil).
       and_return(grouping_filter)
 
-    subject.process(extracts)
+    subject.process(extract_fetcher, reduction_fetcher)
 
     expect(grouping_filter).to have_received(:to_h).once
   end
 
   it 'does not attempt reduction on repeated failures' do
     reducer= build :reducer
+
+    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
+
     allow(reducer).to receive(:reduction_data_for) { raise 'failure' }
 
-    expect { reducer.process(extracts) }.to raise_error('failure')
-    expect { reducer.process(extracts) }.to raise_error('failure')
-    expect { reducer.process(extracts) }.to raise_error('failure')
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
 
     expect(reducer).not_to receive(:reduction_data_for)
-    expect { reducer.process(extracts) }.to raise_error(Stoplight::Error::RedLight)
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error(Stoplight::Error::RedLight)
   end
 
   it 'composes grouping and filtering correctly' do
     workflow = build :workflow
+
     fancy_extracts = [
       build(:extract, extractor_key: 'votes', classification_id: 1, subject_id: 1234, user_id: 5680, data: {"T0" => "ARAI"}),
       build(:extract, extractor_key: 'votes', classification_id: 2, subject_id: 1234, user_id: 5681, data: {"T0" => "ARAI"}),
@@ -87,9 +93,20 @@ RSpec.describe Reducer, type: :model do
       build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
     ]
 
+    extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, has_expired?: false)
+
     reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
+    allow(reducer).to receive(:get_reduction) do |fetcher, key|
+      SubjectReduction.new(
+        subject_id: 1234,
+        workflow_id: workflow.id,
+        reducer_key: 'r'
+      ).tap{ |r| r.subgroup = key }
+    end
     allow(reducer).to receive(:reduction_data_for){ |reduce_me| reduce_me.map(&:data) }
-    reductions = reducer.process(fancy_extracts)
+
+    reductions = reducer.process(extract_fetcher, reduction_fetcher)
 
     expect(reductions[0][:subgroup]).to eq("33")
     expect(reductions[0][:data].count).to eq(3)
@@ -133,12 +150,16 @@ RSpec.describe Reducer, type: :model do
         reduction_mode: Reducer.reduction_modes[:running_reduction],
         workflow_id: workflow.id
 
-      allow(running_reducer).to receive(:prepare_reduction).and_return(subject_reduction_double)
+      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduction_data_for)
+      allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(subject_reduction_double).to receive(:data=)
+      allow(subject_reduction_double).to receive(:expired=)
 
-      running_reducer.process([extract1, extract2], [subject_reduction_double])
+      running_reducer.process(extract_fetcher, reduction_fetcher)
       expect(running_reducer).to have_received(:associate_extracts).with(subject_reduction_double, [extract1, extract2])
     end
 
@@ -162,6 +183,9 @@ RSpec.describe Reducer, type: :model do
         extract: extracts_double
       )
 
+      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+
       running_reducer = create :reducer,
         key: 'aaa',
         type: 'Reducers::PlaceholderReducer',
@@ -169,40 +193,14 @@ RSpec.describe Reducer, type: :model do
         reduction_mode: Reducer.reduction_modes[:running_reduction],
         workflow_id: workflow.id
 
-      allow(running_reducer).to receive(:prepare_reduction).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduction_data_for)
       allow(subject_reduction_double).to receive(:data=)
+      allow(subject_reduction_double).to receive(:expired=)
 
-      running_reducer.process([extract1, extract2], [subject_reduction_double])
+      running_reducer.process(extract_fetcher, reduction_fetcher)
       expect(running_reducer).to have_received(:reduction_data_for).with([extract2], subject_reduction_double)
-    end
-
-    it 'finds and passes along the correct reduction to reduction_data_for' do
-      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
-      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
-      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
-      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
-
-      reducer = described_class.new
-
-      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
-      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
-      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
-      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
-      reducer.prepare_reduction(reductions_double, {foo: 'bar'}, sr_class_double)
-      expect(reductions_double).to have_received(:where).with({foo: 'bar'})
-      expect(sr_class_double).not_to have_received(:new)
-      expect(ur_class_double).not_to have_received(:new)
-
-      sr_class_double = class_double(SubjectReduction, new: (create :subject_reduction))
-      ur_class_double = class_double(UserReduction, new: (create :user_reduction))
-      where_double = instance_double(ActiveRecord::Relation, first_or_initialize: (create :subject_reduction))
-      reductions_double = instance_double(ActiveRecord::Relation, where: where_double)
-      reducer.prepare_reduction(nil, {foo: 'bar'}, sr_class_double)
-      expect(reductions_double).not_to have_received(:where)
-      expect(sr_class_double).to have_received(:new)
-      expect(ur_class_double).not_to have_received(:new)
     end
   end
 end

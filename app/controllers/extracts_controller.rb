@@ -11,8 +11,8 @@ class ExtractsController < ApplicationController
     authorize extract
 
     Workflow.transaction do
-      SubjectReduction.delete(extract.subject_reduction_ids)
-      UserReduction.delete(extract.user_reduction_ids)
+      extract.subject_reduction.update_all expired: true
+      extract.user_reduction.update_all expired: true
       extract.update! extract_params
     end
 

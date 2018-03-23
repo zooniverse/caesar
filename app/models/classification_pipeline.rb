@@ -58,17 +58,25 @@ class ClassificationPipeline
     return [] unless reducers&.present?
     tries ||= 2
 
-    extracts = ExtractFetcher.new(workflow_id, subject_id, user_id, extract_ids)
+    keys = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
+    extract_fetcher = ExtractFetcher.new(keys).including(extract_ids)
+    reduction_fetcher = ReductionFetcher.new(keys)
+
+    # if we don't need to fetch everything, try not to
+    if reducers.all?{ |reducer| reducer.running_reduction? }
+      extract_fetcher.strategy! :fetch_minimal
+    end
 
     # prefetch all reductions to avoid race conditions with optimistic locking
-    subject_reductions = SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
-    user_reductions = UserReduction.where(workflow_id: workflow_id, user_id: user_id)
+    if reducers.any?{ |reducer| reducer.running_reduction? }
+      reduction_fetcher.load
+    end
 
     new_reductions = reducers.map do |reducer|
-      execute_single_reducer(reducer, extracts, subject_reductions, user_reductions)
+      reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for(reducer.topic))
     end.flatten
 
-    return if new_reductions == Reducer::NoData or new_reductions.reject{|reduction| reduction == Reducer::NoData}.empty?
+    return if new_reductions == Reducer::NoData || new_reductions.reject{|reduction| reduction == Reducer::NoData}.empty?
 
     Workflow.transaction do
       new_reductions.each do |reduction|
@@ -92,24 +100,6 @@ class ClassificationPipeline
   end
 
   private
-
-  def execute_single_reducer(reducer, extracts, subject_reductions, user_reductions)
-    inputs = nil
-    priors = nil
-
-    inputs = if reducer.running_reduction?
-      extracts.exact_extracts
-    elsif reducer.reduce_by_user?
-      extracts.user_extracts
-    elsif reducer.reduce_by_subject?
-      extracts.subject_extracts
-    end
-
-    priors = user_reductions.where(reducer_key: reducer.key) if reducer.reduce_by_user?
-    priors = subject_reductions.where(reducer_key: reducer.key) if reducer.reduce_by_subject?
-
-    reducer.process(inputs, priors)
-  end
 
   def check_subject_rules(workflow_id, subject_id)
     return unless subject_rules.present?
