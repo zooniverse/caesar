@@ -58,9 +58,9 @@ class ClassificationPipeline
     return [] unless reducers&.present?
     tries ||= 2
 
-    keys = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
-    extract_fetcher = ExtractFetcher.new(keys).including(extract_ids)
-    reduction_fetcher = ReductionFetcher.new(keys)
+    filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
+    reduction_fetcher = ReductionFetcher.new(filter)
 
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }

@@ -45,7 +45,6 @@ class Reducer < ApplicationRecord
 
   NoData = Class.new
 
-  # def process(extracts, reductions=nil)
   def process(extract_fetcher, reduction_fetcher)
     light = Stoplight("reducer-#{id}") do
       # if any of the reductions that this reducer cares about have expired, we're
