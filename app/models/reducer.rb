@@ -56,27 +56,20 @@ class Reducer < ApplicationRecord
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
       new_reductions = grouped_extracts.map do |group_key, grouped|
-
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
-        reduction_data = reduction_data_for(extracts, reduction)
-        reduction.data = reduction_data if reduction.present?
-        reduction.expired = false
+        reduce_into(extracts, reduction).tap do |r|
+          r.expired = false
 
-        # note that because we use deferred associations, this won't actually hit the database
-        # until the reduction is saved, meaning it happens inside the transaction
-        associate_extracts(reduction, extracts) if running_reduction?
-
-        if reduction_data == NoData
-          NoData
-        else
-          reduction
+          # note that because we use deferred associations, this won't actually hit the database
+          # until the reduction is saved, meaning it happens inside the transaction
+          associate_extracts(r, extracts) if running_reduction?
         end
       end
 
-      if new_reductions == NoData || new_reductions.reject{|reduction| reduction==NoData}.empty?
-        NoData
+      if new_reductions.reject{|reduction| reduction.data.blank?}.empty?
+        nil
       else
         new_reductions
       end
@@ -104,7 +97,7 @@ class Reducer < ApplicationRecord
     reduction.extract << extracts
   end
 
-  def reduction_data_for(extracts, reduction)
+  def reduce_into(extracts, reduction)
     raise NotImplementedError
   end
 

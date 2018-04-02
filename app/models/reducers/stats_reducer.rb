@@ -1,16 +1,18 @@
 module Reducers
   class StatsReducer < Reducer
-    def reduction_data_for(extractions, reduction)
-      data = reduction&.data || {}
+    def reduce_into(extractions, reduction)
+      data = reduction.data || {}
 
-      CountingHash.build(data) do |results|
-        extractions.each do |extraction|
-          extraction.data.each do |key, value|
-            case value
-            when TrueClass, FalseClass
-              results.increment(key, value ? 1 : 0)
-            else
-              results.increment(key, value)
+      reduction.tap do |r|
+        r.data = CountingHash.build(data) do |results|
+          extractions.each do |extraction|
+            extraction.data.each do |key, value|
+              case value
+              when TrueClass, FalseClass
+                results.increment(key, value ? 1 : 0)
+              else
+                results.increment(key, value)
+              end
             end
           end
         end

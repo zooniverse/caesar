@@ -31,7 +31,7 @@ describe Reducers::UniqueCountReducer do
   end
 
   it 'counts unique things' do
-    expect(reducer.reduction_data_for(extracts, nil)).to eq(2)
+    expect(reducer.reduce_into(extracts, create(:subject_reduction)).data).to eq(2)
   end
 
   describe 'aggregation modes' do
@@ -41,10 +41,10 @@ describe Reducers::UniqueCountReducer do
       extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
       reduction = create :subject_reduction, store: {}
 
-      expect(default_reducer.reduction_data_for(extracts, reduction)).to eq(2)
+      expect(default_reducer.reduce_into(extracts, reduction).data).to eq(2)
 
       reduction.store = {}
-      expect(default_reducer.reduction_data_for([extracts[0]], reduction)).to eq(1)
+      expect(default_reducer.reduce_into([extracts[0]], reduction).data).to eq(1)
     end
 
     it 'works correctly in running aggregation mode' do
@@ -53,8 +53,8 @@ describe Reducers::UniqueCountReducer do
       extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
       reduction = create :subject_reduction, store: { "items" => ["A", "B"] }
 
-      expect(running_reducer.reduction_data_for(extracts, reduction)).to eq(3)
-      expect(running_reducer.reduction_data_for([extracts[0]], reduction)).to eq(3)
+      expect(running_reducer.reduce_into(extracts, reduction).data).to eq(3)
+      expect(running_reducer.reduce_into([extracts[0]], reduction).data).to eq(3)
     end
   end
 end

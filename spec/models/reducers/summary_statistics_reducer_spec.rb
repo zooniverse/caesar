@@ -128,7 +128,7 @@ describe Reducers::SummaryStatisticsReducer do
     end
   end
 
-  describe '#reduction_data_for' do
+  describe '#reduce_into' do
 
     describe 'computing min' do
       it 'computes correctly in default mode' do
@@ -141,13 +141,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["min"]).to be_present
-        expect(result["min"]).to eq(4.7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["min"]).to be_present
+        expect(result.data["min"]).to eq(4.7)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["min"]).to be_present
-        expect(result["min"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["min"]).to be_present
+        expect(result.data["min"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -160,13 +160,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["min"]).to be_present
-        expect(result["min"]).to eq(4)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["min"]).to be_present
+        expect(result.data["min"]).to eq(4)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["min"]).to be_present
-        expect(result["min"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["min"]).to be_present
+        expect(result.data["min"]).to eq(3)
       end
     end
 
@@ -180,14 +180,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["first"]).to be_present
-        expect(result["first"]).to eq(4.7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["first"]).to be_present
+        expect(result.data["first"]).to eq(4.7)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["first"]).to be_present
-        expect(result["first"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["first"]).to be_present
+        expect(result.data["first"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -200,13 +200,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["first"]).to be_present
-        expect(result["first"]).to eq(4.7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["first"]).to be_present
+        expect(result.data["first"]).to eq(4.7)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["first"]).to be_present
-        expect(result["first"]).to eq(4.7)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["first"]).to be_present
+        expect(result.data["first"]).to eq(4.7)
       end
     end
 
@@ -220,14 +220,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["max"]).to be_present
-        expect(result["max"]).to eq(5)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["max"]).to be_present
+        expect(result.data["max"]).to eq(5)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["max"]).to be_present
-        expect(result["max"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["max"]).to be_present
+        expect(result.data["max"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -240,13 +240,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["max"]).to be_present
-        expect(result["max"]).to eq(5)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["max"]).to be_present
+        expect(result.data["max"]).to eq(5)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["max"]).to be_present
-        expect(result["max"]).to eq(5)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["max"]).to be_present
+        expect(result.data["max"]).to eq(5)
       end
     end
 
@@ -260,14 +260,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["count"]).to be_present
-        expect(result["count"]).to eq(2)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["count"]).to be_present
+        expect(result.data["count"]).to eq(2)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["count"]).to be_present
-        expect(result["count"]).to eq(1)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["count"]).to be_present
+        expect(result.data["count"]).to eq(1)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -280,13 +280,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["count"]).to be_present
-        expect(result["count"]).to eq(7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["count"]).to be_present
+        expect(result.data["count"]).to eq(7)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["count"]).to be_present
-        expect(result["count"]).to eq(8)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["count"]).to be_present
+        expect(result.data["count"]).to eq(8)
       end
     end
 
@@ -301,14 +301,14 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["sum"]).to be_present
-        expect(result["sum"]).to eq(9.7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["sum"]).to be_present
+        expect(result.data["sum"]).to eq(9.7)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["sum"]).to be_present
-        expect(result["sum"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["sum"]).to be_present
+        expect(result.data["sum"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -321,13 +321,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["sum"]).to be_present
-        expect(result["sum"]).to eq(14.7)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["sum"]).to be_present
+        expect(result.data["sum"]).to eq(14.7)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["sum"]).to be_present
-        expect(result["sum"]).to eq(17.7)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["sum"]).to be_present
+        expect(result.data["sum"]).to eq(17.7)
       end
     end
 
@@ -341,14 +341,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["product"]).to be_present
-        expect(result["product"]).to eq(23.5)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["product"]).to be_present
+        expect(result.data["product"]).to eq(23.5)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["product"]).to be_present
-        expect(result["product"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["product"]).to be_present
+        expect(result.data["product"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -361,13 +361,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["product"]).to be_present
-        expect(result["product"]).to eq(23.5)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["product"]).to be_present
+        expect(result.data["product"]).to eq(23.5)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["product"]).to be_present
-        expect(result["product"]).to eq(70.5)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["product"]).to be_present
+        expect(result.data["product"]).to eq(70.5)
       end
     end
 
@@ -381,14 +381,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["mean"]).to be_present
-        expect(result["mean"]).to eq(4.85)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["mean"]).to be_present
+        expect(result.data["mean"]).to eq(4.85)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["mean"]).to be_present
-        expect(result["mean"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["mean"]).to be_present
+        expect(result.data["mean"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -401,13 +401,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["mean"]).to be_present
-        expect(result["mean"]).to eq(4.85)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["mean"]).to be_present
+        expect(result.data["mean"]).to eq(4.85)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["mean"]).to be_present
-        expect(result["mean"]).to be_within(0.0001).of(4.2333)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["mean"]).to be_present
+        expect(result.data["mean"]).to be_within(0.0001).of(4.2333)
       end
     end
 
@@ -421,14 +421,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["sse"]).to be_present
-        expect(result["sse"]).to be_within(0.0001).of(0.045)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["sse"]).to be_present
+        expect(result.data["sse"]).to be_within(0.0001).of(0.045)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["sse"]).to be_present
-        expect(result["sse"]).to eq(0)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["sse"]).to be_present
+        expect(result.data["sse"]).to eq(0)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -441,13 +441,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["sse"]).to be_present
-        expect(result["sse"]).to be_within(0.0001).of(0.045)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["sse"]).to be_present
+        expect(result.data["sse"]).to be_within(0.0001).of(0.045)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["sse"]).to be_present
-        expect(result["sse"]).to be_within(0.0001).of(2.3266)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["sse"]).to be_present
+        expect(result.data["sse"]).to be_within(0.0001).of(2.3266)
       end
     end
 
@@ -461,14 +461,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["variance"]).to be_present
-        expect(result["variance"]).to be_within(0.0001).of(0.045)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["variance"]).to be_present
+        expect(result.data["variance"]).to be_within(0.0001).of(0.045)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result.key?("variance")).to be(true)
-        expect(result["variance"]).to eq(nil)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data.key?("variance")).to be(true)
+        expect(result.data["variance"]).to eq(nil)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -481,13 +481,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["variance"]).to be_present
-        expect(result["variance"]).to be_within(0.0001).of(0.045)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["variance"]).to be_present
+        expect(result.data["variance"]).to be_within(0.0001).of(0.045)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["variance"]).to be_present
-        expect(result["variance"]).to be_within(0.0001).of(1.1633)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["variance"]).to be_present
+        expect(result.data["variance"]).to be_within(0.0001).of(1.1633)
       end
     end
 
@@ -501,14 +501,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["stdev"]).to be_present
-        expect(result["stdev"]).to be_within(0.0001).of(0.2121)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["stdev"]).to be_present
+        expect(result.data["stdev"]).to be_within(0.0001).of(0.2121)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result.key?("stdev")).to be(true)
-        expect(result["stdev"]).to eq(nil)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data.key?("stdev")).to be(true)
+        expect(result.data["stdev"]).to eq(nil)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -521,13 +521,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["stdev"]).to be_present
-        expect(result["stdev"]).to be_within(0.0001).of(0.2121)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["stdev"]).to be_present
+        expect(result.data["stdev"]).to be_within(0.0001).of(0.2121)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["stdev"]).to be_present
-        expect(result["stdev"]).to be_within(0.0001).of(1.07857)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["stdev"]).to be_present
+        expect(result.data["stdev"]).to be_within(0.0001).of(1.07857)
       end
     end
 
@@ -541,13 +541,13 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["median"]).to be_present
-        expect(result["median"]).to be_within(0.0001).of(4.85)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["median"]).to be_present
+        expect(result.data["median"]).to be_within(0.0001).of(4.85)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["median"]).to eq(3)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["median"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -560,13 +560,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(extracts1, reduction)
-        expect(result["median"]).to be_present
-        expect(result["median"]).to be_within(0.0001).of(4.85)
+        result = reducer1.reduce_into(extracts1, reduction)
+        expect(result.data["median"]).to be_present
+        expect(result.data["median"]).to be_within(0.0001).of(4.85)
 
-        result = reducer2.reduction_data_for(extracts2, reduction)
-        expect(result["median"]).to be_present
-        expect(result["median"]).to be_within(0.0001).of(4.7)
+        result = reducer2.reduce_into(extracts2, reduction)
+        expect(result.data["median"]).to be_present
+        expect(result.data["median"]).to be_within(0.0001).of(4.7)
       end
     end
 
@@ -591,14 +591,14 @@ describe Reducers::SummaryStatisticsReducer do
         reducer2 = reducer1.clone
 
         reduction = create :subject_reduction
-        result = reducer1.reduction_data_for(mode_extracts1, reduction)
-        expect(result["mode"]).to be_present
-        expect(result["mode"]).to eq(4.7)
+        result = reducer1.reduce_into(mode_extracts1, reduction)
+        expect(result.data["mode"]).to be_present
+        expect(result.data["mode"]).to eq(4.7)
 
         reduction = create :subject_reduction
-        result = reducer2.reduction_data_for(mode_extracts2, reduction)
-        expect(result["mode"]).to be_present
-        expect(result["mode"]).to eq(5)
+        result = reducer2.reduce_into(mode_extracts2, reduction)
+        expect(result.data["mode"]).to be_present
+        expect(result.data["mode"]).to eq(5)
       end
 
       it 'computes correctly in running aggregation mode' do
@@ -611,13 +611,13 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        result = reducer1.reduction_data_for(mode_extracts1, reduction)
-        expect(result["mode"]).to be_present
-        expect(result["mode"]).to eq(4.7)
+        result = reducer1.reduce_into(mode_extracts1, reduction)
+        expect(result.data["mode"]).to be_present
+        expect(result.data["mode"]).to eq(4.7)
 
-        result = reducer2.reduction_data_for(mode_extracts2, reduction)
-        expect(result["mode"]).to be_present
-        expect(result["mode"]).to eq(4.7)
+        result = reducer2.reduce_into(mode_extracts2, reduction)
+        expect(result.data["mode"]).to be_present
+        expect(result.data["mode"]).to eq(4.7)
       end
     end
   end

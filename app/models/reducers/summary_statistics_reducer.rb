@@ -55,8 +55,8 @@ module Reducers
       end
     end
 
-    def reduction_data_for(extracts, reduction=nil)
-      @old_store = reduction&.store || {}
+    def reduce_into(extracts, reduction)
+      @old_store = reduction.store || {}
       @new_store = {}
 
       @extracts = extracts
@@ -69,8 +69,10 @@ module Reducers
         end
       end
 
-      reduction.store = @new_store if reduction.present?
-      hash
+      reduction.tap do |r|
+        r.store = @new_store
+        r.data = hash
+      end
     end
 
     private
