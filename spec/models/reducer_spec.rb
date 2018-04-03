@@ -33,7 +33,7 @@ RSpec.describe Reducer, type: :model do
 
   subject(:reducer) do
     klass = Class.new(described_class) do
-      def reduction_data_for(extracts)
+      def reduce_into(extracts, reductions=nil)
         extracts
       end
     end
@@ -44,36 +44,43 @@ RSpec.describe Reducer, type: :model do
   it 'filters extracts' do
     extract_filter = instance_double(ExtractFilter, filter: [])
     expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)
-    subject.process(extracts)
-
+    subject.filter_extracts(extracts, create(:subject_reduction))
     expect(extract_filter).to have_received(:filter).once
   end
 
   it 'groups extracts' do
-    instance_double(ExtractFilter, filter: extracts)
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
+    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
+
     expect(ExtractGrouping).to receive(:new).
       with(extracts, nil).
       and_return(grouping_filter)
 
-    subject.process(extracts)
+    subject.process(extract_fetcher, reduction_fetcher)
 
     expect(grouping_filter).to have_received(:to_h).once
   end
 
   it 'does not attempt reduction on repeated failures' do
     reducer= build :reducer
-    allow(reducer).to receive(:reduction_data_for) { raise 'failure' }
 
-    expect { reducer.process(extracts) }.to raise_error('failure')
-    expect { reducer.process(extracts) }.to raise_error('failure')
-    expect { reducer.process(extracts) }.to raise_error('failure')
+    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
 
-    expect(reducer).not_to receive(:reduction_data_for)
-    expect { reducer.process(extracts) }.to raise_error(Stoplight::Error::RedLight)
+    allow(reducer).to receive(:reduce_into) { raise 'failure' }
+
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+
+    expect(reducer).not_to receive(:reduce_into)
+    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error(Stoplight::Error::RedLight)
   end
 
   it 'composes grouping and filtering correctly' do
+    workflow = build :workflow
+
     fancy_extracts = [
       build(:extract, extractor_key: 'votes', classification_id: 1, subject_id: 1234, user_id: 5680, data: {"T0" => "ARAI"}),
       build(:extract, extractor_key: 'votes', classification_id: 2, subject_id: 1234, user_id: 5681, data: {"T0" => "ARAI"}),
@@ -86,13 +93,25 @@ RSpec.describe Reducer, type: :model do
       build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
     ]
 
-    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}
-    allow(reducer).to receive(:reduction_data_for){ |reduce_me| reduce_me.map(&:data) }
-    reductions = reducer.process(fancy_extracts)
+    extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
+    reduction_fetcher = instance_double(ReductionFetcher, has_expired?: false)
 
-    expect(reductions).to include("33", "34")
-    expect(reductions['33'].count).to eq(3)
-    expect(reductions['34'].count).to eq(1)
+    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
+    allow(reducer).to receive(:get_reduction) do |fetcher, key|
+      SubjectReduction.new(
+        subject_id: 1234,
+        workflow_id: workflow.id,
+        reducer_key: 'r'
+      ).tap{ |r| r.subgroup = key }
+    end
+    allow(reducer).to receive(:reduce_into){ |reduce_me, reduce_into_me| create(:subject_reduction, subgroup: reduce_into_me.subgroup, data: reduce_me.map(&:data)) }
+
+    reductions = reducer.process(extract_fetcher, reduction_fetcher)
+
+    expect(reductions[0][:subgroup]).to eq("33")
+    expect(reductions[0][:data].count).to eq(3)
+    expect(reductions[1][:subgroup]).to eq("34")
+    expect(reductions[1][:data].count).to eq(1)
   end
 
   describe 'validations' do
@@ -100,6 +119,90 @@ RSpec.describe Reducer, type: :model do
       reducer = Reducer.new filters: {repeated_classifications: "something"}
       expect(reducer).not_to be_valid
       expect(reducer.errors[:extract_filter]).to be_present
+    end
+  end
+
+  describe 'running/online aggregation' do
+    it 'tracks the extracts associated with a reduction' do
+      workflow = create :workflow
+      subject = create :subject
+
+      extract1 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extract2 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extracts_double = instance_double(ActiveRecord::Relation)
+
+      subject_reduction_double = instance_double(SubjectReduction,
+        workflow_id: workflow.id,
+        subject_id: subject.id,
+        reducer_key: 'aaa',
+        extract_ids: [],
+        extract: extracts_double,
+        data: "foo"
+      )
+
+      running_reducer = create :reducer,
+        key: 'aaa',
+        type: 'Reducers::PlaceholderReducer',
+        topic: Reducer.topics[:reduce_by_subject],
+        reduction_mode: Reducer.reduction_modes[:running_reduction],
+        workflow_id: workflow.id
+
+      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+
+      allow(running_reducer).to receive(:associate_extracts)
+      allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
+      allow(subject_reduction_double).to receive(:data=)
+      allow(subject_reduction_double).to receive(:expired=)
+
+      running_reducer.process(extract_fetcher, reduction_fetcher)
+      expect(running_reducer).to have_received(:associate_extracts).with(subject_reduction_double, [extract1, extract2])
+    end
+
+    it 'includes a given extract in a running reduction only once' do
+      workflow = create :workflow
+      subject = create :subject
+
+      extract1 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extract2 = create :extract,
+        extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
+
+      extracts_double = instance_double(ActiveRecord::Relation)
+
+      subject_reduction_double = instance_double(SubjectReduction,
+        workflow_id: workflow.id,
+        subject_id: subject.id,
+        reducer_key: 'aaa',
+        extract_ids: [extract1.id],
+        extract: extracts_double,
+        data: "foo"
+      )
+
+      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+
+      running_reducer = create :reducer,
+        key: 'aaa',
+        type: 'Reducers::PlaceholderReducer',
+        topic: Reducer.topics[:reduce_by_subject],
+        reduction_mode: Reducer.reduction_modes[:running_reduction],
+        workflow_id: workflow.id
+
+      allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:associate_extracts)
+      allow(subject_reduction_double).to receive(:data=)
+      allow(subject_reduction_double).to receive(:expired=)
+
+      running_reducer.process(extract_fetcher, reduction_fetcher)
+      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)
     end
   end
 end

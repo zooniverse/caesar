@@ -2,14 +2,22 @@ module Reducers
   class UniqueCountReducer < Reducer
     config_field :field
 
-    def reduction_data_for(extracts)
-      mapped = extracts.map do |extract|
-        if extract.data.key?(field)
-          extract.data[field]
-        end
-      end
+    def reduce_into(extracts, reduction)
+      store = reduction.store || {}
+      store["items"] = [] unless store.key? "items"
 
-      mapped.uniq.size
+      mapped = (store["items"] + extracts.map do |extract|
+        if extract.data.key?(field)
+          val = extract.data[field]
+          if val.respond_to?('sort') && val.respond_to?('join') then val.sort.join('+') else val end
+        end
+      end).uniq
+
+      reduction.tap do |r|
+        r.store = store
+        r.store["items"] = mapped
+        r.data = mapped.size
+      end
     end
   end
 end

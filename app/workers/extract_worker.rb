@@ -16,12 +16,13 @@ class ExtractWorker
     classification.destroy
 
     if extracts.present?
-      ReduceWorker.perform_async(classification.workflow_id, classification.subject_id, classification.user_id)
-    end
+      ids = extracts.map(&:id)
+      ReduceWorker.perform_async(classification.workflow_id, classification.subject_id, classification.user_id, ids)
 
-    if workflow.subscribers?
-      extracts.each do |extract|
-        workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
+      if workflow.subscribers?
+        extracts.each do |extract|
+          workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
+        end
       end
     end
   rescue ActiveRecord::RecordNotFound => e

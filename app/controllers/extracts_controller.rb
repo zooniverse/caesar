@@ -10,7 +10,11 @@ class ExtractsController < ApplicationController
                                             classification_id: classification_id)
     authorize extract
 
-    extract.update! extract_params
+    Workflow.transaction do
+      extract.subject_reduction.update_all expired: true
+      extract.user_reduction.update_all expired: true
+      extract.update! extract_params
+    end
 
     ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
 

@@ -1,12 +1,12 @@
 class CountingHash
-  def self.build
-    results = new
+  def self.build(initial_values = {})
+    results = new(initial_values)
     yield results
     results.to_h
   end
 
-  def initialize
-    @value = {}
+  def initialize(val = {})
+    @value = val
   end
 
   def increment(key, amount = 1)

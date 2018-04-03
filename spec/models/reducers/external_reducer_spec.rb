@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Reducers::ExternalReducer do
-  def unwrap(reduction)
-    reduction['_default']
-  end
-
   let(:extracts) {
     [
       Extract.new(data: {"foo" => "bar"}),
@@ -26,7 +22,7 @@ describe Reducers::ExternalReducer do
 
   it 'posts the extracts to a foreign API' do
     reducer = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
-    reducer.process(extracts)
+    reducer.reduce_into(extracts, build(:subject_reduction))
 
     expect(a_request(:post, "example.org/post/extracts/here")
             .with(body: extracts.to_json))
@@ -34,25 +30,25 @@ describe Reducers::ExternalReducer do
   end
 
   it 'passes through the result from the foreign API' do
-    extractor = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
-    result = extractor.process(extracts)
-    expect(unwrap(result)).to eq(response_data)
+    reducer = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
+    result = reducer.reduce_into(extracts, build(:subject_reduction))
+    expect(result.data).to eq(response_data)
   end
 
   it 'handles 204s' do
     stub_request(:post, "http://example.org/post/extracts/here").
       to_return(status: 204, body: "", headers: {})
 
-    extractor = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
-    result = extractor.process(extracts)
-    expect(unwrap(result)).to eq(Reducer::NoData)
+    reducer = described_class.new(config: {"url" => "http://example.org/post/extracts/here"})
+    result = reducer.reduce_into(extracts, build(:subject_reduction))
+    expect(result.data).to be(nil)
   end
 
   it 'does not post if no url is configured' do
     reducer = described_class.new(config: {"url" => nil})
 
     expect do
-      reducer.process(classification)
+      reducer.reduce_into(extracts, build(:subject_reduction))
     end.to raise_error(StandardError)
   end
 

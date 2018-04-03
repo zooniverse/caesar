@@ -53,6 +53,7 @@ gem 'graphiql-rails'
 gem 'stoplight'
 gem 'dotenv-rails'
 gem 'ranked-model'
+gem 'deferred_associations'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

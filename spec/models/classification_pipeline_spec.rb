@@ -80,14 +80,11 @@ describe ClassificationPipeline do
   end
 
   it 'fetches classifications from panoptes when there are no other extracts' do
-    pending
-    expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(2)
+    expect { pipeline.extract(classification) }.
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
   end
 
   it 'does not fetch subject classifications when extracts already present' do
-    pending
-
     create(
       :extract,
       classification_id: classification.id,
@@ -98,7 +95,7 @@ describe ClassificationPipeline do
     )
 
     expect { pipeline.process(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
+      not_to change(FetchClassificationsWorker.jobs, :size)
   end
 
   it 'groups extracts before reduction' do
@@ -122,7 +119,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
-    reducer = build(:stats_reducer, key: 's', grouping: "g.classroom")
+    reducer = build(:stats_reducer, key: 's', grouping: "g.classroom", workflow_id: workflow.id)
     pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, subject.id, nil)
 
@@ -141,7 +138,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
 
-    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user])
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], workflow_id: workflow.id)
 
     pipeline = described_class.new(nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)
@@ -193,5 +190,15 @@ describe ClassificationPipeline do
 
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once
     expect(user_rule2).not_to have_received(:process)
+  end
+
+  describe 'running/online aggregation mode' do
+    xit 'selects the proper extracts for processing' do
+      raise NotImplementedError
+    end
+
+    xit 'detects synchronization problems' do
+      raise NotImplementedError
+    end
   end
 end

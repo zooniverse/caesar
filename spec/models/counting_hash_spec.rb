@@ -11,6 +11,10 @@ describe CountingHash do
     it 'returns a hash with the values' do
       expect(described_class.build { |results| results.increment("a") }).to eq({"a" => 1})
     end
+
+    it 'handles an initial set of values correctly' do
+      expect(described_class.build({"a"=>1}) { |results| results.increment("a") }).to eq({"a" => 2})
+    end
   end
 
   describe '#increment' do

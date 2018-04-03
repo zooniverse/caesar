@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180220111809) do
+ActiveRecord::Schema.define(version: 20180321162724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,16 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
   end
 
+  create_table "extracts_subject_reductions", id: false, force: :cascade do |t|
+    t.bigint "extract_id", null: false
+    t.bigint "subject_reduction_id", null: false
+  end
+
+  create_table "extracts_user_reductions", id: false, force: :cascade do |t|
+    t.bigint "extract_id", null: false
+    t.bigint "user_reduction_id", null: false
+  end
+
   create_table "reducers", force: :cascade do |t|
     t.bigint "workflow_id"
     t.string "key", null: false
@@ -91,6 +101,7 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "topic", default: 0, null: false
+    t.integer "reduction_mode", default: 0, null: false
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
@@ -118,9 +129,12 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subgroup", default: "_default", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.jsonb "store"
+    t.boolean "expired", default: false
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
+    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
     t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
     t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
@@ -173,6 +187,9 @@ ActiveRecord::Schema.define(version: 20180220111809) do
     t.string "subgroup", default: "_default", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.jsonb "store"
+    t.boolean "expired", default: false
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
     t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
     t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
@@ -213,6 +230,10 @@ ActiveRecord::Schema.define(version: 20180220111809) do
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
+  add_foreign_key "extracts_subject_reductions", "extracts", on_delete: :cascade
+  add_foreign_key "extracts_subject_reductions", "subject_reductions", on_delete: :cascade
+  add_foreign_key "extracts_user_reductions", "extracts", on_delete: :cascade
+  add_foreign_key "extracts_user_reductions", "user_reductions", on_delete: :cascade
   add_foreign_key "reducers", "workflows"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"

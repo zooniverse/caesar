@@ -1,7 +1,9 @@
 module Reducers
   class PlaceholderReducer < Reducer
-    def reduction_data_for(extracts)
-      NoData
+    def reduce_into(extracts, reduction)
+      reduction.tap do |r|
+        r.data = nil
+      end
     end
   end
 end
