@@ -55,7 +55,7 @@ class Reducer < ApplicationRecord
 
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
-      new_reductions = grouped_extracts.map do |group_key, grouped|
+      grouped_extracts.map do |group_key, grouped|
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
@@ -66,13 +66,7 @@ class Reducer < ApplicationRecord
           # until the reduction is saved, meaning it happens inside the transaction
           associate_extracts(r, extracts) if running_reduction?
         end
-      end
-
-      if new_reductions.reject{|reduction| reduction.data.blank?}.empty?
-        nil
-      else
-        new_reductions
-      end
+      end.reject{ |reduction| reduction.data.blank? }
     end
 
     light.run

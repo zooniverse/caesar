@@ -76,11 +76,8 @@ class ClassificationPipeline
       reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for(reducer.topic))
     end.flatten
 
-    return if new_reductions == Reducer::NoData || new_reductions.reject{|reduction| reduction == Reducer::NoData}.empty?
-
     Workflow.transaction do
       new_reductions.each do |reduction|
-        next if reduction == Reducer::NoData
         reduction.save!
       end
     end

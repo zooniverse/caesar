@@ -9,6 +9,7 @@ class ReduceWorker
 
   def perform(workflow_id, subject_id, user_id, extract_ids = [])
     workflow = Workflow.find(workflow_id)
+
     begin
       reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
     rescue ClassificationPipeline::ReductionConflict
@@ -16,11 +17,11 @@ class ReduceWorker
       return
     end
 
-    return if reductions == Reducer::NoData || reductions.reject{ |r| r==Reducer::NoData }.empty?
+    return if reductions.blank?
 
     CheckRulesWorker.perform_async(workflow_id, subject_id, user_id)
-    reductions.each do |datum|
-      workflow.webhooks.process(:new_reduction, datum) if workflow.subscribers?
+    reductions.each do |item|
+      workflow.webhooks.process(:new_reduction, item) if workflow.subscribers?
     end
   end
 end
