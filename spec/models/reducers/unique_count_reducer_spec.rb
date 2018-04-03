@@ -31,15 +31,15 @@ describe Reducers::UniqueCountReducer do
   end
 
   it 'counts unique things' do
-    expect(reducer.reduce_into(extracts, create(:subject_reduction)).data).to eq(2)
+    expect(reducer.reduce_into(extracts, build(:subject_reduction)).data).to eq(2)
   end
 
   describe 'aggregation modes' do
     it 'works correctly in default aggregation mode' do
       default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction], config: {"field" => "choices"})
 
-      extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
-      reduction = create :subject_reduction, store: {}
+      extracts = [build(:extract, data: {"choices"=>"B"}), build(:extract, data: {"choices"=>"C"})]
+      reduction = build :subject_reduction, store: {}
 
       expect(default_reducer.reduce_into(extracts, reduction).data).to eq(2)
 
@@ -50,8 +50,8 @@ describe Reducers::UniqueCountReducer do
     it 'works correctly in running aggregation mode' do
       running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:running_reduction], config: {"field" => "choices"})
 
-      extracts = [create(:extract, data: {"choices"=>"B"}), create(:extract, data: {"choices"=>"C"})]
-      reduction = create :subject_reduction, store: { "items" => ["A", "B"] }
+      extracts = [build(:extract, data: {"choices"=>"B"}), build(:extract, data: {"choices"=>"C"})]
+      reduction = build :subject_reduction, store: { "items" => ["A", "B"] }
 
       expect(running_reducer.reduce_into(extracts, reduction).data).to eq(3)
       expect(running_reducer.reduce_into([extracts[0]], reduction).data).to eq(3)

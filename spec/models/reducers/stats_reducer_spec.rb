@@ -29,26 +29,26 @@ describe Reducers::StatsReducer do
 
   describe '#process' do
     it 'processes when there are no classifications' do
-      expect(reducer.reduce_into([], create(:subject_reduction)).data).to eq({})
+      expect(reducer.reduce_into([], build(:subject_reduction)).data).to eq({})
     end
 
     it 'counts occurrences of species' do
       # expect(unwrap(reducer.process(extracts)))
-      expect(reducer.reduce_into(extracts, create(:subject_reduction)).data)
+      expect(reducer.reduce_into(extracts, build(:subject_reduction)).data)
         .to include({"NTHNGHR" => 2, "RCCN" => 3, "BBN" => 1})
     end
 
     it 'counts booleans as 1' do
       extracts = [Extract.new(data: {'blank' => false})]
-      expect(reducer.reduce_into(extracts, create(:subject_reduction)).data).to eq('blank' => 0)
+      expect(reducer.reduce_into(extracts, build(:subject_reduction)).data).to eq('blank' => 0)
 
       extracts = [Extract.new(data: {'blank' => true}), Extract.new(data: {'blank' => false})]
-      expect(reducer.reduce_into(extracts, create(:subject_reduction)).data).to eq('blank' => 1)
+      expect(reducer.reduce_into(extracts, build(:subject_reduction)).data).to eq('blank' => 1)
     end
 
     it 'works in default aggregation mode' do
       running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
-      reduction = SubjectReduction.create
+      reduction = build :subject_reduction
 
       result = running_reducer.reduce_into(extracts, reduction)
       expect(result.data).to include({"NTHNGHR" => 2})
@@ -57,7 +57,7 @@ describe Reducers::StatsReducer do
 
     it 'works in running aggregation mode' do
       running_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:running_reduction])
-      reduction = SubjectReduction.create data: {"NTHNGHR" => 1, "RCCN" => 2}
+      reduction = build :subject_reduction, data: {"NTHNGHR" => 1, "RCCN" => 2}
 
       result = running_reducer.reduce_into(extracts, reduction)
       expect(result.data).to include({"NTHNGHR" => 3})

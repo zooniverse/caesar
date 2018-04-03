@@ -132,7 +132,7 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing min' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["min"]},
@@ -151,7 +151,7 @@ describe Reducers::SummaryStatisticsReducer do
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction, store: { "min" => 4 }
+        reduction = build :subject_reduction, store: { "min" => 4 }
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["min"]},
@@ -179,19 +179,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["first"]).to be_present
         expect(result.data["first"]).to eq(4.7)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["first"]).to be_present
         expect(result.data["first"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["first"]},
@@ -219,19 +219,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["max"]).to be_present
         expect(result.data["max"]).to eq(5)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["max"]).to be_present
         expect(result.data["max"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction, store: { }
+        reduction = build :subject_reduction, store: { }
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["max"]},
@@ -259,19 +259,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["count"]).to be_present
         expect(result.data["count"]).to eq(2)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["count"]).to be_present
         expect(result.data["count"]).to eq(1)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction, store: { "count" => 5 }
+        reduction = build :subject_reduction, store: { "count" => 5 }
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["count"]},
@@ -292,7 +292,7 @@ describe Reducers::SummaryStatisticsReducer do
 
     describe 'computing sum' do
       it 'computes correctly in default mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["sum"]},
@@ -305,14 +305,14 @@ describe Reducers::SummaryStatisticsReducer do
         expect(result.data["sum"]).to be_present
         expect(result.data["sum"]).to eq(9.7)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["sum"]).to be_present
         expect(result.data["sum"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction, store: { "sum" => 5 }
+        reduction = build :subject_reduction, store: { "sum" => 5 }
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["sum"]},
@@ -340,19 +340,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["product"]).to be_present
         expect(result.data["product"]).to eq(23.5)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["product"]).to be_present
         expect(result.data["product"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["product"]},
@@ -380,19 +380,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["mean"]).to be_present
         expect(result.data["mean"]).to eq(4.85)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["mean"]).to be_present
         expect(result.data["mean"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["mean"]},
@@ -420,19 +420,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["sse"]).to be_present
         expect(result.data["sse"]).to be_within(0.0001).of(0.045)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["sse"]).to be_present
         expect(result.data["sse"]).to eq(0)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["sse"]},
@@ -460,19 +460,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["variance"]).to be_present
         expect(result.data["variance"]).to be_within(0.0001).of(0.045)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data.key?("variance")).to be(true)
         expect(result.data["variance"]).to eq(nil)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["variance"]},
@@ -500,19 +500,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["stdev"]).to be_present
         expect(result.data["stdev"]).to be_within(0.0001).of(0.2121)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data.key?("stdev")).to be(true)
         expect(result.data["stdev"]).to eq(nil)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["stdev"]},
@@ -540,18 +540,18 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(extracts1, reduction)
         expect(result.data["median"]).to be_present
         expect(result.data["median"]).to be_within(0.0001).of(4.85)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(extracts2, reduction)
         expect(result.data["median"]).to eq(3)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["median"]},
@@ -590,19 +590,19 @@ describe Reducers::SummaryStatisticsReducer do
 
         reducer2 = reducer1.clone
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer1.reduce_into(mode_extracts1, reduction)
         expect(result.data["mode"]).to be_present
         expect(result.data["mode"]).to eq(4.7)
 
-        reduction = create :subject_reduction
+        reduction = build :subject_reduction
         result = reducer2.reduce_into(mode_extracts2, reduction)
         expect(result.data["mode"]).to be_present
         expect(result.data["mode"]).to eq(5)
       end
 
       it 'computes correctly in running aggregation mode' do
-        reduction = create :subject_reduction, store: { "frequencies": { "4.7" => 2 } }
+        reduction = build :subject_reduction, store: { "frequencies": { "4.7" => 2 } }
 
         reducer1 = described_class.new(
           config: {"summarize_field" => "some_field", "operations" => ["mode"]},
