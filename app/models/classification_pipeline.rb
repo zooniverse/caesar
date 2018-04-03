@@ -84,7 +84,7 @@ class ClassificationPipeline
 
     new_reductions
   rescue ActiveRecord::StaleObjectError
-    raise ReductionConflict "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
+    raise ReductionConflict, "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     sleep 2
     retry unless (tries-=1).zero?
