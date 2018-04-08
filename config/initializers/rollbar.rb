@@ -31,6 +31,9 @@ Rollbar.configure do |config|
   config.exception_level_filters.merge!('ActionController::RoutingError' => 'ignore',
                                         'Stoplight::Error::RedLight' => 'ignore',
                                         'Extractors::ExternalExtractor::ExternalExtractorFailed' => 'ignore',
+                                        'RestClient::GatewayTimeout' => 'ignore',
+                                        'RestClient::BadGateway' => 'ignore',
+                                        'Extractors::PluckFieldExtractor::FailedMatch' => 'ignore',
                                         'Reducers::ExternalReducer::ExternalReducerFailed' => 'ignore')
   #
   # You can also specify a callable, which will be called with the exception instance.
