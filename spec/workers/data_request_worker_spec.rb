@@ -23,7 +23,6 @@ describe DataRequestWorker do
   before do
     allow(StoredExport).to receive(:new).and_return(stored_export)
     request.status = DataRequest.statuses[:pending]
-    request.url = nil
     request.save!
   end
 

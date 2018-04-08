@@ -151,14 +151,6 @@ describe DataRequestsController, :type => :controller do
       expect(json_response["status"]).to eq("complete")
     end
 
-    it('should return 404 if no file is ready') do
-      data_request.url = nil
-      data_request.save!
-
-      response = get :show, params: params, format: :json
-      expect(response.status).to eq(200)
-    end
-
     it('should return the url if the file is available') do
       data_request.complete!
 
