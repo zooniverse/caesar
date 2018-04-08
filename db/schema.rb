@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180321162724) do
+ActiveRecord::Schema.define(version: 20180408114027) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,7 +180,7 @@ ActiveRecord::Schema.define(version: 20180321162724) do
   end
 
   create_table "user_reductions", force: :cascade do |t|
-    t.string "reducer_key"
+    t.string "reducer_key", null: false
     t.integer "workflow_id", null: false
     t.integer "user_id", null: false
     t.jsonb "data"
