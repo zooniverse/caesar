@@ -24,11 +24,11 @@ describe ExtractGrouping do
   }
 
   let(:nogroup){
-    ExtractGrouping.new(extracts, nil)
+    ExtractGrouping.new(extracts, {})
   }
 
   let(:grouping){
-    ExtractGrouping.new(extracts, "g.classroom")
+    ExtractGrouping.new(extracts, {"field_name" => "g.classroom"})
   }
 
   describe '#to_h' do
@@ -39,8 +39,9 @@ describe ExtractGrouping do
     end
 
     it('throws an error if an extract is missing the key') do
-      expect { ExtractGrouping.new(extracts,"h.classroom").to_h }.to raise_error(MissingGroupingField)
-      expect { ExtractGrouping.new(extracts,"g.foo").to_h }.to raise_error(MissingGroupingField)
+      expect { ExtractGrouping.new(extracts,{"field_name" => "h.classroom", "if_missing" => "error"}).to_h }.to raise_error(MissingGroupingField)
+      expect { ExtractGrouping.new(extracts,{"field_name" => "h.classroom", "if_missing" => "ignore"}).to_h }.not_to raise_error
+      expect { ExtractGrouping.new(extracts,{"field_name" => "g.foo", "if_missing" => "error"}).to_h }.to raise_error(MissingGroupingField)
     end
 
     it('groups extracts correctly') do

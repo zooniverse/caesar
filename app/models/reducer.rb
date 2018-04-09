@@ -107,7 +107,10 @@ class Reducer < ApplicationRecord
     super || {}
   end
 
+  def grouping
+    super || {}
+  end
+
   def nilify_empty_fields
-    self.grouping = nil if grouping.blank?
   end
 end

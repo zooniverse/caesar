@@ -98,13 +98,13 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.bigint "workflow_id"
     t.string "key", null: false
     t.string "type", null: false
-    t.string "grouping"
     t.jsonb "config", default: {}, null: false
     t.jsonb "filters", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "topic", default: 0, null: false
     t.integer "reduction_mode", default: 0, null: false
+    t.jsonb "grouping", default: {}, null: false
     t.index ["workflow_id", "key"], name: "index_reducers_on_workflow_id_and_key", unique: true
     t.index ["workflow_id"], name: "index_reducers_on_workflow_id"
   end
