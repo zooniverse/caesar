@@ -30,14 +30,28 @@ class ClassificationPipeline
     extracts = extractors.map do |extractor|
       data = extractor.process(classification)
 
-      extract = Extract.where(workflow_id: classification.workflow_id, subject_id: classification.subject_id, classification_id: classification.id, extractor_key: extractor.key).first_or_initialize
-      extract.user_id = classification.user_id
-      extract.classification_at = classification.created_at
-      extract.data = data
-      extract.save!
+      extract = Extract.where(
+        workflow_id: classification.workflow_id,
+        subject_id: classification.subject_id,
+        classification_id: classification.id,
+        extractor_key: extractor.key
+      ).first_or_initialize
 
-      extract
+      extract.tap do |an_extract|
+        an_extract.user_id = classification.user_id
+        an_extract.classification_at = classification.created_at
+        an_extract.data = data
+      end
     end
+
+    return if extracts.blank?
+
+    Workflow.transaction do
+      extracts.each do |extract|
+        extract.save!
+      end
+    end
+
 
     if workflow.concerns_subjects? and novel_subject
       FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
