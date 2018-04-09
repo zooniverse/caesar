@@ -38,7 +38,11 @@ class Extractor < ApplicationRecord
       end
     end
 
-    light.run
+    if workflow&.active?
+      light.run
+    elsif workflow&.paused?
+      workflow.pending_classifications << classification
+    end
   end
 
   def extract_data_for(classification)

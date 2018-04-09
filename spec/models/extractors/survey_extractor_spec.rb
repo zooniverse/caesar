@@ -11,12 +11,13 @@ describe Extractors::SurveyExtractor do
   end
 
   let(:annotations) { [make_annotation("OTHER")] }
+  let(:workflow){ create :workflow }
 
   let(:classification) do
     Classification.new(annotations: annotations)
   end
 
-  subject(:extractor) { described_class.new(key: 's') }
+  subject(:extractor) { described_class.new(key: 's', workflow_id: workflow.id) }
 
   describe '#process' do
     it 'can ignore missing task' do

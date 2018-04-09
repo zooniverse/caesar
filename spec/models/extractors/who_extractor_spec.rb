@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Extractors::WhoExtractor do
-  let(:extractor){ described_class.new(key: "s") }
+  let(:workflow){ create :workflow }
+  let(:extractor){ described_class.new(key: "s", workflow_id: workflow.id) }
   let(:classification) { build :classification, user_id: 5 }
 
   it 'gives the user who performed the classification' do

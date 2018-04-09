@@ -46,7 +46,7 @@ describe Extractor do
 
   describe '#process' do
     it 'processes normally when nothing is changed' do
-      extractor = build :extractor, key: 'r'
+      extractor = build :extractor, key: 'r', workflow_id: workflow.id
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extractor.process(classification)
 
@@ -54,7 +54,7 @@ describe Extractor do
     end
 
     it 'processes classifications normally if they are new enough' do
-      extractor = build :extractor, key: 'r', minimum_workflow_version: '3'
+      extractor = build :extractor, key: 'r', minimum_workflow_version: '3', workflow_id: workflow.id
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extractor.process(classification)
 
@@ -63,7 +63,7 @@ describe Extractor do
 
     it 'processes classifications normally if workflow version is unknown' do
       allow(classification).to receive(:workflow_version).and_return(nil)
-      extractor = build :extractor, key: 'r', minimum_workflow_version: '3'
+      extractor = build :extractor, key: 'r', minimum_workflow_version: '3', workflow_id: workflow.id
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extractor.process(classification)
 
@@ -71,7 +71,7 @@ describe Extractor do
     end
 
     it 'returns no data when a classification is too old' do
-      extractor = build :extractor, key: 'r',minimum_workflow_version: '335.4.6'
+      extractor = build :extractor, key: 'r',minimum_workflow_version: '335.4.6', workflow_id: workflow.id
       allow(extractor).to receive(:extract_data_for).and_return(nil)
       extract = extractor.process(classification)
 
@@ -80,7 +80,7 @@ describe Extractor do
     end
 
     it 'does not attempt extraction on repeated failures' do
-      extractor = build :extractor
+      extractor = build :extractor, workflow_id: workflow.id
       allow(extractor).to receive(:extract_data_for) { raise 'failure' }
 
       expect { extractor.process(classification) }.to raise_error('failure')
@@ -89,6 +89,24 @@ describe Extractor do
 
       expect(extractor).not_to receive(:extract_data_for)
       expect { extractor.process(classification) }.to raise_error(Stoplight::Error::RedLight)
+    end
+
+    it 'remembers the pending classification if the workflow is paused' do
+      paused_workflow = build :workflow, status: 'paused'
+      extractor = build :extractor, workflow: paused_workflow
+      extractor.process(classification)
+
+      expect(paused_workflow.pending_classifications).not_to be_empty
+    end
+
+    it 'does nothing if the workflow is paused' do
+      paused_workflow = build :workflow, status: 'disabled'
+      extractor = build :extractor, workflow: paused_workflow
+      allow(extractor).to receive(:extract_data_for) { raise 'failure' }
+
+      extractor.process(classification)
+
+      expect(paused_workflow.pending_classifications).to be_empty
     end
   end
 end

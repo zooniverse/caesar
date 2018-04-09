@@ -94,6 +94,13 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.index ["user_reduction_id", "extract_id"], name: "eur_covering_2"
   end
 
+  create_table "pending_classifications", id: false, force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.bigint "classification_id", null: false
+    t.index ["classification_id"], name: "index_pending_classifications_on_classification_id"
+    t.index ["workflow_id"], name: "index_pending_classifications_on_workflow_id"
+  end
+
   create_table "reducers", force: :cascade do |t|
     t.bigint "workflow_id"
     t.string "key", null: false
@@ -225,6 +232,7 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.boolean "public_extracts", default: false, null: false
     t.boolean "public_reductions", default: false, null: false
     t.integer "rules_applied", default: 0, null: false
+    t.integer "status", default: 1, null: false
   end
 
   add_foreign_key "classifications", "subjects"
