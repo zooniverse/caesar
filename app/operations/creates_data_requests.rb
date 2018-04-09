@@ -11,7 +11,6 @@ class CreatesDataRequests < ApplicationOperation
 
     data_request.public = data_request.workflow.public_data?(data_request.requested_data)
     data_request.status = DataRequest.statuses[:pending]
-    data_request.url = nil
     data_request.save!
 
     DataRequestWorker.perform_async(data_request.id)

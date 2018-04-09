@@ -44,7 +44,6 @@ ActiveRecord::Schema.define(version: 20180408114027) do
     t.bigint "workflow_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
-    t.string "url"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
