@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180408114027) do
+ActiveRecord::Schema.define(version: 20180410094538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,11 +83,15 @@ ActiveRecord::Schema.define(version: 20180408114027) do
   create_table "extracts_subject_reductions", id: false, force: :cascade do |t|
     t.bigint "extract_id", null: false
     t.bigint "subject_reduction_id", null: false
+    t.index ["extract_id", "subject_reduction_id"], name: "cur_covering_1"
+    t.index ["subject_reduction_id", "extract_id"], name: "cur_covering_2"
   end
 
   create_table "extracts_user_reductions", id: false, force: :cascade do |t|
     t.bigint "extract_id", null: false
     t.bigint "user_reduction_id", null: false
+    t.index ["extract_id", "user_reduction_id"], name: "eur_covering_1"
+    t.index ["user_reduction_id", "extract_id"], name: "eur_covering_2"
   end
 
   create_table "reducers", force: :cascade do |t|
