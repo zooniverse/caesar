@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410094538) do
+ActiveRecord::Schema.define(version: 20180410101028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,6 +245,8 @@ ActiveRecord::Schema.define(version: 20180410094538) do
   add_foreign_key "extracts_subject_reductions", "subject_reductions", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "extracts", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "user_reductions", on_delete: :cascade
+  add_foreign_key "pending_classifications", "classifications", on_delete: :cascade
+  add_foreign_key "pending_classifications", "workflows", on_delete: :cascade
   add_foreign_key "reducers", "workflows"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"
