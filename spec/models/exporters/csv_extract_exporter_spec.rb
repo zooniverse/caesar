@@ -84,5 +84,8 @@ describe Exporters::CsvExtractExporter do
     expect(row).to include("")
     expect(row).not_to include("val3")
     expect(row).to include(workflow.id)
+    expect(row).to include(sample.classification_at)
+    expect(row).to include(sample.updated_at)
+    expect(row).to include(sample.created_at)
   end
 end

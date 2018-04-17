@@ -52,6 +52,7 @@ module Exporters
         when String then item
         when Array then item.to_json
         when Hash then item.to_json
+        when DateTime, ActiveSupport::TimeWithZone then item
       end
     end
 
