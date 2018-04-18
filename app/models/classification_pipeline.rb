@@ -98,11 +98,9 @@ class ClassificationPipeline
 
     new_reductions
   rescue ActiveRecord::StaleObjectError
-    raise ReductionConflict, "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
+    raise ReductionConflict, "Object version mismatch"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
-    sleep 2 + (rand * 10)
-    retry unless (tries-=1).zero?
-    raise
+    raise ReductionConflict, "Transient uniqueness violation"
   end
 
   def check_rules(workflow_id, subject_id, user_id)
