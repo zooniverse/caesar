@@ -70,7 +70,7 @@ class ClassificationPipeline
 
   def reduce(workflow_id, subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
-    tries ||= 2
+    tries ||= 5
 
     filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
