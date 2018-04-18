@@ -70,7 +70,7 @@ class ClassificationPipeline
 
   def reduce(workflow_id, subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
-    tries ||= 5
+    tries ||= 10
 
     filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
@@ -100,7 +100,7 @@ class ClassificationPipeline
   rescue ActiveRecord::StaleObjectError
     raise ReductionConflict, "Running Reduction synchronization error in workflow #{ workflow_id } subject #{ subject_id } user #{ user_id }"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
-    sleep 2
+    sleep 2 + (rand * 10)
     retry unless (tries-=1).zero?
     raise
   end
