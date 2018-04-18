@@ -1,21 +1,20 @@
 class ReduceWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
-  sidekiq_options unique: :until_executing, unique_args: ->(args) { args[0,2] } unless Rails.env.test?
+  sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args unless Rails.env.test?
   sidekiq_options queue: 'internal'
   sidekiq_retry_in do |count|
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
+  def self.unique_args(args)
+    [args[0], args[1], args[2]]
+  end
+
   def perform(workflow_id, subject_id, user_id, extract_ids = [])
     workflow = Workflow.find(workflow_id)
 
-    begin
-      reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
-    rescue ClassificationPipeline::ReductionConflict
-      ReduceWorker.perform_async(workflow_id, subject_id, user_id, extract_ids)
-      return
-    end
+    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
 
     return if reductions.blank?
 
