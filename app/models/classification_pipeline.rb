@@ -70,7 +70,7 @@ class ClassificationPipeline
 
   def reduce(workflow_id, subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
-    tries ||= 10
+    retries ||= 2
 
     filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
@@ -83,11 +83,11 @@ class ClassificationPipeline
 
     # prefetch all reductions to avoid race conditions with optimistic locking
     if reducers.any?{ |reducer| reducer.running_reduction? }
-      reduction_fetcher.load
+      reduction_fetcher.load!
     end
 
     new_reductions = reducers.map do |reducer|
-      reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for(reducer.topic))
+      reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for!(reducer.topic))
     end.flatten
 
     Workflow.transaction do
@@ -98,8 +98,10 @@ class ClassificationPipeline
 
     new_reductions
   rescue ActiveRecord::StaleObjectError
+    retry unless (retries-=1).zero?
     raise ReductionConflict, "Object version mismatch"
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    retry unless (retries-=1).zero?
     raise ReductionConflict, "Transient uniqueness violation"
   end
 

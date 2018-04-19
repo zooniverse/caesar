@@ -8,18 +8,18 @@ class ReductionFetcher
     @topic = :reduce_by_subject
   end
 
-  def load
+  def load!
     @subject_reductions.load
     @user_reductions.load
   end
 
-  def for(topic)
+  def for!(topic)
     @topic = topic.to_sym
     self
   end
 
-  def subgroup(subgroup)
-    where(@keys.merge(subgroup: subgroup))
+  def retrieve(reducer_key, subgroup)
+    where(@keys.merge(reducer_key: reducer_key, subgroup: subgroup))
   end
 
   def reductions

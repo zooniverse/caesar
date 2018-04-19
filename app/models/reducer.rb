@@ -73,9 +73,7 @@ class Reducer < ApplicationRecord
   end
 
   def get_reduction(reduction_fetcher, group_key)
-    reduction_fetcher.subgroup(group_key).first_or_initialize.tap do |r|
-      r.reducer_key = key
-      r.subgroup = group_key
+    reduction_fetcher.retrieve(key, group_key).first_or_initialize.tap do |r|
       r.data = if running_reduction? then (r.data || {}) else {} end
       r.store = if running_reduction? then (r.store || {}) else {} end
     end

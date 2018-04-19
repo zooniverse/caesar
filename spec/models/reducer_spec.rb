@@ -51,7 +51,7 @@ RSpec.describe Reducer, type: :model do
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, nil).
@@ -66,7 +66,7 @@ RSpec.describe Reducer, type: :model do
     reducer= build :reducer
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    reduction_fetcher = instance_double(ReductionFetcher, subgroup: SubjectReduction, has_expired?: false)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
@@ -152,7 +152,7 @@ RSpec.describe Reducer, type: :model do
         workflow_id: workflow.id
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
 
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
@@ -186,7 +186,7 @@ RSpec.describe Reducer, type: :model do
       )
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      reduction_fetcher = instance_double(ReductionFetcher, subgroup: [subject_reduction_double], has_expired?: false)
+      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
 
       running_reducer = create :reducer,
         key: 'aaa',
