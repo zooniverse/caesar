@@ -48,8 +48,7 @@ module Exporters
       return "" unless item.present?
 
       case item
-        when Integer then item
-        when String then item
+        when Integer, Float, String, TrueClass, FalseClass then item
         when Array then item.to_json
         when Hash then item.to_json
         when DateTime, ActiveSupport::TimeWithZone then item
