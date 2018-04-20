@@ -44,7 +44,6 @@ gem 'omniauth-zooniverse'
 gem 'responders'
 gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
-gem 'aws-sdk-s3'
 gem 'jsonpath'
 gem 'simple_form'
 gem 'pundit', "~> 1.1.0"
@@ -54,6 +53,8 @@ gem 'stoplight'
 gem 'dotenv-rails'
 gem 'ranked-model'
 gem 'deferred_associations'
+gem 'aws-sdk-s3'
+gem 'aws-sdk-sqs'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
