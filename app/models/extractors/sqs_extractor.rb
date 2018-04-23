@@ -3,6 +3,12 @@ module Extractors
     config_field :queue_name, default: nil
     config_field :queue_url, default: nil
 
+    validate do
+      if queue_name.blank? && queue_url.blank?
+        errors.add("Please specify either queue name or queue url")
+      end
+    end
+
     def extract_data_for(classification)
       sqs_client.send_message({
         "message_deduplication_id" => classification.id,

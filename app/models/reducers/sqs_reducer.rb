@@ -3,6 +3,12 @@ module Reducers
     config_field :queue_name, default: nil
     config_field :queue_url, default: nil
 
+    validate do
+      if queue_name.blank? && queue_url.blank?
+        errors.add("Please specify either a queue name or a queue url")
+      end
+    end
+
     def reduce_into(extracts, reduction)
       extracts.map do |extract|
         {
