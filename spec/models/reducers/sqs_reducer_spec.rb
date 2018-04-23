@@ -33,20 +33,23 @@ describe Reducers::SqsReducer do
   end
 
   it 'sends the extracts to the queue' do
-    sqs_double = instance_double(Aws::SQS::Client, send_message_batch: nil)
-    expect(reducer).to receive(:sqs_client).and_return(sqs_double)
-    expect(reducer).to receive(:queue_url).and_return("a_url")
+    sqs_double = instance_double(Aws::SQS::Client, send_message: nil)
+    expect(reducer).to receive(:sqs_client).twice.and_return(sqs_double)
+    expect(reducer).to receive(:queue_url).twice.and_return("a_url")
 
     reduction = build(:subject_reduction)
     reducer.reduce_into(extracts, reduction)
 
     expect(reduction.data).to eq("dispatched")
-    expect(sqs_double).to have_received(:send_message_batch).once.with({
-      queue_url: "a_url",
-      entries: [
-        { "id"=>1, "message_body" => reducer.prepare_extract(extracts[0]).to_json },
-        { "id"=>2, "message_body" => reducer.prepare_extract(extracts[1]).to_json }
-      ]
+    expect(sqs_double).to have_received(:send_message).once.with({
+      "message_deduplication_id" => 1,
+      "message_body" => reducer.prepare_extract(extracts[0]).to_json,
+      "queue_url" => "a_url"
+    })
+    expect(sqs_double).to have_received(:send_message).once.with({
+      "message_deduplication_id" => 2,
+      "message_body" => reducer.prepare_extract(extracts[1]).to_json,
+      "queue_url" => "a_url"
     })
   end
 end
