@@ -17,7 +17,11 @@ class ExtractWorker
 
     if extracts.present?
       ids = extracts.map(&:id)
-      ReduceWorker.perform_async(classification.workflow_id, classification.subject_id, classification.user_id, ids)
+      ReduceWorker.perform_async(Workflow, classification.workflow_id, classification.subject_id, classification.user_id, ids)
+
+      if workflow.project.has_reducers?
+        ReduceWorker.perform_async(Project, classification.project_id, classification.subject_id, classification.user_id, ids)
+      end
 
       if workflow.subscribers?
         extracts.each do |extract|

@@ -34,10 +34,10 @@ class Reducer < ApplicationRecord
     end
   end
 
-  belongs_to :workflow
+  belongs_to :reducible, polymorphic: true
 
-  validates :workflow, presence: true
-  validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
+  validates :reducible, presence: true
+  validates :key, presence: true, uniqueness: {scope: [:creducible_id]}
   validates :topic, presence: true
   validates_associated :extract_filter
 
