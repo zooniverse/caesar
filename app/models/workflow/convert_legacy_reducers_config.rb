@@ -38,6 +38,8 @@ class Workflow::ConvertLegacyReducersConfig
       Reducers::PlaceholderReducer
     when "summary_stats"
       Reducers::SummaryStatisticsReducer
+    when "sqs"
+      Reducers::SqsReducer
     else
       raise "Reducer misconfigured: unknown type #{config["type"]}"
     end
