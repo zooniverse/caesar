@@ -10,12 +10,12 @@ class Workflow::ConvertLegacyReducersConfig
 
     workflow.reducers.where.not(key: config.keys).delete_all
 
-    config.each do |key, config|
+    config.each do |key, conf|
       reducer = workflow.reducers.find_by(key: key)
-      reducer ||= reducer_type(config).new(workflow: workflow, key: key)
-      reducer.config = config.except("filters", "grouping", "group_by", "type")
-      reducer.grouping = config["group_by"] || config["grouping"] || nil
-      reducer.filters = config["filters"] || {}
+      reducer ||= reducer_type(conf).new(workflow: workflow, key: key)
+      reducer.config = conf.except("filters", "grouping", "group_by", "type")
+      reducer.grouping = conf["grouping"] || {}
+      reducer.filters = conf["filters"] || {}
       reducer.save!
     end
   end

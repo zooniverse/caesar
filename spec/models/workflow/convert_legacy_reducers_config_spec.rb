@@ -12,7 +12,6 @@ describe Workflow::ConvertLegacyReducersConfig do
 
     expect(reducer.reload.config).to eq("a" => "b")
     expect(reducer.reload.filters).to eq("from" => 1)
-    expect(reducer.reload.grouping).to eq("s.LK")
   end
 
   it 'adds new reducers' do

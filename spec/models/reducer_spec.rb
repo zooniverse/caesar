@@ -54,7 +54,7 @@ RSpec.describe Reducer, type: :model do
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
 
     expect(ExtractGrouping).to receive(:new).
-      with(extracts, nil).
+      with(extracts, {}).
       and_return(grouping_filter)
 
     subject.process(extract_fetcher, reduction_fetcher)
@@ -96,7 +96,7 @@ RSpec.describe Reducer, type: :model do
     extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
     reduction_fetcher = instance_double(ReductionFetcher, has_expired?: false)
 
-    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
+    reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
     allow(reducer).to receive(:get_reduction) do |fetcher, key|
       SubjectReduction.new(
         subject_id: 1234,
