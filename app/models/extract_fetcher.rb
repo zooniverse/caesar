@@ -69,6 +69,6 @@ class ExtractFetcher
   end
 
   def exact_extracts
-    @exact_extracts ||= Extract.find(@extract_ids).order(classification_at: :desc)
+    @exact_extracts ||= Extract.find(@extract_ids).sort_by{ |e| e.classification_at }
   end
 end
