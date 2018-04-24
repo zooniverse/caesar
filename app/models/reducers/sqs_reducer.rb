@@ -12,9 +12,8 @@ module Reducers
     def reduce_into(extracts, reduction)
       extracts.map do |extract|
         {
-          "message_deduplication_id" => extract.id,
-          "message_body" => prepare_extract(extract).to_json,
-          "queue_url" => queue_url
+          message_body: prepare_extract(extract).to_json,
+          queue_url: queue_url
         }
       end.each do |message|
         sqs_client.send_message(message)
@@ -38,7 +37,7 @@ module Reducers
     end
 
     def prepare_extract(extract)
-      extract.attributes.except("classification_id", "created_at", "updated_at", "extractor_key", "workflow_id")
+      extract.attributes.except("created_at", "updated_at", "extractor_key", "workflow_id")
     end
   end
 end

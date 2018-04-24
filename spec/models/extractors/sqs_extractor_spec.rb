@@ -31,10 +31,9 @@ describe Extractors::SqsExtractor do
     result = extractor.extract_data_for(classifications[0])
 
     expect(result).to eq("dispatched")
-    expect(sqs_double).to have_received(:send_message).once.with({
-      "message_deduplication_id" => 1,
-      "message_body" => classifications[0].to_json,
-      "queue_url" => "a_url"
-    })
+    expect(sqs_double).to have_received(:send_message).once.with(
+      message_body: classifications[0].to_json,
+      queue_url: "a_url"
+    )
   end
 end

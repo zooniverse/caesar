@@ -29,7 +29,6 @@ describe Reducers::SqsReducer do
     expect(hash).to include("id")
     expect(hash).to include("classification_at")
     expect(hash).not_to include("created_at")
-    expect(hash).not_to include("classification_id")
   end
 
   it 'sends the extracts to the queue' do
@@ -41,15 +40,14 @@ describe Reducers::SqsReducer do
     reducer.reduce_into(extracts, reduction)
 
     expect(reduction.data).to eq("dispatched")
-    expect(sqs_double).to have_received(:send_message).once.with({
-      "message_deduplication_id" => 1,
-      "message_body" => reducer.prepare_extract(extracts[0]).to_json,
-      "queue_url" => "a_url"
-    })
-    expect(sqs_double).to have_received(:send_message).once.with({
-      "message_deduplication_id" => 2,
-      "message_body" => reducer.prepare_extract(extracts[1]).to_json,
-      "queue_url" => "a_url"
-    })
+    expect(sqs_double).to have_received(:send_message).once.with(
+      message_body: reducer.prepare_extract(extracts[0]).to_json,
+      queue_url: "a_url"
+    )
+
+    expect(sqs_double).to have_received(:send_message).once.with(
+      message_body: reducer.prepare_extract(extracts[1]).to_json,
+      queue_url: "a_url"
+    )
   end
 end

@@ -10,11 +10,7 @@ module Extractors
     end
 
     def extract_data_for(classification)
-      sqs_client.send_message({
-        "message_deduplication_id" => classification.id,
-        "message_body" => classification.to_json,
-        "queue_url" => queue_url
-      })
+      sqs_client.send_message(queue_url: queue_url, message_body: classification.to_json)
 
       "dispatched"
     end
