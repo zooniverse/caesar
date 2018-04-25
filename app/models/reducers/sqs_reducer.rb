@@ -20,7 +20,7 @@ module Reducers
       end
 
       reduction.tap do |r|
-        r.data ||= "dispatched"
+        r.data = "dispatched" if r.data.blank?
       end
     end
 
