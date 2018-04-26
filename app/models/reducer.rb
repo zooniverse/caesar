@@ -85,8 +85,9 @@ class Reducer < ApplicationRecord
   end
 
   def associate_extracts(reduction, extracts)
-    reduction.extract.delete_all
-    reduction.extract << extracts
+    extracts.each do |extract|
+      reduction.extracts << extract
+    end
   end
 
   def reduce_into(extracts, reduction)
