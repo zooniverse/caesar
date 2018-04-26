@@ -123,6 +123,27 @@ RSpec.describe Reducer, type: :model do
   end
 
   describe 'running/online aggregation' do
+    it 'persists associations at the right time' do
+      workflow = create :workflow
+      subject = create :subject
+
+      extract = create :extract,
+        extractor_key: 'foo', subject_id: subject.id, workflow_id: workflow.id
+
+      reduction = create :subject_reduction,
+        reducer_key: 'bar', subject_id: subject.id, workflow_id: workflow.id
+
+      reduction.extracts << extract
+
+      check = SubjectReduction.find(reduction.id)
+      expect(check.extract_ids.count).to eq(0)
+
+      reduction.save!
+
+      check = SubjectReduction.find(reduction.id)
+      expect(check.extract_ids.count).to eq(1)
+    end
+
     it 'tracks the extracts associated with a reduction' do
       workflow = create :workflow
       subject = create :subject
@@ -140,7 +161,7 @@ RSpec.describe Reducer, type: :model do
         subject_id: subject.id,
         reducer_key: 'aaa',
         extract_ids: [],
-        extract: extracts_double,
+        extracts: extracts_double,
         data: "foo"
       )
 
@@ -181,7 +202,7 @@ RSpec.describe Reducer, type: :model do
         subject_id: subject.id,
         reducer_key: 'aaa',
         extract_ids: [extract1.id],
-        extract: extracts_double,
+        extracts: extracts_double,
         data: "foo"
       )
 
