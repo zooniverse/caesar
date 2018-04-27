@@ -17,10 +17,11 @@ class RuleBindings
     @reductions.merge!("subject" => SubjectBindings.new(subject)) unless subject.blank?
   end
 
-  def fetch(key, defaultVal=nil)
+  def fetch(key, default=nil)
     reducer_key, data_key = key.split(".")
     return @reductions.fetch(reducer_key) if data_key.nil?
-    @reductions.fetch(reducer_key).data.fetch(data_key, defaultVal)
+    return default unless @reductions.key?(reducer_key)
+    @reductions.fetch(reducer_key).data.fetch(data_key, default)
   end
 
   def keys

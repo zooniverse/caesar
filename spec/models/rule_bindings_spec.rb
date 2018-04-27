@@ -28,6 +28,13 @@ describe RuleBindings do
     expect(rule_bindings.fetch("subject.region")).to eq("oxford")
   end
 
+  it 'returns default when reducer has not produced reduction yet' do
+    reductions = []
+    rule_bindings = described_class.new(reductions, subject)
+    default_value = double
+    expect(rule_bindings.fetch("count.a", default_value)).to eq(default_value)
+  end
+
   it 'handles absent keys' do
     reductions = [
       SubjectReduction.new(reducer_key: 'count', data: {"a" => 1}),
