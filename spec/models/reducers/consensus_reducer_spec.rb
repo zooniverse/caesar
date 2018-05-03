@@ -61,5 +61,14 @@ describe Reducers::ConsensusReducer do
       expect(result.data).to include({"most_likely" => "ZEBRA"})
       expect(result.data).to include({"num_votes" => 5})
     end
+
+    context 'empty extracts' do
+      it 'can ignore them' do
+        reducer.ignore_empty_extracts = true
+        extracts = build_extracts([[], [], ["1"]])
+        expect(reducer.reduce_into(extracts, build(:subject_reduction)).data)
+          .to include({"most_likely" => "1", "num_votes" => 1, "agreement" => 1.0})
+      end
+    end
   end
 end
