@@ -65,6 +65,12 @@ class Workflow < ApplicationRecord
     end
   end
 
+  enum status: {
+    disabled: -1,
+    paused: 0,
+    active: 1
+  }
+
   has_many :extractors
   has_many :reducers
   has_many :subject_rules
@@ -76,6 +82,8 @@ class Workflow < ApplicationRecord
   has_many :subject_actions
   has_many :user_actions
   has_many :data_requests
+
+  has_and_belongs_to_many :pending_classifications, join_table: 'pending_classifications', class_name: 'Classification'
 
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
 
@@ -129,5 +137,15 @@ class Workflow < ApplicationRecord
 
   def concerns_users?
     user_rules.present? or reducers.where(topic: 'reduce_by_user').present?
+  end
+
+  def activate!
+    Workflow.transaction do
+      active!
+      pending_classification_ids.each do |id|
+        ExtractWorker.perform_async(id)
+      end
+      pending_classifications.delete_all
+    end
   end
 end

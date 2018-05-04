@@ -27,14 +27,14 @@ describe Extractors::PluckFieldExtractor do
     end
 
     it 'processes a classification for a single key' do
-      simple = described_class.new(key: "s", config: {"field_map" => { "whodunit" => "$.user_id" }})
+      simple = described_class.new(key: "s", config: {"field_map" => { "whodunit" => "$.user_id" }}, workflow: workflow)
       result = simple.process(classification)
 
       expect(result.blank?).to be(false)
       expect(result).to be_a(Hash)
       expect(result["whodunit"]).to eq(1234)
 
-      complex = described_class.new(key: "c", config: { "field_map" => { "how_fast" => "$.subject.metadata.shutter_speed"}})
+      complex = described_class.new(key: "c", config: { "field_map" => { "how_fast" => "$.subject.metadata.shutter_speed"}}, workflow: workflow)
       result = complex.process(classification)
 
       expect(result.blank?).to be(false)
@@ -47,7 +47,7 @@ describe Extractors::PluckFieldExtractor do
       extractor = described_class.new(key: "c", config: { "field_map" => {
         "whodunit" => "$.user_id",
         "how_fast" => "$.subject.metadata.shutter_speed"
-      }})
+      }}, workflow: workflow)
 
       result = extractor.process(classification)
       expect(result.blank?).to be(false)
@@ -58,12 +58,12 @@ describe Extractors::PluckFieldExtractor do
     end
 
     it 'throws an error if the path is not matched' do
-      empty = described_class.new(key: "e", config: {"field_map" => {"cantfind" => "$.missing_element"}})
+      empty = described_class.new(key: "e", config: {"field_map" => {"cantfind" => "$.missing_element"}}, workflow: workflow)
       expect{empty.process(classification)}.to raise_error(Extractors::PluckFieldExtractor::FailedMatch)
     end
 
     it 'ignores errors if we insist' do
-      empty = described_class.new(key: "e", config: {"field_map" => {"cantfind" => "$.missing_element"}, "if_missing" => "ignore"})
+      empty = described_class.new(key: "e", config: {"field_map" => {"cantfind" => "$.missing_element"}, "if_missing" => "ignore"}, workflow: workflow)
       result = empty.process(classification)
 
       expect(result).to be_a(Hash)

@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Extractors::BlankExtractor do
-  let(:extractor) { described_class.new(key: 'blanco', config: {'task_key' => task_key}) }
+  let(:workflow){ create :workflow }
+  let(:extractor) { described_class.new(key: 'blanco', config: {'task_key' => task_key}, workflow_id: workflow.id) }
   let(:task_key) { 'T1' }
   let(:blank_annotations) { [{'task' => task_key, 'value' => []}] }
   let(:present_annotations) do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410094538) do
+ActiveRecord::Schema.define(version: 20180410101028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,6 +92,13 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.bigint "user_reduction_id", null: false
     t.index ["extract_id", "user_reduction_id"], name: "eur_covering_1"
     t.index ["user_reduction_id", "extract_id"], name: "eur_covering_2"
+  end
+
+  create_table "pending_classifications", id: false, force: :cascade do |t|
+    t.bigint "workflow_id", null: false
+    t.bigint "classification_id", null: false
+    t.index ["classification_id"], name: "index_pending_classifications_on_classification_id"
+    t.index ["workflow_id"], name: "index_pending_classifications_on_workflow_id"
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -225,6 +232,7 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.boolean "public_extracts", default: false, null: false
     t.boolean "public_reductions", default: false, null: false
     t.integer "rules_applied", default: 0, null: false
+    t.integer "status", default: 1, null: false
   end
 
   add_foreign_key "classifications", "subjects"
@@ -237,6 +245,8 @@ ActiveRecord::Schema.define(version: 20180410094538) do
   add_foreign_key "extracts_subject_reductions", "subject_reductions", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "extracts", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "user_reductions", on_delete: :cascade
+  add_foreign_key "pending_classifications", "classifications", on_delete: :cascade
+  add_foreign_key "pending_classifications", "workflows", on_delete: :cascade
   add_foreign_key "reducers", "workflows"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"

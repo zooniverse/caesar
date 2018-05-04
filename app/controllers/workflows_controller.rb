@@ -49,6 +49,28 @@ class WorkflowsController < ApplicationController
     respond_with @workflow
   end
 
+  def activate
+    authorize workflow
+    workflow.activate!
+
+    respond_with workflow
+  end
+
+  def pause
+    authorize workflow
+    workflow.paused!
+
+    respond_with workflow
+  end
+
+  def disable
+    authorize workflow
+    workflow.disabled!
+
+    respond_with workflow
+  end
+
+
   def update
     authorize workflow
 

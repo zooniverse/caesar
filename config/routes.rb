@@ -24,6 +24,10 @@ Rails.application.routes.draw do
     resources :data_requests
   end
 
+  post 'workflows/:workflow_id/activate', to: 'workflows#activate'
+  post 'workflows/:workflow_id/pause', to: 'workflows#pause'
+  post 'workflows/:workflow_id/disable', to: 'workflows#disable'
+
   get 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#index'
   put 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#update', defaults: { format: :json }
 

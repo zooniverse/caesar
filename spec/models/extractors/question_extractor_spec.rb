@@ -8,7 +8,8 @@ describe Extractors::QuestionExtractor do
     }
   end
 
-  subject(:extractor) { described_class.new(key: "s") }
+  let(:workflow){ create :workflow }
+  subject(:extractor) { described_class.new(key: "s", workflow_id: workflow.id) }
 
   describe '#process' do
     it 'extracts a value correctly' do
@@ -43,7 +44,7 @@ describe Extractors::QuestionExtractor do
       annotations = []
       classification = Classification.new("annotations" => annotations, "links" => {"workflow" => "1021"})
 
-      extractor = described_class.new(config: {"if_missing" => "ignore"})
+      extractor = described_class.new(config: {"if_missing" => "ignore"}, workflow_id: workflow.id)
       expect(extractor.process(classification)).to eq({})
     end
   end

@@ -17,7 +17,11 @@ module StreamEvents
         workflow.webhooks.process "new_classification", @data.as_json
       end
 
-      stream.queue.add(ExtractWorker, classification.id)
+      if workflow.active?
+        stream.queue.add(ExtractWorker, classification.id)
+      elsif workflow.paused?
+        workflow.pending_classifications << classification
+      end
     end
 
     def cache_linked_models!
@@ -46,7 +50,7 @@ module StreamEvents
       subject_id = @data.fetch("links").fetch("subjects")[0]
       Subject.find(subject_id)
     end
-    
+
     def workflow_id
       @data.fetch("links").fetch("workflow")
     end
