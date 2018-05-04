@@ -1,10 +1,13 @@
 module Reducers
   class ConsensusReducer < Reducer
+    config_field :ignore_empty_extracts, default: false
+
     def reduce_into(extractions, reduction)
       store_value = reduction.store || {}
       counter = CountingHash.new(store_value)
 
       extractions.each do |extraction|
+        next if ignore_empty_extracts && extraction.data.blank?
         counter.increment(extraction.data.keys.sort.join("+"))
       end
 
