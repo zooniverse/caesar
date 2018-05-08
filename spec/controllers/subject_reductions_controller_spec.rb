@@ -7,9 +7,9 @@ describe SubjectReductionsController, :type => :controller do
     let(:subject2) { create :subject }
     let(:reductions) {
     [
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 'r', data: '1'),
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 's', data: '2'),
-      create(:subject_reduction, workflow: workflow, subject: subject2, reducer_key: 'r', data: '3')
+      create(:subject_reduction, reducible: workflow, subject: subject1, reducer_key: 'r', data: '1'),
+      create(:subject_reduction, reducible: workflow, subject: subject1, reducer_key: 's', data: '2'),
+      create(:subject_reduction, reducible: workflow, subject: subject2, reducer_key: 'r', data: '3')
     ]
   }
 
@@ -19,7 +19,7 @@ describe SubjectReductionsController, :type => :controller do
     it 'returns only the requested reductions' do
       reductions
 
-      response = get :index, params: { workflow_id: workflow.id, reducer_key: 'r', subject_id: subject1.id }
+      response = get :index, params: { reducible_id: workflow.id, reducer_key: 'r', subject_id: subject1.id }
       results = JSON.parse(response.body)
 
       expect(response).to be_success
@@ -40,7 +40,7 @@ describe SubjectReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
         reducer_key: 'r',
         reduction: {
           subject_id: subject1.id,
@@ -50,7 +50,7 @@ describe SubjectReductionsController, :type => :controller do
       }
 
       updated = SubjectReduction.find_by(
-        workflow_id: workflow.id,
+        reducible: workflow,
         reducer_key: 'r',
         subject_id: subject1.id
       )
@@ -69,7 +69,7 @@ describe SubjectReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
         reducer_key: 'q',
         reduction: {
           subject_id: subject1.id,
@@ -79,7 +79,7 @@ describe SubjectReductionsController, :type => :controller do
       }
 
       updated = SubjectReduction.find_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
         reducer_key: 'q',
         subject_id: subject1.id
       )
@@ -98,7 +98,7 @@ describe SubjectReductionsController, :type => :controller do
       )
 
       post :nested_update, params: {
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
         reducer_key: 'q',
         reduction: {
           subject_id: subject1.id,

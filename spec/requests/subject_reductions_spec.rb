@@ -4,11 +4,12 @@ RSpec.describe SubjectReductionsController, type: :controller do
   before { fake_session admin: true }
 
   let(:reducer_key) { 1 }
-  let(:workflow) { create(:workflow, reducers: [build(:external_reducer, key: reducer_key)]) }
+  let(:workflow) { create(:workflow) }
+  let(:reducer) { create(:external_reducer, reducible: workflow, key: reducer_key) }
 
   describe "GET #index" do
     it "returns http success" do
-      get :index, params: {workflow_id: workflow.id, reducer_key: reducer_key}
+      get :index, params: {reducible_id: workflow.id, reducer_key: reducer_key}
       expect(response).to have_http_status(:success)
     end
   end
@@ -18,7 +19,7 @@ RSpec.describe SubjectReductionsController, type: :controller do
 
     it 'creates a new reduction' do
       put :update, as: :json,
-          params: {workflow_id: workflow.id, reducer_key: reducer_key},
+          params: {reducible_id: workflow.id, reducer_key: reducer_key},
           body: {
             reduction: {
               classification_id: 123,
@@ -34,13 +35,13 @@ RSpec.describe SubjectReductionsController, type: :controller do
     end
 
     it 'updates an existing reduction' do
-      SubjectReduction.create!(workflow_id: workflow.id,
+      SubjectReduction.create!(reducible_id: workflow.id,
                         subject_id: subject.id,
                         reducer_key: reducer_key,
                         data: {"foo" => 1})
 
       put :update, as: :json,
-          params: {workflow_id: workflow.id, reducer_key: reducer_key},
+          params: {reducible_id: workflow.id, reducer_key: reducer_key},
           body: {
             reduction: {
               classification_id: 123,

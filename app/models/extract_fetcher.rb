@@ -1,14 +1,14 @@
 class ExtractFetcher
   attr_accessor :reduction_mode, :topic, :extract_ids, :strategy
-  attr_reader :keys
+  attr_reader :filters
 
   @@strategies = [ :fetch_all, :fetch_minimal ]
   def self.strategies
     @@strategies
   end
 
-  def initialize(keys)
-    @keys = keys
+  def initialize(filters)
+    @filters = filters
 
     @extract_ids = []
     @topic = :reduce_by_subject
@@ -23,7 +23,7 @@ class ExtractFetcher
   end
 
   def for(topic)
-    ExtractFetcher.new(keys).tap do |fetcher|
+    ExtractFetcher.new(filters).tap do |fetcher|
       fetcher.topic = topic.to_sym
       fetcher.extract_ids = @extract_ids
       fetcher.strategy = @strategy
@@ -31,7 +31,7 @@ class ExtractFetcher
   end
 
   def including(extract_ids)
-    ExtractFetcher.new(keys).tap do |fetcher|
+    ExtractFetcher.new(filters).tap do |fetcher|
       fetcher.extract_ids = (@extract_ids + extract_ids).uniq
       fetcher.topic = @topic
       fetcher.strategy = @strategy
@@ -61,11 +61,11 @@ class ExtractFetcher
   end
 
   def user_extracts
-    @user_extracts ||= Extract.where(keys.except(:subject_id)).order(classification_at: :desc)
+    @user_extracts ||= Extract.where(filters.except(:subject_id)).order(classification_at: :desc)
   end
 
   def subject_extracts
-    @subject_extracts ||= Extract.where(keys.except(:user_id)).order(classification_at: :desc)
+    @subject_extracts ||= Extract.where(filters.except(:user_id)).order(classification_at: :desc)
   end
 
   def exact_extracts

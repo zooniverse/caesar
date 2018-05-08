@@ -15,8 +15,8 @@ describe ClonesWorkflowConfiguration do
   end
 
   it 'copies reducers' do
-    create :external_reducer, key: 'ext', workflow: workflow
-    create :stats_reducer, key: 'stats', workflow: workflow
+    create :external_reducer, key: 'ext', reducible: workflow
+    create :stats_reducer, key: 'stats', reducible: workflow
 
     copier.copy
 

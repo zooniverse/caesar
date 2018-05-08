@@ -25,7 +25,7 @@ class Workflow < ApplicationRecord
 
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], SubjectReduction)
-        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(reducible_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
         scope
@@ -38,7 +38,7 @@ class Workflow < ApplicationRecord
 
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], SubjectReduction)
-        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(reducible_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
         scope
@@ -50,7 +50,7 @@ class Workflow < ApplicationRecord
 
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], Action)
-        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(reducible_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope
       }
@@ -59,7 +59,7 @@ class Workflow < ApplicationRecord
     field :dataRequests, types[DataRequest::Type] do
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], DataRequest)
-        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(reducible_id: workflow.id)
         scope
       }
     end
@@ -73,8 +73,8 @@ class Workflow < ApplicationRecord
   has_many :user_rules
 
   has_many :extracts
-  has_many :subject_reductions
-  has_many :user_reductions
+  has_many :subject_reductions, as: :reducible
+  has_many :user_reductions, as: :reducible
   has_many :subject_actions
   has_many :user_actions
   has_many :data_requests
@@ -95,7 +95,8 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors,
+    ClassificationPipeline.new(self,
+                               extractors,
                                reducers,
                                subject_rules.rank(:row_order),
                                user_rules.rank(:row_order),

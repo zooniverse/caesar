@@ -96,11 +96,11 @@ RSpec.describe Reducer, type: :model do
     extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
     reduction_fetcher = instance_double(ReductionFetcher, has_expired?: false)
 
-    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
+    reducer = build :reducer, key: 'r', grouping: "user_group.id", filters: {"extractor_keys" => ["votes"]}, reducible: workflow
     allow(reducer).to receive(:get_reduction) do |fetcher, key|
       SubjectReduction.new(
         subject_id: 1234,
-        workflow_id: workflow.id,
+        reducible: workflow,
         reducer_key: 'r'
       ).tap{ |r| r.subgroup = key }
     end
@@ -136,7 +136,7 @@ RSpec.describe Reducer, type: :model do
       extracts_double = instance_double(ActiveRecord::Relation)
 
       subject_reduction_double = instance_double(SubjectReduction,
-        workflow_id: workflow.id,
+        reducible: workflow,
         subject_id: subject.id,
         reducer_key: 'aaa',
         extract_ids: [],
@@ -149,7 +149,7 @@ RSpec.describe Reducer, type: :model do
         type: 'Reducers::PlaceholderReducer',
         topic: Reducer.topics[:reduce_by_subject],
         reduction_mode: Reducer.reduction_modes[:running_reduction],
-        workflow_id: workflow.id
+        reducible: workflow
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
@@ -177,7 +177,7 @@ RSpec.describe Reducer, type: :model do
       extracts_double = instance_double(ActiveRecord::Relation)
 
       subject_reduction_double = instance_double(SubjectReduction,
-        workflow_id: workflow.id,
+        reducible: workflow,
         subject_id: subject.id,
         reducer_key: 'aaa',
         extract_ids: [extract1.id],
@@ -193,7 +193,7 @@ RSpec.describe Reducer, type: :model do
         type: 'Reducers::PlaceholderReducer',
         topic: Reducer.topics[:reduce_by_subject],
         reduction_mode: Reducer.reduction_modes[:running_reduction],
-        workflow_id: workflow.id
+        reducible: workflow
 
       allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)

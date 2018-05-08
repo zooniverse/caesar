@@ -14,7 +14,8 @@ class Project < ApplicationRecord
   has_many :data_requests
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors,
+    ClassificationPipeline.new(self,
+                               extractors,
                                reducers,
                                subject_rules.rank(:row_order),
                                user_rules.rank(:row_order),

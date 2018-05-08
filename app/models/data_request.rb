@@ -59,7 +59,8 @@ class DataRequest < ApplicationRecord
   def as_json(options = {})
     {
       id: id,
-      workflow_id: workflow_id.to_s,
+      reducible_id: reducible.id,
+      reducible_type: reducible_type,
       user_id: user_id,
       subgroup: subgroup,
       status: status,

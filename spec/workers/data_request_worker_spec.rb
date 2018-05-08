@@ -10,7 +10,7 @@ describe DataRequestWorker do
   let(:request) do
     DataRequest.new(
       user_id: 1234,
-      workflow: workflow,
+      reducible: workflow,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )

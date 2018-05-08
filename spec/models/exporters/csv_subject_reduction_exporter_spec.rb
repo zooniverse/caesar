@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Exporters::CsvSubjectReductionExporter do
   let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
-  let(:exporter) { described_class.new workflow_id: workflow.id }
+  let(:exporter) { described_class.new reducible_id: workflow.id }
   let(:sample){
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: workflow.id,
+      reducible: workflow,
       subject_id: subject.id,
       data: {"key1" => "val1", "key2" => "val2", "key5" => {"foo" => "bar"}, "key6" => ["foo", "bar"]}
     )
@@ -20,32 +20,32 @@ describe Exporters::CsvSubjectReductionExporter do
 
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: workflow.id,
+      reducible: workflow,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: workflow.id,
+      reducible: workflow,
       subject_id: Subject.create!.id,
       data: {"key2" => "val2"}
     ).save
     sample.save
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: workflow.id,
+      reducible: workflow,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key2" => "val2"}
     ).save
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: workflow.id,
+      reducible: workflow,
       subject_id: Subject.create!.id,
       data: {"key1" => "val1", "key3" => "val3"}
     ).save
     SubjectReduction.new(
       reducer_key: "x",
-      workflow_id: create(:workflow).id,
+      reducible: create(:workflow),
       subject_id: Subject.create!.id,
       data: {"key4" => "val4"}
     ).save

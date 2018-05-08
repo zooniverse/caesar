@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.boolean "expired", default: false
     t.string "reducible_type"
     t.index ["reducible_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
+    t.index ["reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
     t.index ["reducible_id", "subject_id"], name: "index_subject_reductions_on_reducible_id_and_subject_id"
     t.index ["reducible_id"], name: "index_subject_reductions_on_reducible_id"
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"

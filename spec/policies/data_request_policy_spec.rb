@@ -73,26 +73,26 @@ RSpec.describe DataRequestPolicy do
 
     it 'grants access to data_requests of a workflow with public extracts' do
       workflow.update! public_extracts: true
-      data_request = build(:data_request, workflow: workflow, requested_data: 'extracts')
+      data_request = build(:data_request, reducible: workflow, requested_data: 'extracts')
       credential = build(:credential, workflows: [])
       expect(subject).to permit(credential, data_request)
     end
 
     it 'grants access to data_requests of a workflow with public extracts' do
       workflow.update! public_reductions: true
-      data_request = build(:data_request, workflow: workflow, requested_data: 'reductions')
+      data_request = build(:data_request, reducible: workflow, requested_data: 'reductions')
       credential = build(:credential, workflows: [])
       expect(subject).to permit(credential, data_request)
     end
 
     it 'does not let non-collaborators create requests for non-public workflows', :aggregate_failures do
       workflow = build(:workflow, public_extracts: true) # <- Note extracts are public, but request reductions
-      data_request = build(:data_request, workflow: workflow, requested_data: 'reductions')
+      data_request = build(:data_request, reducible: workflow, requested_data: 'reductions')
       credential = build(:credential, workflows: [])
       expect(subject).not_to permit(credential, data_request)
 
       workflow = build(:workflow, public_reductions: true) # <- Note reductions are public, but request extracts
-      data_request = build(:data_request, workflow: workflow, requested_data: 'extracts')
+      data_request = build(:data_request, reducible: workflow, requested_data: 'extracts')
       credential = build(:credential, workflows: [])
       expect(subject).not_to permit(credential, data_request)
     end
@@ -107,7 +107,7 @@ RSpec.describe DataRequestPolicy do
     end
 
     it 'grants access to data_requests of collaborated project' do
-      credential = build(:credential, workflows: [data_request.workflow])
+      credential = build(:credential, workflows: [data_request.reducible])
       expect(subject).to permit(credential, data_request)
     end
 

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :data_request do
-    workflow
+    reducible { build :workflow }
     requested_data :extracts
   end
 end

@@ -1,13 +1,14 @@
 class SubjectReductionsController < ApplicationController
   def index
-    reductions = policy_scope(SubjectReduction).where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
+    reductions = policy_scope(SubjectReduction).where(reducible_id: params[:reducible_id], subject_id: params[:subject_id])
     reductions = reductions.where(reducer_key: params[:reducer_key]) if params.key?(:reducer_key)
 
     render json: reductions
   end
 
   def update
-    reduction = SubjectReduction.find_or_initialize_by(workflow_id: workflow.id,
+    binding.pry
+    reduction = SubjectReduction.find_or_initialize_by(reducible_id: reducible.id,
                                                 reducer_key: reducer.key,
                                                 subject_id: subject.id,
                                                 subgroup: subgroup)
@@ -24,7 +25,7 @@ class SubjectReductionsController < ApplicationController
   def nested_update
     reductions = reduction_params[:data].to_h.map do |key, data|
       SubjectReduction.find_or_initialize_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
         reducer_key: reducer.key,
         subject_id: subject.id,
         subgroup: key
@@ -45,6 +46,10 @@ class SubjectReductionsController < ApplicationController
 
   def workflow
     @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+  end
+
+  def reducible
+    @reducible ||= policy_scope(Reducible).find(params[:reducible_id])
   end
 
   def data

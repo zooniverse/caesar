@@ -1,10 +1,10 @@
 class ClassificationPipeline
   class ReductionConflict < StandardError; end
 
-  attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied
+  attr_reader :extractors, :reducers, :subject_rules, :user_rules, :rules_applied, :reducible
 
-  def initialize(reducible_class, extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
-    @reducible_class = reducible_class
+  def initialize(reducible, extractors, reducers, subject_rules, user_rules, rules_applied = :all_matching_rules)
+    @reducible = reducible
     @extractors = extractors
     @reducers = reducers
     @subject_rules = subject_rules
@@ -73,7 +73,7 @@ class ClassificationPipeline
     return [] unless reducers&.present?
     retries ||= 2
 
-    filter = case reducible_class
+    filter = case reducible
              when Workflow
                { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
              when Project
@@ -83,7 +83,7 @@ class ClassificationPipeline
              end
 
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
-    reduction_fetcher = ReductionFetcher.new(reducible_class, filter)
+    reduction_fetcher = ReductionFetcher.new(filter.except(:workflow_id), reducible)
 
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }
@@ -151,7 +151,7 @@ class ClassificationPipeline
     return unless subject_rules.present?
 
     subject = Subject.find(subject_id)
-    rule_bindings = RuleBindings.new(subject_reductions(workflow_id, subject_id), subject)
+    rule_bindings = RuleBindings.new(subject_reductions(subject_id), subject)
 
     case rules_applied.to_s
     when 'all_matching_rules'
@@ -168,7 +168,7 @@ class ClassificationPipeline
   def check_user_rules(workflow_id, user_id)
     return unless (user_rules.present? and not user_id.blank?)
 
-    rule_bindings = RuleBindings.new(user_reductions(workflow_id, user_id), nil)
+    rule_bindings = RuleBindings.new(user_reductions(user_id), nil)
     case rules_applied.to_s
     when 'all_matching_rules'
       user_rules.each do |rule|
@@ -181,11 +181,11 @@ class ClassificationPipeline
     end
   end
 
-  def user_reductions(workflow_id, user_id)
-    UserReduction.where(workflow_id: workflow_id, user_id: user_id)
+  def user_reductions(user_id)
+    reducible.user_reductions.where(user_id: user_id)
   end
 
-  def subject_reductions(workflow_id, subject_id)
-    SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
+  def subject_reductions(subject_id)
+    reducible.subject_reductions.where(subject_id: subject_id)
   end
 end

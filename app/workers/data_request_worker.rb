@@ -22,7 +22,7 @@ class DataRequestWorker
       elsif request.reductions?
         Exporters::CsvSubjectReductionExporter
       end.new(
-        :workflow_id => request.workflow_id,
+        :reducible => request.reducible_id,
         :user_id => request.user_id,
         :subgroup => request.subgroup
       )

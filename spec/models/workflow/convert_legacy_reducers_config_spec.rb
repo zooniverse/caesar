@@ -4,7 +4,7 @@ describe Workflow::ConvertLegacyReducersConfig do
   let(:workflow) { create :workflow }
 
   it 'updates config for existing reducers' do
-    reducer = create :stats_reducer, key: 'stat', workflow: workflow
+    reducer = create :stats_reducer, key: 'stat', reducible: workflow
 
     described_class.new(workflow).update(
       "stat" => {"a" => "b", "filters" => {"from" => 1}, "group_by" => "s.LK"}
@@ -23,8 +23,8 @@ describe Workflow::ConvertLegacyReducersConfig do
   end
 
   it 'removes reducers that are no longer mentioned' do
-    create :stats_reducer, key: 'stat', workflow: workflow
-    create :stats_reducer, key: 'old', workflow: workflow
+    create :stats_reducer, key: 'stat', reducible: workflow
+    create :stats_reducer, key: 'old', reducible: workflow
 
     expect {
       described_class.new(workflow).update("stat" => {})
@@ -32,8 +32,8 @@ describe Workflow::ConvertLegacyReducersConfig do
   end
 
   it 'allows removing all reducers' do
-    create :stats_reducer, key: 'stat', workflow: workflow
-    create :stats_reducer, key: 'old', workflow: workflow
+    create :stats_reducer, key: 'stat', reducible: workflow
+    create :stats_reducer, key: 'old', reducible: workflow
 
     expect {
       described_class.new(workflow).update({})
@@ -41,7 +41,7 @@ describe Workflow::ConvertLegacyReducersConfig do
   end
 
   it 'does nothing if no config given' do
-    create :stats_reducer, key: 'stat', workflow: workflow
+    create :stats_reducer, key: 'stat', reducible: workflow
 
     expect {
       described_class.new(workflow).update(nil)

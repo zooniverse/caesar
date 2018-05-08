@@ -58,7 +58,7 @@ describe CaesarSchema do
       end
 
       it 'does not expose reductions when not logged in' do
-        create :subject_reduction, workflow: workflow, subject: subject, data: {a: 1}
+        create :subject_reduction, reducible: workflow, subject: subject, data: {a: 1}
         expect(result["data"]["workflow"]["subject_reductions"].size).to eq(0)
       end
     end
@@ -78,7 +78,7 @@ describe CaesarSchema do
       end
 
       it 'exposes reductions when not logged in' do
-        create :subject_reduction, workflow: workflow, subject: subject, data: {a: 1}
+        create :subject_reduction, reducible: workflow, subject: subject, data: {a: 1}
         expect(result["data"]["workflow"]["subject_reductions"].size).to eq(1)
       end
 
