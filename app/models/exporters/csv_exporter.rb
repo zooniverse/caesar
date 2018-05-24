@@ -18,12 +18,16 @@ module Exporters
       end
 
       items = get_items
+      total = items.count
+      progress = 0
 
       CSV.open(path, "wb",
         :write_headers => true,
         :headers => get_csv_headers) do |csv|
         items.find_each do |item|
           csv << extract_row(item)
+          progress += 1
+          yield(progress, total) if block_given?
         end
       end
     end

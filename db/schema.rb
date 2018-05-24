@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410094538) do
+ActiveRecord::Schema.define(version: 20180524152847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,8 @@ ActiveRecord::Schema.define(version: 20180410094538) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: false, null: false
+    t.integer "records_count"
+    t.integer "records_exported"
     t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
     t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
   end

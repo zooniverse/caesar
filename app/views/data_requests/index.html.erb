@@ -19,6 +19,7 @@
       <tr class="data-request-<%= data_request.status %>">
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data %></td>
+        <td><%= data_request.records_exported %> / <%= data_request.records_count %></td>
         <td><%= data_request.status%></td>
         <td><%= link_to "Download", data_request.url %></td>
       </tr>
