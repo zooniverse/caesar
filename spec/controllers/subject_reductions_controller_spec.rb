@@ -2,14 +2,16 @@ require 'spec_helper'
 require 'ostruct'
 
 describe SubjectReductionsController, :type => :controller do
-    let(:workflow) { create :workflow }
-    let(:subject1) { create :subject }
-    let(:subject2) { create :subject }
-    let(:reductions) {
+  let(:workflow) { create :workflow }
+  let(:reducer1) { create :external_reducer, workflow: workflow, key: 'r' }
+  let(:reducer2) { create :external_reducer, workflow: workflow, key: 's' }
+  let(:subject1) { create :subject }
+  let(:subject2) { create :subject }
+  let(:reductions) {
     [
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 'r', data: '1'),
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: 's', data: '2'),
-      create(:subject_reduction, workflow: workflow, subject: subject2, reducer_key: 'r', data: '3')
+      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: reducer1.key, data: {'1' => 1}),
+      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: reducer2.key, data: {'2' => 1}),
+      create(:subject_reduction, workflow: workflow, subject: subject2, reducer_key: reducer1.key, data: {'3' => 1})
     ]
   }
 
@@ -31,6 +33,8 @@ describe SubjectReductionsController, :type => :controller do
   end
 
   describe '#update' do
+    before { allow(CheckRulesWorker).to receive(:perform_async) }
+
     it 'updates an existing reduction' do
       r = reductions
 
@@ -47,7 +51,7 @@ describe SubjectReductionsController, :type => :controller do
           subgroup: '_default',
           data: { blah: 10 }
         }
-      }
+      }, as: :json
 
       updated = SubjectReduction.find_by(
         workflow_id: workflow.id,
@@ -57,35 +61,48 @@ describe SubjectReductionsController, :type => :controller do
 
       expect(SubjectReduction.count).to eq(3)
       expect(updated.id).to eq(r[0].id)
-      expect(updated.data).to eq("blah" => "10")
+      expect(updated.data).to eq("blah" => 10)
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, subject1.id).once
     end
 
     it 'creates new reductions if needed' do
       reductions
 
-      #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(SubjectReductionsController).to receive(:reducer).and_return(
-        OpenStruct.new(key: 'q')
-      )
-
       post :update, params: {
         workflow_id: workflow.id,
-        reducer_key: 'q',
+        reducer_key: reducer2.key,
         reduction: {
-          subject_id: subject1.id,
+          subject_id: subject2.id,
           subgroup: '_default',
           data: { blah: 10 }
         }
-      }
+      }, as: :json
 
       updated = SubjectReduction.find_by(
         workflow_id: workflow.id,
-        reducer_key: 'q',
-        subject_id: subject1.id
+        reducer_key: reducer2.key,
+        subject_id: subject2.id
       )
 
       expect(SubjectReduction.count).to eq(4)
-      expect(updated.data).to eq("blah" => "10")
+      expect(updated.data).to eq("blah" => 10)
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, subject2.id).once
+    end
+
+    it 'does not trigger rules if nothing changed' do
+      reductions
+
+      post :update, params: {
+        workflow_id: workflow.id,
+        reducer_key: reducer1.key,
+        reduction: {
+          subject_id: subject1.id,
+          subgroup: '_default',
+          data: reductions[0].data
+        }
+      }, as: :json
+
+      expect(CheckRulesWorker).not_to have_received(:perform_async)
     end
   end
 

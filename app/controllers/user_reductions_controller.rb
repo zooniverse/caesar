@@ -12,11 +12,12 @@ class UserReductionsController < ApplicationController
                                                 user_id: user_id,
                                                 subgroup: subgroup)
     authorize reduction
-    reduction.update! reduction_params
 
-    CheckRulesWorker.perform_async(workflow.id, user_id) if workflow.configured?
-
-    workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
+    if reduction.data != reduction_params[:data]
+      reduction.update! reduction_params
+      CheckRulesWorker.perform_async(workflow.id, user_id) if workflow.configured?
+      workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
+    end
 
     render json: reduction
   end
