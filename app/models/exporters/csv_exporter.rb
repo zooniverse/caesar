@@ -63,7 +63,7 @@ module Exporters
     end
 
     def get_model_cols
-      @model_cols ||= get_topic.attribute_names - ["data"]
+      @model_cols ||= get_topic.attribute_names - ["data", "store"]
     end
 
     def get_unique_json_cols
