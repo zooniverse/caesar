@@ -10,15 +10,17 @@ class ExtractsController < ApplicationController
                                             classification_id: classification_id)
     authorize extract
 
-    Workflow.transaction do
-      extract.subject_reduction.update_all expired: true
-      extract.user_reduction.update_all expired: true
-      extract.update! extract_params
+    if extract.data != extract_params[:data]
+      Workflow.transaction do
+        extract.subject_reduction.update_all expired: true
+        extract.user_reduction.update_all expired: true
+        extract.update! extract_params
+      end
+
+      ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
+
+      workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
     end
-
-    ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
-
-    workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
 
     render json: extract
   end
