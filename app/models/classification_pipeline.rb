@@ -24,6 +24,10 @@ class ClassificationPipeline
 
     workflow = Workflow.find(classification.workflow_id)
 
+    if workflow.name.blank?
+      DescribeWorkflowWorker.perform_async(classification.workflow_id)
+    end
+
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
     novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 

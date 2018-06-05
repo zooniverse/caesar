@@ -46,6 +46,8 @@ class WorkflowsController < ApplicationController
                                                    project_id: workflow_hash["links"]["project"]))
 
     @workflow.save
+    DescribeWorkflowWorker.perform_async(@workflow.id)
+
     respond_with @workflow
   end
 
