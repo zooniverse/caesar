@@ -37,7 +37,7 @@
           <td><%= reducer.class %></td>
           <td><%= debug reducer.config %></td>
           <td><%= debug reducer.filters %></td>
-          <td><%= reducer.grouping || "no grouping" %></td>
+          <td><%= debug reducer.grouping %></td>
           <td>
             <%= link_to "Edit", [:edit, @workflow, reducer.becomes(Reducer)], class: 'btn btn-primary' %>
             <%= link_to "Destroy", [@workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>

@@ -13,7 +13,16 @@
 
   <%= f.input :topic, collection: Reducer.topics.keys %>
 
-  <%= f.input :grouping %>
+  <div class="panel panel-default">
+    <div class="panel-heading">Grouping</div>
+    <div class="panel-body">
+      <p>You can group extracts before reduction, producing one reduction per group</p>
+      <%= f.simple_fields_for :grouping do |grouping| %>
+        <%= grouping.input :field_name %>
+        <%= grouping.input :if_missing, collection: ['ignore', 'error'] %>
+      <% end %>
+    </div>
+  </div>
 
 
   <div class="panel panel-default">
