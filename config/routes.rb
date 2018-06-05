@@ -18,28 +18,37 @@ Rails.application.routes.draw do
 
   resources :workflows do
     resources :extractors
+    resources :extractors, param: :key do
+      resources :extracts
+    end
     resources :reducers
-    resources :subjects, only: [:show]
+    resources :subject_reductions, param: :reducer_key
+    resources :user_reductions, param: :reducer_key
+
+    resources :subjects, only: [:show] do
+      resources :subject_reductions, only: [:index]
+    end
+
+    resources :users, only: [:show] do
+      resources :user_reductions, only: [:index]
+    end
 
     resources :data_requests
   end
 
-  get 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#index'
-  put 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#update', defaults: { format: :json }
+  resources :projects do
+    resources :reducers
+    resources :subject_reductions, param: :reducer_key
+    resources :user_reductions, param: :reducer_key
 
-  # legacy routes
-  get 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#index'
-  get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
-  put 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#update'
-  put 'workflows/:workflow_id/reducers/:reducer_key/reductions/nested', to: 'subject_reductions#nested_update'
+    resources :subjects, only: [:show] do
+      resources :subject_reductions, only: [:index]
+    end
 
-  get 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#index'
-  get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
-  put 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#update'
-  put 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions/nested', to: 'subject_reductions#nested_update'
+    resources :users, only: [:show] do
+      resources :user_reductions, only: [:index]
+    end
+    resources :data_requests
+  end
 
-  get 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#index'
-  get 'workflows/:workflow_id/users/:user_id/reductions', to: 'user_reductions#index'
-  put 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#update'
-  put 'workflows/:workflow_id/user_reductions/:reducer_key/reductions/nested', to: 'user_reductions#nested_update'
 end

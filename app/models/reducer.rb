@@ -37,7 +37,7 @@ class Reducer < ApplicationRecord
   belongs_to :reducible, polymorphic: true
 
   validates :reducible, presence: true
-  validates :key, presence: true, uniqueness: {scope: [:reducible_id]}
+  validates :key, presence: true, uniqueness: {scope: [:reducible_id, :reducible_type]}
   validates :topic, presence: true
   validates_associated :extract_filter
 

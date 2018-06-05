@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410094538) do
+ActiveRecord::Schema.define(version: 20180516151238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,16 +41,16 @@ ActiveRecord::Schema.define(version: 20180410094538) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.bigint "reducible_id", null: false
+    t.bigint "exportable_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: false, null: false
-    t.string "reducible_type"
-    t.index ["reducible_id"], name: "index_data_requests_on_reducible_id"
-    t.index ["user_id", "reducible_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
+    t.string "exportable_type"
+    t.index ["exportable_id"], name: "index_data_requests_on_exportable_id"
+    t.index ["user_id", "exportable_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
   end
 
   create_table "extractors", force: :cascade do |t|
@@ -242,7 +242,7 @@ ActiveRecord::Schema.define(version: 20180410094538) do
 
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
-  add_foreign_key "data_requests", "workflows", column: "reducible_id"
+  add_foreign_key "data_requests", "workflows", column: "exportable_id"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"

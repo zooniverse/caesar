@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Effects::PromoteUser do
-  let(:workflow) { create :workflow, project_id: 1234 }
+  let(:project) { create(:project) }
+  let(:workflow) { create :workflow, project_id: project.id }
   let(:target_workflow_id) { 20004 }
   let(:user_id) { 33333 }
 

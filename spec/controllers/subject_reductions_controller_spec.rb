@@ -40,7 +40,7 @@ describe SubjectReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        reducible_id: workflow.id,
+        workflow_id: workflow.id,
         reducer_key: 'r',
         reduction: {
           subject_id: subject1.id,
@@ -69,7 +69,7 @@ describe SubjectReductionsController, :type => :controller do
       )
 
       post :update, params: {
-        reducible_id: workflow.id,
+        workflow_id: workflow.id,
         reducer_key: 'q',
         reduction: {
           subject_id: subject1.id,
@@ -79,44 +79,13 @@ describe SubjectReductionsController, :type => :controller do
       }
 
       updated = SubjectReduction.find_by(
-        reducible_id: workflow.id,
+        reducible: workflow,
         reducer_key: 'q',
         subject_id: subject1.id
       )
 
       expect(SubjectReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => "10")
-    end
-  end
-
-  describe '#nested_update' do
-    it 'creates multiple reductions from the data' do
-
-      #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(SubjectReductionsController).to receive(:reducer).and_return(
-        OpenStruct.new(key: 'q')
-      )
-
-      post :nested_update, params: {
-        reducible_id: workflow.id,
-        reducer_key: 'q',
-        reduction: {
-          subject_id: subject1.id,
-          data: {
-            group1: {
-              blah: 11
-            },
-            group2: {
-              blah: 11
-            }
-          }
-        }
-      }
-
-      expect(SubjectReduction.count).to eq(2)
-      expect(SubjectReduction.exists?(subgroup: 'group1')).to be(true)
-      expect(SubjectReduction.exists?(subgroup: 'group2')).to be(true)
-      expect(SubjectReduction.exists?(subgroup: '_default')).to be(false)
     end
   end
 end

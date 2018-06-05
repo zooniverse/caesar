@@ -7,7 +7,6 @@ class SubjectReductionsController < ApplicationController
   end
 
   def update
-    binding.pry
     reduction = SubjectReduction.find_or_initialize_by(reducible_id: reducible.id,
                                                 reducer_key: reducer.key,
                                                 subject_id: subject.id,
@@ -22,34 +21,22 @@ class SubjectReductionsController < ApplicationController
     render json: reduction
   end
 
-  def nested_update
-    reductions = reduction_params[:data].to_h.map do |key, data|
-      SubjectReduction.find_or_initialize_by(
-        reducible_id: workflow.id,
-        reducer_key: reducer.key,
-        subject_id: subject.id,
-        subgroup: key
-      ).tap do |item|
-        authorize item
-        item.save
-      end
-    end
-
-    CheckRulesWorker.perform_async(workflow.id, subject.id) if workflow.configured?
-
-    workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
-
-    render json: reductions
-  end
-
   private
 
-  def workflow
-    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+  def reducible
+    @reducible ||=  if params[:workflow_id]
+                      policy_scope(Workflow).find(params[:workflow_id])
+                    elsif params[:project]
+                      policy_scope(Project).find(params[:project_id])
+                    end
   end
 
-  def reducible
-    @reducible ||= policy_scope(Reducible).find(params[:reducible_id])
+  def reducible_type
+    @reducible_type ||=   if params[:workflow_id]
+                            "workflow"
+                          elsif params[:project]
+                            "project"
+                          end
   end
 
   def data

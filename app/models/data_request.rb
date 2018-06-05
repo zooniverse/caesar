@@ -44,7 +44,7 @@ class DataRequest < ApplicationRecord
   validates :status, presence: true
   validates :requested_data, presence: true
 
-  belongs_to :reducible, polymorphic: true
+  belongs_to :exportable, polymorphic: true
 
   def stored_export
     raise "DataRequest needs to be saved to database first" unless id.present?

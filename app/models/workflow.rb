@@ -38,7 +38,7 @@ class Workflow < ApplicationRecord
 
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], SubjectReduction)
-        scope = scope.where(reducible_id: workflow.id)
+        scope = scope.where(reducible_id: workflow.id, reducible_type: "workflow")
         scope = scope.where(subject_id: args[:subjectId])
         scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
         scope
@@ -77,7 +77,7 @@ class Workflow < ApplicationRecord
   has_many :user_reductions, as: :reducible
   has_many :subject_actions
   has_many :user_actions
-  has_many :data_requests
+  has_many :data_requests, as: :exportable
 
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
 

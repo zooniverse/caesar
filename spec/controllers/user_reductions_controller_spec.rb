@@ -2,14 +2,14 @@ require 'spec_helper'
 require 'ostruct'
 
 describe UserReductionsController, :type => :controller do
-    let(:workflow) { create :workflow }
-    let(:user1_id) { 1234 }
-    let(:user2_id) { 2345 }
-    let(:reductions) {
+  let(:workflow) { create :workflow }
+  let(:user1_id) { 1234 }
+  let(:user2_id) { 2345 }
+  let(:reductions) {
     [
-      create(:user_reduction, workflow: workflow, user_id: user1_id, reducer_key: 'r', data: '1'),
-      create(:user_reduction, workflow: workflow, user_id: user1_id, reducer_key: 's', data: '2'),
-      create(:user_reduction, workflow: workflow, user_id: user2_id, reducer_key: 'r', data: '3')
+      create(:user_reduction, reducible: workflow, user_id: user1_id, reducer_key: 'r', data: '1'),
+      create(:user_reduction, reducible: workflow, user_id: user1_id, reducer_key: 's', data: '2'),
+      create(:user_reduction, reducible: workflow, user_id: user2_id, reducer_key: 'r', data: '3')
     ]
   }
 
@@ -79,44 +79,14 @@ describe UserReductionsController, :type => :controller do
       }
 
       updated = UserReduction.find_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
+        reducible_type: "workflow",
         reducer_key: 'q',
         user_id: user1_id
       )
 
       expect(UserReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => "10")
-    end
-  end
-
-  describe '#nested_update' do
-    it 'creates multiple reductions from the data' do
-
-      #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(UserReductionsController).to receive(:reducer).and_return(
-        OpenStruct.new(key: 'q')
-      )
-
-      post :nested_update, params: {
-        workflow_id: workflow.id,
-        reducer_key: 'q',
-        reduction: {
-          user_id: user1_id,
-          data: {
-            group1: {
-              blah: 11
-            },
-            group2: {
-              blah: 11
-            }
-          }
-        }
-      }
-
-      expect(UserReduction.count).to eq(2)
-      expect(UserReduction.exists?(subgroup: 'group1')).to be(true)
-      expect(UserReduction.exists?(subgroup: 'group2')).to be(true)
-      expect(UserReduction.exists?(subgroup: '_default')).to be(false)
     end
   end
 end
