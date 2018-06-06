@@ -122,6 +122,14 @@ RSpec.describe Reducer, type: :model do
     end
   end
 
+  it 'saves reducible attributes' do
+    workflow = create :workflow
+    reducer = build :stats_reducer, workflow_id: workflow.id
+    reducer.save!
+    expect(reducer.reducible_id).to eq(workflow.id)
+    expect(reducer.reducible_type).to eq("workflow")
+  end
+
   describe 'running/online aggregation' do
     it 'persists associations at the right time' do
       workflow = create :workflow

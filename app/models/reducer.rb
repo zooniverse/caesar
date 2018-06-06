@@ -1,5 +1,6 @@
 class Reducer < ApplicationRecord
   include Configurable
+  include Reducible
 
   enum topic: {
     reduce_by_subject: 0,
@@ -35,7 +36,6 @@ class Reducer < ApplicationRecord
   end
 
   belongs_to :workflow
-  belongs_to :reducible, polymorphic: true, optional: true
 
   validates :workflow, presence: true
   validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
