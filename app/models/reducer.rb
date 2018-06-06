@@ -35,6 +35,7 @@ class Reducer < ApplicationRecord
   end
 
   belongs_to :workflow
+  belongs_to :reducible, polymorphic: true, optional: true
 
   validates :workflow, presence: true
   validates :key, presence: true, uniqueness: {scope: [:workflow_id]}

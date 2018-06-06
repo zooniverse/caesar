@@ -15,6 +15,6 @@ class SubjectReduction < ApplicationRecord
 
   belongs_to :workflow
   belongs_to :subject
-  belongs_to :reducible, polymorphic: true
+  belongs_to :reducible, polymorphic: true, optional: true
   has_and_belongs_to_many_with_deferred_save :extracts
 end
