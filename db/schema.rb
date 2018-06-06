@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180524152847) do
+ActiveRecord::Schema.define(version: 20180606074726) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,6 +96,22 @@ ActiveRecord::Schema.define(version: 20180524152847) do
     t.index ["user_reduction_id", "extract_id"], name: "eur_covering_2"
   end
 
+  create_table "flipper_features", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_flipper_features_on_key", unique: true
+  end
+
+  create_table "flipper_gates", force: :cascade do |t|
+    t.string "feature_key", null: false
+    t.string "key", null: false
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
   create_table "reducers", force: :cascade do |t|
     t.bigint "workflow_id"
     t.string "key", null: false
@@ -139,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180524152847) do
     t.boolean "expired", default: false
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
-    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_subject_covering"
+    t.index ["workflow_id", "subject_id", "reducer_key", "subgroup"], name: "index_reductions_covering", unique: true
     t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
     t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
@@ -167,6 +183,7 @@ ActiveRecord::Schema.define(version: 20180524152847) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "locations", default: {}, null: false
   end
 
   create_table "user_actions", force: :cascade do |t|
