@@ -28,6 +28,8 @@ class ApplicationController < ActionController::Base
 
   def authenticated?
     credential.ok?
+  rescue ActiveRecord::RecordNotUnique
+    raise StandardError.new('A session with these credentials already exists')
   end
 
   def credential
