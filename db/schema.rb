@@ -233,6 +233,8 @@ ActiveRecord::Schema.define(version: 20180606193006) do
     t.boolean "public_extracts", default: false, null: false
     t.boolean "public_reductions", default: false, null: false
     t.integer "rules_applied", default: 0, null: false
+    t.string "name"
+    t.string "project_name"
   end
 
   add_foreign_key "classifications", "subjects"

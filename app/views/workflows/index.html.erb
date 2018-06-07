@@ -2,16 +2,16 @@
   <thead>
      <thead class="thead-inverse" >
     <tr>
-      <th>Project ID</th>
-      <th>Workflow ID</th>
+      <th>Project (ID)</th>
+      <th>Workflow (ID)</th>
       <th>Show Workflow</th>
     </tr>
   </thead>
   <tbody>
     <% @workflows.each do |workflow| %>
       <tr>
-        <td><%= workflow.project_id %></td>
-        <td><%= workflow.id %></td>
+        <td><%= workflow.project_name %> (<%= workflow.project_id %>)</td>
+        <td><%= workflow.name %> (<%= workflow.id %>)</td>
         <td><%= link_to "Show", workflow %></td>
       </tr>
     <% end %>
