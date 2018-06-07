@@ -1,5 +1,6 @@
 class Reducer < ApplicationRecord
   include Configurable
+  include BelongsToReducible
 
   enum topic: {
     reduce_by_subject: 0,
