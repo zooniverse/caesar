@@ -1,4 +1,4 @@
-module Reducible 
+module BelongsToReducible 
   extend ActiveSupport::Concern
 
   included do

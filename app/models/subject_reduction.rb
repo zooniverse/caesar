@@ -1,5 +1,5 @@
 class SubjectReduction < ApplicationRecord
-  include Reducible
+  include BelongsToReducible
 
   Type = GraphQL::ObjectType.define do
     name "SubjectReduction"
