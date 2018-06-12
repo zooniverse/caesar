@@ -121,7 +121,7 @@ describe ClassificationPipeline do
     # build a simplified pipeline to reduce these extracts
     reducer = build(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, workflow_id: workflow.id)
     pipeline = described_class.new(nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, subject.id, nil)
+    pipeline.reduce(workflow.id, "Workflow", subject.id, nil)
 
     expect(SubjectReduction.count).to eq(2)
     expect(SubjectReduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
@@ -141,7 +141,7 @@ describe ClassificationPipeline do
     reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], workflow_id: workflow.id)
 
     pipeline = described_class.new(nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, nil, 1234)
+    pipeline.reduce(workflow.id, "Workflow", nil, 1234)
 
     expect(UserReduction.count).to eq(1)
     expect(UserReduction.first.user_id).to eq(1234)

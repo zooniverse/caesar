@@ -58,7 +58,7 @@ RSpec.describe ExtractsController, type: :controller do
       expect(response).to have_http_status(:success)
       expect(Extract.count).to eq(1)
       expect(Extract.first.data).to eq("foo" => 2)
-      expect(ReduceWorker).to have_received(:perform_async).with(workflow.id, subject.id, nil)
+      expect(ReduceWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject.id, nil)
     end
 
     it 'does not trigger reducers if nothing changed' do

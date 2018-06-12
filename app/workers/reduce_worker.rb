@@ -11,16 +11,15 @@ class ReduceWorker
     [args[0], args[1], args[2]]
   end
 
-  def perform(workflow_id, subject_id, user_id, extract_ids = [])
-    workflow = Workflow.find(workflow_id)
-
-    reductions = workflow.classification_pipeline.reduce(workflow_id, subject_id, user_id, extract_ids)
+  def perform(reducible_id, reducible_class, subject_id, user_id, extract_ids = [])
+    reducible = reducible_class.constantize.find(reducible_id)
+    reductions = reducible.classification_pipeline.reduce(reducible_id, reducible_class, subject_id, user_id, extract_ids)
 
     return if reductions.blank?
 
-    CheckRulesWorker.perform_async(workflow_id, subject_id, user_id)
+    CheckRulesWorker.perform_async(reducible_id, subject_id, user_id)
     reductions.each do |item|
-      workflow.webhooks.process(:new_reduction, item) if workflow.subscribers?
+      reducible.webhooks.process(:new_reduction, item) if reducible.subscribers?
     end
   end
 end

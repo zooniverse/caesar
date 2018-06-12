@@ -17,7 +17,7 @@ class ExtractsController < ApplicationController
         extract.update! extract_params
       end
 
-      ReduceWorker.perform_async(workflow.id, subject.id, user_id) if workflow.configured?
+      ReduceWorker.perform_async(workflow.id, "Workflow", subject.id, user_id) if workflow.configured?
 
       workflow.webhooks.process(:updated_extraction, data) if workflow.subscribers?
     end

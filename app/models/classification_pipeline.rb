@@ -13,7 +13,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
+    reduce(classification.workflow_id, Workflow, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
@@ -68,11 +68,13 @@ class ClassificationPipeline
     raise
   end
 
-  def reduce(workflow_id, subject_id, user_id, extract_ids=[])
+  # def reduce(workflow_id, subject_id, user_id, extract_ids=[])
+  def reduce(reducible_id, reducible_class, subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
     retries ||= 2
 
-    filter = { workflow_id: workflow_id, subject_id: subject_id, user_id: user_id }
+    # TODO: Update filter when Fetchers are updated
+    filter = { workflow_id: reducible_id, subject_id: subject_id, user_id: user_id }
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
     reduction_fetcher = ReductionFetcher.new(filter)
 
