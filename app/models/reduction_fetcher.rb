@@ -1,9 +1,9 @@
 class ReductionFetcher
   attr_accessor :topic
-  def initialize(keys)
-    @keys = keys
-    @subject_reductions = SubjectReduction.where(keys.except(:user_id))
-    @user_reductions = UserReduction.where(keys.except(:subject_id))
+  def initialize(filter)
+    @filter = filter
+    @subject_reductions = SubjectReduction.where(filter.except(:user_id))
+    @user_reductions = UserReduction.where(filter.except(:subject_id))
 
     @topic = :reduce_by_subject
   end
@@ -19,7 +19,7 @@ class ReductionFetcher
   end
 
   def retrieve(reducer_key, subgroup)
-    where(@keys.merge(reducer_key: reducer_key, subgroup: subgroup))
+    where(@filter.merge(reducer_key: reducer_key, subgroup: subgroup))
   end
 
   def reductions
