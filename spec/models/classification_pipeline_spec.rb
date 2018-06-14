@@ -120,8 +120,8 @@ describe ClassificationPipeline do
 
     # build a simplified pipeline to reduce these extracts
     reducer = build(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, workflow_id: workflow.id)
-    pipeline = described_class.new(nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, "Workflow", subject.id, nil)
+    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
+    pipeline.reduce(workflow.id, subject.id, nil)
 
     expect(SubjectReduction.count).to eq(2)
     expect(SubjectReduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
@@ -140,8 +140,8 @@ describe ClassificationPipeline do
 
     reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], workflow_id: workflow.id)
 
-    pipeline = described_class.new(nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, "Workflow", nil, 1234)
+    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
+    pipeline.reduce(workflow.id, nil, 1234)
 
     expect(UserReduction.count).to eq(1)
     expect(UserReduction.first.user_id).to eq(1234)
@@ -156,7 +156,7 @@ describe ClassificationPipeline do
     subject = create :subject
     user_id = 1234
 
-    pipeline = described_class.new(nil, nil, [subject_rule], [user_rule])
+    pipeline = described_class.new(Workflow, nil, nil, [subject_rule], [user_rule])
     pipeline.check_rules(workflow.id, subject.id, user_id)
 
     expect(user_rule).to have_received(:process).with(user_id, any_args).once
@@ -170,7 +170,7 @@ describe ClassificationPipeline do
     workflow = create :workflow
     subject = create :subject
 
-    pipeline = described_class.new(nil, nil, [subject_rule1, subject_rule2], [], :first_matching_rule)
+    pipeline = described_class.new(Workflow, nil, nil, [subject_rule1, subject_rule2], [], :first_matching_rule)
     pipeline.check_rules(workflow.id, subject.id, nil)
 
     expect(subject_rule1).to have_received(:process).with(subject.id, any_args).once
@@ -185,7 +185,7 @@ describe ClassificationPipeline do
     subject = create :subject
     user_id = 1234
 
-    pipeline = described_class.new(nil, nil, [], [user_rule1, user_rule2], :first_matching_rule)
+    pipeline = described_class.new(Workflow, nil, nil, [], [user_rule1, user_rule2], :first_matching_rule)
     pipeline.check_rules(workflow.id, subject.id, user_id)
 
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once

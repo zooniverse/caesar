@@ -93,7 +93,8 @@ class Workflow < ApplicationRecord
   end
 
   def classification_pipeline
-    ClassificationPipeline.new(extractors,
+    ClassificationPipeline.new(Workflow,
+                               extractors,
                                reducers,
                                subject_rules.rank(:row_order),
                                user_rules.rank(:row_order),

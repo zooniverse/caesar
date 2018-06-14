@@ -13,7 +13,7 @@ class ReduceWorker
 
   def perform(reducible_id, reducible_class, subject_id, user_id, extract_ids = [])
     reducible = reducible_class.constantize.find(reducible_id)
-    reductions = reducible.classification_pipeline.reduce(reducible_id, reducible_class, subject_id, user_id, extract_ids)
+    reductions = reducible.classification_pipeline.reduce(reducible_id, subject_id, user_id, extract_ids)
 
     return if reductions.blank?
 
