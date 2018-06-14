@@ -52,6 +52,8 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.example_status_persistence_file_path = File.expand_path(File.join(__FILE__, "..", "..", "tmp", "spec_status.txt"))
+  config.filter_run_including :focus => true
+  config.run_all_when_everything_filtered = true
 
   config.before(:suite) do
     Stoplight::Light.default_error_notifier = -> _ {}
