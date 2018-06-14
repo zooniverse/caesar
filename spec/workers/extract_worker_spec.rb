@@ -26,7 +26,7 @@ RSpec.describe ExtractWorker, type: :worker do
 
     it 'reraises error if no extracts exist' do
       expect do
-        described_class.new.perform(1)
+        described_class.new.perform(-1)
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
