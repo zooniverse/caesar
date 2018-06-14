@@ -30,8 +30,18 @@ class ReducersController < ApplicationController
     reducer_class = Reducer.of_type(params[:reducer][:type])
     @reducer = reducer_class.new(reducer_params(reducer_class))
 
+    if(@reducer.filters['from'].blank? && @reducer.filters['to'].blank? && @reducer.filters['extractor_keys'].blank?)
+      @reducer.filters = {}
+    end
+
+    if(@reducer.grouping['field_name'].blank?)
+      @reducer.grouping = {}
+    end
+
     if @reducer.save
       flash[:success] = 'Reducer created'
+    else
+      flash[:error] = 'Could not create reducer'
     end
 
     respond_with @reducer, location: [workflow]
@@ -73,9 +83,10 @@ class ReducersController < ApplicationController
   def reducer_params(klass)
     params.require(:reducer).permit(
       :key,
-      :grouping,
+      :topic,
       *klass.configuration_fields.keys,
       filters: {},
+      grouping: {},
     ).merge(workflow_id: workflow.id)
   end
 end

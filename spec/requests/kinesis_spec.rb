@@ -5,6 +5,8 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
     panoptes = instance_double(
       Panoptes::Client,
       retire_subject: true,
+      workflow: {},
+      project: {},
       get_subject_classifications: {"classifications" => []},
       get_user_classifications: {"classifications" => []}
     )

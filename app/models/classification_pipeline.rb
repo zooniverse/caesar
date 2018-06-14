@@ -14,7 +14,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
+    reduce(classification.workflow_id, Workflow, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
@@ -24,6 +24,10 @@ class ClassificationPipeline
     tries ||= 2
 
     workflow = Workflow.find(classification.workflow_id)
+
+    if workflow.name.blank?
+      DescribeWorkflowWorker.perform_async(classification.workflow_id)
+    end
 
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
     novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?

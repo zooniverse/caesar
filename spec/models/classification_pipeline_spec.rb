@@ -65,6 +65,8 @@ describe ClassificationPipeline do
     instance_double(
       Panoptes::Client,
       retire_subject: true,
+      workflow: {},
+      project: {},
       get_subject_classifications: {},
       get_user_classifications: {}
     )
