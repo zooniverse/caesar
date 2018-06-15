@@ -14,7 +14,7 @@ class ClassificationPipeline
 
   def process(classification)
     extract(classification)
-    reduce(classification.workflow_id, Workflow, classification.subject_id, classification.user_id)
+    reduce(classification.workflow_id, classification.subject_id, classification.user_id)
     check_rules(classification.workflow_id, classification.subject_id, classification.user_id)
   end
 
@@ -79,8 +79,8 @@ class ClassificationPipeline
 
     # TODO: Send array of workflow ids if reducing by Project
     filter = case
-               when Workflow == reducible_class
-                 { workflow_id: reducible_id, subject_id: subject_id, user_id: user_id }
+             when Workflow == reducible_class
+               { workflow_id: reducible_id, subject_id: subject_id, user_id: user_id }
               #  when Project
                 #  reducible = reducible_class.find(reducible_id)
                 #  workflow_ids = reducible.where(project_id: reducible_id).pluck(:id)
