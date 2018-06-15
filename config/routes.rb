@@ -18,25 +18,23 @@ Rails.application.routes.draw do
 
   resources :workflows do
     resources :extractors
+    resources :extractors, param: :key do
+      resource :extracts
+      resources :extracts, only: [:index]
+    end
+    
     resources :reducers
-    resources :subjects, only: [:show]
+    resources :subject_reductions, param: :reducer_key
+    resources :user_reductions, param: :reducer_key
+
+    resources :subjects, only: [:show] do
+      resources :subject_reductions, only: [:index]
+    end
+
+    resources :users, only: [:show] do
+      resources :user_reductions, only: [:index]
+    end
 
     resources :data_requests
   end
-
-  get 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#index'
-  put 'workflows/:workflow_id/extractors/:extractor_key/extracts', to: 'extracts#update', defaults: { format: :json }
-
-  # legacy routes
-  get 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#index'
-  get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
-  put 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#update'
-
-  get 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#index'
-  get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
-  put 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#update'
-
-  get 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#index'
-  get 'workflows/:workflow_id/users/:user_id/reductions', to: 'user_reductions#index'
-  put 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#update'
 end
