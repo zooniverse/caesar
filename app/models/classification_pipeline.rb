@@ -120,18 +120,18 @@ class ClassificationPipeline
     raise ReductionConflict, "Transient uniqueness violation"
   end
 
-  def check_rules(workflow_id, subject_id, user_id)
-    check_subject_rules(workflow_id, subject_id)
-    check_user_rules(workflow_id, user_id)
+  def check_rules(reducible_id, subject_id, user_id)
+    check_subject_rules(reducible_id, subject_id)
+    check_user_rules(reducible_id, user_id)
   end
 
   private
 
-  def check_subject_rules(workflow_id, subject_id)
+  def check_subject_rules(reducible_id, subject_id)
     return unless subject_rules.present?
 
     subject = Subject.find(subject_id)
-    rule_bindings = RuleBindings.new(subject_reductions(workflow_id, subject_id), subject)
+    rule_bindings = RuleBindings.new(subject_reductions(reducible_id, subject_id), subject)
 
     case rules_applied.to_s
     when 'all_matching_rules'
@@ -145,10 +145,10 @@ class ClassificationPipeline
     end
   end
 
-  def check_user_rules(workflow_id, user_id)
+  def check_user_rules(reducible_id, user_id)
     return unless (user_rules.present? and not user_id.blank?)
 
-    rule_bindings = RuleBindings.new(user_reductions(workflow_id, user_id), nil)
+    rule_bindings = RuleBindings.new(user_reductions(reducible_id, user_id), nil)
     case rules_applied.to_s
     when 'all_matching_rules'
       user_rules.each do |rule|
@@ -161,11 +161,11 @@ class ClassificationPipeline
     end
   end
 
-  def user_reductions(workflow_id, user_id)
-    UserReduction.where(workflow_id: workflow_id, user_id: user_id)
+  def user_reductions(reducible_id, user_id)
+    UserReduction.where(reducible_id: reducible_id, user_id: user_id)
   end
 
-  def subject_reductions(workflow_id, subject_id)
-    SubjectReduction.where(workflow_id: workflow_id, subject_id: subject_id)
+  def subject_reductions(reducible_id, subject_id)
+    SubjectReduction.where(reducible_id: reducible_id, subject_id: subject_id)
   end
 end
