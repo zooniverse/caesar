@@ -31,15 +31,12 @@ Rails.application.routes.draw do
   get 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#index'
   get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
   put 'workflows/:workflow_id/reducers/:reducer_key/reductions', to: 'subject_reductions#update'
-  put 'workflows/:workflow_id/reducers/:reducer_key/reductions/nested', to: 'subject_reductions#nested_update'
 
   get 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#index'
   get 'workflows/:workflow_id/subjects/:subject_id/reductions', to: 'subject_reductions#index'
   put 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions', to: 'subject_reductions#update'
-  put 'workflows/:workflow_id/subject_reductions/:reducer_key/reductions/nested', to: 'subject_reductions#nested_update'
 
   get 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#index'
   get 'workflows/:workflow_id/users/:user_id/reductions', to: 'user_reductions#index'
   put 'workflows/:workflow_id/user_reductions/:reducer_key/reductions', to: 'user_reductions#update'
-  put 'workflows/:workflow_id/user_reductions/:reducer_key/reductions/nested', to: 'user_reductions#nested_update'
 end
