@@ -1,0 +1,2 @@
+class UserRuleEffectsController < ApplicationController
+end
