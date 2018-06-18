@@ -1,0 +1,2 @@
+class SubjectRuleEffectsController < ApplicationController
+end

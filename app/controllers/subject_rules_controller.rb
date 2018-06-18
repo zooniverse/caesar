@@ -1,0 +1,2 @@
+class SubjectRulesController < ApplicationController
+end

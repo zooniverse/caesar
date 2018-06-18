@@ -1,0 +1,2 @@
+module UserRulesHelper
+end
