@@ -66,7 +66,7 @@ class Workflow < ApplicationRecord
   end
 
   has_many :extractors
-  has_many :reducers
+  has_many :reducers, as: :reducible
   has_many :subject_rules
   has_many :user_rules
 
@@ -95,7 +95,7 @@ class Workflow < ApplicationRecord
   def classification_pipeline
     ClassificationPipeline.new(Workflow,
                                extractors,
-                               reducers,
+                               reducible,
                                subject_rules.rank(:row_order),
                                user_rules.rank(:row_order),
                                rules_applied)

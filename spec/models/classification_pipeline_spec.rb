@@ -140,7 +140,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
 
-    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], workflow_id: workflow.id)
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "workflow")
 
     pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)

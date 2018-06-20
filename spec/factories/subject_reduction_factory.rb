@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :subject_reduction do
-    workflow
+    reducible { build :workflow }
     subject
 
     reducer_key "foo"

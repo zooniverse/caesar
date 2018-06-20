@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :user_reduction do
-    workflow
+    reducible { build :workflow }
     user_id 1234
 
     reducer_key "foo"

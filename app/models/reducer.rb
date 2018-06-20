@@ -35,9 +35,6 @@ class Reducer < ApplicationRecord
     end
   end
 
-  belongs_to :workflow
-
-  validates :workflow, presence: true
   validates :key, presence: true, uniqueness: {scope: [:workflow_id]}
   validates :topic, presence: true
   validates_associated :extract_filter

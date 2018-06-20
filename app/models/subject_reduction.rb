@@ -15,7 +15,6 @@ class SubjectReduction < ApplicationRecord
     field :updatedAt, !Types::TimeType, property: :updated_at
   end
 
-  belongs_to :workflow
   belongs_to :subject
   has_and_belongs_to_many_with_deferred_save :extracts
 end
