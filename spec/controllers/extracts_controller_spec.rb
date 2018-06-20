@@ -30,7 +30,7 @@ RSpec.describe ExtractsController, type: :controller do
               data: {"object_present" => true}
             }
           }.to_json
-
+      
       expect(response).to have_http_status(:success)
       expect(Extract.count).to eq(1)
     end
