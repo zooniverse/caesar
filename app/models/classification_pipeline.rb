@@ -87,9 +87,9 @@ class ClassificationPipeline
                 #  { workflow_id: workflow_ids, subject_id: subject_id, user_id: user_id }
              end
 
-    # filter = { workflow_id: reducible_id, subject_id: subject_id, user_id: user_id }
+    reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)	     
-    reduction_fetcher = ReductionFetcher.new(filter)
+    reduction_fetcher = ReductionFetcher.new(reduction_filter)
           
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }

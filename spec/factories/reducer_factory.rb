@@ -4,7 +4,7 @@ FactoryGirl.define do
   end
 
   factory :reducer do
-    reducible nil
+    reducible { create :workflow }
     key { generate(:key) }
     config { {} }
 

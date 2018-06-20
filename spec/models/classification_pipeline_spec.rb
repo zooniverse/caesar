@@ -40,19 +40,18 @@ describe ClassificationPipeline do
     )
   end
 
-  let(:reducers) do
-    [
-      build(:stats_reducer, key: 's'),
-      build(:stats_reducer, key: 'g', grouping: {"field_name" => "s.LK"})
-    ]
-  end
-
   let(:workflow) do
     create(:workflow, project_id: 1,
-                      extractors: [build(:survey_extractor, key: 's', config: {"task_key" => "T1"})],
-                      reducers: reducers) do |w|
+                      extractors: [build(:survey_extractor, key: 's', config: {"task_key" => "T1"})]) do |w|
       create :subject_rule, workflow: w, subject_rule_effects: [build(:subject_rule_effect, config: {reason: "consensus"})]
     end
+  end
+
+  let(:reducers) do
+    [
+      create(:stats_reducer, key: 's', reducible: workflow),
+      create(:stats_reducer, key: 'g', grouping: {"field_name" => "s.LK"}, reducible: workflow)
+    ]
   end
 
   let(:subject) { Subject.create }
@@ -121,9 +120,10 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 55555, data: { classroom: 2 }
 
     # build a simplified pipeline to reduce these extracts
-    reducer = build(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, workflow_id: workflow.id)
+    reducer = create(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, reducible: workflow)
     pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, subject.id, nil)
+
 
     expect(SubjectReduction.count).to eq(2)
     expect(SubjectReduction.where(subgroup: 1).first.data).to include({"LN" => 2, "TGR" => 1})
