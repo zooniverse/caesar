@@ -100,35 +100,4 @@ describe UserReductionsController, :type => :controller do
       expect(CheckRulesWorker).not_to have_received(:perform_async)
     end
   end
-
-  describe '#nested_update' do
-    it 'creates multiple reductions from the data' do
-
-      #we don't have any real reducers configured, so work around that
-      allow_any_instance_of(UserReductionsController).to receive(:reducer).and_return(
-        OpenStruct.new(key: 'q')
-      )
-
-      post :nested_update, params: {
-        workflow_id: workflow.id,
-        reducer_key: 'q',
-        reduction: {
-          user_id: user1_id,
-          data: {
-            group1: {
-              blah: 11
-            },
-            group2: {
-              blah: 11
-            }
-          }
-        }
-      }
-
-      expect(UserReduction.count).to eq(2)
-      expect(UserReduction.exists?(subgroup: 'group1')).to be(true)
-      expect(UserReduction.exists?(subgroup: 'group2')).to be(true)
-      expect(UserReduction.exists?(subgroup: '_default')).to be(false)
-    end
-  end
 end
