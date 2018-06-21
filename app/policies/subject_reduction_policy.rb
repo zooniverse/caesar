@@ -12,11 +12,6 @@ class SubjectReductionPolicy < ApplicationPolicy
     update?
   end
 
-  def nested_update?
-    return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
-  end
-
   def update?
     return true if credential.admin?
     credential.project_ids.include?(record.workflow.project_id)
