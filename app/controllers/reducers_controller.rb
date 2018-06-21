@@ -16,7 +16,7 @@ class ReducersController < ApplicationController
 
   def new
     authorize workflow
-    @reducer = Reducer.of_type(params[:type]).new(workflow: workflow)
+    @reducer = Reducer.of_type(params[:type]).new(reducible: workflow)
   end
 
   def edit
@@ -37,7 +37,7 @@ class ReducersController < ApplicationController
     if(@reducer.grouping['field_name'].blank?)
       @reducer.grouping = {}
     end
-
+    
     if @reducer.save
       flash[:success] = 'Reducer created'
     else
@@ -87,6 +87,6 @@ class ReducersController < ApplicationController
       *klass.configuration_fields.keys,
       filters: {},
       grouping: {},
-    ).merge(workflow_id: workflow.id)
+    ).merge(reducible_id: workflow.id, reducible_type: "Workflow")
   end
 end
