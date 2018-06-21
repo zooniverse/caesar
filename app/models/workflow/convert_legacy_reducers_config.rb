@@ -12,7 +12,7 @@ class Workflow::ConvertLegacyReducersConfig
 
     config.each do |key, conf|
       reducer = workflow.reducers.find_by(key: key)
-      reducer ||= reducer_type(conf).new(workflow: workflow, key: key)
+      reducer ||= reducer_type(conf).new(reducible: workflow, key: key)
       reducer.config = conf.except("filters", "grouping", "group_by", "type")
       reducer.grouping = conf["grouping"] || {}
       reducer.filters = conf["filters"] || {}
