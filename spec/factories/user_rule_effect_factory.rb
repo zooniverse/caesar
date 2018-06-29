@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :user_rule_effect do
-    action 1
-    config ""
+    action :promote_user
+    config { {workflow_id: 1} }
   end
 end

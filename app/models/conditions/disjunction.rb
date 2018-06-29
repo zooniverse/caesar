@@ -6,6 +6,10 @@ module Conditions
       @operations = operations
     end
 
+    def to_a
+      ["or"] + @operations.map(&:to_a)
+    end
+
     def apply(bindings)
       @operations.reduce(false) { |memo, operation| memo || operation.apply(bindings) }
     end

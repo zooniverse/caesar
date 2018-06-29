@@ -7,6 +7,10 @@ module Conditions
       @operations = operations
     end
 
+    def to_a
+      [@type] + @operations.map(&:to_a)
+    end
+
     def apply(bindings)
       values = @operations.lazy.map { |operation| operation.apply(bindings) }
 
