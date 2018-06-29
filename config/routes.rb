@@ -22,14 +22,24 @@ Rails.application.routes.draw do
       resource :extracts
       resources :extracts, only: [:index]
     end
-    
+
     resources :reducers
     resources :subject_reductions, param: :reducer_key
     resources :user_reductions, param: :reducer_key
 
+    resources :subject_rules do
+      resources :subject_rule_effects
+    end
+
+    resources :user_rules do
+      resources :user_rule_effects
+    end
+
     resources :subjects, only: [:show] do
       resources :subject_reductions, only: [:index]
+      resources :data_requests
     end
+
 
     resources :users, only: [:show] do
       resources :user_reductions, only: [:index]
