@@ -8,7 +8,7 @@ module BelongsToReducible
 
   def set_reducible
     self.reducible_id = workflow.id
-    self.reducible_type = "workflow" 
+    self.reducible_type = "Workflow" 
   end
 
   def set_workflow
