@@ -3,15 +3,15 @@ require 'ostruct'
 
 describe UserReductionsController, :type => :controller do
     let(:workflow) { create :workflow }
-    let(:reducer1) { create :external_reducer, workflow: workflow, key: 'r', topic: :reduce_by_user }
-    let(:reducer2) { create :external_reducer, workflow: workflow, key: 's', topic: :reduce_by_user }
+    let(:reducer1) { create :external_reducer, reducible: workflow, key: 'r', topic: :reduce_by_user }
+    let(:reducer2) { create :external_reducer, reducible: workflow, key: 's', topic: :reduce_by_user }
     let(:user1_id) { 1234 }
     let(:user2_id) { 2345 }
     let(:reductions) {
     [
-      create(:user_reduction, workflow: workflow, user_id: user1_id, reducer_key: reducer1.key, data: {'1' => 1}),
-      create(:user_reduction, workflow: workflow, user_id: user1_id, reducer_key: reducer2.key, data: {'2' => 1}),
-      create(:user_reduction, workflow: workflow, user_id: user2_id, reducer_key: reducer1.key, data: {'3' => 1})
+      create(:user_reduction, reducible: workflow, user_id: user1_id, reducer_key: reducer1.key, data: {'1' => 1}),
+      create(:user_reduction, reducible: workflow, user_id: user1_id, reducer_key: reducer2.key, data: {'2' => 1}),
+      create(:user_reduction, reducible: workflow, user_id: user2_id, reducer_key: reducer1.key, data: {'3' => 1})
     ]
   }
 
@@ -49,7 +49,8 @@ describe UserReductionsController, :type => :controller do
       }, as: :json
 
       updated = UserReduction.find_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
+        reducible_type: "Workflow",
         reducer_key: reducer1.key,
         user_id: user1_id
       )
@@ -74,7 +75,8 @@ describe UserReductionsController, :type => :controller do
       }, as: :json
 
       updated = UserReduction.find_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
+        reducible_type: "Workflow",
         reducer_key: reducer2.key,
         user_id: user2_id
       )
