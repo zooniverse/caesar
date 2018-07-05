@@ -1,13 +1,9 @@
 class UserReductionPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      workflow_ids = Pundit.policy_scope!(credential, Workflow).pluck(:id)
-
-      # scope = self.scope.joins(:workflow).references(:workflows)
-      # scope.where(workflow_id: workflow_ids).or(scope.where(workflows: {public_reductions: true}))
-
-      # Temporary, see subject_reduction_policy.rb
-      scope = self.scope.where(reducible_id: workflow_ids)
+      public_workflows = Workflow.where(public_reductions: true).pluck(:id)
+      workflow_ids = (Pundit.policy_scope!(credential, Workflow).pluck(:id) + public_workflows).uniq
+      self.scope.where(reducible_type: 'Workflow', reducible_id: workflow_ids)
     end
   end
 
