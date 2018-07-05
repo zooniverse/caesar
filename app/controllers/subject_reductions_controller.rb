@@ -7,7 +7,8 @@ class SubjectReductionsController < ApplicationController
   end
 
   def update
-    reduction = SubjectReduction.find_or_initialize_by(workflow_id: workflow.id,
+    reduction = SubjectReduction.find_or_initialize_by(reducible_id: workflow.id,
+                                                reducible_type: "Workflow",
                                                 reducer_key: reducer.key,
                                                 subject_id: subject.id,
                                                 subgroup: subgroup)

@@ -8,7 +8,7 @@ RSpec.describe SubjectReductionsController, type: :controller do
 
   describe "GET #index" do
     it "returns http success" do
-      get :index, params: {reducible_id: workflow.id, reducible_type: "workflow", reducer_key: reducer_key}
+      get :index, params: {workflow_id: workflow.id, reducer_key: reducer_key}
       expect(response).to have_http_status(:success)
     end
   end
@@ -34,7 +34,8 @@ RSpec.describe SubjectReductionsController, type: :controller do
     end
 
     it 'updates an existing reduction' do
-      SubjectReduction.create!(workflow_id: workflow.id,
+      SubjectReduction.create!(reducible_id: workflow.id,
+                        reducible_type: "Workflow",
                         subject_id: subject.id,
                         reducer_key: reducer_key,
                         data: {"foo" => 1})

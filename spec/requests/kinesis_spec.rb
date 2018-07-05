@@ -26,7 +26,7 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
                   subject_rule_effects: [rule_effect])
     workflow = create(:workflow, id: 338,
                       extractors: [build(:survey_extractor, key: 's')],
-                      reducers: [build(:stats_reducer, key: 's')],
+                      reducers: [build(:stats_reducer, key: 's', reducible: nil)],
                       subject_rules: [rule])
 
     post "/kinesis",
