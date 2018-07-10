@@ -7,7 +7,8 @@ class UserReductionsController < ApplicationController
   end
 
   def update
-    reduction = UserReduction.find_or_initialize_by(workflow_id: workflow.id,
+    reduction = UserReduction.find_or_initialize_by(reducible_id: workflow.id,
+                                                reducible_type: "Workflow",
                                                 reducer_key: reducer.key,
                                                 user_id: user_id,
                                                 subgroup: subgroup)

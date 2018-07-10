@@ -36,7 +36,7 @@ RSpec.describe UserReductionPolicy do
     end
 
     it 'denies access when token has expired' do
-      credential = build(:credential, :expired, workflows: [reduction.workflow])
+      credential = build(:credential, :expired, workflows: [reduction.reducible])
       expect(subject).not_to permit(credential, reduction)
     end
 
@@ -51,12 +51,12 @@ RSpec.describe UserReductionPolicy do
     end
 
     it 'grants access to reductions of collaborated project' do
-      credential = build(:credential, workflows: [reduction.workflow])
+      credential = build(:credential, workflows: [reduction.reducible])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'grants access if the workflow has public reductions' do
-      reduction.workflow.update! public_reductions: true
+      reduction.reducible.update! public_reductions: true
       credential = build(:credential, :not_logged_in)
       expect(subject).to permit(credential, reduction)
     end
@@ -72,12 +72,12 @@ RSpec.describe UserReductionPolicy do
     end
 
     it 'grants access to reduction of collaborated project' do
-      credential = build(:credential, workflows: [reduction.workflow])
+      credential = build(:credential, workflows: [reduction.reducible])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'denies access to non-collabs for public reduction' do
-      reduction.workflow.update! public_reductions: true
+      reduction.reducible.update! public_reductions: true
       credential = build(:credential)
       expect(subject).not_to permit(credential, reduction)
     end

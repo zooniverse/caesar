@@ -6,13 +6,13 @@ describe ReducersController, :type => :controller do
   let(:workflow) { create :workflow }
 
   let(:reducer) do
-    create :external_reducer, workflow: workflow
+    create :external_reducer, reducible: workflow
   end
 
   describe '#index' do
     it 'lists reducers for a workflow' do
-      reducers = [create(:external_reducer, workflow: workflow),
-                  create(:stats_reducer, workflow: workflow)]
+      reducers = [create(:external_reducer, reducible: workflow),
+                  create(:stats_reducer, reducible: workflow)]
       get :index, params: {workflow_id: workflow.id}, format: :json
       json_response = JSON.parse(response.body)
       expect(json_response.map { |i| i["id"] }).to match_array(reducers.map(&:id))

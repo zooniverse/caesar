@@ -34,7 +34,8 @@ RSpec.describe SubjectReductionsController, type: :controller do
     end
 
     it 'updates an existing reduction' do
-      SubjectReduction.create!(workflow_id: workflow.id,
+      SubjectReduction.create!(reducible_id: workflow.id,
+                        reducible_type: "Workflow",
                         subject_id: subject.id,
                         reducer_key: reducer_key,
                         data: {"foo" => 1})

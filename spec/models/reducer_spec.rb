@@ -124,10 +124,9 @@ RSpec.describe Reducer, type: :model do
 
   it 'saves reducible attributes' do
     workflow = create :workflow
-    reducer = build :stats_reducer, workflow_id: workflow.id
-    reducer.save!
+    reducer = create :stats_reducer, reducible_id: workflow.id, reducible_type: "Workflow"
     expect(reducer.reducible_id).to eq(workflow.id)
-    expect(reducer.reducible_type).to eq("workflow")
+    expect(reducer.reducible_type).to eq("Workflow")
   end
 
   describe 'running/online aggregation' do
@@ -139,7 +138,7 @@ RSpec.describe Reducer, type: :model do
         extractor_key: 'foo', subject_id: subject.id, workflow_id: workflow.id
 
       reduction = create :subject_reduction,
-        reducer_key: 'bar', subject_id: subject.id, workflow_id: workflow.id
+        reducer_key: 'bar', subject_id: subject.id, reducible_id: workflow.id, reducible_type: "Workflow"
 
       reduction.extracts << extract
 
@@ -178,7 +177,8 @@ RSpec.describe Reducer, type: :model do
         type: 'Reducers::PlaceholderReducer',
         topic: Reducer.topics[:reduce_by_subject],
         reduction_mode: Reducer.reduction_modes[:running_reduction],
-        workflow_id: workflow.id
+        reducible_id: workflow.id,
+        reducible_type: "Workflow"
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
@@ -222,7 +222,8 @@ RSpec.describe Reducer, type: :model do
         type: 'Reducers::PlaceholderReducer',
         topic: Reducer.topics[:reduce_by_subject],
         reduction_mode: Reducer.reduction_modes[:running_reduction],
-        workflow_id: workflow.id
+        reducible_id: workflow.id,
+        reducible_type: "Workflow"
 
       allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)

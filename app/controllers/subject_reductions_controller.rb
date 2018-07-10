@@ -1,13 +1,14 @@
 class SubjectReductionsController < ApplicationController
   def index
-    reductions = policy_scope(SubjectReduction).where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
+    reductions = policy_scope(SubjectReduction).where(reducible_id: params[:workflow_id], subject_id: params[:subject_id])
     reductions = reductions.where(reducer_key: params[:reducer_key]) if params.key?(:reducer_key)
 
     render json: reductions
   end
 
   def update
-    reduction = SubjectReduction.find_or_initialize_by(workflow_id: workflow.id,
+    reduction = SubjectReduction.find_or_initialize_by(reducible_id: workflow.id,
+                                                reducible_type: "Workflow",
                                                 reducer_key: reducer.key,
                                                 subject_id: subject.id,
                                                 subgroup: subgroup)

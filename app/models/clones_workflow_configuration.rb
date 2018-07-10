@@ -15,7 +15,7 @@ class ClonesWorkflowConfiguration < ApplicationOperation
     end
 
     from.reducers.each do |reducer|
-      reducer.class.create!(workflow: to,
+      reducer.class.create!(reducible: to,
                             key: reducer.key,
                             config: reducer.config,
                             grouping: reducer.grouping,

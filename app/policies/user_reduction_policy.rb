@@ -1,10 +1,9 @@
 class UserReductionPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      workflow_ids = Pundit.policy_scope!(credential, Workflow).pluck(:id)
-
-      scope = self.scope.joins(:workflow).references(:workflows)
-      scope.where(workflow_id: workflow_ids).or(scope.where(workflows: {public_reductions: true}))
+      public_workflows = Workflow.where(public_reductions: true).pluck(:id)
+      workflow_ids = (Pundit.policy_scope!(credential, Workflow).pluck(:id) + public_workflows).uniq
+      self.scope.where(reducible_type: 'Workflow', reducible_id: workflow_ids)
     end
   end
 
@@ -12,14 +11,9 @@ class UserReductionPolicy < ApplicationPolicy
     update?
   end
 
-  def nested_update?
-    return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
-  end
-
   def update?
     return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
+    credential.project_ids.include?(record.reducible.project_id)
   end
 
   def destroy?

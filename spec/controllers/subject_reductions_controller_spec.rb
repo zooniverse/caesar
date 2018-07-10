@@ -3,15 +3,15 @@ require 'ostruct'
 
 describe SubjectReductionsController, :type => :controller do
   let(:workflow) { create :workflow }
-  let(:reducer1) { create :external_reducer, workflow: workflow, key: 'r' }
-  let(:reducer2) { create :external_reducer, workflow: workflow, key: 's' }
+  let(:reducer1) { create :external_reducer, reducible: workflow, key: 'r' }
+  let(:reducer2) { create :external_reducer, reducible: workflow, key: 's' }
   let(:subject1) { create :subject }
   let(:subject2) { create :subject }
   let(:reductions) {
     [
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: reducer1.key, data: {'1' => 1}),
-      create(:subject_reduction, workflow: workflow, subject: subject1, reducer_key: reducer2.key, data: {'2' => 1}),
-      create(:subject_reduction, workflow: workflow, subject: subject2, reducer_key: reducer1.key, data: {'3' => 1})
+      create(:subject_reduction, reducible: workflow, subject: subject1, reducer_key: reducer1.key, data: {'1' => 1}),
+      create(:subject_reduction, reducible: workflow, subject: subject1, reducer_key: reducer2.key, data: {'2' => 1}),
+      create(:subject_reduction, reducible: workflow, subject: subject2, reducer_key: reducer1.key, data: {'3' => 1})
     ]
   }
 
@@ -54,7 +54,8 @@ describe SubjectReductionsController, :type => :controller do
       }, as: :json
 
       updated = SubjectReduction.find_by(
-        workflow_id: workflow.id,
+        reducible_id: workflow.id,
+        reducible_type: "Workflow",
         reducer_key: 'r',
         subject_id: subject1.id
       )
