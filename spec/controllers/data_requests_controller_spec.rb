@@ -9,7 +9,7 @@ describe DataRequestsController, :type => :controller do
 
   let(:data_request) do
     DataRequest.new(
-      workflow: workflow,
+      exportable: workflow,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )
@@ -23,8 +23,8 @@ describe DataRequestsController, :type => :controller do
     let(:params) { {workflow_id: workflow.id} }
 
     it 'returns data requests for workflow' do
-      data_request1 = create(:data_request, workflow: workflow, created_at: 5.days.ago)
-      data_request2 = create(:data_request, workflow: workflow, created_at: 2.days.ago)
+      data_request1 = create(:data_request, exportable: workflow, created_at: 5.days.ago)
+      data_request2 = create(:data_request, exportable: workflow, created_at: 2.days.ago)
 
       get :index, params: params, format: :json
       expect(json_response).to eq([data_request2.as_json.stringify_keys,
@@ -33,8 +33,8 @@ describe DataRequestsController, :type => :controller do
 
     it 'returns public requests for unauthorized users' do
       fake_session(logged_in: false)
-      data_request1 = create(:data_request, workflow: workflow, created_at: 5.days.ago, public: true)
-      data_request2 = create(:data_request, workflow: workflow, created_at: 2.days.ago)
+      data_request1 = create(:data_request, exportable: workflow, created_at: 5.days.ago, public: true)
+      data_request2 = create(:data_request, exportable: workflow, created_at: 2.days.ago)
 
       get :index, params: params, format: :json
       expect(json_response).to eq([data_request1.as_json.stringify_keys])

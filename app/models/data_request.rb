@@ -45,6 +45,11 @@ class DataRequest < ApplicationRecord
   validates :requested_data, presence: true
 
   belongs_to :exportable, polymorphic: true
+  before_save :set_workflow
+
+  def set_workflow
+    self.workflow_id = exportable.id
+  end
 
   def stored_export
     raise "DataRequest needs to be saved to database first" unless id.present?
@@ -60,7 +65,7 @@ class DataRequest < ApplicationRecord
     {
       id: id,
       reducible_id: exportable.id.to_s,
-      reducible_type: exportable.to_s,
+      reducible_type: exportable.class.to_s,
       user_id: user_id,
       subgroup: subgroup,
       status: status,

@@ -5,12 +5,13 @@ describe DataRequestWorker do
 
   let(:stored_export) { double("StoredExport", "download_url" => "hi", "upload" => nil)}
 
-  let(:workflow) { build :workflow }
+  let(:workflow) { create :workflow }
 
   let(:request) do
     DataRequest.new(
       user_id: 1234,
-      workflow: workflow,
+      exportable: workflow,
+      workflow_id: workflow.id,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )

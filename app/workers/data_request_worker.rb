@@ -46,26 +46,3 @@ class DataRequestWorker
     end
   end
 end
-
-        :user_id => request.user_id,
-        :subgroup => request.subgroup
-      )
-
-      exporter.dump(path) do |progress, total|
-        if progress % 1000 == 0
-          request.records_count = total
-          request.records_exported = progress
-          request.save
-        end
-      end
-
-      request.stored_export.upload(path)
-      request.complete!
-    rescue
-      request.failed!
-      raise
-    ensure
-      ::File.unlink path
-    end
-  end
-end

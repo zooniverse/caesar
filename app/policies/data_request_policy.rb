@@ -2,7 +2,7 @@ class DataRequestPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       workflow_ids = Pundit.policy_scope!(credential, Workflow).pluck(:id)
-      self.scope.where(exportable_type: 'Workflow', exportable_id: workflow_ids)
+      self.scope.where(exportable_type: 'Workflow', exportable_id: workflow_ids).or(self.scope.where(public: true))
     end
   end
 
