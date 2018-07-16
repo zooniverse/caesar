@@ -64,8 +64,8 @@ class DataRequest < ApplicationRecord
   def as_json(options = {})
     {
       id: id,
-      reducible_id: exportable.id.to_s,
-      reducible_type: exportable.class.to_s,
+      exportable_id: exportable.id.to_s,
+      exportable_type: exportable.class.to_s,
       user_id: user_id,
       subgroup: subgroup,
       status: status,
