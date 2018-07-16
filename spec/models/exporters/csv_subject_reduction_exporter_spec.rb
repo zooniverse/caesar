@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Exporters::CsvSubjectReductionExporter do
   let(:workflow) { create :workflow }
   let(:subject) { Subject.create! }
-  let(:exporter) { described_class.new workflow_id: workflow.id }
+  let(:exporter) { described_class.new exportable_id: workflow.id }
   let(:sample){
     SubjectReduction.new(
       reducer_key: "x",
