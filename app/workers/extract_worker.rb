@@ -19,6 +19,11 @@ class ExtractWorker
       ids = extracts.map(&:id)
       ReduceWorker.perform_async(classification.workflow_id, "Workflow", classification.subject_id, classification.user_id, ids)
 
+      project = Project.find_by_id(workflow.project_id)
+      if project && project.has_reducers?
+        ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
+      end
+
       if workflow.subscribers?
         extracts.each do |extract|
           workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
