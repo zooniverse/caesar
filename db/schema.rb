@@ -258,11 +258,9 @@ ActiveRecord::Schema.define(version: 20180717201101) do
   add_foreign_key "extracts_subject_reductions", "subject_reductions", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "extracts", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "user_reductions", on_delete: :cascade
-  add_foreign_key "reducers", "workflows"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
-  add_foreign_key "subject_reductions", "workflows"
   add_foreign_key "subject_rule_effects", "subject_rules"
   add_foreign_key "subject_rules", "workflows"
   add_foreign_key "user_actions", "workflows"

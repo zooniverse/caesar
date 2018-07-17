@@ -71,11 +71,9 @@ RSpec.describe SubjectReductionPolicy do
 
     it 'returns project-scoped reductions' do
       project = create(:project)
-      public_reduction = create(:subject_reduction, reducible: project)
-      public_reduction.reducible.update! public_reductions: true
-      credential = build(:credential, workflows: [reduction.reducible])
-      expect(subject).to permit(credential, reduction)
-      expect(subject).to permit(credential, public_reduction)
+      project_reduction = create(:subject_reduction, reducible: project)
+      credential = build(:credential, project_ids: [project_reduction.reducible.id])
+      expect(subject).to permit(credential, project_reduction)
     end
 
   end

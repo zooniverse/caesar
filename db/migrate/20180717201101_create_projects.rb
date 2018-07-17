@@ -9,5 +9,8 @@ class CreateProjects < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+
+    remove_foreign_key :subject_reductions, :workflows
+    remove_foreign_key :reducers, :workflows
   end
 end
