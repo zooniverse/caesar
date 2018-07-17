@@ -22,8 +22,9 @@ RSpec.describe SubjectReductionPolicy do
     end
 
     it 'returns records that the user is a collaborator on' do
-      credential = build(:credential, project_ids: [])
-      expect(records_for(credential)).to match_array(SubjectReduction.none)
+      workflow = create(:workflow)
+      credential = build(:credential, project_ids: [workflow.project_id])
+      expect(records_for(credential)).to match_array(SubjectReduction.all)
     end
   end
 
@@ -75,7 +76,6 @@ RSpec.describe SubjectReductionPolicy do
       credential = build(:credential, project_ids: [project_reduction.reducible.id])
       expect(subject).to permit(credential, project_reduction)
     end
-
   end
 
   permissions :update? do
