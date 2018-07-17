@@ -250,7 +250,6 @@ ActiveRecord::Schema.define(version: 20180717201101) do
 
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
-  add_foreign_key "data_requests", "workflows"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"

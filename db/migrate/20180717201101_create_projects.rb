@@ -12,5 +12,6 @@ class CreateProjects < ActiveRecord::Migration[5.1]
 
     remove_foreign_key :subject_reductions, :workflows
     remove_foreign_key :reducers, :workflows
+    remove_foreign_key :data_requests, :workflows
   end
 end
