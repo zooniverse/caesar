@@ -8,6 +8,10 @@ module Effects
       reason.present?
     end
 
+    def self.config_fields
+      ["reason"]
+    end
+
     def reason
       config["reason"] || "other"
     end

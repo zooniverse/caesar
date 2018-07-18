@@ -9,6 +9,10 @@ module Effects
       target_workflow_id.present?
     end
 
+    def self.config_fields
+      ["workflow_id"]
+    end
+
     def target_workflow_id
       config.fetch("workflow_id", nil)
     end

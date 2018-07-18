@@ -8,7 +8,11 @@ class UserRule < ApplicationRecord
   validate :valid_condition?
 
   def condition
-    Conditions::FromConfig.build(self[:condition])
+    Conditions::FromConfig.build(self[:condition]) unless self[:condition].blank?
+  end
+
+  def condition_string
+    condition.to_a.to_s
   end
 
   def process(user_id, bindings)
