@@ -53,7 +53,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
 
       expect(response.status).to eq(302)
       location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}")
+      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}/edit")
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
 
       expect(response.status).to eq(302)
       location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}")
+      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}/edit")
     end
   end
 

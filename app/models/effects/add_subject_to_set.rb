@@ -18,6 +18,10 @@ module Effects
       subject_set_id.present?
     end
 
+    def self.config_fields
+      ["subject_set_id"]
+    end
+
     def subject_set_id
       config.fetch("subject_set_id")
     end

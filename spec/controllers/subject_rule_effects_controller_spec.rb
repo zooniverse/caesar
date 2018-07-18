@@ -56,7 +56,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
       expect(response.status).to eq(302)
       location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}")
+      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}/edit")
     end
   end
 
@@ -81,7 +81,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
       expect(response.status).to eq(302)
       location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}")
+      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}/edit")
     end
   end
 

@@ -1,7 +1,7 @@
 <h2>Subject Rules</h2>
 <!-- <button type="button" name="button">Add New</button> -->
+<%= button_to "Create", new_workflow_subject_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
 <table class="table table-hover table table-sm">
-  <thead>
     <thead class="thead-inverse">
       <tr>
         <th>If</th>
@@ -20,8 +20,10 @@
               <% end %>
             </ul>
           </td>
-          <td><!-- <button type="button" name="button">Edit</button>
-                   <button type="button" name="button">Delete</button> --></td>
+          <td>
+            <%= link_to "Edit", [:edit, @workflow, rule], class: 'btn btn-primary' %>
+            <%= link_to "Destroy", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
+          </td>
         </tr>
       <% end %>
     </tbody>
@@ -29,6 +31,7 @@
 
 <h2>User Rules</h2>
 <!-- <button type="button" name="button">Add New</button> -->
+<%= button_to "Create", new_workflow_user_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
 <table class="table table-hover table table-sm">
   <thead>
     <thead class="thead-inverse">
@@ -49,8 +52,10 @@
               <% end %>
             </ul>
           </td>
-          <td><!-- <button type="button" name="button">Edit</button>
-                   <button type="button" name="button">Delete</button> --></td>
+          <td>
+            <%= link_to "Edit", [:edit, @workflow, rule], class: 'btn btn-primary' %>
+            <%= link_to "Destroy", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
+          </td>
         </tr>
       <% end %>
     </tbody>

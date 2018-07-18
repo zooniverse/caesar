@@ -2,5 +2,4 @@
 
 <%= render 'form', subject_rule_effect: @subject_rule_effect %>
 
-<%= link_to 'Show', @subject_rule_effect %> |
-<%= link_to 'Back', subject_rule_effects_path %>
+<%= link_to 'Back', edit_workflow_subject_rule_path(@workflow, @subject_rule) %>

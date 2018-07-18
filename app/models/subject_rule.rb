@@ -13,7 +13,11 @@ class SubjectRule < ApplicationRecord
   }
 
   def condition
-    Conditions::FromConfig.build(self[:condition])
+    Conditions::FromConfig.build(self[:condition]) unless self[:condition].blank?
+  end
+
+  def condition_string
+    condition.to_a.to_s
   end
 
   def process(subject_id, bindings)

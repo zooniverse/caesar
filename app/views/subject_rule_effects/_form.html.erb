@@ -1,8 +1,15 @@
-<%= simple_form_for(@subject_rule_effect) do |f| %>
+<%= simple_form_for(@subject_rule_effect, url: [@workflow, @subject_rule, @subject_rule_effect]) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
+    <label>Action Type</label><br/>
+    <%= f.select :action, SubjectRuleEffect.actions.keys.collect{ |key| [Effects[key].name.demodulize, key] }, :disabled => true %>
   </div>
+
+  <% Effects[@subject_rule_effect.action].config_fields.each do |key, options| %>
+    <label><%= key.capitalize %></label><br/>
+    <%= text_field_tag "subject_rule_effect[config[#{key}]]", @subject_rule_effect.config[key] %>
+  <% end %>
 
   <div class="form-actions">
     <%= f.button :submit %>
