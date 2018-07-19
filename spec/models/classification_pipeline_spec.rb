@@ -194,6 +194,17 @@ describe ClassificationPipeline do
     expect(user_rule2).not_to have_received(:process)
   end
 
+  context "reducing by project" do
+    let(:project) { create :project }
+    
+    let(:pipeline) do
+      Project.find(project.id).classification_pipeline
+    end
+
+    xit 'fetchers are called with correct params' do
+    end
+  end
+
   describe 'running/online aggregation mode' do
     xit 'selects the proper extracts for processing' do
       raise NotImplementedError

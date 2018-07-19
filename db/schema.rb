@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20180717201101) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "project_id"
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
@@ -102,6 +103,7 @@ ActiveRecord::Schema.define(version: 20180717201101) do
     t.jsonb "reducers_config"
     t.jsonb "rules_config"
     t.jsonb "webhooks"
+    t.integer "rules_applied", default: 0, null: false
     t.boolean "public_reductions", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
