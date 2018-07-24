@@ -57,6 +57,11 @@ class UserRulesController < ApplicationController
     authorize workflow
     rule = workflow.user_rules.find(params[:id])
 
+    UserRule.transaction do
+      UserRuleEffect.where(user_rule_id: rule.id).delete_all
+      rule.destroy
+    end
+
     rule.destroy
     respond_with rule, location: [workflow]
   end

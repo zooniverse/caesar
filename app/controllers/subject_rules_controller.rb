@@ -54,9 +54,13 @@ class SubjectRulesController < ApplicationController
 
   def destroy
     authorize workflow
-    rule = workflow.subject_rules.find(params[:id])
+    rule = workflow.subject_rules.find(params[:id]) or not_found
 
-    rule.destroy
+    SubjectRule.transaction do
+      SubjectRuleEffect.where(subject_rule_id: rule.id).delete_all
+      rule.destroy
+    end
+
     respond_with rule, location: [workflow]
   end
 
