@@ -54,7 +54,24 @@ RSpec.describe WorkflowsController, type: :controller do
   end
 
   describe 'POST #create' do
-    it 'creates a workflow' do
+    it 'creates a workflow json' do
+      workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
+      allow(@credential).to receive(:project_ids)
+                              .and_return([10])
+      allow(@credential).to receive(:accessible_workflow?)
+                              .with(workflow_hash["id"])
+                              .and_return(workflow_hash)
+
+      post :create, params: {workflow: {id: workflow_hash["id"],
+                                        project_id: workflow_hash["links"]["project_id"],
+                                        public_reductions: true}}, format: :json
+
+      expect(response.status).to eq(200)
+      expect(Workflow.find(workflow_hash["id"])).to be_present
+      expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
+    end
+
+    it 'creates a workflow html' do
       workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
       allow(@credential).to receive(:project_ids)
                               .and_return([10])
@@ -66,7 +83,7 @@ RSpec.describe WorkflowsController, type: :controller do
                                         project_id: workflow_hash["links"]["project_id"],
                                         public_reductions: true}}
 
-      expect(response).to redirect_to(action: :show, id: workflow_hash["id"])
+      expect(response).to redirect_to(workflows_path)
       expect(Workflow.find(workflow_hash["id"])).to be_present
       expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
     end

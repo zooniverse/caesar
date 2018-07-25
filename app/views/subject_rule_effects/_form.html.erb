@@ -1,17 +1,23 @@
 <%= simple_form_for(@subject_rule_effect, url: [@workflow, @subject_rule, @subject_rule_effect]) do |f| %>
   <%= f.error_notification %>
 
-  <div class="form-inputs">
+  <div class="form-inputs form">
     <label>Action Type</label><br/>
-    <%= f.select :action, SubjectRuleEffect.actions.keys.collect{ |key| [Effects[key].name.demodulize, key] }, :disabled => true %>
+    <span class="form-control">
+      <%= @subject_rule_effect.action %>
+    </span>
+    <%= f.input :action, :as => :hidden %>
+    <br />
+    <div class="form-group">
+      <% Effects[@subject_rule_effect.action].config_fields.each do |key, options| %>
+        <label><%= key.capitalize %></label><br/>
+        <%= text_field_tag "subject_rule_effect[config[#{key}]]", @subject_rule_effect.config[key], { class: 'form-control' } %>
+      <% end %>
+    </div>
   </div>
-
-  <% Effects[@subject_rule_effect.action].config_fields.each do |key, options| %>
-    <label><%= key.capitalize %></label><br/>
-    <%= text_field_tag "subject_rule_effect[config[#{key}]]", @subject_rule_effect.config[key] %>
-  <% end %>
-
+  <br />
   <div class="form-actions">
-    <%= f.button :submit %>
+    <%= f.button :submit, class: 'btn btn-primary' %>
+    <%= link_to 'Back', edit_workflow_subject_rule_path(@workflow, @subject_rule), class: 'btn btn-default' %>
   </div>
 <% end %>

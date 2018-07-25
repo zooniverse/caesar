@@ -55,6 +55,19 @@ module Reducers
       end
     end
 
+    def summarize_field
+      config['summarize_field']
+    end
+
+    def operations
+      if config['operations'].is_a? Array
+        config['operations'].uniq
+      else
+        [config['operations']]
+      end
+    end
+
+
     def reduce_into(extracts, reduction)
       @old_store = reduction.store || {}
       @new_store = {}
@@ -233,18 +246,6 @@ module Reducers
     def relevant_extracts
       return extracts if extractor_name.blank?
       return extracts.select { |extract| extract.extractor_key == extractor_name }
-    end
-
-    def summarize_field
-      config['summarize_field']
-    end
-
-    def operations
-      if config['operations'].is_a? Array
-        config['operations'].uniq
-      else
-        [config['operations']]
-      end
     end
 
     def extractor_name

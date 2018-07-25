@@ -1,0 +1,46 @@
+<div class="row">
+<div class="col-md-12">
+<table class="table table-striped table-sm">
+  <thead>
+    <tr>
+      <th>Requested at</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @workflow.data_requests.each do |data_request| %>
+      <tr>
+        <td><%= data_request.created_at %></td>
+        <td><%= data_request.requested_data.capitalize %></td>
+        <td>
+          <span class="text-<% case data_request.status %><%
+            when 'complete' %>success<%
+            when 'failed' %>danger<%
+            when 'processing' %>primary<%
+            when 'empty' %>muted<%
+            when 'pending' %>muted
+          <% end %>"><%= data_request.status.capitalize %></span>
+          <% if data_request.processing? %>
+            (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)
+          <% end %>
+        </td>
+        <td><% if data_request.complete? %><%= link_to "Download", data_request.url %><% end %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
+  </button>
+
+  <ul class="dropdown-menu">
+    <li><%= link_to "Request Extracts Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'extracts'}), method: :post %></li>
+    <li><%= link_to "Request Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'reductions'}), method: :post %></li>
+  </ul>
+</div>
+</div>
+</div>

@@ -1,4 +1,6 @@
 class UserRuleEffectsController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
     user_rule
@@ -9,38 +11,32 @@ class UserRuleEffectsController < ApplicationController
 
   def show
     authorize workflow
-    user_rule
-
     @user_rule_effect = policy_scope(UserRuleEffect).find(params[:id])
-    respond_with @user_rule_effect
+    respond_with workflow, user_rule, @user_rule_effect
   end
 
   def new
     authorize workflow
     @user_rule_effect = UserRuleEffect.new(action: params[:action_type], user_rule: user_rule)
-    respond_with @user_rule_effect
+
+    respond_with workflow, user_rule, @user_rule_effect
   end
 
   def edit
     authorize workflow
-    user_rule
-
     @user_rule_effect = UserRuleEffect.find(params[:id])
+    respond_with workflow, user_rule, @user_rule_effect
   end
 
   def create
     authorize workflow
-    user_rule
 
     @user_rule_effect = UserRuleEffect.new(effect_params)
+    @user_rule_effect.save
 
-    if @user_rule_effect.save
-      respond_to do |format|
-        format.html { redirect_to [:edit, workflow, user_rule] }
-        format.json { render json: @user_rule_effect }
-      end
-    else
-      respond_with @user_rule_effect
+    respond_to do |format|
+      format.html { respond_with @user_rule_effect, location: edit_workflow_user_rule_path(workflow, user_rule) }
+      format.json { respond_with workflow, user_rule, @user_rule_effect }
     end
   end
 
@@ -48,15 +44,11 @@ class UserRuleEffectsController < ApplicationController
     authorize workflow
     user_rule
 
-    @user_rule_effect = UserRuleEffect.find(params[:id])
-
-    if @user_rule_effect.update(effect_params)
-      respond_to do |format|
-        format.html { redirect_to [:edit, workflow, user_rule] }
-        format.json { render json: @user_rule_effect }
-      end
-    else
-      respond_with @user_rule_effect
+    @user_rule_effect = UserRuleEffect.find(params[:id]) or not_found
+    @user_rule_effect.update(effect_params)
+    respond_to do |format|
+      format.html { respond_with @user_rule_effect, location: edit_workflow_user_rule_path(workflow, user_rule) }
+      format.json { respond_with workflow, user_rule, @user_rule_effect }
     end
   end
 
@@ -67,7 +59,7 @@ class UserRuleEffectsController < ApplicationController
     effect = UserRuleEffect.find(params[:id])
 
     effect.destroy
-    respond_with effect, location: [:edit, workflow, user_rule]
+    respond_with effect, location: edit_workflow_user_rule_path(workflow, user_rule)
   end
 
   private
