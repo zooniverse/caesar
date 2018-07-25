@@ -13,5 +13,6 @@
 
   <%= f.input :minimum_workflow_version %>
 
-  <%= f.submit class: 'btn btn-submit' %>
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Back', workflow_path(@workflow), class: 'btn btn-default' %>
 <% end %>

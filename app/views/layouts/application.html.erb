@@ -12,17 +12,15 @@
   </head>
 
   <body>
+    <%= render partial: 'header' %>
+    <% if flash[:alert] %>
+      <div class="alert"><%= flash[:alert] %></div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notice"><%= flash[:notice] %></div>
+    <% end %>
     <div class="container-fluid">
-      <%= render partial: 'header' %>
-
-      <% if flash[:alert] %>
-        <div class="alert"><%= flash[:alert] %></div>
-      <% end %>
-
-      <% if flash[:notice] %>
-        <div class="notice"><%= flash[:notice] %></div>
-      <% end %>
-
       <%= yield %>
     </div>
   </body>

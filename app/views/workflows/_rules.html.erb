@@ -1,8 +1,11 @@
+<div class="row">
+<div class="col-md-12">
 <h2>Subject Rules</h2>
-<!-- <button type="button" name="button">Add New</button> -->
-<%= button_to "Create", new_workflow_subject_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
+<% for rule in @workflow.subject_rules %>
+  <p style="line-height: 3em; margin-bottom: 2em;"><strong>If</strong> <%= render_condition rule.condition %> <strong>then</strong> </p>
+<% end %>
 <table class="table table-hover table table-sm">
-    <thead class="thead-inverse">
+    <thead>
       <tr>
         <th>If</th>
         <th>Then</th>
@@ -12,7 +15,7 @@
     <tbody>
       <% for rule in @workflow.subject_rules %>
         <tr>
-          <td><%= render_condition rule.condition %></td>
+          <td>If <%= render_condition rule.condition %></td>
           <td>
             <ul>
               <% rule.subject_rule_effects.each do |rule_effect| %>
@@ -28,9 +31,9 @@
       <% end %>
     </tbody>
 </table>
+<%= button_to "Create", new_workflow_subject_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
 
 <h2>User Rules</h2>
-<!-- <button type="button" name="button">Add New</button> -->
 <%= button_to "Create", new_workflow_user_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
 <table class="table table-hover table table-sm">
   <thead>
@@ -60,3 +63,5 @@
       <% end %>
     </tbody>
 </table>
+</div>
+</div>

@@ -13,9 +13,9 @@
 
   <%= f.input :topic, collection: Reducer.topics.keys %>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Grouping</div>
-    <div class="panel-body">
+  <div class="panel panel-info">
+    <div class="panel-heading"><a role="button" data-toggle="collapse" href="#groupingInputs" aria-expanded="false" aria-controls="groupingInputs">Grouping <span class="caret"></span></a></div>
+    <div class="panel-body collapse" id="groupingInputs">
       <p>You can group extracts before reduction, producing one reduction per group</p>
       <%= f.simple_fields_for :grouping do |grouping| %>
         <%= grouping.input :field_name %>
@@ -25,9 +25,9 @@
   </div>
 
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Filters</div>
-    <div class="panel-body">
+  <div class="panel panel-info">
+    <div class="panel-heading"><a role="button" data-toggle="collapse" href="#filterInputs" aria-expanded="false" aria-controls="filterInputs">Filters <span class="caret"></span></a></div>
+    <div class="panel-body collapse" id="filterInputs">
       <p>Using filters it is possible to limit which extracts this reducer works on.</p>
       <%= f.simple_fields_for :filters do |filters| %>
         <%= filters.input :from %>
@@ -39,5 +39,6 @@
   </div>
 
 
-  <%= f.submit class: 'btn btn-submit' %>
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Back', workflow_path(@workflow), class: 'btn btn-default' %>
 <% end %>

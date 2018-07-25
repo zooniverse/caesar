@@ -1,60 +1,52 @@
 <% case condition %>
 <% when Conditions::Conjunction %>
-  <table class="condition">
-    <tr>
-      <td rowspan="<%= condition.operations.size %>">AND</td>
-      <td><%= render_condition condition.operations[0] %></td>
-    </tr>
-    <% condition.operations[1..-1].each do |c| %>
-      <tr><td><%= render_condition c %></td></tr>
-    <% end %>
-  </table>
+  <% condition.operations.each_with_index do |c, i| %>
+    <% if i > 0 %><span class="label label-danger">and</span><% end %>
+    <span class="btn btn-default"><%= render_condition c %></span>
+  <% end %>
 <% when Conditions::Disjunction %>
-  <table class="condition">
-    <tr>
-      <td rowspan="<%= condition.operations.size %>">OR</td>
-      <td><%= render_condition condition.operations[0] %></td>
-    </tr>
-    <% condition.operations[1..-1].each do |c| %>
-      <tr><td><%= render_condition c %></td></tr>
-    <% end %>
-  </table>
+  <% condition.operations.each_with_index do |c, i| %>
+    <% if i > 0 %><span class="label label-danger">or</span><% end %>
+    <span class="btn btn-default"><%= render_condition c %></span>
+  <% end %>
 <% when Conditions::Negation %>
-  <table class="condition">
-    <tr>
-      <td>NOT</td>
-      <td><%= render_condition condition.operation %></td>
-    </tr>
-  </table>
+    <span class="label label-danger">not</span>
+    <span class="btn btn-default"><%= render_condition condition.operation %></span>
 <% when Conditions::Comparison %>
-  <table class="condition">
-    <tr>
-      <td rowspan="<%= condition.operations.size %>"><%= condition.type %></td>
-      <td><%= render_condition condition.operations[0] %></td>
-    </tr>
-    <% condition.operations[1..-1].each do |c| %>
-      <tr><td><%= render_condition c %></td></tr>
-    <% end %>
-  </table>
+  <% condition.operations.each_with_index do |c, i| %>
+    <% if i > 0 %><span class="label label-primary"><% case condition.type when
+        'eq' %>is equal to<% when
+        'lt' %>is less than<% when
+        'lte' %>is less than or equal to<% when
+        'gt' %>is greater than<% when
+        'gte' %>is greater than or equal to<% end %></span><% end %>
+    <%= render_condition c %>
+  <% end %>
 <% when Conditions::Lookup %>
-  <div class="input-group">
-    <span class="input-group-addon">LOOKUP</span>
-    <%= text_field_tag 'lookup', condition.key, class: "form-control" %>
-    <span class="input-group-addon">default: <%= condition.absent_val %></span>
-  </div>
+  <span class="text-info">
+    <em>
+      lookup value <span class="label label-info"><%= condition.key %></span>
+      with default <span class="label label-info"><%= condition.absent_val %></span>
+    </em>
+  </span>
 <% when Conditions::Constant %>
-  <div class="input-group">
-    <span class="input-group-addon">CONST</span>
-    <%= text_field_tag 'lookup', condition.value, class: "form-control" %>
-  </div>
+  <span class="text-success">
+    <em>
+      constant value
+      <span class="label label-success"><%= condition.value %></span>
+    </em>
+  </span>
 <% when Conditions::TextTransform %>
-  <table class="condition">
-    <tr>
-      <td>TRANSFORM</td>
-      <td><%= condition.transform %></td>
-      <td><%= render_condition condition.operation %></td>
-    </tr>
-  </table>
+  <span class="text-warning">
+    <%= render_condition condition.operation %>
+    <em> as
+      <span class="label label-warning"><% case condition.transform when
+        :upcase %>uppercase<% when
+        :downcase %>lowercase<% when
+        :to_i %>integer<% when
+        :to_f %>float<% end %></span>
+    </em>
+  </span>
 <% else %>
   <%= debug condition %>
 <% end %>

@@ -1,11 +1,23 @@
 class WorkflowsController < ApplicationController
   def index
-    @workflows = policy_scope(Workflow).all
+    @workflows = policy_scope(Workflow).all.sort_by(&:id)
     respond_with @workflows
   end
 
   def show
     authorize workflow
+    @heartbeat = {
+      :extract => workflow.extracts.first&.updated_at,
+      :reduction => [
+        workflow.subject_reductions.order(updated_at: :desc).first&.updated_at,
+        workflow.user_reductions.order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action => [
+        SubjectAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at,
+        UserAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action_count => SubjectAction.where(workflow_id: workflow.id).count + UserAction.where(workflow_id: workflow.id).count
+    }
     respond_with workflow
   end
 
