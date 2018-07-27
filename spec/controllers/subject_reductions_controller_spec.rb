@@ -63,7 +63,7 @@ describe SubjectReductionsController, :type => :controller do
       expect(SubjectReduction.count).to eq(3)
       expect(updated.id).to eq(r[0].id)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, subject1.id).once
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject1.id).once
     end
 
     it 'creates new reductions if needed' do
@@ -87,7 +87,7 @@ describe SubjectReductionsController, :type => :controller do
 
       expect(SubjectReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, subject2.id).once
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject2.id).once
     end
 
     it 'does not trigger rules if nothing changed' do

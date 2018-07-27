@@ -16,7 +16,7 @@ class UserReductionsController < ApplicationController
 
     if reduction.data != reduction_params[:data]
       reduction.update! reduction_params
-      CheckRulesWorker.perform_async(workflow.id, user_id) if workflow.configured?
+      CheckRulesWorker.perform_async(workflow.id, "Workflow", user_id) if workflow.configured?
       workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
     end
 

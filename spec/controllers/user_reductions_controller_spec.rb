@@ -58,7 +58,7 @@ describe UserReductionsController, :type => :controller do
       expect(UserReduction.count).to eq(3)
       expect(updated.id).to eq(reductions[0].id)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, user1_id).once
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", user1_id).once
     end
 
     it 'creates new reductions if needed' do
@@ -83,7 +83,7 @@ describe UserReductionsController, :type => :controller do
 
       expect(UserReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, user2_id).once
+      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", user2_id).once
     end
 
     it 'does not check rules if nothing changed' do
