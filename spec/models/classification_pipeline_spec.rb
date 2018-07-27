@@ -196,11 +196,21 @@ describe ClassificationPipeline do
 
   context "reducing by project" do
     let(:project) { create :project }
-    let(:reducer) { build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: project.id, reducible_type: "Project") }
+    let(:reducer) { create(:stats_reducer, key: 's', reducible: project) }
     let(:subject) { create(:subject) }
     
     let(:pipeline) do
       described_class.new(Project, nil, [reducer], nil, nil)
+    end
+
+    it "creates reductions from project extractions" do
+      create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+      create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
+
+      pipeline = described_class.new(Project, nil, [reducer], nil, nil)
+      expect{
+        pipeline.reduce(project.id, subject.id, nil)
+      }.to change{SubjectReduction.count}.by(1)
     end
 
     it "instantiates fetchers with correct filters" do

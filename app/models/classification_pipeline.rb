@@ -103,7 +103,7 @@ class ClassificationPipeline
       reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for!(reducer.topic))
     end.flatten
 
-    Workflow.transaction do
+    ActiveRecord::Base.transaction do
       new_reductions.each do |reduction|
         reduction.save!
       end
