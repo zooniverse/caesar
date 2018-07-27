@@ -140,7 +140,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
 
-    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "workflow")
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "Workflow")
 
     pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)
@@ -196,12 +196,21 @@ describe ClassificationPipeline do
 
   context "reducing by project" do
     let(:project) { create :project }
+    let(:reducer) { build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: project.id, reducible_type: "Project") }
+    let(:subject) { create(:subject) }
     
     let(:pipeline) do
-      Project.find(project.id).classification_pipeline
+      described_class.new(Project, nil, [reducer], nil, nil)
     end
 
-    xit 'fetchers are called with correct params' do
+    it "instantiates fetchers with correct filters" do
+      filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
+      reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
+  
+      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
+      expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
+
+      pipeline.reduce(project.id, subject.id, nil)
     end
   end
 
