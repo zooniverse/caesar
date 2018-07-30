@@ -4,17 +4,18 @@ module Exporters
   class UnknownExporter < StandardError; end
 
   class CsvExporter
-    attr_reader :workflow_id, :user_id, :subgroup
+    attr_reader :resource_id, :resource_type, :user_id, :subgroup
 
     def initialize(params)
-      @workflow_id = params[:workflow_id]
+      @resource_id = params[:exportable_id]
+      @resource_type = params[:exportable_type]
       @user_id = params[:user_id]
       @subgroup = params[:subgroup]
     end
 
     def dump(path=nil)
       if path.blank?
-        path = "tmp/#{get_topic.name.demodulize.underscore.pluralize}_#{workflow_id}.csv"
+        path = "tmp/#{get_topic.name.demodulize.underscore.pluralize}_#{resource_id}.csv"
       end
 
       items = get_items
@@ -60,7 +61,11 @@ module Exporters
     end
 
     def get_items
-      find_hash = { :workflow_id => workflow_id }
+      if get_topic == Extract
+        find_hash = { :workflow_id => resource_id }
+      elsif get_topic == SubjectReduction
+        find_hash = { :reducible_id => resource_id }
+      end
       find_hash[:user_id] = user_id unless user_id.blank?
       find_hash[:subgroup] = subgroup unless subgroup.blank?
       get_topic.where(find_hash)

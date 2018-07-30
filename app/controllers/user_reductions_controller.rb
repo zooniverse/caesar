@@ -23,26 +23,6 @@ class UserReductionsController < ApplicationController
     render json: reduction
   end
 
-  def nested_update
-    reductions = reduction_params[:data].to_h.map do |key, data|
-      UserReduction.find_or_initialize_by(
-        workflow_id: workflow.id,
-        reducer_key: reducer.key,
-        user_id: user_id,
-        subgroup: key
-      ).tap do |item|
-        authorize item
-        item.save
-      end
-    end
-
-    CheckRulesWorker.perform_async(workflow.id, user_id) if workflow.configured?
-
-    workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
-
-    render json: reductions
-  end
-
   private
 
   def workflow

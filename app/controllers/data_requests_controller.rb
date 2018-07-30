@@ -26,8 +26,8 @@ class DataRequestsController < ApplicationController
       skip_authorization # operations do this themselves and raise if needed
 
       respond_to do |format|
-        format.html { redirect_to [data_request.workflow, :data_requests] }
-        format.json { respond_with data_request.workflow, data_request }
+        format.html { redirect_to [data_request.exportable, :data_requests] }
+        format.json { respond_with data_request.exportable, data_request }
       end
     end
   end

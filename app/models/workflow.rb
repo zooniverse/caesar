@@ -75,8 +75,8 @@ class Workflow < ApplicationRecord
   has_many :user_reductions
   has_many :subject_actions
   has_many :user_actions
-  has_many :data_requests
-
+  has_many :data_requests, as: :exportable
+  
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
 
   def self.accessible_by(credential)
