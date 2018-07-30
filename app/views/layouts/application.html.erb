@@ -13,15 +13,33 @@
 
   <body>
     <%= render partial: 'header' %>
-    <% if flash[:alert] %>
-      <div class="alert"><%= flash[:alert] %></div>
-    <% end %>
 
-    <% if flash[:notice] %>
-      <div class="notice"><%= flash[:notice] %></div>
-    <% end %>
     <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <% if flash[:error] %>
+            <div class="alert alert-danger"><%= flash[:error] %></div>
+          <% end %>
+          <% if flash[:alert] %>
+            <div class="alert alert-warning"><%= flash[:alert] %></div>
+          <% end %>
+          <% if flash[:success] %>
+            <div class="alert alert-success"><%= flash[:success] %></div>
+          <% end %>
+          <% if flash[:notice] %>
+            <div class="alert alert-info"><%= flash[:notice] %></div>
+          <% end %>
+        </div>
+      </div>
+
       <%= yield %>
     </div>
+    <script type="text/javascript">
+      window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+      }, 4000);
+    </script>
   </body>
 </html>

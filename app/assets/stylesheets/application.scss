@@ -75,8 +75,11 @@ $nav-link-hover-bg: $zooniverse-light-teal;
 
 $badge-bg: $zooniverse-light-teal;
 
-$state-success-bg: lighten($zooniverse-green, 20%);
-$state-danger-bg: lighten($zooniverse-tomato, 20%);
+$state-success-bg: lighten($zooniverse-green, 60%);
+$state-success-border: $zooniverse-green;
+
+$state-danger-bg: lighten($zooniverse-tomato, 30%);
+$state-danger-border: $zooniverse-tomato;
 
 $state-info-text: $zooniverse-dark-teal;
 $state-info-bg: $zooniverse-light-teal;
@@ -136,4 +139,17 @@ h1, h2, h3 {
 
 .params-column li {
   list-style-type: none;
+}
+
+.modal-header {
+  background-color: $brand-primary;
+  color: $white;
+}
+
+.modal-content {
+  overflow: hidden;
+}
+
+h4.modal-title {
+  color: white;
 }

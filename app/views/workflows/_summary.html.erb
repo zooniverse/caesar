@@ -82,7 +82,7 @@
             <br/>
             <div class="form-inputs">
               <label for="workflow_rules_applied">Rules Applied</label>
-              <%= f.select :rules_applied, @workflow.class.rules_applieds.map{|key, val| [key.humanize, val]}, {}, { class: 'form-control' } %>
+              <%= f.select :rules_applied, @workflow.class.rules_applieds.map{|key, val| [key.humanize, key]}, {}, { class: 'form-control' } %>
             </div>
             <br/>
             <div class="form-actions">

@@ -1,6 +1,7 @@
 class WorkflowsController < ApplicationController
   def index
     @workflows = policy_scope(Workflow).all.sort_by(&:id)
+    @workflow = Workflow.new
     respond_with @workflows
   end
 
@@ -45,8 +46,10 @@ class WorkflowsController < ApplicationController
 
   def create
     skip_authorization
+    workflow_id = params[:workflow][:id]
 
-    workflow_hash = credential.accessible_workflow?(params[:workflow][:id])
+    workflow_hash = { id: workflow_id }
+    workflow_hash = credential.accessible_workflow?(params[:workflow][:id]) unless Rails.env.development?
 
     unless workflow_hash.present?
       skip_authorization
@@ -54,13 +57,30 @@ class WorkflowsController < ApplicationController
       return
     end
 
-    @workflow = Workflow.new(workflow_params.merge(id: params[:workflow][:id],
-                                                   project_id: workflow_hash["links"]["project"]))
+    panoptes_workflow = Effects.panoptes.workflow(workflow_id) unless Rails.env.development?
+    if Rails.env.development?
+      panoptes_workflow = { workflow_id: workflow_id, project_id: workflow_id, display_name: 'New Workflow'}.stringify_keys
+    end
 
-    @workflow.save
-    DescribeWorkflowWorker.perform_async(@workflow.id)
+    @workflow = Workflow.new(workflow_params.merge(
+      id: workflow_id,
+      project_id: panoptes_workflow["project_id"],
+      name: panoptes_workflow["display_name"]
+    ))
 
-    respond_with @workflow
+    begin
+      if @workflow.save
+        flash[:success] = "Added workflow \"#{@workflow.name}\""
+        DescribeWorkflowWorker.perform_async(@workflow.id)
+        respond_with @workflow
+      else
+        flash[:error] = 'Failed to add workflow'
+        redirect_to workflows_path
+      end
+    rescue
+      flash[:error] = 'Failed to add workflow'
+      redirect_to workflows_path
+    end
   end
 
   def update
@@ -85,6 +105,7 @@ class WorkflowsController < ApplicationController
     params.require(:workflow).permit(
       :public_extracts,
       :public_reductions,
+      :rules_applied,
       webhooks_config: {},
     )
   end
