@@ -37,26 +37,33 @@ class ReducersController < ApplicationController
     if(@reducer.grouping['field_name'].blank?)
       @reducer.grouping = {}
     end
-    
-    if @reducer.save
-      flash[:success] = 'Reducer created'
-    else
-      flash[:error] = 'Could not create reducer'
-    end
 
-    respond_with @reducer, location: [workflow]
+    begin
+      @reducer.save!
+      flash[:success] = 'Reducer created'
+      respond_to do |format|
+        format.html { redirect_to workflow_path(workflow, anchor: 'reducers') }
+        format.json { respond_with @reducer }
+      end
+    rescue
+      flash[:error] = 'Could not create reducer'
+      respond_with @reducer
+    end
   end
 
   def update
     authorize workflow
     @reducer = workflow.reducers.find(params[:id])
 
-    if @reducer.update(reducer_params(@reducer.class))
+    begin
+      @reducer.update!(reducer_params(@reducer.class))
+      flash[:success] = 'Reducer updated'
       respond_to do |format|
-        format.html { redirect_to workflow, success: 'Reducer created' }
+        format.html { redirect_to workflow_path(workflow, anchor: 'reducers') }
         format.json { respond_with @reducer }
       end
-    else
+    rescue
+      flash.now[:error] = 'Failed to update reducer'
       respond_with @reducer
     end
   end
@@ -65,13 +72,17 @@ class ReducersController < ApplicationController
     authorize workflow
     reducer = workflow.reducers.find(params[:id])
 
-    if reducer.destroy
+    begin
+      reducer.destroy!
       flash[:success] = 'Reducer deleted'
-    else
-      flash[:error] = 'Could not delete reducer'
+      respond_to do |format|
+        format.html { redirect_to workflow_path(workflow, anchor: 'reducers') }
+        format.json { respond_with reducer }
+      end
+    rescue
+      flash.now[:error] = 'Could not delete reducer'
+      respond_with reducer, location: workflow_path(workflow, anchor: 'reducers')
     end
-
-    respond_with reducer, location: [workflow]
   end
 
   private

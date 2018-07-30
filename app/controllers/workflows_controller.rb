@@ -86,11 +86,17 @@ class WorkflowsController < ApplicationController
   def update
     authorize workflow
 
-    workflow.update!(workflow_params)
+    begin
+      workflow.update!(workflow_params)
 
-    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
-    Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
-    Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
+      Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
+      Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
+      Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
+
+      flash[:success] = 'Workflow updated'
+    rescue
+      flash[:error] = 'Could not update workflow'
+    end
 
     respond_with workflow
   end

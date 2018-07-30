@@ -33,7 +33,7 @@ class SubjectRulesController < ApplicationController
     @subject_rule.save
 
     respond_to do |format|
-      format.html{ redirect_to workflow }
+      format.html{ redirect_to workflow, anchor: 'extractors' }
       format.json{ render json: @subject_rule}
     end
   end
@@ -43,8 +43,9 @@ class SubjectRulesController < ApplicationController
     @subject_rule = workflow.subject_rules.find(params[:id]) or not_found
 
     if @subject_rule.update(rule_params)
+      flash[:success] = 'Rule has been updated'
       respond_to do |format|
-        format.html { redirect_to workflow, success: 'Rule updated' }
+        format.html { redirect_to workflow, success: 'Rule updated', anchor: 'extractors' }
         format.json { render json: @subject_rule }
       end
     else
