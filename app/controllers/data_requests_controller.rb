@@ -19,15 +19,21 @@ class DataRequestsController < ApplicationController
   def create
     DataRequest.transaction do
       obj = nil
-      args = (params[:data_request] || {}).merge(workflow_id: params[:workflow_id])
+      args = ({requested_data: params.dig(:data_request, :requested_data)} || {}).merge(workflow_id: params[:workflow_id])
       ctx = {credential: credential}
 
-      data_request = CreatesDataRequests.call(obj, args, ctx)
-      skip_authorization # operations do this themselves and raise if needed
+      begin
+        data_request = CreatesDataRequests.call(obj, args, ctx)
+        skip_authorization # operations do this themselves and raise if needed
+        flash[:success] = 'Export requested'
 
-      respond_to do |format|
-        format.html { redirect_to [data_request.exportable, :data_requests] }
-        format.json { respond_with data_request.exportable, data_request }
+        respond_to do |format|
+          format.html { redirect_to workflow_path(data_request.workflow, anchor: 'requests') }
+          format.json { respond_with data_request.workflow, data_request }
+        end
+      rescue
+        flash[:error] = 'Failed to request export'
+        redirect_to workflow_path(data_request.workflow, anchor: 'requests')
       end
     end
   end

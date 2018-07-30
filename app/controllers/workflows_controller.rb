@@ -58,7 +58,7 @@ class WorkflowsController < ApplicationController
     end
 
     panoptes_workflow = Effects.panoptes.workflow(workflow_id) unless Rails.env.development?
-    if Rails.env.development?
+    if Rails.env.development? || Rails.env.test?
       panoptes_workflow = { workflow_id: workflow_id, project_id: workflow_id, display_name: 'New Workflow'}.stringify_keys
     end
 

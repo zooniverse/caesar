@@ -11,11 +11,22 @@
   </thead>
   <tbody>
     <% @workflow.data_requests.each do |data_request| %>
-      <tr class="data-request-<%= data_request.status %>">
+      <tr>
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data.capitalize %></td>
-        <td><%= data_request.status.capitalize %> (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)</td>
-        <td><%= link_to "Download", data_request.url %></td>
+        <td>
+          <span class="text-<% case data_request.status %><%
+            when 'complete' %>success<%
+            when 'failed' %>danger<%
+            when 'processing' %>primary<%
+            when 'empty' %>muted<%
+            when 'pending' %>muted
+          <% end %>"><%= data_request.status.capitalize %></span>
+          <% if data_request.processing? %>
+            (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)
+          <% end %>
+        </td>
+        <td><% if data_request.complete? %><%= link_to "Download", data_request.url %><% end %></td>
       </tr>
     <% end %>
   </tbody>
@@ -27,8 +38,8 @@
   </button>
 
   <ul class="dropdown-menu">
-    <li><%= link_to "Request Extracts Export", new_workflow_reducer_path(@workflow, type: 'consensus') %></li>
-    <li><%= link_to "Request Reductions Export", new_workflow_reducer_path(@workflow, type: 'count') %></li>
+    <li><%= link_to "Request Extracts Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'extracts'}), method: :post %></li>
+    <li><%= link_to "Request Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'reductions'}), method: :post %></li>
   </ul>
 </div>
 </div>
