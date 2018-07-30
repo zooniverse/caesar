@@ -123,7 +123,7 @@ GEM
     graphiql-rails (1.4.10)
       railties
       sprockets-rails
-    graphql (1.7.6)
+    graphql (1.8.5)
     hashdiff (0.3.7)
     hashie (3.5.7)
     http-cookie (1.0.3)
