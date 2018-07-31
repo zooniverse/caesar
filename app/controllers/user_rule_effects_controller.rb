@@ -33,8 +33,6 @@ class UserRuleEffectsController < ApplicationController
     user_rule
 
     @user_rule_effect = UserRuleEffect.new(effect_params)
-    # @user_rule_effect.action = params[:user_rule_effect][:action] || params[:action_type]
-    # @user_rule_effect.config = params[:config]
 
     if(@user_rule_effect.save)
       respond_to do |format|

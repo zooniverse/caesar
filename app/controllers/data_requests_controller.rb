@@ -28,12 +28,12 @@ class DataRequestsController < ApplicationController
         flash[:success] = 'Export requested'
 
         respond_to do |format|
-          format.html { redirect_to workflow_path(data_request.workflow, anchor: 'requests') }
-          format.json { respond_with data_request.workflow, data_request }
+          format.html { redirect_to workflow_path(Workflow.find(data_request.workflow_id), anchor: 'requests') }
+          format.json { respond_with Workflow.find(data_request.workflow_id), data_request }
         end
       rescue
         flash[:error] = 'Failed to request export'
-        redirect_to workflow_path(data_request.workflow, anchor: 'requests')
+        redirect_to workflow_path(Workflow.find(data_request.workflow_id), anchor: 'requests')
       end
     end
   end

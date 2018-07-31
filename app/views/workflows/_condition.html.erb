@@ -1,51 +1,46 @@
 <% case condition %>
 <% when Conditions::Conjunction %>
+  <span class="nested-condition">
   <% condition.operations.each_with_index do |c, i| %>
-    <% if i > 0 %><span class="label label-danger">and</span><% end %>
-    <span class="btn btn-default"><%= render_condition c %></span>
-  <% end %>
+    <% if i > 0 %><span class="label label-success yields-text">and</span><% end %><%= render_condition c %><% end %>
+  </span>
 <% when Conditions::Disjunction %>
+  <span class="nested-condition">
   <% condition.operations.each_with_index do |c, i| %>
-    <% if i > 0 %><span class="label label-danger">or</span><% end %>
-    <span class="btn btn-default"><%= render_condition c %></span>
-  <% end %>
-<% when Conditions::Negation %>
-    <span class="label label-danger">not</span>
-    <span class="btn btn-default"><%= render_condition condition.operation %></span>
-<% when Conditions::Comparison %>
-  <% condition.operations.each_with_index do |c, i| %>
-    <% if i > 0 %><span class="label label-primary"><% case condition.type when
-        'eq' %>is equal to<% when
-        'lt' %>is less than<% when
-        'lte' %>is less than or equal to<% when
-        'gt' %>is greater than<% when
-        'gte' %>is greater than or equal to<% end %></span><% end %>
+    <% if i > 0 %><span class="label label-success yields-text">or</span><% end %>
     <%= render_condition c %>
   <% end %>
+  </span>
+<% when Conditions::Negation %>
+  <span class="nested-condition">
+    <span class="label label-danger yields-text">not</span>
+    <%= render_condition condition.operation %>
+  </span>
+<% when Conditions::Comparison %>
+  <span class="nested-condition">
+  <% condition.operations.each_with_index do |c, i| %>
+    <% if i > 0 %><span class="yields-text"><% case condition.type when
+        'eq' %>=<% when
+        'lt' %>&lt;<% when
+        'lte' %>&le;<% when
+        'gt' %>&gt;<% when
+        'gte' %>&ge;<% end %></span><% end %><%= render_condition c %><% end %>
+  </span>
 <% when Conditions::Lookup %>
-  <span class="text-info">
-    <em>
-      lookup value <span class="label label-info"><%= condition.key %></span>
-      with default <span class="label label-info"><%= condition.absent_val %></span>
-    </em>
+  <span class="text-info yields-text">
+    <abbr title="Default value: <%= condition.absent_val %>"><%= condition.key %></abbr>
   </span>
 <% when Conditions::Constant %>
-  <span class="text-success">
-    <em>
-      constant value
-      <span class="label label-success"><%= condition.value %></span>
-    </em>
-  </span>
+  <span class="text-primary yields-text"><%= condition.value %></span>
 <% when Conditions::TextTransform %>
-  <span class="text-warning">
+  <span class="nested-condition">
     <%= render_condition condition.operation %>
-    <em> as
-      <span class="label label-warning"><% case condition.transform when
-        :upcase %>uppercase<% when
-        :downcase %>lowercase<% when
-        :to_i %>integer<% when
-        :to_f %>float<% end %></span>
-    </em>
+    as
+    <span class="text-primary yields-text"><% case condition.transform when
+      :upcase %>uppercase<% when
+      :downcase %>lowercase<% when
+      :to_i %>integer<% when
+      :to_f %>float<% end %></span>
   </span>
 <% else %>
   <%= debug condition %>

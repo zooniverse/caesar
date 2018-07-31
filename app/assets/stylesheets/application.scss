@@ -154,3 +154,17 @@ h1, h2, h3 {
 h4.modal-title {
   color: white;
 }
+
+.nested-condition {
+  background-color: transparentize($color: $zooniverse-mid-grey, $amount: 0.75);
+  padding: 0.5em 0;
+}
+
+.yields-text {
+  margin: 0 0.5em;
+}
+
+.rules-pane td {
+  padding-top: 1em !important;
+  padding-bottom: 1em !important;
+}
