@@ -18,30 +18,34 @@ class FetchClassificationsWorker
   sidekiq_options unique: :until_executed unless Rails.env.test?
 
   def perform(workflow_id, object_id, object_type)
-    light = Stoplight("fetch-classifications-#{workflow_id}-#{object_type}") do
-      classifications = fetch_classifications(workflow_id, object_id, object_type)
-      process_classifications(workflow_id, classifications)
+    classifications = fetch_classifications(workflow_id, object_id, object_type)
+    process_classifications(workflow_id, classifications)
+  end
+
+  def fetch_classifications(workflow_id, object_id, object_type)
+    light = Stoplight("fetch-classifications") do
+      case object_type
+      when @@FetchForSubject
+        Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
+      when @@FetchForUser
+        Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
+      else
+        []
+      end
     end
 
     light.run
   end
 
-  def fetch_classifications(workflow_id, object_id, object_type)
-    case object_type
-    when @@FetchForSubject
-      Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
-    when @@FetchForUser
-      Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
-    else
-      []
-    end
-  end
-
   def process_classifications(workflow_id, classifications)
-    classifications.each do |attributes|
-      attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
-      classification = Classification.upsert(attributes)
-      ExtractWorker.perform_async(classification.id)
+    light = Stoplight("fetch-classifications-#{workflow_id}") do
+      classifications.each do |attributes|
+        attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
+        classification = Classification.upsert(attributes)
+        ExtractWorker.perform_async(classification.id)
+      end
     end
+
+    light.run
   end
 end
