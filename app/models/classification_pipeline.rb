@@ -88,9 +88,9 @@ class ClassificationPipeline
              end
 
     reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
-    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)	     
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
-          
+
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }
       extract_fetcher.strategy! :fetch_minimal

@@ -26,9 +26,9 @@ class FetchClassificationsWorker
     light = Stoplight("fetch-classifications") do
       case object_type
       when @@FetchForSubject
-        Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
+        Effects.panoptes.get_subject_classifications(object_id, workflow_id).fetch("classifications")
       when @@FetchForUser
-        Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
+        Effects.panoptes.get_user_classifications(object_id, workflow_id).fetch("classifications")
       else
         []
       end
