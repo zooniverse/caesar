@@ -19,19 +19,22 @@ class FetchClassificationsWorker
 
   def perform(workflow_id, object_id, object_type)
     light = Stoplight("fetch-classifications-#{workflow_id}-#{object_type}") do
-      classifications = case object_type
-      when @@FetchForSubject
-        Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
-      when @@FetchForUser
-        Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
-      else
-        nil
-      end
-
+      classifications = fetch_classifications(workflow_id, object_id, object_type)
       process_classifications(workflow_id, classifications)
     end
 
     light.run
+  end
+
+  def fetch_classifications(workflow_id, object_id, object_type)
+    case object_type
+    when @@FetchForSubject
+      Effects.panoptes.get_subject_classifications(object_id, workflow_id)["classifications"]
+    when @@FetchForUser
+      Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
+    else
+      nil
+    end
   end
 
   def process_classifications(workflow_id, classifications)
