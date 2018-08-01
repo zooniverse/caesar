@@ -33,13 +33,11 @@ class FetchClassificationsWorker
     when @@FetchForUser
       Effects.panoptes.get_user_classifications(object_id, workflow_id)["classifications"]
     else
-      nil
+      []
     end
   end
 
   def process_classifications(workflow_id, classifications)
-    return unless classifications
-
     classifications.each do |attributes|
       attributes["workflow_version"] ||= attributes["metadata"]["workflow_version"]
       classification = Classification.upsert(attributes)
