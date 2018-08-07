@@ -1,4 +1,6 @@
 class UserRulesController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
 
@@ -18,13 +20,11 @@ class UserRulesController < ApplicationController
   def new
     authorize workflow
     @user_rule = UserRule.new(workflow: workflow)
-    respond_with @user_rule
   end
 
   def edit
     authorize workflow
     @user_rule = UserRule.find(params[:id]) or not_found
-    respond_with @user_rule
   end
 
   def create
@@ -34,22 +34,20 @@ class UserRulesController < ApplicationController
     @user_rule.save
 
     respond_to do |format|
-      format.html{ redirect_to workflow }
+      format.html{ respond_with @user_rule, location: workflow_path(workflow, :anchor => "rules") }
       format.json{ render json: @user_rule}
     end
   end
 
   def update
     authorize workflow
-    @user_rule = workflow.user_rules.find(params[:id]) or not_found
 
-    if @user_rule.update(rule_params)
-      respond_to do |format|
-        format.html { redirect_to workflow, success: 'Rule updated' }
-        format.json { render json: @user_rule }
-      end
-    else
-      respond_with @user_rule
+    @user_rule = workflow.user_rules.find(params[:id]) or not_found
+    @user_rule.update(rule_params)
+
+    respond_to do |format|
+      format.html{ respond_with @user_rule, location: workflow_path(workflow, :anchor => "rules") }
+      format.json { render json: @user_rule }
     end
   end
 
@@ -63,7 +61,7 @@ class UserRulesController < ApplicationController
     end
 
     rule.destroy
-    respond_with rule, location: [workflow]
+    respond_with rule, location: workflow_path(workflow, :anchor => "rules)")
   end
 
   private

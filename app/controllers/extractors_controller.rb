@@ -1,4 +1,6 @@
 class ExtractorsController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
 
@@ -30,34 +32,22 @@ class ExtractorsController < ApplicationController
     extractor_class = Extractor.of_type(params[:extractor][:type])
     @extractor = extractor_class.new(extractor_params(extractor_class))
 
-    begin
-      @extractor.save!
-      flash[:success] = 'Extractor created'
-      respond_to do |format|
-        format.html { redirect_to workflow_path(workflow, anchor: 'extractors') }
-        format.json { respond_with @extractor }
-      end
-    rescue
-      flash.now[:error] = 'Failed to create extractor'
-      respond_with @extractor
+    @extractor.save
+    respond_to do |format|
+      format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with @extractor }
     end
-
   end
 
   def update
     authorize workflow
-    @extractor = workflow.extractors.find(params[:id])
 
-    begin
-      @extractor.update!(extractor_params(@extractor.class))
-      flash[:success] = 'Extractor updated'
-      respond_to do |format|
-        format.html { redirect_to workflow_path(workflow, anchor: 'extractors') }
-        format.json { respond_with @extractor }
-      end
-    rescue
-      flash.now[:error] = 'Failed to update extractor'
-      respond_with @extractor
+    @extractor = workflow.extractors.find(params[:id])
+    @extractor.update(extractor_params(@extractor.class))
+
+    respond_to do |format|
+      format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with @extractor }
     end
   end
 
@@ -65,16 +55,10 @@ class ExtractorsController < ApplicationController
     authorize workflow
     extractor = workflow.extractors.find(params[:id])
 
-    begin
-      extractor.destroy!
-      flash[:success] = 'Extractor deleted'
-      respond_to do |format|
-        format.html { redirect_to workflow_path(workflow, anchor: 'extractors') }
-        format.json { respond_with extractor }
-      end
-    rescue
-      flash[:error] = 'Could not delete extractor'
-      respond_with extractor, location: workflow_path(workflow, anchor: 'extractors')
+    extractor.destroy
+    respond_to do |format|
+      format.html { respond_with extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with extractor }
     end
   end
 

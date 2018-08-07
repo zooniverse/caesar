@@ -1,4 +1,6 @@
 class WorkflowsController < ApplicationController
+  responders :flash
+
   def index
     @workflows = policy_scope(Workflow).all.sort_by(&:id)
     @workflow = Workflow.new
@@ -7,19 +9,8 @@ class WorkflowsController < ApplicationController
 
   def show
     authorize workflow
-    @heartbeat = {
-      :extract => workflow.extracts.first&.updated_at,
-      :reduction => [
-        workflow.subject_reductions.order(updated_at: :desc).first&.updated_at,
-        workflow.user_reductions.order(updated_at: :desc).first&.updated_at
-      ].compact.max,
-      :action => [
-        SubjectAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at,
-        UserAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at
-      ].compact.max,
-      :action_count => SubjectAction.where(workflow_id: workflow.id).count + UserAction.where(workflow_id: workflow.id).count
-    }
-    respond_with workflow
+    heartbeat
+    respond_with @workflow
   end
 
   def new
@@ -68,35 +59,23 @@ class WorkflowsController < ApplicationController
       name: panoptes_workflow["display_name"]
     ))
 
-    begin
-      if @workflow.save
-        flash[:success] = "Added workflow \"#{@workflow.name}\""
-        DescribeWorkflowWorker.perform_async(@workflow.id)
-        respond_with @workflow
-      else
-        flash[:error] = 'Failed to add workflow'
-        redirect_to workflows_path
-      end
-    rescue
-      flash[:error] = 'Failed to add workflow'
-      redirect_to workflows_path
+    @workflow.save
+    DescribeWorkflowWorker.perform_async(@workflow.id) unless @workflow.id.blank?
+
+    respond_to do |format|
+      format.html { respond_with @workflow, location: workflows_path }
+      format.json { render json: workflow }
     end
   end
 
   def update
     authorize workflow
 
-    begin
-      workflow.update!(workflow_params)
+    workflow.update(workflow_params)
 
-      Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
-      Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
-      Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
-
-      flash[:success] = 'Workflow updated'
-    rescue
-      flash[:error] = 'Could not update workflow'
-    end
+    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
+    Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
+    Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
 
     respond_with workflow
   end
@@ -114,5 +93,20 @@ class WorkflowsController < ApplicationController
       :rules_applied,
       webhooks_config: {},
     )
+  end
+
+  def heartbeat
+    @heartbeat = {
+      :extract => workflow.extracts.first&.updated_at,
+      :reduction => [
+        workflow.subject_reductions.order(updated_at: :desc).first&.updated_at,
+        workflow.user_reductions.order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action => [
+        SubjectAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at,
+        UserAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action_count => SubjectAction.where(workflow_id: workflow.id).count + UserAction.where(workflow_id: workflow.id).count
+    }
   end
 end

@@ -1,4 +1,6 @@
 class SubjectRulesController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
 
@@ -18,7 +20,6 @@ class SubjectRulesController < ApplicationController
   def new
     authorize workflow
     @subject_rule = SubjectRule.new(workflow: workflow)
-    respond_with @subject_rule
   end
 
   def edit
@@ -33,7 +34,7 @@ class SubjectRulesController < ApplicationController
     @subject_rule.save
 
     respond_to do |format|
-      format.html{ redirect_to workflow, anchor: 'extractors' }
+      format.html{ respond_with @subject_rule, location: workflow_path(workflow, :anchor => "rules") }
       format.json{ render json: @subject_rule}
     end
   end
@@ -42,14 +43,10 @@ class SubjectRulesController < ApplicationController
     authorize workflow
     @subject_rule = workflow.subject_rules.find(params[:id]) or not_found
 
-    if @subject_rule.update(rule_params)
-      flash[:success] = 'Rule has been updated'
-      respond_to do |format|
-        format.html { redirect_to workflow, success: 'Rule updated', anchor: 'extractors' }
-        format.json { render json: @subject_rule }
-      end
-    else
-      respond_with @subject_rule
+    @subject_rule.update(rule_params)
+    respond_to do |format|
+      format.html{ respond_with @subject_rule, location: workflow_path(workflow, :anchor => "rules") }
+      format.json{ render json: @subject_rule }
     end
   end
 
@@ -62,7 +59,7 @@ class SubjectRulesController < ApplicationController
       rule.destroy
     end
 
-    respond_with rule, location: [workflow]
+    respond_with rule, location: -> { workflow_path(workflow, :anchor => "rules") }
   end
 
   private
