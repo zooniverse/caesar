@@ -66,8 +66,8 @@ describe ClassificationPipeline do
       retire_subject: true,
       workflow: {},
       project: {},
-      get_subject_classifications: {},
-      get_user_classifications: {}
+      get_subject_classifications: {"classifications" => []},
+      get_user_classifications: {"classifications" => []}
     )
   }
 
