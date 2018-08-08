@@ -71,8 +71,8 @@ class Workflow < ApplicationRecord
   has_many :user_rules
 
   has_many :extracts
-  has_many :subject_reductions
-  has_many :user_reductions
+  has_many :subject_reductions, as: :reducible
+  has_many :user_reductions, as: :reducible
   has_many :subject_actions
   has_many :user_actions
   has_many :data_requests, as: :exportable

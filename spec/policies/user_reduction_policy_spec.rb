@@ -4,7 +4,7 @@ RSpec.describe UserReductionPolicy do
   subject { described_class }
 
   permissions ".scope" do
-    let!(:reductions) { create_list :subject_reduction, 4 }
+    let!(:reductions) { create_list :user_reduction, 4 }
 
     it 'returns no records when not logged in' do
       credential = build(:credential, :not_logged_in)
@@ -22,13 +22,14 @@ RSpec.describe UserReductionPolicy do
     end
 
     it 'returns records that the subject is a collaborator on' do
-      credential = build(:credential, project_ids: [])
-      expect(records_for(credential)).to match_array(UserReduction.none)
+      workflow = create(:workflow)
+      credential = build(:credential, project_ids: [workflow.project_id])
+      expect(records_for(credential)).to match_array(UserReduction.all)
     end
   end
 
   permissions :show? do
-    let(:reduction) { create :subject_reduction }
+    let(:reduction) { create :user_reduction }
 
     it 'denies access when not logged in' do
       credential = build(:credential, :not_logged_in)
@@ -61,10 +62,24 @@ RSpec.describe UserReductionPolicy do
       expect(subject).to permit(credential, reduction)
     end
 
+    it 'returns both public and scoped reductions' do
+      public_reduction = create(:user_reduction)
+      public_reduction.reducible.update! public_reductions: true
+      credential = build(:credential, workflows: [reduction.reducible])
+      expect(subject).to permit(credential, reduction)
+      expect(subject).to permit(credential, public_reduction)
+    end
+
+    it 'returns project-scoped reductions' do
+      project = create(:project)
+      project_reduction = create(:user_reduction, reducible: project)
+      credential = build(:credential, project_ids: [project_reduction.reducible.id])
+      expect(subject).to permit(credential, project_reduction)
+    end
   end
 
   permissions :update? do
-    let(:reduction) { create :subject_reduction }
+    let(:reduction) { create :user_reduction }
 
     it 'grants access to an admin' do
       credential = build(:credential, :admin, workflows: [])
@@ -85,7 +100,7 @@ RSpec.describe UserReductionPolicy do
 
   permissions :destroy? do
     it 'allows admin to destroy records' do
-      reduction = create :subject_reduction
+      reduction = create :user_reduction
       credential = build(:credential, :admin)
       expect(subject).to permit(credential, reduction)
     end

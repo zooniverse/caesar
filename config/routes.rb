@@ -37,4 +37,19 @@ Rails.application.routes.draw do
 
     resources :data_requests
   end
+
+  resources :projects do
+    resources :reducers
+    resources :subject_reductions, param: :reducer_key
+    resources :user_reductions, param: :reducer_key
+
+    resources :subjects, only: [:show] do
+      resources :subject_reductions, only: [:index]
+    end
+
+    resources :users, only: [:show] do
+      resources :user_reductions, only: [:index]
+    end
+    resources :data_requests
+  end
 end

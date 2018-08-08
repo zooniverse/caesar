@@ -4,8 +4,8 @@ class CheckRulesWorker
   sidekiq_options unique: :until_executing unless Rails.env.test?
   sidekiq_options queue: 'internal'
 
-  def perform(workflow_id, subject_id, user_id = nil)
-    workflow = Workflow.find(workflow_id)
-    workflow.classification_pipeline.check_rules(workflow_id, subject_id, user_id)
+  def perform(reducible_id, reducible_type, subject_id, user_id = nil)
+    reducible = reducible_type.constantize.find(reducible_id)
+    reducible.classification_pipeline.check_rules(reducible_id, subject_id, user_id)
   end
 end

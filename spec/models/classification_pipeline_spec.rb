@@ -140,7 +140,7 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1235, subject_id: subject.id, classification_id: 33333, data: { TGR: 1 }
     create :extract, extractor_key: 's', workflow_id: workflow.id, user_id: 1236, subject_id: subject.id, classification_id: 44444, data: { BR: 1 }
 
-    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "workflow")
+    reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "Workflow")
 
     pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
     pipeline.reduce(workflow.id, nil, 1234)
@@ -192,6 +192,36 @@ describe ClassificationPipeline do
 
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once
     expect(user_rule2).not_to have_received(:process)
+  end
+
+  context "reducing by project" do
+    let(:project) { create :project }
+    let(:reducer) { create(:stats_reducer, key: 's', reducible: project) }
+    let(:subject) { create(:subject) }
+    
+    let(:pipeline) do
+      described_class.new(Project, nil, [reducer], nil, nil)
+    end
+
+    it "creates reductions from project extractions" do
+      create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+      create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
+
+      pipeline = described_class.new(Project, nil, [reducer], nil, nil)
+      expect{
+        pipeline.reduce(project.id, subject.id, nil)
+      }.to change{SubjectReduction.count}.by(1)
+    end
+
+    it "instantiates fetchers with correct filters" do
+      filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
+      reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
+  
+      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
+      expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
+
+      pipeline.reduce(project.id, subject.id, nil)
+    end
   end
 
   describe 'running/online aggregation mode' do

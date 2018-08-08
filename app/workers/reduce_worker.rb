@@ -17,7 +17,7 @@ class ReduceWorker
     
     return if reductions.blank?
 
-    CheckRulesWorker.perform_async(reducible_id, subject_id, user_id)
+    CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id)
     reductions.each do |item|
       reducible.webhooks.process(:new_reduction, item) if reducible.subscribers?
     end

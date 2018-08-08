@@ -39,7 +39,8 @@ class ClassificationPipeline
         workflow_id: classification.workflow_id,
         subject_id: classification.subject_id,
         classification_id: classification.id,
-        extractor_key: extractor.key
+        extractor_key: extractor.key,
+        project_id: classification.project_id
       ).first_or_initialize
 
       extract.tap do |an_extract|
@@ -77,18 +78,15 @@ class ClassificationPipeline
     return [] unless reducers&.present?
     retries ||= 2
 
-    # TODO: Send array of workflow ids if reducing by Project
-    filter = case
-             when Workflow == reducible_class
-               { workflow_id: reducible_id, subject_id: subject_id, user_id: user_id }
-              #  when Project
-                #  reducible = reducible_class.find(reducible_id)
-                #  workflow_ids = reducible.where(project_id: reducible_id).pluck(:id)
-                #  { workflow_id: workflow_ids, subject_id: subject_id, user_id: user_id }
-             end
+    filter = { subject_id: subject_id, user_id: user_id }
+    if reducible_class.to_s == "Workflow"
+      filter[:workflow_id] = reducible_id 
+    elsif reducible_class.to_s == "Project"
+      filter[:project_id] = reducible_id
+    end
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)	     
 
     reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
-    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
 
     # if we don't need to fetch everything, try not to
@@ -105,7 +103,7 @@ class ClassificationPipeline
       reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for!(reducer.topic))
     end.flatten
 
-    Workflow.transaction do
+    ActiveRecord::Base.transaction do
       new_reductions.each do |reduction|
         reduction.save!
       end
@@ -162,10 +160,10 @@ class ClassificationPipeline
   end
 
   def user_reductions(reducible_id, user_id)
-    UserReduction.where(reducible_id: reducible_id, user_id: user_id)
+    UserReduction.where(reducible_id: reducible_id, reducible_type: reducible_class.to_s, user_id: user_id)
   end
 
   def subject_reductions(reducible_id, subject_id)
-    SubjectReduction.where(reducible_id: reducible_id, subject_id: subject_id)
+    SubjectReduction.where(reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id)
   end
 end

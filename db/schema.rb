@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180716210957) do
+ActiveRecord::Schema.define(version: 20180717201101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20180716210957) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "project_id"
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
@@ -96,6 +97,16 @@ ActiveRecord::Schema.define(version: 20180716210957) do
     t.bigint "user_reduction_id", null: false
     t.index ["extract_id", "user_reduction_id"], name: "eur_covering_1"
     t.index ["user_reduction_id", "extract_id"], name: "eur_covering_2"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.jsonb "reducers_config"
+    t.jsonb "rules_config"
+    t.jsonb "webhooks"
+    t.integer "rules_applied", default: 0, null: false
+    t.boolean "public_reductions", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -241,7 +252,6 @@ ActiveRecord::Schema.define(version: 20180716210957) do
 
   add_foreign_key "classifications", "subjects"
   add_foreign_key "classifications", "workflows"
-  add_foreign_key "data_requests", "workflows"
   add_foreign_key "extractors", "workflows"
   add_foreign_key "extracts", "subjects"
   add_foreign_key "extracts", "workflows"
@@ -249,11 +259,9 @@ ActiveRecord::Schema.define(version: 20180716210957) do
   add_foreign_key "extracts_subject_reductions", "subject_reductions", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "extracts", on_delete: :cascade
   add_foreign_key "extracts_user_reductions", "user_reductions", on_delete: :cascade
-  add_foreign_key "reducers", "workflows"
   add_foreign_key "subject_actions", "subjects"
   add_foreign_key "subject_actions", "workflows"
   add_foreign_key "subject_reductions", "subjects"
-  add_foreign_key "subject_reductions", "workflows"
   add_foreign_key "subject_rule_effects", "subject_rules"
   add_foreign_key "subject_rules", "workflows"
   add_foreign_key "user_actions", "workflows"
