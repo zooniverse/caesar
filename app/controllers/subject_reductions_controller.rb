@@ -16,9 +16,7 @@ class SubjectReductionsController < ApplicationController
 
     if reduction.data != reduction_params[:data]
       reduction.update! reduction_params
-
       CheckRulesWorker.perform_async(reducible.id, reducible_type, subject.id) if workflow.configured?
-
       workflow.webhooks.process(:updated_reduction, data) if workflow.subscribers?
     end
 
@@ -46,8 +44,6 @@ class SubjectReductionsController < ApplicationController
   def workflow
     @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
   end
-
-
 
   def data
     params[:reduction][:data]
