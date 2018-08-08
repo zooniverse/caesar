@@ -50,7 +50,7 @@ describe ExtractorsController, :type => :controller do
 
     it 'creates a new extractor' do
       post :create, params: {workflow_id: workflow.id, extractor: extractor_params}
-      expect(response).to redirect_to(workflow_path(workflow))
+      expect(response).to redirect_to(workflow_path(workflow, anchor: 'extractors'))
       expect(workflow.extractors.count).to eq(1)
       expect(workflow.extractors.first.url).to eq('https://example.org')
     end
@@ -66,7 +66,7 @@ describe ExtractorsController, :type => :controller do
       put :update, params: {workflow_id: workflow.id,
                             id: extractor.id,
                             extractor: {url: 'https://example.org/2'}}
-      expect(response).to redirect_to(workflow_path(workflow))
+      expect(response).to redirect_to(workflow_path(workflow, anchor: 'extractors'))
       expect(workflow.extractors.first.url).to eq('https://example.org/2')
     end
 

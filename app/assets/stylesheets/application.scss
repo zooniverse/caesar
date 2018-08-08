@@ -11,37 +11,160 @@
  * It is generally better to create a new file per style scope.
  *
  */
+ $white: #fff;
+ $black: #000;
+ $zooniverse-light-grey: #eff2f5;
+ $zooniverse-mid-grey: #a6a7a9;
+ $zooniverse-dark-grey: #5c5c5c;
+
+ $zooniverse-teal: #00979d;
+ $zooniverse-light-teal: #addde0;
+ $zooniverse-dark-teal: #005d69;
+
+ $zooniverse-gold: #f0b200;
+ $zooniverse-light-gold: #f6d885;
+
+ $zooniverse-tomato: #e45950;
+
+ $zooniverse-green: #078f52;
+
+ $gray: $zooniverse-mid-grey;
+ $gray-light: $zooniverse-light-grey;
+ $gray-lighter: lighten($gray-light, 30%);
+ $gray-dark: $zooniverse-dark-grey;
+ $gray-darker: darken($gray-dark, 10%);
+
+
+ $brand-primary: $zooniverse-teal;
+ $brand-success: $zooniverse-green;
+ $brand-info: $zooniverse-light-teal;
+ $brand-warning: $zooniverse-gold;
+ $brand-danger: $zooniverse-tomato;
+
+ $body-bg: $white;
+ $text-color: $zooniverse-dark-grey;
+
+ $font-family-sans-serif: Karla, sans-serif;
+
+$font-size-base: 14px;
+$font-size-h1: 32px;
+$font-size-h2: 30px;
+$font-size-h3: 26px;
+$font-size-h4: 26px;
+
+$line-height-base: 1.214285714285714;
+
+$headings-color: $zooniverse-dark-grey;
+
+$table-bg-accent: lighten($zooniverse-light-teal, 20%);
+$table-border-color: $zooniverse-light-teal;
+
+$dropdown-link-hover-bg: $zooniverse-light-teal;
+
+$navbar-border-radius: 0;
+
+$navbar-default-color: $white;
+$navbar-default-bg: $brand-primary;
+$navbar-default-link-color: $white;
+$navbar-default-link-hover-color: $white;
+$navbar-default-link-hover-bg: darken($zooniverse-teal, 5%);
+$navbar-default-link-active-color: $white;
+$navbar-default-link-active-bg: $zooniverse-dark-teal;
+
+$nav-link-hover-bg: $zooniverse-light-teal;
+
+$badge-bg: $zooniverse-light-teal;
+
+$state-success-bg: lighten($zooniverse-green, 60%);
+$state-success-border: $zooniverse-green;
+
+$state-danger-bg: lighten($zooniverse-tomato, 30%);
+$state-danger-border: $zooniverse-tomato;
+
+$state-info-text: $zooniverse-dark-teal;
+$state-info-bg: $zooniverse-light-teal;
+
+$state-warning-text: $zooniverse-gold;
+$state-warning-bg: $zooniverse-light-gold;
+
+$text-muted: $zooniverse-mid-grey;
+
 @import "bootstrap-sprockets";
-
-$navbar-default-bg: black;
-$navbar-default-color: #cbcccb;
-
 @import "bootstrap";
 
-.container-fluid {
-  margin-top: 1em;
-}
+@import url('https://fonts.googleapis.com/css?family=Karla');
 
-nav {
-  font-family: "Open Sans", "Gill Sans", "Arial", "sans-serif";
-  letter-spacing: 0.20em;
-  font-size: 11.25px;
+.navbar-brand {
+  font-weight: bold;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
-thead {
-  background-color: #007482;
-  color: white;
+dd, dt {
+  line-height: 2em;
 }
 
-
-table.condition td {
-  vertical-align: top;
-  border: 1px solid black;
-  padding: 5px;
+dt {
+  color: black;
 }
 
+input[type="checkbox"], input[type="checkbox"].form-control {
+  border: 0;
+  box-shadow: none;
+}
 
 .data-request-failed { background-color: #AA3E39; color: white; }
 .data-request-processing { background-color: #D3E08D; }
 .data-request-complete { background-color: #7C9208; }
+
+.navbar-text {
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+}
+
+.params-column ul {
+  line-height: 1.5em;
+}
+
+.params-column strong {
+  color: $brand-primary;
+}
+
+.params-column > ul {
+  padding-left: 0;
+}
+
+.params-column li {
+  list-style-type: none;
+}
+
+.modal-header {
+  background-color: $brand-primary;
+  color: $white;
+}
+
+.modal-content {
+  overflow: hidden;
+}
+
+h4.modal-title {
+  color: white;
+}
+
+.nested-condition {
+  background-color: transparentize($color: $zooniverse-mid-grey, $amount: 0.75);
+  padding: 0.5em 0;
+}
+
+.yields-text {
+  margin: 0 0.5em;
+}
+
+.rules-pane td {
+  padding-top: 1em !important;
+  padding-bottom: 1em !important;
+}

@@ -1,12 +1,16 @@
 class WorkflowsController < ApplicationController
+  responders :flash
+
   def index
-    @workflows = policy_scope(Workflow).all
+    @workflows = policy_scope(Workflow).all.sort_by(&:id)
+    @workflow = Workflow.new
     respond_with @workflows
   end
 
   def show
     authorize workflow
-    respond_with workflow
+    heartbeat
+    respond_with @workflow
   end
 
   def new
@@ -33,8 +37,10 @@ class WorkflowsController < ApplicationController
 
   def create
     skip_authorization
+    workflow_id = params[:workflow][:id]
 
-    workflow_hash = credential.accessible_workflow?(params[:workflow][:id])
+    workflow_hash = { id: workflow_id }
+    workflow_hash = credential.accessible_workflow?(params[:workflow][:id]) unless Rails.env.development?
 
     unless workflow_hash.present?
       skip_authorization
@@ -42,19 +48,30 @@ class WorkflowsController < ApplicationController
       return
     end
 
-    @workflow = Workflow.new(workflow_params.merge(id: params[:workflow][:id],
-                                                   project_id: workflow_hash["links"]["project"]))
+    panoptes_workflow = Effects.panoptes.workflow(workflow_id) unless Rails.env.development?
+    if Rails.env.development? || Rails.env.test?
+      panoptes_workflow = { workflow_id: workflow_id, project_id: workflow_id, display_name: 'New Workflow'}.stringify_keys
+    end
+
+    @workflow = Workflow.new(workflow_params.merge(
+      id: workflow_id,
+      project_id: panoptes_workflow["project_id"],
+      name: panoptes_workflow["display_name"]
+    ))
 
     @workflow.save
-    DescribeWorkflowWorker.perform_async(@workflow.id)
+    DescribeWorkflowWorker.perform_async(@workflow.id) unless @workflow.id.blank?
 
-    respond_with @workflow
+    respond_to do |format|
+      format.html { respond_with @workflow, location: workflows_path }
+      format.json { render json: workflow }
+    end
   end
 
   def update
     authorize workflow
 
-    workflow.update!(workflow_params)
+    workflow.update(workflow_params)
 
     Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
     Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
@@ -73,7 +90,23 @@ class WorkflowsController < ApplicationController
     params.require(:workflow).permit(
       :public_extracts,
       :public_reductions,
+      :rules_applied,
       webhooks_config: {},
     )
+  end
+
+  def heartbeat
+    @heartbeat = {
+      :extract => workflow.extracts.first&.updated_at,
+      :reduction => [
+        workflow.subject_reductions.order(updated_at: :desc).first&.updated_at,
+        workflow.user_reductions.order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action => [
+        SubjectAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at,
+        UserAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at
+      ].compact.max,
+      :action_count => SubjectAction.where(workflow_id: workflow.id).count + UserAction.where(workflow_id: workflow.id).count
+    }
   end
 end

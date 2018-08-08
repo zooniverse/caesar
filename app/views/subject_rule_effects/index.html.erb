@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Subject Rule Effects</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @subject_rule_effects.each do |subject_rule_effect| %>
+      <tr>
+        <td><%= link_to 'Show', subject_rule_effect %></td>
+        <td><%= link_to 'Edit', edit_subject_rule_effect_path(subject_rule_effect) %></td>
+        <td><%= link_to 'Destroy', subject_rule_effect, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Subject Rule Effect', new_subject_rule_effect_path %>

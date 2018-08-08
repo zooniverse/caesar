@@ -1,4 +1,6 @@
 class ExtractorsController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
 
@@ -30,24 +32,22 @@ class ExtractorsController < ApplicationController
     extractor_class = Extractor.of_type(params[:extractor][:type])
     @extractor = extractor_class.new(extractor_params(extractor_class))
 
-    if @extractor.save
-      flash[:success] = 'Extractor created'
+    @extractor.save
+    respond_to do |format|
+      format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with @extractor }
     end
-
-    respond_with @extractor, location: [workflow]
   end
 
   def update
     authorize workflow
-    @extractor = workflow.extractors.find(params[:id])
 
-    if @extractor.update(extractor_params(@extractor.class))
-      respond_to do |format|
-        format.html { redirect_to workflow, success: 'Extractor created' }
-        format.json { respond_with @extractor }
-      end
-    else
-      respond_with @extractor
+    @extractor = workflow.extractors.find(params[:id])
+    @extractor.update(extractor_params(@extractor.class))
+
+    respond_to do |format|
+      format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with @extractor }
     end
   end
 
@@ -55,13 +55,11 @@ class ExtractorsController < ApplicationController
     authorize workflow
     extractor = workflow.extractors.find(params[:id])
 
-    if extractor.destroy
-      flash[:success] = 'Extractor deleted'
-    else
-      flash[:error] = 'Could not delete extractor'
+    extractor.destroy
+    respond_to do |format|
+      format.html { respond_with extractor, location: workflow_path(workflow, anchor: 'extractors') }
+      format.json { respond_with extractor }
     end
-
-    respond_with extractor, location: [workflow]
   end
 
   private

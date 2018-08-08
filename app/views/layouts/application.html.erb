@@ -12,18 +12,28 @@
   </head>
 
   <body>
+    <%= render partial: 'header' %>
+
     <div class="container-fluid">
-      <%= render partial: 'header' %>
-
-      <% if flash[:alert] %>
-        <div class="alert"><%= flash[:alert] %></div>
-      <% end %>
-
-      <% if flash[:notice] %>
-        <div class="notice"><%= flash[:notice] %></div>
-      <% end %>
+      <div class="row">
+        <div class="col-md-12">
+          <% if flash[:alert] %>
+            <div class="alert alert-warning"><%= flash[:alert] %></div>
+          <% end %>
+          <% if flash[:notice] %>
+            <div class="alert alert-success"><%= flash[:notice] %></div>
+          <% end %>
+        </div>
+      </div>
 
       <%= yield %>
     </div>
+    <script type="text/javascript">
+      window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+      }, 4000);
+    </script>
   </body>
 </html>

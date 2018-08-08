@@ -14,6 +14,10 @@ module Effects
       collection_id.present?
     end
 
+    def self.config_fields
+      ["collection_id"]
+    end
+
     def collection_id
       config.fetch("collection_id")
     end

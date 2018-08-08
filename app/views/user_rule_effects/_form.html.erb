@@ -1,0 +1,21 @@
+<%= simple_form_for(@user_rule_effect, url: [@workflow, @user_rule, @user_rule_effect]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs form">
+    <label>Action Type</label><br/>
+    <span class="form-control">
+      <%= @user_rule_effect.action %>
+    </span>
+    <%= f.input :action, :as => :hidden %>
+    <br />
+    <% Effects[@user_rule_effect.action].config_fields.each do |key, options| %>
+      <label><%= key.capitalize %></label><br/>
+      <%= text_field_tag "user_rule_effect[config[#{key}]]", @user_rule_effect.config[key], { class: 'form-control' } %>
+    <% end %>
+  </div>
+  <br />
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+    <%= link_to 'Back', edit_workflow_user_rule_path(@workflow, @user_rule), class: 'btn btn-default' %>
+  </div>
+<% end %>
