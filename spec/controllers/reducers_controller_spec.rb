@@ -14,13 +14,11 @@ describe ReducersController, :type => :controller do
       reducers = [create(:external_reducer, reducible: workflow),
                   create(:stats_reducer, reducible: workflow)]
       get :index, params: {workflow_id: workflow.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response.map { |i| i["id"] }).to match_array(reducers.map(&:id))
     end
 
     it 'returns empty list when there are no reducers' do
       get :index, params: {workflow_id: workflow.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response).to eq([])
     end
   end

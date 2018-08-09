@@ -14,13 +14,11 @@ describe ExtractorsController, :type => :controller do
       extractors = [create(:external_extractor, workflow: workflow),
                     create(:survey_extractor, workflow: workflow)]
       get :index, params: {workflow_id: workflow.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response.map { |i| i["id"] }).to match_array(extractors.map(&:id))
     end
 
     it 'returns empty list when there are no extractors' do
       get :index, params: {workflow_id: workflow.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response).to eq([])
     end
   end

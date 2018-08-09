@@ -12,13 +12,11 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
                   create(:subject_rule_effect, subject_rule: rule)]
 
       get :index, params: {workflow_id: workflow.id, subject_rule_id: rule.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response.map { |i| i["id"] }).to match_array(rules.map(&:id))
     end
 
     it 'returns empty list when there are no subject rules' do
       get :index, params: {workflow_id: workflow.id, subject_rule_id: rule.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response).to eq([])
     end
   end

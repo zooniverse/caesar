@@ -12,13 +12,11 @@ RSpec.describe UserRuleEffectsController, type: :controller do
                   create(:user_rule_effect, user_rule: rule)]
 
       get :index, params: {workflow_id: workflow.id, user_rule_id: rule.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response.map { |i| i["id"] }).to match_array(rules.map(&:id))
     end
 
     it 'returns empty list when there are no user rules' do
       get :index, params: {workflow_id: workflow.id, user_rule_id: rule.id}, format: :json
-      json_response = JSON.parse(response.body)
       expect(json_response).to eq([])
     end
   end
