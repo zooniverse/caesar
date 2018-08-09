@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col-md-6">
+    <dl class="dl-horizontal">
+      <dt>Project Id</dt>
+      <dd><%= @project.id %>
+      <dt>Project Name</dt>
+      <dd><%= @project.display_name %>
+      <br/><br/>
+      <dt>Reducers</dt>
+      <dd>
+        <% if @project.reducers.count == 0 %>None<% end %>
+        <% @project.reducers.pluck(:key).each do |key| %>
+          <span class="label label-info"><%= key %></span>
+        <% end %>
+      </dd>
+      <br/>
+      <dt>Created</dt>
+      <dd><%= @project.created_at %>
+      <dt>Updated</dt>
+      <dd><%= @project.updated_at %>
+    </dl>
+  </div>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="dl-horizontal">
+          <dt>Total Reductions</dt>
+          <dd><%= @project.subject_reductions.count + @project.user_reductions.count %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" style="height: 2em;"></div>
+</div>
