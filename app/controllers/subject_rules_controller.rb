@@ -66,7 +66,7 @@ class SubjectRulesController < ApplicationController
   end
 
   def rule_params
-    p = params.require(:subject_rule).permit(:condition, :id)
-    p.merge(condition: JSON.parse(p["condition"]), workflow_id: workflow.id)
+    p = params.require(:subject_rule).permit(:id)
+    p.merge(condition: params[:subject_rule][:condition], workflow_id: workflow.id)
   end
 end

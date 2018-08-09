@@ -40,7 +40,7 @@ RSpec.describe SubjectRulesController, type: :controller do
   describe '#create' do
     it 'makes a new rule' do
       condition = ["gte", ["const", 5], ["const", 3]]
-      post :create, params: {subject_rule: {condition: condition.to_json}, workflow_id: workflow.id}, format: :json
+      post :create, params: {subject_rule: {condition: condition}, workflow_id: workflow.id}, as: :json
 
       expect(response.status).to eq(200)
       result = JSON.parse(response.body)
@@ -58,7 +58,7 @@ RSpec.describe SubjectRulesController, type: :controller do
       rule = create :subject_rule, condition: condition1, workflow: workflow
 
       condition2 = ["lte", ["const", 5], ["const", 3]]
-      put :update, params: {subject_rule: {condition: condition2.to_json}, workflow_id: workflow.id, id: rule.id}, format: :json
+      put :update, params: {subject_rule: {condition: condition2}, workflow_id: workflow.id, id: rule.id}, as: :json
 
       expect(response.status).to eq(200)
       result = JSON.parse(response.body)
