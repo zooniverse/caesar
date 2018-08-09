@@ -7,6 +7,10 @@ module Conditions
       @operation = operation
     end
 
+    def to_a
+      [@transform, @operation.to_a]
+    end
+
     def apply(bindings)
       value = operation.apply(bindings)
       raise TypeError, "Cannot run text transformation in rules for type #{value.class}" unless String === value
