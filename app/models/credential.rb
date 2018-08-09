@@ -36,6 +36,10 @@ class Credential < ApplicationRecord
     client.panoptes.paginate("/projects", current_user_roles: ['owner', 'collaborator'])
   end
 
+  def accessible_project?(id)
+    project_ids.include?(id)
+  end
+
   def accessible_workflow?(id)
     response = client.panoptes.get("/workflows/#{id}")
     workflow_hash = response["workflows"][0]

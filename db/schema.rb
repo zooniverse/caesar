@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.boolean "public_reductions", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "display_name"
   end
 
   create_table "reducers", force: :cascade do |t|
