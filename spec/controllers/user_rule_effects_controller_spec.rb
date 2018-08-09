@@ -50,10 +50,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
 
     it 'redirects to the user rule in html mode' do
       post :create, params: {user_rule_effect: {action: 'promote_user', config: { workflow_id: 1234 }}, workflow_id: workflow.id, user_rule_id: rule.id }, format: :html
-
-      expect(response.status).to eq(302)
-      location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}")
+      expect(response).to redirect_to(workflow_user_rule_path(workflow,rule))
     end
   end
 
@@ -75,10 +72,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
     it 'redirects to the user rule in html mode' do
       effect = create :user_rule_effect, action: 'promote_user', config: { workflow_id: '1234' }, user_rule: rule
       put :update, params: { user_rule_effect: { config: { workflow_id: '2345' }}, id: effect.id, user_rule_id: rule.id, workflow_id: workflow.id }, format: :html
-
-      expect(response.status).to eq(302)
-      location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/user_rules/#{rule.id}")
+      expect(response).to redirect_to(workflow_user_rule_path(workflow,rule))
     end
   end
 

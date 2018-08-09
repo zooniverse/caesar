@@ -32,8 +32,8 @@ class UserRulesController < ApplicationController
     @rule.save
 
     respond_to do |format|
-      format.html{ redirect_to workflow }
-      format.json{ render json: @rule}
+      format.html { redirect_to workflow }
+      format.json { render json: @rule}
     end
   end
 

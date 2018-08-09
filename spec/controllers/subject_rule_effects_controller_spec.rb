@@ -53,10 +53,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
     it 'redirects to the subject rule in html mode' do
       post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
-
-      expect(response.status).to eq(302)
-      location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}")
+      expect(response).to redirect_to(workflow_subject_rule_path(workflow,rule))
     end
   end
 
@@ -78,10 +75,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
     it 'redirects to the subject rule in html mode' do
       effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
       put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :html
-
-      expect(response.status).to eq(302)
-      location = response.headers["Location"]
-      expect(location).to end_with("workflows/#{workflow.id}/subject_rules/#{rule.id}")
+      expect(response).to redirect_to(workflow_subject_rule_path(workflow,rule))
     end
   end
 

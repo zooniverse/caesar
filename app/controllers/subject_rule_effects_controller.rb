@@ -7,7 +7,7 @@ class SubjectRuleEffectsController < ApplicationController
 
   def show
     authorize workflow
-    @effect = policy_scope(SubjectRuleEffect).find(params[:id]) or not found
+    @effect = policy_scope(SubjectRuleEffect).find(params[:id])
     respond_with @effect
   end
 
@@ -18,17 +18,17 @@ class SubjectRuleEffectsController < ApplicationController
 
   def edit
     authorize workflow
-    @effect = SubjectRule.find(id: params[:id]) or not_found
+    @effect = SubjectRule.find(id: params[:id])
   end
 
   def create
     authorize workflow
 
     @effect = SubjectRuleEffect.new(effect_params)
-    if(@effect.save)
+    if @effect.save
       respond_to do |format|
-        format.html{ redirect_to [workflow, subject_rule] }
-        format.json{ render json: @effect }
+        format.html { redirect_to [workflow, subject_rule] }
+        format.json { render json: @effect }
       end
     else
       respond_with @effect
@@ -37,12 +37,12 @@ class SubjectRuleEffectsController < ApplicationController
 
   def update
     authorize workflow
-    @effect = SubjectRuleEffect.find(params[:id]) or not_found
+    @effect = SubjectRuleEffect.find(params[:id])
 
-    if(@effect.update(effect_params))
+    if @effect.update(effect_params)
       respond_to do |format|
-        format.html{ redirect_to [workflow, subject_rule] }
-        format.json{ render json: @effect }
+        format.html { redirect_to [workflow, subject_rule] }
+        format.json { render json: @effect }
       end
     else
       respond_with @effect

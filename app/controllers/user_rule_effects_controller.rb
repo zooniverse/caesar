@@ -7,7 +7,7 @@ class UserRuleEffectsController < ApplicationController
 
   def show
     authorize workflow
-    @effect = policy_scope(UserRuleEffect).find(params[:id]) or not found
+    @effect = policy_scope(UserRuleEffect).find(params[:id])
     respond_with @effect
   end
 
@@ -18,7 +18,7 @@ class UserRuleEffectsController < ApplicationController
 
   def edit
     authorize workflow
-    @effect = UserRule.find(id: params[:id]) or not_found
+    @effect = UserRule.find(id: params[:id])
   end
 
   def create
@@ -27,24 +27,20 @@ class UserRuleEffectsController < ApplicationController
     @effect = UserRuleEffect.new(effect_params)
     @effect.save
 
-    if(@effect.save)
-      respond_to do |format|
-        format.html{ redirect_to [workflow, user_rule] }
-        format.json{ render json: @effect }
-      end
-    else
-      respond_with @effect
+    respond_to do |format|
+      format.html { redirect_to [workflow, user_rule] }
+      format.json { render json: @effect }
     end
   end
 
   def update
     authorize workflow
-    @effect = UserRuleEffect.find(params[:id]) or not_found
+    @effect = UserRuleEffect.find(params[:id])
 
-    if(@effect.update(effect_params))
+    if @effect.update(effect_params)
       respond_to do |format|
-        format.html{ redirect_to [workflow, user_rule] }
-        format.json{ render json: @effect }
+        format.html { redirect_to [workflow, user_rule] }
+        format.json { render json: @effect }
       end
     else
       respond_with @effect

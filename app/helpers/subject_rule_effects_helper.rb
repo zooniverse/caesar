@@ -1,2 +1,0 @@
-module SubjectRuleEffectsHelper
-end

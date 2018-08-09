@@ -2,7 +2,7 @@ class SubjectRulesController < ApplicationController
   def index
     authorize workflow
 
-    rules = SubjectRule.where(workflow_id: params[:workflow_id])
+    rules = workflow.subject_rules
     respond_to do |format|
       format.html { redirect_to workflow }
       format.json { render json: rules }
@@ -11,7 +11,7 @@ class SubjectRulesController < ApplicationController
 
   def show
     authorize workflow
-    @rule = workflow.subject_rules.find(params[:id]) or not_found
+    @rule = workflow.subject_rules.find(params[:id])
     respond_with @rule
   end
 
@@ -22,7 +22,7 @@ class SubjectRulesController < ApplicationController
 
   def edit
     authorize workflow
-    @rule = SubjectRule.find(id: params[:id]) or not_found
+    @rule = SubjectRule.find(id: params[:id])
   end
 
   def create

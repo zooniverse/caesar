@@ -37,9 +37,7 @@ Rails.application.routes.draw do
 
     resources :subjects, only: [:show] do
       resources :subject_reductions, only: [:index]
-      resources :data_requests
     end
-
 
     resources :users, only: [:show] do
       resources :user_reductions, only: [:index]

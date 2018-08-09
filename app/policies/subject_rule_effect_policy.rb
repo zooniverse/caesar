@@ -1,4 +1,3 @@
-
 class SubjectRuleEffectPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
