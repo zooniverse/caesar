@@ -6,6 +6,10 @@ module Conditions
       @value = value
     end
 
+    def to_a
+      ["const", @value]
+    end
+
     def apply(bindings)
       @value
     end

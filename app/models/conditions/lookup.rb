@@ -7,6 +7,10 @@ module Conditions
       @absent_val = absent_val
     end
 
+    def to_a
+      ["lookup", @key, @absent_val]
+    end
+
     def apply(bindings)
       bindings.fetch(@key, @absent_val)
     end
