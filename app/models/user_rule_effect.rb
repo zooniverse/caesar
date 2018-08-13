@@ -18,11 +18,6 @@ class UserRuleEffect < ApplicationRecord
                    user_id: user_id)
   end
 
-  def notify_subscribers(workflow_id, event_name, data)
-    workflow = Workflow.find(workflow_id)
-    workflow.webhooks.process(event_name, data) if workflow.subscribers?
-  end
-
   private
 
   def valid_effect?

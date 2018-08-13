@@ -10,13 +10,7 @@ module StreamEvents
 
     def process
       return unless enabled?
-
       cache_linked_models!
-
-      if workflow.subscribers?
-        workflow.webhooks.process "new_classification", @data.as_json
-      end
-
       stream.queue.add(ExtractWorker, classification.id)
     end
 

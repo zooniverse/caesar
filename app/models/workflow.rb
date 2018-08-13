@@ -88,10 +88,6 @@ class Workflow < ApplicationRecord
     where(project_id: credential.project_ids)
   end
 
-  def subscribers?
-    webhooks&.size > 0
-  end
-
   def classification_pipeline
     ClassificationPipeline.new(Workflow,
                                extractors,
@@ -99,10 +95,6 @@ class Workflow < ApplicationRecord
                                subject_rules.rank(:row_order),
                                user_rules.rank(:row_order),
                                rules_applied)
-  end
-
-  def webhooks
-    Webhooks::Engine.new(webhooks_config)
   end
 
   def configured?
@@ -118,10 +110,6 @@ class Workflow < ApplicationRecord
     else
       false
     end
-  end
-
-  def subscribers?
-    webhooks.size > 0
   end
 
   def concerns_subjects?

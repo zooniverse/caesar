@@ -23,12 +23,6 @@ class ExtractWorker
       if project && project.has_reducers?
         ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
       end
-
-      if workflow.subscribers?
-        extracts.each do |extract|
-          workflow.webhooks.process(:new_extraction, extract.data) if workflow.subscribers?
-        end
-      end
     end
   rescue ActiveRecord::RecordNotFound => e
     if Extract.where(classification_id: classification_id).any?

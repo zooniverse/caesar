@@ -16,10 +16,5 @@ module Effects
                      workflow_id: workflow_id,
                      subject_id: subject_id)
     end
-
-    def notify_subscribers(workflow_id, event_name, data)
-      workflow = Workflow.find(workflow_id)
-      workflow.webhooks.process(event_name, data) if workflow.subscribers?
-    end
   end
 end
