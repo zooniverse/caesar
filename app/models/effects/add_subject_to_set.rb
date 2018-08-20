@@ -13,7 +13,7 @@ module Effects
     end
 
     def self.config_fields
-      ["subject_set_id"]
+      [:subject_set_id].freeze
     end
 
     def subject_set_id

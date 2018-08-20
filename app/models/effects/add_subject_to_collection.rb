@@ -9,7 +9,7 @@ module Effects
     end
 
     def self.config_fields
-      ["collection_id"]
+      [:collection_id].freeze
     end
 
     def collection_id

@@ -3,7 +3,7 @@ class UserRule < ApplicationRecord
   ranks :row_order, with_same: :workflow_id
 
   belongs_to :workflow
-  has_many :user_rule_effects
+  has_many :user_rule_effects, dependent: :destroy
 
   validate :valid_condition?
 

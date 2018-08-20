@@ -9,7 +9,7 @@ module Effects
     end
 
     def self.config_fields
-      ["reason"]
+      [:reason].freeze
     end
 
     def reason

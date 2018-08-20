@@ -11,7 +11,7 @@ class UserRulesController < ApplicationController
 
   def show
     authorize workflow
-    @user_rule = workflow.user_rules.find(params[:id]) or not_found
+    @user_rule = workflow.user_rules.find(params[:id])
     respond_with @user_rule
   end
 
@@ -23,7 +23,7 @@ class UserRulesController < ApplicationController
 
   def edit
     authorize workflow
-    @user_rule = UserRule.find(params[:id]) or not_found
+    @user_rule = UserRule.find(params[:id])
     respond_with @user_rule
   end
 
@@ -41,7 +41,7 @@ class UserRulesController < ApplicationController
 
   def update
     authorize workflow
-    @user_rule = workflow.user_rules.find(params[:id]) or not_found
+    @user_rule = workflow.user_rules.find(params[:id])
 
     if @user_rule.update(rule_params)
       respond_to do |format|
@@ -55,14 +55,10 @@ class UserRulesController < ApplicationController
 
   def destroy
     authorize workflow
+
     rule = workflow.user_rules.find(params[:id])
-
-    UserRule.transaction do
-      UserRuleEffect.where(user_rule_id: rule.id).delete_all
-      rule.destroy
-    end
-
     rule.destroy
+
     respond_with rule, location: [workflow]
   end
 

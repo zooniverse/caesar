@@ -10,7 +10,7 @@ module Effects
     end
 
     def self.config_fields
-      ["workflow_id"]
+      [:workflow_id].freeze
     end
 
     def target_workflow_id
