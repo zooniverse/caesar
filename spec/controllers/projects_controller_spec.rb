@@ -10,7 +10,6 @@ describe ProjectsController, type: :controller do
       expect(response).to have_http_status(:success)
 
       projects = JSON.parse(response.body)
-      print projects
       expect(projects.length).to eq(1)
     end
   end
@@ -47,7 +46,7 @@ describe ProjectsController, type: :controller do
 
       expect(response.status).to eq(204)
       project = Project.find(8)
-      expect(project.display_name).to eq('eight')
+      expect(project.display_name).to eq('seven')
     end
   end
 end

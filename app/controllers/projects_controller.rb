@@ -39,11 +39,7 @@ class ProjectsController < ApplicationController
       return
     end
 
-    if Rails.env.development? || Rails.env.test?
-      panoptes_project = { id: project_id, display_name: 'New Project' }
-    else
-      panoptes_project = Effects.panoptes.project(project_id)
-    end
+    panoptes_project = Effects.panoptes.project(project_id) || { id: project_id, display_name: 'New Project' }
 
     @project = Project.new(project_params.merge(
       id: project_id,
@@ -61,7 +57,7 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   def update
     authorize project
-    project.update(project_params)
+    project.update(project_params.except('display_name'))
     respond_with project
   end
 
