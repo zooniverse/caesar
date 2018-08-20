@@ -27,8 +27,10 @@
       </dd>
       <dt>Rules</dt>
       <dd>
-        <% if @workflow.subject_rules.count == 0 && @workflow.user_rules.count == 0 %>None<%
-        else %><%= @workflow.subject_rules.count %> for subjects, <%= @workflow.user_rules.count %> for users
+        <% if @workflow.subject_rules.count == 0 && @workflow.user_rules.count == 0 %>
+          None
+        <% else %>
+          <%= @workflow.subject_rules.count %> for subjects, <%= @workflow.user_rules.count %> for users
         <% end %>
       </dd>
       <br/>
@@ -47,17 +49,17 @@
           <dt>Total Reductions</dt>
           <dd><%= @workflow.subject_reductions.count + @workflow.user_reductions.count %></dd>
           <dt>Total Actions</dt>
-          <dd><%= @heartbeat[:action_count] %></dd>
+          <dd><%= @heartbeat.action_count %></dd>
         </dl>
       </div>
       <div class="col-md-6">
         <dl class="dl-horizontal">
           <dt>Last Extract</dt>
-          <dd><%= @heartbeat[:extract] || "Never" %></dd>
+          <dd><%= @heartbeat.last_extract || "Never" %></dd>
           <dt>Last Reduction</dt>
-          <dd><%= @heartbeat[:reduction] || "Never" %></dd>
+          <dd><%= @heartbeat.last_reduction || "Never" %></dd>
           <dt>Last Action</dt>
-          <dd><%= @heartbeat[:action] || "Never" %></dd>
+          <dd><%= @heartbeat.last_action || "Never" %></dd>
         </dl>
       </div>
     </div>

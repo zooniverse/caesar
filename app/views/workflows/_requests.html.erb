@@ -15,13 +15,15 @@
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data.capitalize %></td>
         <td>
-          <span class="text-<% case data_request.status %><%
-            when 'complete' %>success<%
-            when 'failed' %>danger<%
-            when 'processing' %>primary<%
-            when 'empty' %>muted<%
-            when 'pending' %>muted
-          <% end %>"><%= data_request.status.capitalize %></span>
+          <% case data_request.status when 'complete' %><span class="text-success">
+          <% when 'failed' %><span class="text-danger">
+          <% when 'processing' %><span class="text-primary">
+          <% when 'empty' %><span class="text-muted">
+          <% when 'pending' %><span class="text-muted">
+          <% else %><span>
+          <% end %>
+            <%= data_request.status.capitalize %>
+          </span>
           <% if data_request.processing? %>
             (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)
           <% end %>

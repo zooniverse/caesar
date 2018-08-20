@@ -9,7 +9,7 @@ class WorkflowsController < ApplicationController
 
   def show
     authorize workflow
-    heartbeat
+    @heartbeat = Heartbeat.new(workflow)
     respond_with @workflow
   end
 
@@ -39,8 +39,7 @@ class WorkflowsController < ApplicationController
     skip_authorization
     workflow_id = params[:workflow][:id]
 
-    workflow_hash = { id: workflow_id }
-    workflow_hash = credential.accessible_workflow?(params[:workflow][:id]) unless Rails.env.development?
+    workflow_hash = credential.accessible_workflow?(params[:workflow][:id])
 
     unless workflow_hash.present?
       skip_authorization
@@ -48,18 +47,14 @@ class WorkflowsController < ApplicationController
       return
     end
 
-    panoptes_workflow = Effects.panoptes.workflow(workflow_id) unless Rails.env.development?
-    if Rails.env.development? || Rails.env.test?
-      panoptes_workflow = { workflow_id: workflow_id, project_id: workflow_id, display_name: 'New Workflow'}.stringify_keys
-    end
-
     @workflow = Workflow.new(workflow_params.merge(
       id: workflow_id,
-      project_id: panoptes_workflow["project_id"],
-      name: panoptes_workflow["display_name"]
+      project_id: workflow_hash["project_id"] || -1,
+      name: workflow_hash["display_name"] || "New Workflow"
     ))
 
     @workflow.save
+
     DescribeWorkflowWorker.perform_async(@workflow.id) unless @workflow.id.blank?
 
     respond_to do |format|
@@ -98,20 +93,5 @@ class WorkflowsController < ApplicationController
       :status,
       :rules_applied,
     )
-  end
-
-  def heartbeat
-    @heartbeat = {
-      :extract => workflow.extracts.first&.updated_at,
-      :reduction => [
-        workflow.subject_reductions.order(updated_at: :desc).first&.updated_at,
-        workflow.user_reductions.order(updated_at: :desc).first&.updated_at
-      ].compact.max,
-      :action => [
-        SubjectAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at,
-        UserAction.where(workflow_id: workflow.id).order(updated_at: :desc).first&.updated_at
-      ].compact.max,
-      :action_count => SubjectAction.where(workflow_id: workflow.id).count + UserAction.where(workflow_id: workflow.id).count
-    }
   end
 end

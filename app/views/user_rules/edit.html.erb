@@ -27,8 +27,14 @@
     <tr>
       <td><%= render partial: 'effect', locals: {effect: rule_effect.effect} %></td>
       <td>
-        <%= link_to "", [:edit, @workflow, @user_rule, rule_effect], class: 'glyphicon glyphicon-cog text-warning' %>
-        <%= link_to "", [@workflow, @user_rule, rule_effect], method: :delete, data: {confirm: "Are you sure?"}, class: 'glyphicon glyphicon-trash text-danger' %>
+        <%= link_to [:edit, @workflow, @user_rule, rule_effect] do %>
+          <i class="glyphicon glyphicon-cog text-warning"></i>
+          <span class="sr-only">Edit</i>
+        <% end %>
+        <%= link_to [:edit, @workflow, @user_rule, rule_effect], method: :delete, data: {confirm: "Are you sure?"} do %>
+          <i class="glyphicon glyphicon-trash text-danger"></i>
+          <span class="sr-only">Delete</i>
+        <% end %>
       </td>
     </tr>
     <% end %>

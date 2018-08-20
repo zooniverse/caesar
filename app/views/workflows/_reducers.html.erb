@@ -28,14 +28,24 @@
       <tr>
         <td><%= reducer.id %></td>
         <td><%= reducer.key %></td>
-        <td><% case reducer.topic when 'reduce_by_subject' %>Subjects<% when 'reduce_by_user' %>Users<% end %></td>
-        <td><%= reducer.class.to_s.demodulize %></td>
-        <td class="params-column"><%= render_params reducer.config, 'No Configuration' %></td>
-        <td class="params-column"><%= render_params reducer.filters, 'No Filters' %></td>
-        <td class="params-column"><%= render_params reducer.grouping, 'No Grouping' %></td>
         <td>
-          <%= link_to "", [:edit, @workflow, reducer.becomes(Reducer)], class: 'glyphicon glyphicon-cog text-warning' %>
-          <%= link_to "", [@workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"}, class: 'glyphicon glyphicon-trash text-danger' %>
+          <% case reducer.topic when 'reduce_by_subject' %>Subjects
+          <% when 'reduce_by_user' %>Users
+          <% end %>
+        </td>
+        <td><%= reducer.class.to_s.demodulize %></td>
+        <td class="params-column"><%= render_hash reducer.config, 'No Configuration' %></td>
+        <td class="params-column"><%= render_hash reducer.filters, 'No Filters' %></td>
+        <td class="params-column"><%= render_hash reducer.grouping, 'No Grouping' %></td>
+        <td>
+          <%= link_to [:edit, @workflow, reducer.becomes(Reducer)] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
         </td>
       </tr>
     <% end %>

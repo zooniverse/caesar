@@ -25,11 +25,18 @@
         <td><%= extractor.id %></td>
         <td><%= extractor.key %></td>
         <td><%= extractor.class.to_s.demodulize %></td>
-        <td class="params-column"><%= render_params extractor.config, "No Configuration" %></td>
+        <td class="params-column"><%= render_hash extractor.config, "No Configuration" %></td>
         <td><%= extractor.minimum_workflow_version || "any" %></td>
         <td style="text-align: center;">
-          <%= link_to "", [:edit, @workflow, extractor.becomes(Extractor)], class: 'glyphicon glyphicon-cog text-warning' %>
-          <%= link_to "", [@workflow, extractor.becomes(Extractor)], method: :delete, data: {confirm: "Are you sure?"}, class: 'glyphicon glyphicon-trash text-danger' %>
+          <%= link_to [:edit, @workflow, extractor.becomes(Extractor)] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, extractor.becomes(Extractor)], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

@@ -25,8 +25,14 @@
           <% end %>
         </td>
         <td>
-          <%= link_to "", [:edit, @workflow, rule], class: 'glyphicon glyphicon-cog text-warning' %>
-          <%= link_to "", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'glyphicon glyphicon-trash text-danger' %>
+          <%= link_to [:edit, @workflow, rule] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, rule], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
         </td>
       </tr>
     <% end %>
@@ -67,8 +73,14 @@
           <% end %>
         </td>
         <td>
-          <%= link_to "", [:edit, @workflow, rule], class: 'glyphicon glyphicon-cog text-warning' %>
-          <%= link_to "", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'glyphicon glyphicon-trash text-danger' %>
+          <%= link_to [:edit, @workflow, rule] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, rule], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
         </td>
       </tr>
     <% end %>

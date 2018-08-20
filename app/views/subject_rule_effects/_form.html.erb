@@ -1,7 +1,7 @@
 <%= simple_form_for(@subject_rule_effect, url: [@workflow, @subject_rule, @subject_rule_effect]) do |f| %>
   <%= f.error_notification %>
 
-  <div class="form-inputs form">
+  <div class="form form-inputs">
     <label>Action Type</label><br/>
     <span class="form-control">
       <%= @subject_rule_effect.action %>

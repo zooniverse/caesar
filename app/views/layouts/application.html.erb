@@ -13,7 +13,6 @@
 
   <body>
     <%= render partial: 'header' %>
-
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
@@ -25,15 +24,7 @@
           <% end %>
         </div>
       </div>
-
       <%= yield %>
     </div>
-    <script type="text/javascript">
-      window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove();
-        });
-      }, 4000);
-    </script>
   </body>
 </html>

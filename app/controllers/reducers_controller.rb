@@ -59,13 +59,11 @@ class ReducersController < ApplicationController
     @reducer = workflow.reducers.find(params[:id])
     params = reducer_params(@reducer.class)
 
-    # if(params['filters']['from'].blank? && params['filters']['to'].blank? && params['filters']['extractor_keys'].blank?)
-    if(params.dig('filters','from').blank? && params.dig('filters','to').blank? && params.dig('filters','extractor_keys').blank?)
+    if params.dig('filters','from').blank? && params.dig('filters','to').blank? && params.dig('filters','extractor_keys').blank?
       params['filters'] = {}
     end
 
-    # if(params['grouping']['field_name'].blank?)
-    if(params.dig('grouping','field_name').blank?)
+    if params.dig('grouping','field_name').blank?
       params['grouping'] = {}
     end
 

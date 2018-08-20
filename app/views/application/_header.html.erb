@@ -32,7 +32,7 @@
             <p class="navbar-text"><strong>Logged in as</strong> <%= credential.login %></p>
             <li><%= link_to 'Log Out', session_path, method: :delete %></li>
           <% else %>
-          <li><%= link_to 'Log In', '/auth/zooniverse' %></li>
+            <li><%= link_to 'Log In', '/auth/zooniverse' %></li>
           <% end %>
         </ul>
       </div><!-- /.navbar-collapse -->

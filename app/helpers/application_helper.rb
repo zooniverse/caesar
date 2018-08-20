@@ -3,7 +3,7 @@ module ApplicationHelper
     render partial: 'condition', locals: {condition: condition}
   end
 
-  def render_params(params, empty_string)
-    render partial: 'params', locals: {hash: params, empty_string: empty_string}
+  def render_hash(hash, empty_string)
+    render partial: 'hash', locals: {hash: hash, empty_string: empty_string}
   end
 end
