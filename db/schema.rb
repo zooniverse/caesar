@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180717201101) do
+ActiveRecord::Schema.define(version: 20180813112117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,7 +102,6 @@ ActiveRecord::Schema.define(version: 20180717201101) do
   create_table "projects", force: :cascade do |t|
     t.jsonb "reducers_config"
     t.jsonb "rules_config"
-    t.jsonb "webhooks"
     t.integer "rules_applied", default: 0, null: false
     t.boolean "public_reductions", default: false, null: false
     t.datetime "created_at", null: false
@@ -242,7 +241,6 @@ ActiveRecord::Schema.define(version: 20180717201101) do
     t.integer "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "webhooks_config", default: [], null: false
     t.boolean "public_extracts", default: false, null: false
     t.boolean "public_reductions", default: false, null: false
     t.integer "rules_applied", default: 0, null: false

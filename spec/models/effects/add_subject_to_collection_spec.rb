@@ -10,7 +10,6 @@ describe Effects::AddSubjectToCollection do
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
-    allow(effect).to receive(:notify_subscribers).and_return(nil)
   end
 
   it 'adds the given subject to a given subject set' do
@@ -18,10 +17,4 @@ describe Effects::AddSubjectToCollection do
     expect(panoptes).to have_received(:add_subjects_to_collection)
       .with(collection_id, [subject_id])
   end
-
-  it 'notifies subscribers' do
-    effect.perform(workflow_id, subject_id)
-    expect(effect).to have_received(:notify_subscribers).once
-  end
-
 end

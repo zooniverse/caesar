@@ -72,8 +72,7 @@ class WorkflowsController < ApplicationController
   def workflow_params
     params.require(:workflow).permit(
       :public_extracts,
-      :public_reductions,
-      webhooks_config: {},
+      :public_reductions
     )
   end
 end
