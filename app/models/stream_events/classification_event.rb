@@ -11,7 +11,7 @@ module StreamEvents
     def process
       return unless enabled?
       cache_linked_models!
-      stream.queue.add(ExtractWorker, classification.id)
+      stream.queue.add(ExtractWorker, classification.id) unless classification.workflow.paused?
     end
 
     def cache_linked_models!
@@ -40,7 +40,7 @@ module StreamEvents
       subject_id = @data.fetch("links").fetch("subjects")[0]
       Subject.find(subject_id)
     end
-    
+
     def workflow_id
       @data.fetch("links").fetch("workflow")
     end

@@ -76,8 +76,9 @@ class Workflow < ApplicationRecord
   has_many :subject_actions
   has_many :user_actions
   has_many :data_requests, as: :exportable
-  
+
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
+  enum status: { paused: 0, active: 1 }
 
   def self.accessible_by(credential)
     return none unless credential.logged_in?

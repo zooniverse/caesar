@@ -6,6 +6,9 @@ class CheckRulesWorker
 
   def perform(reducible_id, reducible_type, subject_id, user_id = nil)
     reducible = reducible_type.constantize.find(reducible_id)
+
+    return if reducible.class.name.demodulize=='Workflow' && reducible.paused?
+
     reducible.classification_pipeline.check_rules(reducible_id, subject_id, user_id)
   end
 end

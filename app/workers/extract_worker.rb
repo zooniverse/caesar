@@ -10,6 +10,8 @@ class ExtractWorker
     classification = Classification.find(classification_id)
 
     workflow = classification.workflow
+    return if workflow.paused?
+
     extracts = workflow.classification_pipeline.extract(classification)
     extracts = extracts.select { |extract| extract != Extractor::NoData }
 

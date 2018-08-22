@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180822135902) do
+ActiveRecord::Schema.define(version: 20180822211217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -246,6 +246,7 @@ ActiveRecord::Schema.define(version: 20180822135902) do
     t.integer "rules_applied", default: 0, null: false
     t.string "name"
     t.string "project_name"
+    t.integer "status", default: 1, null: false
   end
 
   add_foreign_key "classifications", "subjects"

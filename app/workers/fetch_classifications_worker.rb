@@ -18,6 +18,9 @@ class FetchClassificationsWorker
   sidekiq_options unique: :until_executed unless Rails.env.test?
 
   def perform(workflow_id, object_id, object_type)
+    workflow = Workflow.find(workflow_id)
+    return if workflow.paused?
+
     classifications = fetch_classifications(workflow_id, object_id, object_type)
     process_classifications(workflow_id, classifications)
   end
