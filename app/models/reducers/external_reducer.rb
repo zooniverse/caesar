@@ -39,6 +39,11 @@ module Reducers
           else
             raise StandardError.new 'Remote reducer failed'
           end)
+
+          if r&.data&.key? '_store'
+            r.store = r.data['_store']
+            r.data = r.data.except '_store'
+          end
         end
       else
         raise StandardError.new "External extractor improperly configured: no URL"
