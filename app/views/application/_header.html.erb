@@ -16,6 +16,7 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <% if credential.logged_in? %><li><%= link_to 'Workflows', workflows_path %></li><% end %>
+          <% if credential.logged_in? %><li><%= link_to 'Projects', projects_path %></li><% end %>
           <% if credential.admin? %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator <span class="caret"></span></a>

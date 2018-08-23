@@ -1,4 +1,4 @@
-<%= simple_form_for @reducer, as: :reducer, url: [@workflow, @reducer.becomes(Reducer)], html: { class: 'form-vertical' } do |f| %>
+<%= simple_form_for @reducer, as: :reducer, url: [@reducible, @reducer.becomes(Reducer)], html: { class: 'form-vertical' } do |f| %>
   <%= f.hidden_field :type, value: params.dig(:reducer, :type) || params[:type] %>
 
   <%= f.input :key %>
@@ -12,6 +12,8 @@
   <% end %>
 
   <%= f.input :topic, collection: Reducer.topics.keys %>
+
+  <%= f.input :reducible_type, :as => :hidden %>
 
   <div class="panel panel-info">
     <div class="panel-heading"><a role="button" data-toggle="collapse" href="#groupingInputs" aria-expanded="false" aria-controls="groupingInputs">Grouping <span class="caret"></span></a></div>
@@ -40,5 +42,9 @@
 
 
   <%= f.submit class: 'btn btn-primary' %>
-  <%= link_to 'Back', workflow_path(@workflow, anchor: 'reducers'), class: 'btn btn-default' %>
+  <% if @reducible_type == :Workflow %>
+    <%= link_to 'Back', workflow_path(@reducible, anchor: 'reducers'), class: 'btn btn-default' %>
+  <% elsif @reducible_type == :Project %>
+    <%= link_to 'Back', project_path(@reducible, anchor: 'reducers'), class: 'btn btn-default' %>
+  <% end %>
 <% end %>

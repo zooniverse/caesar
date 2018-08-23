@@ -1,0 +1,66 @@
+<div class="row">
+<div class="col-md-12">
+<h2>Projects</h2>
+
+<table class="table table-striped">
+  <colgroup>
+    <col style="width: 8em"/>
+    <col />
+    <col style="width: 8em"/>
+    <col style="width: 8em"/>
+    <col style="width: 8em"/>
+    <col style="width: 16em"/>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th class="text-muted">Extractors</th>
+      <th>Reducers</th>
+      <th class="text-muted">Rules</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr>
+        <td><%= project.id %></td>
+        <td><%= link_to project.display_name || "No Name", project_path(project) %></td>
+        <td class="text-muted">N/A</td>
+        <td><%= project.reducers.count %></td>
+        <td class="text-muted">N/A</td>
+        <td><%= project.updated_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    <i class="glyphicon glyphicon-plus"></i> Add</span>
+  </button>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= simple_form_for @project, url: projects_path, html: { class: 'form-vertical' } do |f| %>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add Project</h4>
+      </div>
+      <div class="modal-body">
+        <%= f.input :id, label: 'Project Id' %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <%= f.submit 'Add Project', class: 'btn btn-primary' %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
