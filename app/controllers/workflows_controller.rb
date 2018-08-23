@@ -53,8 +53,13 @@ class WorkflowsController < ApplicationController
 
   def update
     authorize workflow
+    was_paused = workflow.paused?
 
     workflow.update!(workflow_params)
+
+    if was_paused && workflow.active?
+      UnpauseWorkflowWorker.perform_async workflow.id
+    end
 
     Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
     Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
@@ -72,7 +77,8 @@ class WorkflowsController < ApplicationController
   def workflow_params
     params.require(:workflow).permit(
       :public_extracts,
-      :public_reductions
+      :public_reductions,
+      :status
     )
   end
 end

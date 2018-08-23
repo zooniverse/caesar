@@ -4,6 +4,7 @@ class PerformSubjectActionWorker
 
   def perform(action_id)
     action = SubjectAction.find(action_id)
+    return if action.workflow.paused?
     action.perform
   end
 end

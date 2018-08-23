@@ -24,9 +24,6 @@ Reducer.create!(type: 'Reducers::SqsReducer', key: 'SQS', config: { queue_url: '
 
 SubjectReduction.create!(reducible: wf1, subject: s1, reducer_key: 'UC', data: { foo: 'bar' })
 SubjectReduction.create!(reducible: wf1, subject: s2, reducer_key: 'UC', data: { foo: 'bar' })
-SubjectReduction.create!(reducible: wf1, subject: s2, reducer_key: 'UC', data: { foo: 'baz' })
-SubjectReduction.create!(reducible: wf1, subject: s2, reducer_key: 'UC', data: { foo: 'baz' })
-SubjectReduction.create!(reducible: wf1, subject: s2, reducer_key: 'UC', data: { foo: 'baz' })
 SubjectReduction.create!(reducible: wf2, subject: s3, reducer_key: 'C', data: { bar: 'foo' })
 
 sr1 = SubjectRule.create!(workflow: wf1, condition: ["lte", ["const", 5], ["const", 3]])

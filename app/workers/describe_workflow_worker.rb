@@ -8,6 +8,7 @@ class DescribeWorkflowWorker
     light = Stoplight("describe-workflow-#{workflow_id}") do
       workflow = Workflow.find(workflow_id)
 
+      return if workflow.paused?
       return unless workflow.name.blank? || workflow.project_name.blank?
 
       panoptes_workflow = Effects.panoptes.workflow(workflow_id)
