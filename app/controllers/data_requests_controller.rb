@@ -1,6 +1,7 @@
 class DataRequestsController < ApplicationController
+  responders :flash
+
   def index
-    @workflow = Workflow.find(params[:workflow_id])
     @data_requests = scope.order(created_at: :desc)
 
     if(params.has_key?(:subgroup))
@@ -13,21 +14,22 @@ class DataRequestsController < ApplicationController
   def show
     data_request = scope.find(params[:id])
     authorize data_request
+
     respond_with data_request
   end
 
   def create
     DataRequest.transaction do
       obj = nil
-      args = (params[:data_request] || {}).merge(workflow_id: params[:workflow_id])
+      args = ({requested_data: params.dig(:data_request, :requested_data)} || {}).merge(workflow_id: params[:workflow_id])
       ctx = {credential: credential}
 
       data_request = CreatesDataRequests.call(obj, args, ctx)
       skip_authorization # operations do this themselves and raise if needed
 
       respond_to do |format|
-        format.html { redirect_to [data_request.exportable, :data_requests] }
-        format.json { respond_with data_request.exportable, data_request }
+        format.html { respond_with data_request, location: workflow_path(workflow, anchor: 'requests') }
+        format.json { respond_with unscoped_workflow, data_request }
       end
     end
   end
@@ -36,5 +38,13 @@ class DataRequestsController < ApplicationController
 
   def scope
     policy_scope(DataRequest).where(workflow_id: params[:workflow_id])
+  end
+
+  def workflow
+    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+  end
+
+  def unscoped_workflow
+    @unscoped_workflow ||= Workflow.find(params[:workflow_id])
   end
 end

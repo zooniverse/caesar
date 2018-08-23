@@ -1,0 +1,27 @@
+<ul>
+  <% if hash.blank? %>
+  <li><%= empty_string %></li>
+  <% else %>
+    <% for key in hash.keys %>
+      <% if hash[key].is_a?(String) %>
+        <li><strong><%= key %>: </strong>'<%= hash[key] %>'</li>
+      <% elsif hash[key].is_a?(Hash) %>
+        <li><strong><%= key %>:</strong></li>
+        <%= render_params hash[key], empty_string %>
+      <% elsif hash[key].is_a?(Array) %>
+        <li><strong><%= key %>:</strong></li>
+        <ul>
+        <% for element in hash[key] %>
+          <% if element.is_a?(String) %>
+            <li>'<%= element %>'</li>
+          <% else %>
+            <li><%= element %></li>
+          <% end %>
+        <% end %>
+        </ul>
+      <% else %>
+        <li><strong><%= key %>: </strong><%= hash[key] %></li>
+      <% end %>
+    <% end %>
+  <% end %>
+</ul>

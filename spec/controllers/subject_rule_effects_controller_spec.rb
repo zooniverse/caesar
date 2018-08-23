@@ -43,7 +43,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
     it 'makes a new effect' do
       post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
-      expect(response.status).to eq(200)
+      expect(response.status).to eq(201)
       result = JSON.parse(response.body)
       expect(result["id"]).not_to be(nil)
       expect(result["subject_rule_id"]).to eq(rule.id)
@@ -60,12 +60,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
       put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
 
-      expect(response.status).to eq(200)
-      result = JSON.parse(response.body)
-
-      expect(result["id"]).not_to be(nil)
-      expect(result["id"]).to eq(effect.id)
-
+      expect(response.status).to eq(204)
       effect = SubjectRuleEffect.find(effect.id)
       expect(effect.config['foo']).to eq('baz')
     end

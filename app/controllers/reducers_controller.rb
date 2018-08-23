@@ -1,4 +1,6 @@
 class ReducersController < ApplicationController
+  responders :flash
+
   def index
     authorize workflow
 
@@ -11,17 +13,22 @@ class ReducersController < ApplicationController
   def show
     authorize workflow
     @reducer = workflow.reducers.find(params[:id])
-    respond_with @reducer
+
+    respond_with workflow, @reducer
   end
 
   def new
     authorize workflow
     @reducer = Reducer.of_type(params[:type]).new(reducible: workflow)
+
+    respond_with workflow, @reducer
   end
 
   def edit
     authorize workflow
     @reducer = workflow.reducers.find(params[:id])
+
+    respond_with workflow, @reducer
   end
 
   def create
@@ -37,41 +44,47 @@ class ReducersController < ApplicationController
     if(@reducer.grouping['field_name'].blank?)
       @reducer.grouping = {}
     end
-    
-    if @reducer.save
-      flash[:success] = 'Reducer created'
-    else
-      flash[:error] = 'Could not create reducer'
-    end
 
-    respond_with @reducer, location: [workflow]
+    @reducer.save
+
+    respond_to do |format|
+      format.html { respond_with @reducer, location: workflow_path(workflow, anchor: 'reducers') }
+      format.json { respond_with @reducer }
+    end
   end
 
   def update
     authorize workflow
-    @reducer = workflow.reducers.find(params[:id])
 
-    if @reducer.update(reducer_params(@reducer.class))
-      respond_to do |format|
-        format.html { redirect_to workflow, success: 'Reducer created' }
-        format.json { respond_with @reducer }
-      end
-    else
-      respond_with @reducer
+    @reducer = workflow.reducers.find(params[:id])
+    params = reducer_params(@reducer.class)
+
+    if params.dig('filters','from').blank? && params.dig('filters','to').blank? && params.dig('filters','extractor_keys').blank?
+      params['filters'] = {}
+    end
+
+    if params.dig('grouping','field_name').blank?
+      params['grouping'] = {}
+    end
+
+    @reducer.update(params)
+
+    respond_to do |format|
+      format.html { respond_with @reducer, location: workflow_path(workflow, anchor: 'reducers') }
+      format.json { respond_with @reducer }
     end
   end
 
   def destroy
     authorize workflow
+
     reducer = workflow.reducers.find(params[:id])
+    reducer.destroy
 
-    if reducer.destroy
-      flash[:success] = 'Reducer deleted'
-    else
-      flash[:error] = 'Could not delete reducer'
+    respond_to do |format|
+      format.html { respond_with reducer, location: workflow_path(workflow, anchor: 'reducers') }
+      format.json { respond_with reducer }
     end
-
-    respond_with reducer, location: [workflow]
   end
 
   private

@@ -1,8 +1,60 @@
-<h2>Reducers</h2>
+<div class="row">
+<div class="col-md-12 clearfix">
+<table class="table table-striped table-sm">
+  <colgroup>
+    <col style="width: 4em;" />
+    <col style="width: 8em;" />
+    <col style="width: 6em;" />
+    <col style="width: 12em;" />
+    <col />
+    <col />
+    <col />
+    <col style="width: 4em;" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Key</th>
+      <th>Topic</th>
+      <th>Type</th>
+      <th>Configuration</th>
+      <th>Filters</th>
+      <th>Grouping</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for reducer in @workflow.reducers %>
+      <tr>
+        <td><%= reducer.id %></td>
+        <td><%= reducer.key %></td>
+        <td>
+          <% case reducer.topic when 'reduce_by_subject' %>Subjects
+          <% when 'reduce_by_user' %>Users
+          <% end %>
+        </td>
+        <td><%= reducer.class.to_s.demodulize %></td>
+        <td class="params-column"><%= render_hash reducer.config, 'No Configuration' %></td>
+        <td class="params-column"><%= render_hash reducer.filters, 'No Filters' %></td>
+        <td class="params-column"><%= render_hash reducer.grouping, 'No Grouping' %></td>
+        <td>
+          <%= link_to [:edit, @workflow, reducer.becomes(Reducer)] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Create <span class="caret"></span>
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
   </button>
 
   <ul class="dropdown-menu">
@@ -11,38 +63,10 @@
     <li><%= link_to "Placeholder", new_workflow_reducer_path(@workflow, type: 'placeholder') %></li>
     <li><%= link_to "External", new_workflow_reducer_path(@workflow, type: 'external') %></li>
     <li><%= link_to "First Extract", new_workflow_reducer_path(@workflow, type: 'first_extract') %></li>
-    <li><%= link_to "Stats", new_workflow_reducer_path(@workflow, type: 'stats') %></li>
+    <li><%= link_to "Simple Stats", new_workflow_reducer_path(@workflow, type: 'stats') %></li>
+    <li><%= link_to "Summary Stats", new_workflow_reducer_path(@workflow, type: 'summary_stats') %></li>
     <li><%= link_to "Unique Count", new_workflow_reducer_path(@workflow, type: 'unique_count') %></li>
   </ul>
 </div>
-
-<table class="table table-hover table table-sm">
-  <thead>
-    <thead class="thead-inverse">
-      <tr>
-        <th>Name</th>
-        <th>Topic</th>
-        <th>Type</th>
-        <th>Configuration</th>
-        <th>Filters</th>
-        <th>Grouping</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% for reducer in @workflow.reducers %>
-        <tr>
-          <td><%= reducer.key %></td>
-          <td><%= reducer.topic %></td>
-          <td><%= reducer.class %></td>
-          <td><%= debug reducer.config %></td>
-          <td><%= debug reducer.filters %></td>
-          <td><%= debug reducer.grouping %></td>
-          <td>
-            <%= link_to "Edit", [:edit, @workflow, reducer.becomes(Reducer)], class: 'btn btn-primary' %>
-            <%= link_to "Destroy", [@workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-</table>
+</div>
+</div>

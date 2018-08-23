@@ -1,8 +1,50 @@
-<h2>Extractors</h2>
+<div class="row">
+<div class="col-md-12">
+<table class="table table-sm table-striped">
+  <colgroup>
+    <col style="width: 4em;" />
+    <col style="width: 8em;" />
+    <col style="width: 12em;" />
+    <col />
+    <col style="width: 8em;" />
+    <col style="width: 4em;" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Key</th>
+      <th>Type</th>
+      <th>Configuration</th>
+      <th>Min. Ver.</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for extractor in @workflow.extractors %>
+      <tr>
+        <td><%= extractor.id %></td>
+        <td><%= extractor.key %></td>
+        <td><%= extractor.class.to_s.demodulize %></td>
+        <td class="params-column"><%= render_hash extractor.config, "No Configuration" %></td>
+        <td><%= extractor.minimum_workflow_version || "any" %></td>
+        <td style="text-align: center;">
+          <%= link_to [:edit, @workflow, extractor.becomes(Extractor)] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, extractor.becomes(Extractor)], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Create <span class="caret"></span>
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
   </button>
 
   <ul class="dropdown-menu">
@@ -14,29 +56,5 @@
     <li><%= link_to "Who", new_workflow_extractor_path(@workflow, type: 'who') %></li>
   </ul>
 </div>
-
-<table class="table table-hover table table-sm">
-  <thead>
-     <thead class="thead-inverse">
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Configuration</th>
-      <th>Minimum workflow version</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for extractor in @workflow.extractors %>
-      <tr>
-        <td><%= extractor.key %></td>
-        <td><%= extractor.class %></td>
-        <td><%= debug extractor.config %></td>
-        <td><%= extractor.minimum_workflow_version || "any" %></td>
-        <td>
-          <%= link_to "Edit", [:edit, @workflow, extractor.becomes(Extractor)], class: 'btn btn-primary' %>
-          <%= link_to "Destroy", [@workflow, extractor.becomes(Extractor)], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+</div>
+</div>

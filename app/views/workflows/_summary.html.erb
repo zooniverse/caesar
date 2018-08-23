@@ -1,0 +1,101 @@
+<div class="row">
+  <div class="col-md-6">
+    <dl class="dl-horizontal">
+      <dt>Workflow Id</dt>
+      <dd><%= @workflow.id %>
+      <dt>Workflow Name</dt>
+      <dd><%= @workflow.name %>
+      <br/><br/>
+      <dt>Project Id</dt>
+      <dd><%= @workflow.project_id %>
+      <dt>Project Name</dt>
+      <dd><%= @workflow.project_name %>
+      <br/><br/>
+      <dt>Extractors</dt>
+      <dd>
+        <% if @workflow.extractors.count == 0 %>None<% end %>
+        <% @workflow.extractors.pluck(:key).each do |key| %>
+          <span class="label label-info"><%= key %></span>
+        <% end %>
+      </dd>
+      <dt>Reducers</dt>
+      <dd>
+        <% if @workflow.reducers.count == 0 %>None<% end %>
+        <% @workflow.reducers.pluck(:key).each do |key| %>
+          <span class="label label-info"><%= key %></span>
+        <% end %>
+      </dd>
+      <dt>Rules</dt>
+      <dd>
+        <% if @workflow.subject_rules.count == 0 && @workflow.user_rules.count == 0 %>
+          None
+        <% else %>
+          <%= @workflow.subject_rules.count %> for subjects, <%= @workflow.user_rules.count %> for users
+        <% end %>
+      </dd>
+      <br/>
+      <dt>Created</dt>
+      <dd><%= @workflow.created_at %>
+      <dt>Updated</dt>
+      <dd><%= @workflow.updated_at %>
+    </dl>
+  </div>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="dl-horizontal">
+          <dt>Total Extracts</dt>
+          <dd><%= @workflow.extracts.count %></dd>
+          <dt>Total Reductions</dt>
+          <dd><%= @workflow.subject_reductions.count + @workflow.user_reductions.count %></dd>
+          <dt>Total Actions</dt>
+          <dd><%= @heartbeat.action_count %></dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <dl class="dl-horizontal">
+          <dt>Last Extract</dt>
+          <dd><%= @heartbeat.last_extract || "Never" %></dd>
+          <dt>Last Reduction</dt>
+          <dd><%= @heartbeat.last_reduction || "Never" %></dd>
+          <dt>Last Action</dt>
+          <dd><%= @heartbeat.last_action || "Never" %></dd>
+        </dl>
+      </div>
+    </div>
+    <div class="row"><div class="col-md-12">&nbsp;</div></div>
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Settings</h3>
+        <%= simple_form_for(@workflow, url: [@workflow], :html => { class: 'panel panel-info clearfix' }) do |f| %>
+          <%= f.error_notification %>
+          <div class="panel-body">
+            <div class="form-inline form-inputs">
+              <div class="form-group">
+                <%= f.check_box :public_extracts, class: 'form-control' %>
+                <label for="workflow_public_extracts" style="vertical-align: sub; margin-left: 0.5em;">Public Extracts</label>
+              </div>
+              <br/>
+              <div class="form-group">
+                <%= f.check_box :public_reductions, class: 'form-control' %>
+                <label for="workflow_public_reductions" style="vertical-align: sub; margin-left: 0.5em;">Public Reductions</label>
+              </div>
+            </div>
+            <br/>
+            <div class="form-inputs">
+              <label for="workflow_rules_applied">Rules Applied</label>
+              <%= f.select :rules_applied, @workflow.class.rules_applieds.map{|key, val| [key.humanize, key]}, {}, { class: 'form-control' } %>
+            </div>
+            <br/>
+            <div class="form-actions">
+              <%= f.button :submit, class: 'btn btn-primary pull-right' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" style="height: 2em;"></div>
+</div>

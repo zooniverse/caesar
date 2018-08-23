@@ -42,7 +42,7 @@ class Credential < ApplicationRecord
     project_id = workflow_hash["links"]["project"].to_i
 
     if project_ids.include?(project_id)
-      workflow_hash
+      workflow_hash.merge project_id: project_id
     end
   rescue Panoptes::Client::ResourceNotFound
     nil

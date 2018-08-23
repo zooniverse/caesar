@@ -49,7 +49,7 @@ describe ReducersController, :type => :controller do
 
     it 'creates a new reducer' do
       post :create, params: {workflow_id: workflow.id, reducer: reducer_params}
-      expect(response).to redirect_to(workflow_path(workflow))
+      expect(response).to redirect_to(workflow_path(workflow, anchor: 'reducers'))
       expect(workflow.reducers.count).to eq(1)
       expect(workflow.reducers.first.url).to eq('https://example.org')
     end
@@ -65,7 +65,7 @@ describe ReducersController, :type => :controller do
       put :update, params: {workflow_id: workflow.id,
                             id: reducer.id,
                             reducer: {url: 'https://example.org/2'}}
-      expect(response).to redirect_to(workflow_path(workflow))
+      expect(response).to redirect_to(workflow_path(workflow, anchor: 'reducers'))
       expect(workflow.reducers.first.url).to eq('https://example.org/2')
     end
 

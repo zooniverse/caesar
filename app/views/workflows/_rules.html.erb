@@ -1,62 +1,93 @@
+<div class="row">
+<div class="col-md-12">
 <h2>Subject Rules</h2>
-<!-- <button type="button" name="button">Add New</button> -->
-<%= button_to "Create", new_workflow_subject_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
-<table class="table table-hover table table-sm">
-    <thead class="thead-inverse">
-      <tr>
-        <th>If</th>
-        <th>Then</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% for rule in @workflow.subject_rules %>
-        <tr>
-          <td><%= render_condition rule.condition %></td>
-          <td>
-            <ul>
-              <% rule.subject_rule_effects.each do |rule_effect| %>
-                <li><%= render partial: 'effect', locals: {effect: rule_effect.effect} %></li>
-              <% end %>
-            </ul>
-          </td>
-          <td>
-            <%= link_to "Edit", [:edit, @workflow, rule], class: 'btn btn-primary' %>
-            <%= link_to "Destroy", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-</table>
-
-<h2>User Rules</h2>
-<!-- <button type="button" name="button">Add New</button> -->
-<%= button_to "Create", new_workflow_user_rule_path(@workflow), :class => "btn btn-default", :method => :get %>
-<table class="table table-hover table table-sm">
+<table class="table table-striped table-sm">
+  <colgroup>
+    <col />
+    <col style="width: 6em;" />
+  </colgroup>
   <thead>
-    <thead class="thead-inverse">
+    <tr>
+      <th>Rule</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for rule in @workflow.subject_rules %>
       <tr>
-        <th>If</th>
-        <th>Then</th>
-        <th>Actions</th>
+        <td>
+          <span class="yields-text"><strong>If</strong></span>
+          <%= render_condition rule.condition %>
+          <span class="yields-text"><strong>then</strong></span>
+          <% rule.subject_rule_effects.each_with_index do |rule_effect, i| %>
+            <% if i > 0 %> and <% end %>
+            <%= render partial: 'effect', locals: {effect: rule_effect.effect} %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to [:edit, @workflow, rule] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, rule], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% for rule in @workflow.user_rules %>
-        <tr>
-          <td><%= render_condition rule.condition %></td>
-          <td>
-            <ul>
-              <% rule.user_rule_effects.each do |rule_effect| %>
-                <li><%= render partial: 'effect', locals: {effect: rule_effect.effect} %></li>
-              <% end %>
-            </ul>
-          </td>
-          <td>
-            <%= link_to "Edit", [:edit, @workflow, rule], class: 'btn btn-primary' %>
-            <%= link_to "Destroy", [@workflow, rule], method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
+    <% end %>
+  </tbody>
 </table>
+<div class="pull-right">
+  <%= button_to "Create", new_workflow_subject_rule_path(@workflow), :class => "btn btn-primary", :method => :get %>
+</div>
+</div>
+</div>
+
+<div class="row"> <div class="col-md-12"> </div> </div>
+
+<div class="row">
+<div class="col-md-12">
+<h2>User Rules</h2>
+<table class="table table-striped table-sm">
+  <colgroup>
+    <col />
+    <col style="width: 6em;" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Rule</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for rule in @workflow.user_rules %>
+      <tr>
+        <td>
+          <span class="yields-text"><strong>If</strong></span>
+          <%= render_condition rule.condition %>
+          <span class="yields-text"><strong>then</strong></span>
+          <% rule.user_rule_effects.each_with_index do |rule_effect, i| %>
+            <% if i > 0 %> and <% end %>
+            <%= render partial: 'effect', locals: {effect: rule_effect.effect} %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to [:edit, @workflow, rule] do %>
+            <i class="glyphicon glyphicon-cog text-warning"></i>
+            <span class="sr-only">Edit</i>
+          <% end %>
+          <%= link_to [:edit, @workflow, rule], method: :delete, data: {confirm: "Are you sure?"} do %>
+            <i class="glyphicon glyphicon-trash text-danger"></i>
+            <span class="sr-only">Delete</i>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div class="pull-right">
+  <%= button_to "Create", new_workflow_user_rule_path(@workflow), :class => "btn btn-primary", :method => :get %>
+</div>
+</div>
+</div>
