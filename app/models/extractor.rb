@@ -45,6 +45,10 @@ class Extractor < ApplicationRecord
     raise NotImplementedError
   end
 
+  def stoplight_color
+    @color ||= Stoplight("extractor-#{id}").color
+  end
+
   private
 
   def too_old?(classification)
