@@ -5,6 +5,8 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Project.create! id: 8, display_name: 'Oceans Eight'
+Project.create! id: 2501, display_name: 'Ghost in The Shell'
 
 wf1 = Workflow.create!(id: 55, project_id: 16, name: 'Sample workflow 1', project_name: 'Sample project 1')
 wf2 = Workflow.create!(id: 56, project_id: 16, name: 'Sample workflow 2', project_name: 'Sample project 1')
