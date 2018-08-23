@@ -42,21 +42,29 @@
   </tbody>
 </table>
 
-<div class="btn-group pull-right">
-  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
-  </button>
+<div class="pull-right">
+  <%= simple_form_for @project, url: [@project] do |f| %>
+    <%= f.hidden_field :rerun, :value => 'reducers' %>
+    <%= f.button :button, class: 'btn btn-default' do %>
+      <span class="glyphicon glyphicon-repeat"></span> Rerun Reducers
+    <% end %>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
+      </button>
 
-  <ul class="dropdown-menu">
-    <li><%= link_to "Consensus", new_project_reducer_path(@project, type: 'consensus') %></li>
-    <li><%= link_to "Count", new_project_reducer_path(@project, type: 'count') %></li>
-    <li><%= link_to "Placeholder", new_project_reducer_path(@project, type: 'placeholder') %></li>
-    <li><%= link_to "External", new_project_reducer_path(@project, type: 'external') %></li>
-    <li><%= link_to "First Extract", new_project_reducer_path(@project, type: 'first_extract') %></li>
-    <li><%= link_to "Simple Stats", new_project_reducer_path(@project, type: 'stats') %></li>
-    <li><%= link_to "Summary Stats", new_project_reducer_path(@project, type: 'summary_stats') %></li>
-    <li><%= link_to "Unique Count", new_project_reducer_path(@project, type: 'unique_count') %></li>
-  </ul>
+      <ul class="dropdown-menu">
+        <li><%= link_to "Consensus", new_project_reducer_path(@project, type: 'consensus') %></li>
+        <li><%= link_to "Count", new_project_reducer_path(@project, type: 'count') %></li>
+        <li><%= link_to "Placeholder", new_project_reducer_path(@project, type: 'placeholder') %></li>
+        <li><%= link_to "External", new_project_reducer_path(@project, type: 'external') %></li>
+        <li><%= link_to "First Extract", new_project_reducer_path(@project, type: 'first_extract') %></li>
+        <li><%= link_to "Simple Stats", new_project_reducer_path(@project, type: 'stats') %></li>
+        <li><%= link_to "Summary Stats", new_project_reducer_path(@project, type: 'summary_stats') %></li>
+        <li><%= link_to "Unique Count", new_project_reducer_path(@project, type: 'unique_count') %></li>
+      </ul>
+    </div>
+  <% end %>
 </div>
 </div>
 </div>

@@ -42,19 +42,27 @@
   </tbody>
 </table>
 
-<div class="btn-group pull-right">
-  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
-  </button>
 
-  <ul class="dropdown-menu">
-    <li><%= link_to "Blank", new_workflow_extractor_path(@workflow, type: 'blank') %></li>
-    <li><%= link_to "External", new_workflow_extractor_path(@workflow, type: 'external') %></li>
-    <li><%= link_to "Pluck field", new_workflow_extractor_path(@workflow, type: 'pluck_field') %></li>
-    <li><%= link_to "Question", new_workflow_extractor_path(@workflow, type: 'question') %></li>
-    <li><%= link_to "Survey", new_workflow_extractor_path(@workflow, type: 'survey') %></li>
-    <li><%= link_to "Who", new_workflow_extractor_path(@workflow, type: 'who') %></li>
-  </ul>
+<div class="pull-right">
+  <%= simple_form_for @workflow, url: [@workflow] do |f| %>
+    <%= f.hidden_field :rerun, :value => 'extractors' %>
+    <%= f.button :button, class: 'btn btn-default' do %>
+      <span class="glyphicon glyphicon-repeat"></span> Rerun Extractors
+    <% end %>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="glyphicon glyphicon-plus"></i> Create Extractor <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><%= link_to "Blank", new_workflow_extractor_path(@workflow, type: 'blank') %></li>
+        <li><%= link_to "External", new_workflow_extractor_path(@workflow, type: 'external') %></li>
+        <li><%= link_to "Pluck field", new_workflow_extractor_path(@workflow, type: 'pluck_field') %></li>
+        <li><%= link_to "Question", new_workflow_extractor_path(@workflow, type: 'question') %></li>
+        <li><%= link_to "Survey", new_workflow_extractor_path(@workflow, type: 'survey') %></li>
+        <li><%= link_to "Who", new_workflow_extractor_path(@workflow, type: 'who') %></li>
+      </ul>
+    </div>
+  <% end %>
 </div>
 </div>
 </div>
