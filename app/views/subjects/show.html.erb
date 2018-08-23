@@ -1,64 +1,95 @@
-<h2>Extracts</h2>
-<% @extracts.group_by {|e| e.extractor_key }.each do |extractor_key, extracts| %>
-  <% keys = extracts.map(&:data).flat_map(&:keys).uniq %>
+<div class="row">
+  <div class="col-md-12">
+    <h2>Subject <%= @subject.id %></h2>
+    <br />
+    <p>
+      <h4>Metadata</h4>
+      <%= render_hash @subject.metadata, 'No Metadata' %>
+    </p>
+    <br />
+    <p>
+      <h4>Extracts</h4>
+      <% if @extracts.count == 0 %><ul><li>No Extracts</li></ul><% end %>
+      <% @extracts.group_by {|e| e.extractor_key }.each do |extractor_key, extracts| %>
+        <% keys = extracts.map(&:data).flat_map(&:keys).uniq %>
+        <div class="panel panel-info">
+          <div class="panel-heading">Extractor <%= extractor_key %></div>
+          <div class="panel-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Classification</th>
+                  <th>User</th>
+                  <th>Extractor</th>
+                  <th>Timestamp</th>
+                  <% keys.each do |key| %>
+                    <th><%= key %></th>
+                  <% end %>
+                </tr>
+              </thead>
+              <tbody>
+                <% extracts.each do |extract| %>
+                  <tr>
+                    <td><%= extract.id %></td>
+                    <td><%= extract.classification_id %></td>
+                    <td><%= extract.user_id %></td>
+                    <td><%= extract.extractor_key %></td>
+                    <td><%= extract.updated_at %></td>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Classification</th>
-        <th>User</th>
-        <th>Extractor</th>
-        <th>Timestamp</th>
-        <% keys.each do |key| %>
-          <th><%= key %></th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% extracts.each do |extract| %>
-        <tr>
-          <td><%= extract.id %></td>
-          <td><%= extract.classification_id %></td>
-          <td><%= extract.user_id %></td>
-          <td><%= extract.extractor_key %></td>
-          <td><%= extract.updated_at %></td>
-
-          <% keys.each do |key| %>
-            <td><%= extract.data[key] %></td>
-          <% end %>
-        </tr>
+                    <% keys.each do |key| %>
+                      <td><%= extract.data[key] %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
       <% end %>
-    </tbody>
-  </table>
-<% end %>
+    </p>
+    <br />
+    <p>
+    <h4>Reductions</h4>
+      <% if @reductions.count == 0 %><ul><li>No Reductions</li></ul><% end %>
+      <% @reductions.group_by {|e| e.reducer_key }.each do |reducer_key, reductions| %>
+        <% keys = reductions.map(&:data).flat_map(&:keys).uniq %>
+        <div class="panel panel-info">
+          <div class="panel-heading">Reducer <%= reducer_key %></div>
+          <div class="panel-body">
+            <table class="table">
+              <colgroup>
+                <col style="width: 4em;" />
+                <col style="width: 8em;" />
+                <col style="width: 16em;" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Subgroup</th>
+                  <th>Timestamp</th>
+                  <% keys.each do |key| %>
+                    <th><%= key %></th>
+                  <% end %>
+                </tr>
+              </thead>
+              <tbody>
+                <% reductions.sort_by(&:reducer_key).each do |reduction| %>
+                  <tr>
+                    <td><%= reduction.id %></td>
+                    <td><%= reduction.subgroup %></td>
+                    <td><%= reduction.updated_at %></td>
 
-<h2>Reductions</h2>
-<% @reductions.group_by {|e| e.reducer_key }.each do |reducer_key, reductions| %>
-  <% keys = reductions.map(&:data).flat_map(&:keys).uniq %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Reducer</th>
-        <th>Timestamp</th>
-        <% keys.each do |key| %>
-          <th><%= key %></th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% reductions.sort_by(&:reducer_key).each do |reduction| %>
-        <tr>
-          <td><%= reduction.id %></td>
-          <td><%= reduction.reducer_key %></td>
-          <td><%= reduction.updated_at %></td>
-
-          <% keys.each do |key| %>
-            <td><%= reduction.data[key] %></td>
-          <% end %>
-        </tr>
+                    <% keys.each do |key| %>
+                      <td><%= reduction.data[key] %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
       <% end %>
-    </tbody>
-  </table>
-<% end %>
+    </p>
+    <%= link_to 'Back', workflow_path(@workflow, anchor: 'subjects'), class: 'btn btn-primary' %>
+  </div>
+</div>
