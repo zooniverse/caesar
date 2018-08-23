@@ -3,6 +3,7 @@
 <table class="table table-sm table-striped">
   <colgroup>
     <col style="width: 4em;" />
+    <col style="width: 4em;" />
     <col style="width: 8em;" />
     <col style="width: 12em;" />
     <col />
@@ -11,6 +12,7 @@
   </colgroup>
   <thead>
     <tr>
+      <th>Status</th>
       <th>Id</th>
       <th>Key</th>
       <th>Type</th>
@@ -22,6 +24,21 @@
   <tbody>
     <% for extractor in @workflow.extractors %>
       <tr>
+        <td style="text-align: center; ">
+          <% case extractor.stoplight_color when 'green' %>
+            <span class="text-success glyphicon glyphicon-ok-sign">
+              <span class="sr-only">OK</span>
+            </span>
+          <% when 'yellow' %>
+            <span class="text-warning glyphicon glyphicon-exclamation-sign">
+              <span class="sr-only">Warning</span>
+            </span>
+          <% when 'red' %>
+            <span class="text-danger glyphicon glyphicon-remove-sign">
+              <span class="sr-only">Error</span>
+            </span>
+          <% end %>
+        </td>
         <td><%= extractor.id %></td>
         <td><%= extractor.key %></td>
         <td><%= extractor.class.to_s.demodulize %></td>

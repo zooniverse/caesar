@@ -3,6 +3,7 @@
 <table class="table table-striped table-sm">
   <colgroup>
     <col style="width: 4em;" />
+    <col style="width: 4em;" />
     <col style="width: 8em;" />
     <col style="width: 6em;" />
     <col style="width: 12em;" />
@@ -13,6 +14,7 @@
   </colgroup>
   <thead>
     <tr>
+      <th>Status</th>
       <th>Id</th>
       <th>Key</th>
       <th>Topic</th>
@@ -26,6 +28,21 @@
   <tbody>
     <% for reducer in @project.reducers %>
       <tr>
+        <td style="text-align: center; ">
+          <% case reducer.stoplight_color when 'green' %>
+            <span class="text-success glyphicon glyphicon-ok-sign">
+              <span class="sr-only">OK</span>
+            </span>
+          <% when 'yellow' %>
+            <span class="text-warning glyphicon glyphicon-exclamation-sign">
+              <span class="sr-only">Warning</span>
+            </span>
+          <% when 'red' %>
+            <span class="text-danger glyphicon glyphicon-remove-sign">
+              <span class="sr-only">Error</span>
+            </span>
+          <% end %>
+        </td>
         <td><%= reducer.id %></td>
         <td><%= reducer.key %></td>
         <td><% case reducer.topic when 'reduce_by_subject' %>Subjects<% when 'reduce_by_user' %>Users<% end %></td>

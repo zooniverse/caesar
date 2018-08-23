@@ -96,6 +96,10 @@ class Reducer < ApplicationRecord
     ExtractFilter.new(filters)
   end
 
+  def stoplight_color
+    @color ||= Stoplight("reducer-#{id}").color
+  end
+
   def config
     super || {}
   end
