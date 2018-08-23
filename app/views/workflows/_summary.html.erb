@@ -97,5 +97,23 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-12" style="height: 2em;"></div>
+  <div class="col-md-12" style="height: 2em;">
+    <div class="pull-right">
+      <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
+        <%= f.hidden_field :status, :value => 'paused' %>
+        <%= f.button :button, class: 'btn btn-default', disabled: @workflow.paused? do %>
+          <span class="glyphicon glyphicon-pause"></span> Pause Workflow
+        <% end %>
+      <% end %>
+    </div>
+    <p class="pull-right">&nbsp;</p>
+    <div class="pull-right">
+      <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
+        <%= f.hidden_field :status, :value => 'active' %>
+        <%= f.button :button, class: 'btn btn-default', disabled: @workflow.active? do %>
+          <span class="glyphicon glyphicon-play"></span> Resume Workflow
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 </div>

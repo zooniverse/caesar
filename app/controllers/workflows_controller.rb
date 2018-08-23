@@ -74,8 +74,16 @@ class WorkflowsController < ApplicationController
       respond_with workflow, location: workflow_path(@workflow, anchor: 'reducers')
     else
       was_paused = workflow.paused?
-
       workflow.update(workflow_params)
+
+      if was_paused && workflow.active?
+        UnpauseWorkflowWorker.perform_async workflow.id
+        flash[:notice] = 'Resuming workflow'
+      end
+
+      if !was_paused && workflow.paused?
+        flash[:notice] = 'Pausing workflow'
+      end
 
       if was_paused && workflow.active?
         UnpauseWorkflowWorker.perform_async workflow.id
