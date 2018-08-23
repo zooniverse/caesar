@@ -1,0 +1,17 @@
+<%= simple_form_for(@user_rule_effect, url: [@workflow, @user_rule, @user_rule_effect]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <label>Action Type</label><br/>
+    <%= f.select :action, UserRuleEffect.actions.keys.collect{ |key| [Effects[key].name.demodulize, key] }, :disabled => true %>
+  </div>
+
+  <% Effects[@user_rule_effect.action].config_fields.each do |key, options| %>
+    <label><%= key.capitalize %></label><br/>
+    <%= text_field_tag "user_rule_effect[config[#{key}]]", @user_rule_effect.config[key] %>
+  <% end %>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

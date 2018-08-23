@@ -7,54 +7,60 @@ class SubjectRuleEffectsController < ApplicationController
 
   def show
     authorize workflow
-    @effect = policy_scope(SubjectRuleEffect).find(params[:id])
-    respond_with @effect
+    @subject_rule_effect = policy_scope(SubjectRuleEffect).find(params[:id])
+    respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def new
     authorize workflow
-    @effect = SubjectRuleEffect.new(subject_rule: subject_rule)
+    @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
+    respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def edit
     authorize workflow
-    @effect = SubjectRule.find(id: params[:id])
+    @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+    respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def create
     authorize workflow
 
-    @effect = SubjectRuleEffect.new(effect_params)
-    if @effect.save
+    @subject_rule_effect = SubjectRuleEffect.new(effect_params)
+
+    if @subject_rule_effect.save
       respond_to do |format|
-        format.html { redirect_to [workflow, subject_rule] }
-        format.json { render json: @effect }
+        format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
+        format.json { render json: @subject_rule_effect }
       end
     else
-      respond_with @effect
+      respond_with workflow, subject_rule, @subject_rule_effect
     end
   end
 
   def update
     authorize workflow
-    @effect = SubjectRuleEffect.find(params[:id])
 
-    if @effect.update(effect_params)
+    @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+
+    if @subject_rule_effect.update(effect_params)
       respond_to do |format|
-        format.html { redirect_to [workflow, subject_rule] }
-        format.json { render json: @effect }
+        format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
+        format.json { render json: @subject_rule_effect }
       end
     else
-      respond_with @effect
+      respond_with workflow, subject_rule, @subject_rule_effect
     end
   end
 
   def destroy
     authorize workflow
+    subject_rule
+
     effect = SubjectRuleEffect.find(params[:id])
 
     effect.destroy
-    respond_with effect, location: [workflow, subject_rule]
+    respond_with effect, location: [:edit, workflow, subject_rule]
   end
 
   private
@@ -70,6 +76,7 @@ class SubjectRuleEffectsController < ApplicationController
   def effect_params
     params.require(:subject_rule_effect).permit(
       :action,
+      :action_type,
       config: {}
     ).merge(subject_rule_id: params[:subject_rule_id])
   end

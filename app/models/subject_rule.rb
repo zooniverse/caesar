@@ -3,7 +3,7 @@ class SubjectRule < ApplicationRecord
   ranks :row_order, with_same: :workflow_id
 
   belongs_to :workflow
-  has_many :subject_rule_effects
+  has_many :subject_rule_effects, dependent: :destroy
 
   validate :valid_condition?
 
@@ -13,7 +13,11 @@ class SubjectRule < ApplicationRecord
   }
 
   def condition
-    Conditions::FromConfig.build(self[:condition])
+    Conditions::FromConfig.build(self[:condition]) unless self[:condition].blank?
+  end
+
+  def condition_string
+    condition.to_a.to_s
   end
 
   def process(subject_id, bindings)

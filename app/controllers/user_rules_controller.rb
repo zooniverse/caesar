@@ -11,51 +11,54 @@ class UserRulesController < ApplicationController
 
   def show
     authorize workflow
-    @rule = workflow.user_rules.find(params[:id]) or not_found
-    respond_with @rule
+    @user_rule = workflow.user_rules.find(params[:id])
+    respond_with @user_rule
   end
 
   def new
     authorize workflow
-    @rule = UserRule.new(workflow: workflow)
+    @user_rule = UserRule.new(workflow: workflow)
+    respond_with @user_rule
   end
 
   def edit
     authorize workflow
-    @rule = UserRule.find(workflow: workflow) or not_found
+    @user_rule = UserRule.find(params[:id])
+    respond_with @user_rule
   end
 
   def create
     authorize workflow
 
-    @rule = UserRule.new(rule_params)
-    @rule.save
+    @user_rule = UserRule.new(rule_params)
+    @user_rule.save
 
     respond_to do |format|
       format.html { redirect_to workflow }
-      format.json { render json: @rule}
+      format.json { render json: @user_rule}
     end
   end
 
   def update
     authorize workflow
-    @rule = workflow.user_rules.find(params[:id]) or not_found
+    @user_rule = workflow.user_rules.find(params[:id])
 
-    if @rule.update(rule_params)
+    if @user_rule.update(rule_params)
       respond_to do |format|
         format.html { redirect_to workflow, success: 'Rule updated' }
-        format.json { render json: @rule }
+        format.json { render json: @user_rule }
       end
     else
-      respond_with @rule
+      respond_with @user_rule
     end
   end
 
   def destroy
     authorize workflow
-    rule = workflow.user_rules.find(params[:id])
 
+    rule = workflow.user_rules.find(params[:id])
     rule.destroy
+
     respond_with rule, location: [workflow]
   end
 

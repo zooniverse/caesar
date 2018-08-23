@@ -3,12 +3,16 @@ class UserRule < ApplicationRecord
   ranks :row_order, with_same: :workflow_id
 
   belongs_to :workflow
-  has_many :user_rule_effects
+  has_many :user_rule_effects, dependent: :destroy
 
   validate :valid_condition?
 
   def condition
-    Conditions::FromConfig.build(self[:condition])
+    Conditions::FromConfig.build(self[:condition]) unless self[:condition].blank?
+  end
+
+  def condition_string
+    condition.to_a.to_s
   end
 
   def process(user_id, bindings)
