@@ -7,7 +7,7 @@
         <li><strong><%= key %>: </strong>'<%= hash[key] %>'</li>
       <% elsif hash[key].is_a?(Hash) %>
         <li><strong><%= key %>:</strong></li>
-        <%= render_params hash[key], empty_string %>
+        <%= render_hash hash[key], empty_string %>
       <% elsif hash[key].is_a?(Array) %>
         <li><strong><%= key %>:</strong></li>
         <ul>
