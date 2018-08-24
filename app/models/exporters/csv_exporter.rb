@@ -7,8 +7,8 @@ module Exporters
     attr_reader :resource_id, :resource_type, :user_id, :subgroup
 
     def initialize(params)
-      @resource_id = params[:exportable_id]
-      @resource_type = params[:exportable_type]
+      @resource_id = params[:resource_id]
+      @resource_type = params[:resource_type]
       @user_id = params[:user_id]
       @subgroup = params[:subgroup]
     end
