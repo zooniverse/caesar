@@ -37,6 +37,7 @@ describe DataRequestsController, :type => :controller do
       data_request2 = create(:data_request, exportable: workflow, created_at: 2.days.ago)
 
       get :index, params: params, format: :json
+      expect(assigns[:workflow]).to be_nil
       expect(json_response).to eq([data_request1.as_json.stringify_keys])
     end
 

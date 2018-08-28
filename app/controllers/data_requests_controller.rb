@@ -42,7 +42,7 @@ class DataRequestsController < ApplicationController
   end
 
   def workflow
-    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+    @workflow ||= policy_scope(Workflow).find_by(id: params[:workflow_id])
   end
 
   def unscoped_workflow
