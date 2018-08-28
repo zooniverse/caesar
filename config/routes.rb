@@ -44,6 +44,11 @@ Rails.application.routes.draw do
     end
 
     resources :data_requests
+
+    # Legacy routes
+    get 'reducers/:reducer_key/reductions', to: 'subject_reductions#index'
+    get 'subjects/:subject_id/reductions', to: 'subject_reductions#index'
+    put 'reducers/:reducer_key/reductions', to: 'subject_reductions#update'
   end
 
   resources :projects do
