@@ -1,10 +1,10 @@
 namespace :export do
   namespace :csv do
-    task :extracts, [:workflow_id] => [:environment] do |t, args|
-      Exporters::CsvExtractExporter.new(workflow_id: args[:workflow_id]).dump
+    task :extracts, [:resource_id, :resource_type] => [:environment] do |t, args|
+      Exporters::CsvExtractExporter.new(resource_id: args[:resource_id], resource_type: args[:resource_type]).dump
     end
-    task :reductions, [:workflow_id] => [:environment] do |t, args|
-      Exporters::CsvSubjectReductionExporter.new(workflow_id: args[:workflow_id]).dump
+    task :reductions, [:resource_id, :resource_type] => [:environment] do |t, args|
+      Exporters::CsvSubjectReductionExporter.new(resource_id: args[:resource_id], resouce_type: args[:resource_type]).dump
     end
   end
 end
