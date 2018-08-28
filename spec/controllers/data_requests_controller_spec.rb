@@ -39,6 +39,11 @@ describe DataRequestsController, :type => :controller do
       get :index, params: params, format: :json
       expect(json_response).to eq([data_request1.as_json.stringify_keys])
     end
+
+    it 'assigns workflow' do
+      get :index, params: params
+      expect(assigns[:workflow]).to eq(workflow)
+    end
   end
 
   describe '#create' do

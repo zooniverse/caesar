@@ -2,6 +2,7 @@ class DataRequestsController < ApplicationController
   responders :flash
 
   def index
+    @workflow = workflow
     @data_requests = scope.order(created_at: :desc)
 
     if(params.has_key?(:subgroup))
