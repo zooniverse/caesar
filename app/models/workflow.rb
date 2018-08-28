@@ -80,6 +80,8 @@ class Workflow < ApplicationRecord
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
   enum status: { paused: 0, active: 1 }
 
+  attr_accessor :rerun
+
   def self.accessible_by(credential)
     return none unless credential.logged_in?
     return none if credential.expired?

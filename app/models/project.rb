@@ -15,6 +15,8 @@ class Project < ApplicationRecord
 
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
 
+  attr_accessor :rerun
+
   def self.accessible_by(credential)
     return none unless credential.logged_in?
     return none if credential.expired?

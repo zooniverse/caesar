@@ -57,8 +57,14 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   def update
     authorize project
-    project.update(project_params.except('display_name'))
-    respond_with project
+
+    if params[:project][:rerun] == 'reducers'
+      rerun_reducers
+      respond_with project, location: project_path(@project, anchor: 'reducers')
+    else
+      project.update(project_params.except('display_name'))
+      respond_with project
+    end
   end
 
   private
@@ -68,10 +74,22 @@ class ProjectsController < ApplicationController
     @project ||= policy_scope(Project).find(params[:id])
   end
 
+  def rerun_reducers
+    duration = 3.hours
+
+    project.extracts.group_by(&:subject_id).each do |subject_id, extracts|
+      ReduceWorker.perform_in(rand(duration.to_i).seconds, project.id, 'Project', subject_id, nil, extracts.pluck(:id))
+    end
+
+    flash[:notice] = "Re-running reducers for the next #{duration / 1.hour.to_i} hours"
+  end
+
+
   # Only allow a trusted parameter "white list" through.
   def project_params
     params.require(:project).permit(
       :display_name,
+      :rerun,
     )
   end
 end

@@ -65,19 +65,27 @@ class WorkflowsController < ApplicationController
 
   def update
     authorize workflow
-    was_paused = workflow.paused?
 
-    workflow.update(workflow_params)
+    if params[:workflow][:rerun] == 'extractors'
+      rerun_extractors
+      respond_with workflow, location: workflow_path(@workflow, anchor: 'extractors')
+    elsif params[:workflow][:rerun] == 'reducers'
+      rerun_reducers
+      respond_with workflow, location: workflow_path(@workflow, anchor: 'reducers')
+    else
+      was_paused = workflow.paused?
 
-    if was_paused && workflow.active?
-      UnpauseWorkflowWorker.perform_async workflow.id
+      workflow.update(workflow_params)
+
+      if was_paused && workflow.active?
+        UnpauseWorkflowWorker.perform_async workflow.id
+      end
+
+      Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
+      Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
+      Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
+      respond_with workflow
     end
-
-    Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
-    Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
-    Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
-
-    respond_with workflow
   end
 
   private
@@ -86,12 +94,33 @@ class WorkflowsController < ApplicationController
     @workflow ||= policy_scope(Workflow).find(params[:id])
   end
 
+  def rerun_extractors
+    duration = 3.hours
+
+    workflow.extracts.pluck(:subject_id).uniq.each do |subject_id|
+      FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, workflow.id, subject_id, FetchClassificationsWorker.fetch_for_subject)
+    end
+
+    flash[:notice] = "Re-running extractors for the next #{duration / 1.hour.to_i} hours"
+  end
+
+  def rerun_reducers
+    duration = 3.hours
+
+    workflow.extracts.group_by(&:subject_id).each do |subject_id, extracts|
+      ReduceWorker.perform_in(rand(duration.to_i).seconds, workflow.id, 'Workflow', subject_id, nil, extracts.pluck(:id))
+    end
+
+    flash[:notice] = "Re-running reducers for the next #{duration / 1.hour.to_i} hours"
+  end
+
   def workflow_params
     params.require(:workflow).permit(
       :public_extracts,
       :public_reductions,
       :status,
       :rules_applied,
+      :rerun,
     )
   end
 end
