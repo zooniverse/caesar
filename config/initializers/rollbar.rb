@@ -16,6 +16,7 @@ Rollbar.configure do |config|
   # config.person_id_method = "my_id"
   config.person_username_method = "login"
   # config.person_email_method = "my_email"
+  config.scrub_fields |= [:credentials]
 
   # If you want to attach custom data to all exception and message reports,
   # provide a lambda like the following. It should return a hash.
