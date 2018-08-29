@@ -24,4 +24,15 @@ class Heartbeat
   def action_count
     SubjectAction.where(workflow_id: @workflow.id).count + UserAction.where(workflow_id: @workflow.id).count
   end
+
+  def subject_count
+    return @subject_count if @subject_count
+
+    ids = []
+    ids.concat(@workflow.extracts.pluck(:id).uniq)
+    ids.concat(@workflow.subject_reductions.pluck(:id).uniq)
+    ids.concat(@workflow.user_reductions.pluck(:id).uniq)
+
+    @subject_count = ids.uniq.count
+  end
 end

@@ -66,10 +66,10 @@
     <div class="row"><div class="col-md-12">&nbsp;</div></div>
     <div class="row">
       <div class="col-md-12">
-        <h3>Settings</h3>
         <%= simple_form_for(@workflow, url: [@workflow], :html => { class: 'panel panel-info clearfix' }) do |f| %>
-          <%= f.error_notification %>
+          <div class="panel-heading">Settings</div>
           <div class="panel-body">
+            <%= f.error_notification %>
             <div class="form-inline form-inputs">
               <div class="form-group">
                 <%= f.check_box :public_extracts, class: 'form-control' %>

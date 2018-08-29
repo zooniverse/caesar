@@ -7,6 +7,7 @@
     <li><a href="#reducers" data-toggle="tab">Reducers <span class="badge"><%= @workflow.reducers.count %></span></a></li>
     <li><a href="#rules" data-toggle="tab">Rules <span class="badge"><%= @workflow.subject_rules.count + @workflow.user_rules.count %></span></a></li>
     <li><a href="#requests" data-toggle="tab">Data Requests <span class="badge"><%= @workflow.data_requests.count %></span></a></li>
+    <li><a href="#subjects" data-toggle="tab">Subjects</a></li>
 </ul>
 <div class="container-fluid">
   <div class="row"><div class="col-md-12">&nbsp;</div></div>
@@ -25,6 +26,9 @@
       </div>
       <div class="tab-pane fade" id="requests">
         <%= render partial: 'requests' %>
+      </div>
+      <div class="tab-pane fade" id="subjects">
+        <%= render partial: 'subjects' %>
       </div>
     </div>
   </div>
