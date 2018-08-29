@@ -31,7 +31,7 @@ class SubjectAction < ApplicationRecord
 
   enum status: [:pending, :completed, :failed]
 
-  belongs_to :workflow
+  belongs_to :workflow, counter_cache: true
   belongs_to :subject
 
   def perform

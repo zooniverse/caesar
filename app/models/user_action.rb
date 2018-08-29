@@ -1,6 +1,6 @@
 class UserAction < ApplicationRecord
   enum status: [:pending, :completed, :failed]
-  belongs_to :workflow
+  belongs_to :workflow, counter_cache: true
 
   def perform
     effect.perform(workflow_id, user_id)

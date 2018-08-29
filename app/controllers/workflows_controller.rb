@@ -9,7 +9,7 @@ class WorkflowsController < ApplicationController
 
   def show
     authorize workflow
-    @heartbeat = Heartbeat.new(workflow)
+    @summary = WorkflowSummary.new(workflow)
     respond_with @workflow
   end
 

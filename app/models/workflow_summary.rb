@@ -1,6 +1,34 @@
-class Heartbeat
+class WorkflowSummary
   def initialize(workflow)
     @workflow = workflow
+  end
+
+  def extracts_count
+    @workflow.extracts_count || 0
+  end
+
+  def reductions_count
+    subject_reductions + user_reductions
+  end
+
+  def actions_count
+    subject_actions + user_actions
+  end
+
+  def subject_reductions
+    @workflow.subject_reductions_count || 0
+  end
+
+  def user_reductions
+    @workflow.user_reductions_count || 0
+  end
+
+  def subject_actions
+    @workflow.subject_actions_count || 0
+  end
+
+  def user_actions
+    @workflow.user_actions_count || 0
   end
 
   def last_extract
@@ -19,10 +47,6 @@ class Heartbeat
       SubjectAction.where(workflow_id: @workflow.id).order(updated_at: :desc).first&.updated_at,
       UserAction.where(workflow_id: @workflow.id).order(updated_at: :desc).first&.updated_at
     ].compact.max
-  end
-
-  def action_count
-    SubjectAction.where(workflow_id: @workflow.id).count + UserAction.where(workflow_id: @workflow.id).count
   end
 
   def subject_count

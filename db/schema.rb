@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180822211217) do
+ActiveRecord::Schema.define(version: 20180829170321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
+    t.index ["workflow_id", "updated_at"], name: "extracts_updated_by_workflow"
     t.index ["workflow_id"], name: "index_extracts_on_workflow_id"
   end
 
@@ -107,6 +108,8 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "display_name"
+    t.integer "subject_reductions_count"
+    t.integer "user_reductions_count"
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -138,6 +141,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.datetime "updated_at", null: false
     t.integer "rule_id"
     t.index ["subject_id"], name: "index_subject_actions_on_subject_id"
+    t.index ["workflow_id", "updated_at"], name: "subject_actions_updated_by_workflow"
     t.index ["workflow_id"], name: "index_subject_actions_on_workflow_id"
   end
 
@@ -158,6 +162,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
     t.index ["workflow_id", "subgroup"], name: "index_reductions_workflow_id_and_subgroup"
     t.index ["workflow_id", "subject_id"], name: "index_subject_reductions_on_workflow_id_and_subject_id"
+    t.index ["workflow_id", "updated_at"], name: "subject_reductions_updated_by_workflow"
     t.index ["workflow_id"], name: "index_subject_reductions_on_workflow_id"
   end
 
@@ -198,6 +203,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_subject_actions_on_user_id"
+    t.index ["workflow_id", "updated_at"], name: "user_actions_updated_by_workflow"
     t.index ["workflow_id"], name: "index_user_actions_on_workflow_id"
   end
 
@@ -215,6 +221,7 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.integer "reducible_id"
     t.string "reducible_type"
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
+    t.index ["workflow_id", "updated_at"], name: "user_reductions_updated_by_workflow"
     t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
     t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
     t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
@@ -248,6 +255,11 @@ ActiveRecord::Schema.define(version: 20180822211217) do
     t.string "name"
     t.string "project_name"
     t.integer "status", default: 1, null: false
+    t.integer "extracts_count"
+    t.integer "subject_reductions_count"
+    t.integer "user_reductions_count"
+    t.integer "subject_actions_count"
+    t.integer "user_actions_count"
   end
 
   add_foreign_key "classifications", "subjects"
