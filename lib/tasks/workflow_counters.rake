@@ -1,6 +1,6 @@
 desc 'Update counter caches for workflows'
 namespace :counters do
-  namespace :rebuild do
+  namespace :update do
     task workflows: :environment do
       Workflow.reset_column_information
       Workflow.pluck(:id).each do |id|

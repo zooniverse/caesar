@@ -1,7 +1,7 @@
 desc 'Update counter caches for projects'
 
 namespace :counters do
-  namespace :rebuild do
+  namespace :update do
     task projects: :environment do
       Project.reset_column_information
       Project.pluck(:id).each do |id|
