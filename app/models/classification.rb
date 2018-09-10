@@ -23,7 +23,7 @@ class Classification < ApplicationRecord
 
   def annotations=(val)
     write_attribute(:annotations,
-                    val.group_by { |ann| ann['task'] })
+                    Annotation.parse(val))
   end
 
   def workflow_version
