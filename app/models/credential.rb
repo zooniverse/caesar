@@ -37,13 +37,12 @@ class Credential < ApplicationRecord
   end
 
   def accessible_project?(id)
-    project_ids.include?(id)
+    project_ids.include?(id) || credential.admin?
   end
 
   def accessible_workflow?(id)
-    response = client.panoptes.get("/workflows/#{id}")
-    workflow_hash = response["workflows"][0]
-    project_id = workflow_hash["links"]["project"].to_i
+    workflow_hash = client.workflow(id.to_s)
+    project_id = workflow_hash["links"]["project"]
 
     if accessible_project?(project_id)
       workflow_hash.merge project_id: project_id
