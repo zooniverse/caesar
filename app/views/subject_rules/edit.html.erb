@@ -33,7 +33,7 @@
           <i class="glyphicon glyphicon-cog text-warning"></i>
           <span class="sr-only">Edit</i>
         <% end %>
-        <%= link_to [:edit, @workflow, @subject_rule, rule_effect], method: :delete, data: {confirm: "Are you sure?"} do %>
+        <%= link_to [@workflow, @subject_rule, rule_effect], method: :delete, data: {confirm: "Are you sure?"} do %>
           <i class="glyphicon glyphicon-trash text-danger"></i>
           <span class="sr-only">Delete</i>
         <% end %>
