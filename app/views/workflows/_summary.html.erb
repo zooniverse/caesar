@@ -45,21 +45,21 @@
       <div class="col-md-6">
         <dl class="dl-horizontal">
           <dt>Total Extracts</dt>
-          <dd><%= @workflow.extracts.count %></dd>
+          <dd><%= @summary.extracts_count %></dd>
           <dt>Total Reductions</dt>
-          <dd><%= @workflow.subject_reductions.count + @workflow.user_reductions.count %></dd>
+          <dd><%= @summary.reductions_count %></dd>
           <dt>Total Actions</dt>
-          <dd><%= @heartbeat.action_count %></dd>
+          <dd><%= @summary.actions_count %></dd>
         </dl>
       </div>
       <div class="col-md-6">
         <dl class="dl-horizontal">
           <dt>Last Extract</dt>
-          <dd><%= @heartbeat.last_extract || "Never" %></dd>
+          <dd><%= @summary.last_extract || "Never" %></dd>
           <dt>Last Reduction</dt>
-          <dd><%= @heartbeat.last_reduction || "Never" %></dd>
+          <dd><%= @summary.last_reduction || "Never" %></dd>
           <dt>Last Action</dt>
-          <dd><%= @heartbeat.last_action || "Never" %></dd>
+          <dd><%= @summary.last_action || "Never" %></dd>
         </dl>
       </div>
     </div>

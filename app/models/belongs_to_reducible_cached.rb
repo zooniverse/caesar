@@ -1,8 +1,8 @@
-module BelongsToReducible
+module BelongsToReducibleCached
   extend ActiveSupport::Concern
 
   included do
-    belongs_to :reducible, polymorphic: true, optional: true
+    belongs_to :reducible, polymorphic: true, optional: true, counter_cache: true
     before_save :set_workflow
   end
 
