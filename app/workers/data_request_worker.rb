@@ -42,7 +42,7 @@ class DataRequestWorker
       request.failed!
       raise
     ensure
-      ::File.unlink path
+      ::File.unlink path unless path.blank?
     end
   end
 end
