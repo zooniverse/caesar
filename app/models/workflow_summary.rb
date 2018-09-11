@@ -48,15 +48,4 @@ class WorkflowSummary
       UserAction.where(workflow_id: @workflow.id).order(updated_at: :desc).first&.updated_at
     ].compact.max
   end
-
-  def subject_count
-    return @subject_count if @subject_count
-
-    ids = []
-    ids.concat(@workflow.extracts.pluck(:id).uniq)
-    ids.concat(@workflow.subject_reductions.pluck(:id).uniq)
-    ids.concat(@workflow.user_reductions.pluck(:id).uniq)
-
-    @subject_count = ids.uniq.count
-  end
 end
