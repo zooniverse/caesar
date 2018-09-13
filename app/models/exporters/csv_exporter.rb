@@ -77,6 +77,7 @@ module Exporters
 
     def get_unique_json_cols
       @unique_json_cols ||= get_items
+                              .where("jsonb_typeof(data)='object'")
                               .select("DISTINCT(jsonb_object_keys(data)) AS key")
                               .map(&:key)
     end
