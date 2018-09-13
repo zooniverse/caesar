@@ -59,7 +59,7 @@
             <i class="glyphicon glyphicon-cog text-warning"></i>
             <span class="sr-only">Edit</i>
           <% end %>
-          <%= link_to [:edit, @workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"} do %>
+          <%= link_to [@workflow, reducer.becomes(Reducer)], method: :delete, data: {confirm: "Are you sure?"} do %>
             <i class="glyphicon glyphicon-trash text-danger"></i>
             <span class="sr-only">Delete</i>
           <% end %>
