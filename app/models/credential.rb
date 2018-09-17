@@ -37,7 +37,7 @@ class Credential < ApplicationRecord
   end
 
   def accessible_project?(id)
-    project_ids.include?(id) || credential.admin?
+    project_ids.include?(id) || admin?
   end
 
   def accessible_workflow?(id)
