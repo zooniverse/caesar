@@ -37,17 +37,25 @@ class Credential < ApplicationRecord
   end
 
   def accessible_project?(id)
-    project_ids.include?(id) || credential.admin?
+    project_ids.include?(id) || admin?
   end
 
   def accessible_workflow?(id)
     workflow_hash = client.workflow(id.to_s)
-    project_id = workflow_hash["links"]["project"]
 
-    if accessible_project?(project_id)
-      workflow_hash.merge project_id: project_id
+    if workflow_hash.blank? && admin?
+      return { "id" => id }
+    else workflow_hash.blank?
+      project_id = workflow_hash&.dig("links", "project") || -1
+
+      if accessible_project?(project_id)
+        workflow_hash&.merge!("project_id" => project_id)
+      end
+
+      return workflow_hash
     end
   rescue Panoptes::Client::ResourceNotFound
+    return { "id" => id } if admin?
     nil
   end
 
