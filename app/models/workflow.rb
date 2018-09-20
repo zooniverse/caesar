@@ -56,6 +56,30 @@ class Workflow < ApplicationRecord
       }
     end
 
+    field :user_reductions, types[UserReduction::Type] do
+      argument :userId, !types.ID, "Filter by specific user"
+      argument :reducerKey, types.String, "Filter by specific reducer"
+
+      resolve -> (workflow, args, ctx) {
+        scope = Pundit.policy_scope!(ctx[:credential], UserReduction)
+        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(user_id: args[:userId])
+        scope = scope.where(reducer_key: args[:reducerKey]) if args[:reducerKey]
+        scope
+      }
+    end
+
+    field :user_actions, types[UserAction::Type] do
+      argument :userId, !types.ID, "Filter by specific subject"
+
+      resolve -> (workflow, args, ctx) {
+        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = scope.where(workflow_id: workflow.id)
+        scope = scope.where(user_id: args[:userId])
+        scope
+      }
+    end
+
     field :dataRequests, types[DataRequest::Type] do
       resolve -> (workflow, args, ctx) {
         scope = Pundit.policy_scope!(ctx[:credential], DataRequest)

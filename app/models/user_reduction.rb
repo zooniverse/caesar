@@ -2,7 +2,7 @@ class UserReduction < ApplicationRecord
   include BelongsToReducibleCached
 
   Type = GraphQL::ObjectType.define do
-    name "SubjectReduction"
+    name "UserReduction"
 
     field :projectId, types.ID, property: :project_id
     field :workflowId, !types.ID, property: :workflow_id
