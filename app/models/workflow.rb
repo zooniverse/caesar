@@ -49,7 +49,7 @@ class Workflow < ApplicationRecord
       argument :subjectId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
-        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = Pundit.policy_scope!(ctx[:credential], SubjectAction)
         scope = scope.where(workflow_id: workflow.id)
         scope = scope.where(subject_id: args[:subjectId])
         scope
@@ -73,7 +73,7 @@ class Workflow < ApplicationRecord
       argument :userId, !types.ID, "Filter by specific subject"
 
       resolve -> (workflow, args, ctx) {
-        scope = Pundit.policy_scope!(ctx[:credential], Action)
+        scope = Pundit.policy_scope!(ctx[:credential], UserAction)
         scope = scope.where(workflow_id: workflow.id)
         scope = scope.where(user_id: args[:userId])
         scope
