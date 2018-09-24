@@ -1,15 +1,6 @@
 class SubjectAction < ApplicationRecord
-  Status = GraphQL::EnumType.define do
-    name "ActionStatus"
-    description "Status of a pending or performed action"
-
-    value("pending", "Action is not performed yet")
-    value("completed", "Action has been performed successfully")
-    value("failed", "Action failed even after retries")
-  end
-
   Type = GraphQL::ObjectType.define do
-    name "Action"
+    name "SubjectAction"
 
     field :id, !types.ID
 
@@ -19,7 +10,7 @@ class SubjectAction < ApplicationRecord
     field :workflowId, !types.ID, property: :workflow_id
     field :subjectId, !types.ID, property: :subject_id
     field :effectType, !types.String, property: :effect_type
-    field :status, !Status
+    field :status, !Types::ActionStatusType
 
     field :config, Types::JsonType
 
