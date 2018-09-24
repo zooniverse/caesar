@@ -19,8 +19,8 @@ class FakeCredential
     true
   end
 
-  def accessible_workflow?(workflow)
-    workflow
+  def accessible_workflow?(workflow_id)
+    workflow_id
   end
 
   def accessible_project?(id)
