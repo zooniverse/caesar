@@ -43,7 +43,10 @@ class WorkflowsController < ApplicationController
 
     unless workflow_hash.present?
       skip_authorization
-      head :forbidden
+      respond_to do |format|
+        format.html { redirect_to workflows_path, :alert => 'Unable to add workflow' }
+        format.json { head :forbidden }
+      end
       return
     end
 

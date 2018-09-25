@@ -93,7 +93,7 @@ RSpec.describe WorkflowsController, type: :controller do
       allow(@credential).to receive(:project_ids).and_return([])
       allow(@credential).to receive(:accessible_workflow?).with(workflow_hash["id"]).and_return(nil)
 
-      post :create, params: {workflow: {id: workflow_hash["id"], project_id: workflow_hash["links"]["project_id"]}}
+      post :create, params: {workflow: {id: workflow_hash["id"], project_id: workflow_hash["links"]["project_id"]}, format: :json}
       expect(response).to have_http_status(:forbidden)
     end
   end

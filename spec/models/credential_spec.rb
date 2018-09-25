@@ -64,12 +64,14 @@ describe Credential, type: :model do
         allow(panoptes).to receive(:workflow).and_return({"links"=>{"project"=>3}})
         expect(credential.accessible_workflow? 1).not_to be(nil)
         expect(credential.accessible_workflow?(1)["project_id"]).to eq(3)
+      end
 
+      it 'denies access to workflows that are not real' do
         allow(panoptes).to receive(:workflow).and_return(nil)
-        expect(credential.accessible_workflow? 1).not_to be(nil)
+        expect(credential.accessible_workflow? 1).to be(nil)
 
         allow(panoptes).to receive(:workflow).and_raise(Panoptes::Client::ResourceNotFound)
-        expect(credential.accessible_workflow? 1).not_to be(nil)
+        expect(credential.accessible_workflow? 1).to be(nil)
       end
     end
   end
