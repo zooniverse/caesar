@@ -26,4 +26,12 @@ class ReduceWorker
     reductions = reducible.classification_pipeline.reduce(reducible_id, subject_id, user_id, extract_ids)
     CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id) unless reductions.blank?
   end
+
+  def self.test_uniq(testing)
+    if testing
+      sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args
+    else
+      sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args unless Rails.env.test?
+    end
+  end
 end
