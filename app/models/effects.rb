@@ -18,6 +18,8 @@ module Effects
       Effects::AddSubjectToCollection
     when "promote_user"
       Effects::PromoteUser
+    when "external"
+      Effects::External
     else
       raise UnknownEffect, "Don't know what to do with #{effect_type}"
     end
