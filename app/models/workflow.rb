@@ -1,4 +1,6 @@
 class Workflow < ApplicationRecord
+  include IsReducible
+
   Type = GraphQL::ObjectType.define do
     name "Workflow"
 
@@ -139,11 +141,9 @@ class Workflow < ApplicationRecord
     end
   end
 
-  def concerns_subjects?
-    subject_rules.present? or reducers.where(topic: 'reduce_by_subject').present?
-  end
-
-  def concerns_users?
-    user_rules.present? or reducers.where(topic: 'reduce_by_user').present?
+  def rerun_extractors(duration = 3.hours)
+    extracts.pluck(:subject_id).uniq.each do |subject_id|
+      FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, workflow.id, subject_id, FetchClassificationsWorker.fetch_for_subject)
+    end
   end
 end

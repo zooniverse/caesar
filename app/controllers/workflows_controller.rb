@@ -106,23 +106,13 @@ class WorkflowsController < ApplicationController
   end
 
   def rerun_extractors
-    duration = 3.hours
-
-    workflow.extracts.pluck(:subject_id).uniq.each do |subject_id|
-      FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, workflow.id, subject_id, FetchClassificationsWorker.fetch_for_subject)
-    end
-
-    flash[:notice] = "Re-running extractors for the next #{duration / 1.hour.to_i} hours"
+    workflow.rerun_extractors
+    flash[:notice] = "Re-running extractors. Results may take some time to process."
   end
 
   def rerun_reducers
-    duration = 3.hours
-
-    workflow.extracts.group_by(&:subject_id).each do |subject_id, extracts|
-      ReduceWorker.perform_in(rand(duration.to_i).seconds, workflow.id, 'Workflow', subject_id, nil, extracts.pluck(:id))
-    end
-
-    flash[:notice] = "Re-running reducers for the next #{duration / 1.hour.to_i} hours"
+    workflow.rerun_extractors
+    flash[:notice] = "Re-running reducers. Results may take some time to process."
   end
 
   def workflow_params

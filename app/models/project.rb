@@ -1,5 +1,6 @@
 class Project < ApplicationRecord
   include Configurable
+  include IsReducible
 
   has_many :extractors
   has_many :reducers, as: :reducible
