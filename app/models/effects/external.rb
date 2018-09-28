@@ -6,8 +6,9 @@ module Effects
       reductions = SubjectReduction.where(
         workflow_id: workflow_id, 
         subject_id: subject_id, 
-        reducer_key: config[:reducer_key]
       )
+      reductions = reductions.where(reducer_key: config[:reducer_key]) if config[:reducer_key]
+
       begin
         if valid?
           response = RestClient.post(url, reductions.to_json, {content_type: :json, accept: :json})

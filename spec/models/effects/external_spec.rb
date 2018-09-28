@@ -1,23 +1,33 @@
 require 'spec_helper'
 
 describe Effects::External do
-  let(:reduction) { create(:subject_reduction) }
+  let(:reduction) { create(:subject_reduction, reducer_key: "key") }
   let(:url) { "https://example.org/post/reduction/here" }
-  let(:effect) { described_class.new(url: url) }
+  let(:effect) { described_class.new(url: url, reducer_key: "key") }
 
   before do
-    stub_request(:post, "https://example.org/post/reduction/here")
-      .with(:body => [reduction].to_json,
-           :headers => {'Accept'=>'application/json',
-                        'Content-Type'=>'application/json',
-                        'Host'=>'example.org'})
-      .to_return(:status => 200, :headers => {})
+    stub_request(:post, url).to_return(status: 200, headers: {})
   end
 
   it 'sends the reductions to the external API' do
     effect.perform(reduction.workflow_id, reduction.subject_id)
-    expect(a_request(:post, "https://example.org/post/reduction/here")
-             .with(body: [reduction].to_json))
+    expect(a_request(:post, url).with(body: [reduction].to_json))
+      .to have_been_made.once
+  end
+
+  it 'does not include reductions that do not match the reducer key' do
+    effect = described_class.new(url: url, reducer_key: "yarp")
+    effect.perform(reduction.workflow_id, reduction.subject_id)
+
+    expect(a_request(:post, url).with(body: [].to_json))
+      .to have_been_made.once
+  end
+
+  it 'includes all reductions if no key is specified' do
+    effect = described_class.new(url: url)
+    effect.perform(reduction.workflow_id, reduction.subject_id)
+
+    expect(a_request(:post, url).with(body: [reduction].to_json))
       .to have_been_made.once
   end
 
