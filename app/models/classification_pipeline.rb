@@ -32,8 +32,18 @@ class ClassificationPipeline
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
     novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
+    exception = nil
+
     extracts = extractors.map do |extractor|
-      data = extractor.process(classification)
+      extract_ok = false
+      begin
+        data = extractor.process(classification)
+        extract_ok = true
+      rescue Exception => e
+        exception = e
+      end
+
+      next unless extract_ok
 
       extract = Extract.where(
         workflow_id: classification.workflow_id,
@@ -50,7 +60,9 @@ class ClassificationPipeline
       end
     end
 
-    return if extracts.blank?
+    raise StandardError.new('One or more extractors failed', cause: exception) unless exception.blank?
+
+    return if extracts&.compact.blank?
 
     Workflow.transaction do
       extracts.each do |extract|
@@ -80,11 +92,11 @@ class ClassificationPipeline
 
     filter = { subject_id: subject_id, user_id: user_id }
     if reducible_class.to_s == "Workflow"
-      filter[:workflow_id] = reducible_id 
+      filter[:workflow_id] = reducible_id
     elsif reducible_class.to_s == "Project"
       filter[:project_id] = reducible_id
     end
-    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)	     
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
 
     reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
