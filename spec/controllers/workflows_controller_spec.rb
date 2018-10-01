@@ -114,4 +114,13 @@ RSpec.describe WorkflowsController, type: :controller do
       expect(workflow.reload.extractors[0]).to be_present
     end
   end
+
+  describe 'rerun_reducers' do
+    it 'calls rerun_reducers not rerun_extractors' do
+      wf_double = instance_double(Workflow, rerun_reducers: true)
+      allow_any_instance_of(WorkflowsController).to receive(:workflow).and_return(wf_double)
+      controller.send(:rerun_reducers)
+      expect(wf_double).to have_received(:rerun_reducers).once
+    end
+  end
 end
