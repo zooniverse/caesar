@@ -111,7 +111,7 @@ class WorkflowsController < ApplicationController
   end
 
   def rerun_reducers
-    workflow.rerun_extractors
+    workflow.rerun_reducers
     flash[:notice] = "Re-running reducers. Results may take some time to process."
   end
 
