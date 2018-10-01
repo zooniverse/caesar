@@ -22,7 +22,7 @@ class ReduceWorker
 
   def perform(reducible_id, reducible_class, subject_id, user_id, extract_ids = [])
     reducible = reducible_class.constantize.find(reducible_id)
-    return if reducible.respond_to?('paused?') && reducible.paused?
+    return if reducible.paused?
 
     reductions = reducible.classification_pipeline.reduce(reducible_id, subject_id, user_id, extract_ids)
 
