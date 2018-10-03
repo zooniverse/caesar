@@ -26,7 +26,7 @@ class ReduceWorker
 
     reductions = reducible.classification_pipeline.reduce(reducible_id, subject_id, user_id, extract_ids)
 
-    return unless reducible.respond_to?('subject_rules') && reducible.respond_to?('user_rules')
+    return if reducible_class=='Project'
     CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id) unless reductions.blank?
   end
 
