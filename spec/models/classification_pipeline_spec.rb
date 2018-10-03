@@ -198,7 +198,7 @@ describe ClassificationPipeline do
     let(:project) { create :project }
     let(:reducer) { create(:stats_reducer, key: 's', reducible: project) }
     let(:subject) { create(:subject) }
-    
+
     let(:pipeline) do
       described_class.new(Project, nil, [reducer], nil, nil)
     end
@@ -216,7 +216,7 @@ describe ClassificationPipeline do
     it "instantiates fetchers with correct filters" do
       filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
       reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
-  
+
       expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
@@ -224,13 +224,31 @@ describe ClassificationPipeline do
     end
   end
 
-  describe 'running/online aggregation mode' do
-    xit 'selects the proper extracts for processing' do
-      raise NotImplementedError
+  describe '#extract' do
+    let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
+    let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
+    let(:extractors){ [blank_extractor, question_extractor] }
+
+    it 'calls all defined extractors' do
+      allow_any_instance_of(ClassificationPipeline).to receive(:extractors).and_return(extractors)
+
+      expect(blank_extractor).to receive(:process).once
+      expect(question_extractor).to receive(:process).once
+
+      workflow.classification_pipeline.extract(classification)
     end
 
-    xit 'detects synchronization problems' do
-      raise NotImplementedError
+    it 'calls all defined extractors even when one fails' do
+      allow_any_instance_of(ClassificationPipeline).to receive(:extractors).and_return(extractors)
+      allow(blank_extractor).to receive(:process).and_raise(StandardError.new('boo'))
+
+      expect(blank_extractor).to receive(:process).once
+      expect(question_extractor).to receive(:process).once
+
+      expect do
+        workflow.classification_pipeline.extract(classification)
+      end.to raise_error(StandardError)
     end
   end
+
 end

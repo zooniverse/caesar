@@ -60,7 +60,7 @@ class ClassificationPipeline
       end
     end
 
-    raise StandardError.new('One or more extractors failed', cause: exception) unless exception.blank?
+    raise (StandardError.new('One or more extractors failed').tap{ |e| e.set_backtrace exception.backtrace }) unless exception.blank?
 
     return if extracts&.compact.blank?
 
