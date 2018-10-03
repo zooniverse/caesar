@@ -1,8 +1,11 @@
 module Effects
   class External < Effect
     class ExternalEffectFailed < StandardError; end
+    class InvalidConfiguration < StandardError; end
 
     def perform(workflow_id, subject_id)
+      raise InvalidConfiguration unless valid?
+
       reductions = SubjectReduction.where(
         workflow_id: workflow_id, 
         subject_id: subject_id, 
@@ -10,11 +13,7 @@ module Effects
       reductions = reductions.where(reducer_key: config[:reducer_key]) if config[:reducer_key]
 
       begin
-        if valid?
-          response = RestClient.post(url, reductions.to_json, {content_type: :json, accept: :json})
-        else
-          raise StandardError.new "External effect has missing or invalid URL"
-        end
+        response = RestClient.post(url, reductions.to_json, {content_type: :json, accept: :json})
       rescue RestClient::InternalServerError
         raise ExternalEffectFailed
       end

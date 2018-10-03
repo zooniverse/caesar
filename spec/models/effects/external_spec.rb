@@ -36,7 +36,7 @@ describe Effects::External do
 
     expect do
       effect.perform(reduction.workflow_id, reduction.subject_id)
-    end.to raise_error(StandardError)
+    end.to raise_error(Effects::External::InvalidConfiguration)
   end
 
   describe 'validations' do
