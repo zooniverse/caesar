@@ -39,6 +39,14 @@ describe Effects::External do
     end.to raise_error(Effects::External::InvalidConfiguration)
   end
 
+  it 'raises an error if the post fails' do
+    stub_request(:post, url).to_return(status: 500, headers: {})
+
+    expect do
+      effect.perform(reduction.workflow_id, reduction.subject_id)
+    end.to raise_error(Effects::External::ExternalEffectFailed)
+  end
+
   describe 'validations' do
     it 'is not valid with a non-https url' do
       effect = described_class.new(url: "http://foo.com")
