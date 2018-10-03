@@ -24,7 +24,7 @@ module Effects
     end
 
     def self.config_fields
-      [:url].freeze
+      [:url, :reducer_key].freeze
     end
 
     def url 
