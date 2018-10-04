@@ -68,7 +68,12 @@ class UserRulesController < ApplicationController
   end
 
   def rule_params
-    p = params.require(:user_rule).permit(:id)
-    p.merge(condition: params[:user_rule][:condition], workflow_id: workflow.id)
+    if params.dig :user_rule, :condition
+      params.require(:user_rule).permit(:id).merge(condition: params.require(:user_rule).require(:condition))
+    elsif params.dig :user_rule, :condition_string
+      params.require(:user_rule).permit(:id).merge(condition: JSON.parse(params[:user_rule][:condition_string]))
+    else
+      raise StandardError.new('No condition specified')
+    end.merge(workflow_id: workflow.id)
   end
 end
