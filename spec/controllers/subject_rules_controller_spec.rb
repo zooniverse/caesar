@@ -36,9 +36,13 @@ RSpec.describe SubjectRulesController, type: :controller do
   end
 
   describe '#create' do
+    let(:condition){ ["gte", ["const", 5], ["const", 3]] }
+
     it 'makes a new rule' do
-      condition = ["gte", ["const", 5], ["const", 3]]
-      post :create, params: {subject_rule: {condition: condition}, workflow_id: workflow.id}, as: :json
+      post :create, params: {
+        subject_rule: {condition: condition},
+        workflow_id: workflow.id
+      }, as: :json
 
       expect(response.status).to eq(200)
       result = JSON.parse(response.body)
@@ -48,15 +52,29 @@ RSpec.describe SubjectRulesController, type: :controller do
       new_rule = SubjectRule.find(result["id"])
       expect(new_rule.condition.to_a).to eq(condition)
     end
+
+    it 'handles a condition_string properly' do
+      post :create, params: {
+        subject_rule: {condition_string: condition.to_json},
+        workflow_id: workflow.id
+      }, as: :html
+
+      expect(response.status).to eq(302)
+      expect(SubjectRule.count).to eq(1)
+    end
   end
 
   describe '#update' do
-    it 'changes a rule' do
-      condition1 = ["gte", ["const", 5], ["const", 3]]
-      rule = create :subject_rule, condition: condition1, workflow: workflow
+    let(:condition){ ["gte", ["const", 5], ["const", 3]] }
 
-      condition2 = ["lte", ["const", 5], ["const", 3]]
-      put :update, params: {subject_rule: {condition: condition2}, workflow_id: workflow.id, id: rule.id}, as: :json
+    it 'changes a rule' do
+      rule = create :subject_rule, condition: condition, workflow: workflow
+      new_condition = ["lte", ["const", 5], ["const", 3]]
+
+      put :update, params: {
+        subject_rule: {condition: new_condition},
+        workflow_id: workflow.id, id: rule.id
+      }, as: :json
 
       expect(response.status).to eq(200)
       result = JSON.parse(response.body)
@@ -65,7 +83,23 @@ RSpec.describe SubjectRulesController, type: :controller do
       expect(result["workflow_id"]).to eq(workflow.id)
 
       new_rule = SubjectRule.find(rule.id)
-      expect(new_rule.condition.to_a).to eq(condition2)
+      expect(new_rule.condition.to_a).to eq(new_condition)
+    end
+
+    it 'handles a condition_string properly' do
+      rule = create :subject_rule, condition: condition, workflow: workflow
+      new_condition = ["lte", ["const", 5], ["const", 3]]
+
+      put :update, params: {
+        subject_rule: {condition_string: new_condition.to_json},
+        workflow_id: workflow.id, id: rule.id
+      }, as: :html
+
+      expect(response.status).to eq(302)
+      expect(SubjectRule.count).to eq(1)
+
+      new_rule = SubjectRule.find(rule.id)
+      expect(new_rule.condition.to_a).to eq(new_condition)
     end
   end
 
