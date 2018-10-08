@@ -10,7 +10,7 @@
       <dd>
         <% if @project.reducers.count == 0 %>None<% end %>
         <% @project.reducers.pluck(:key).each do |key| %>
-          <span class="label label-info"><%= key %></span>
+          <span class="label label-success"><%= key %></span>
         <% end %>
       </dd>
       <br/>
