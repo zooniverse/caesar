@@ -27,6 +27,10 @@ class Project < ApplicationRecord
     where(id: credential.project_ids)
   end
 
+  def paused?
+    false
+  end
+
   def classification_pipeline
     ClassificationPipeline.new(Project,
                                extractors,
