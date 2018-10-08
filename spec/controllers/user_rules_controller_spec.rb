@@ -36,6 +36,8 @@ RSpec.describe UserRulesController, type: :controller do
   end
 
   describe '#create' do
+    let(:condition){ ["gte", ["const", 5], ["const", 3]] }
+
     it 'makes a new rule' do
       condition = ["gte", ["const", 5], ["const", 3]]
       post :create, params: {user_rule: {condition: condition}, workflow_id: workflow.id}, as: :json
@@ -48,9 +50,21 @@ RSpec.describe UserRulesController, type: :controller do
       new_rule = UserRule.find(result["id"])
       expect(new_rule.condition.to_a).to eq(condition)
     end
+
+    it 'handles a condition_string properly' do
+      post :create, params: {
+        user_rule: {condition_string: condition.to_json},
+        workflow_id: workflow.id
+      }, as: :html
+
+      expect(response.status).to eq(302)
+      expect(UserRule.count).to eq(1)
+    end
   end
 
   describe '#update' do
+    let(:condition){ ["gte", ["const", 5], ["const", 3]] }
+
     it 'changes a rule' do
       condition1 = ["gte", ["const", 5], ["const", 3]]
       rule = create :user_rule, condition: condition1, workflow: workflow
@@ -66,6 +80,22 @@ RSpec.describe UserRulesController, type: :controller do
 
       new_rule = UserRule.find(rule.id)
       expect(new_rule.condition.to_a).to eq(condition2)
+    end
+
+    it 'handles a condition_string properly' do
+      rule = create :user_rule, condition: condition, workflow: workflow
+      new_condition = ["lte", ["const", 5], ["const", 3]]
+
+      put :update, params: {
+        user_rule: {condition_string: new_condition.to_json},
+        workflow_id: workflow.id, id: rule.id
+      }, as: :html
+
+      expect(response.status).to eq(302)
+      expect(UserRule.count).to eq(1)
+
+      new_rule = UserRule.find(rule.id)
+      expect(new_rule.condition.to_a).to eq(new_condition)
     end
   end
 

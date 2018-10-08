@@ -44,6 +44,7 @@ class SubjectRulesController < ApplicationController
     @subject_rule = workflow.subject_rules.find(params[:id])
 
     @subject_rule.update(rule_params)
+
     respond_to do |format|
       format.html{ respond_with @subject_rule, location: workflow_path(workflow, :anchor => "rules") }
       format.json{ render json: @subject_rule }
@@ -66,7 +67,12 @@ class SubjectRulesController < ApplicationController
   end
 
   def rule_params
-    p = params.require(:subject_rule).permit(:id)
-    p.merge(condition: params[:subject_rule][:condition], workflow_id: workflow.id)
+    if params.dig :subject_rule, :condition
+      params.require(:subject_rule).permit(:id).merge(condition: params.require(:subject_rule).require(:condition))
+    elsif params.dig :subject_rule, :condition_string
+      params.require(:subject_rule).permit(:id).merge(condition: JSON.parse(params[:subject_rule][:condition_string]))
+    else
+      raise StandardError.new('No condition specified')
+    end.merge(workflow_id: workflow.id)
   end
 end
