@@ -15,7 +15,7 @@
       <dd>
         <% if @workflow.extractors.count == 0 %>None<% end %>
         <% @workflow.extractors.pluck(:key).each do |key| %>
-          <span class="label label-info"><%= key %></span>
+          <span class="label label-success"><%= key %></span>
         <% end %>
       </dd>
       <dt>Reducers</dt>
