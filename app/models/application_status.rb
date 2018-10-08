@@ -13,12 +13,12 @@ class ApplicationStatus
 
   def newest_reduction_date
     [SubjectReduction.order(id: :desc).first&.created_at].concat(
-      [UserReduction.order(id: :desc).first&.created_at]).compact.min
+      [UserReduction.order(id: :desc).first&.created_at]).compact.max
   end
 
   def newest_action_date
     [SubjectAction.order(id: :desc).first&.created_at].concat(
-      [UserAction.order(id: :desc).first&.created_at ]).compact.min
+      [UserAction.order(id: :desc).first&.created_at ]).compact.max
   end
 
   def commit_id
