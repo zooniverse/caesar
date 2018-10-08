@@ -54,6 +54,38 @@ describe ReducersController, :type => :controller do
       expect(workflow.reducers.first.url).to eq('https://example.org')
     end
 
+    it 'handles properties on nested objects' do
+      post :create, params: {
+        workflow_id: workflow.id,
+        reducer: {
+          key: 'a',
+          type: 'external',
+          config: { url: 'https://example.org' },
+          filters: { extractor_keys: ['test'] }
+        }
+      }, format: :json
+
+      expect(response).to have_http_status(:created)
+      expect(workflow.reducers.count).to eq(1)
+      expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
+    end
+
+    it 'jsonifies extractor_keys' do
+      post :create, params: {
+        workflow_id: workflow.id,
+        reducer: {
+          key: 'a',
+          type: 'external',
+          config: { url: 'https://example.org' },
+          filters: { extractor_keys: ['test'].to_json }
+        }
+      }, format: :json
+
+      expect(response).to have_http_status(:created)
+      expect(workflow.reducers.count).to eq(1)
+      expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
+    end
+
     it 'renders form on errors' do
       post :create, params: {workflow_id: workflow.id, reducer: {key: nil, type: 'external'}}
       expect(response.status).to eq(200)
