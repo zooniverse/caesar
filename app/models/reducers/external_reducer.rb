@@ -28,7 +28,7 @@ module Reducers
         elsif running_reduction?
           RestClient.post(url, { extracts: extractions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
         else
-          nil
+          raise StandardError.new("Impossible reducer configuration #{id}")
         end
 
         reduction.tap do |r|
