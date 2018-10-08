@@ -22,7 +22,7 @@
       <dd>
         <% if @workflow.reducers.count == 0 %>None<% end %>
         <% @workflow.reducers.pluck(:key).each do |key| %>
-          <span class="label label-info"><%= key %></span>
+          <span class="label label-success"><%= key %></span>
         <% end %>
       </dd>
       <dt>Rules</dt>
