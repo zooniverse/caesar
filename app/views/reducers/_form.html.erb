@@ -34,8 +34,8 @@
       <%= f.simple_fields_for :filters do |filters| %>
         <%= filters.input :from %>
         <%= filters.input :to %>
-        <%= filters.input :extractor_keys %>
-        <%= filters.input :repeated_classifications, collection: ExtractFilter::REPEATED_CLASSIFICATIONS %>
+        <%= filters.input :extractor_keys, placeholder: '["list", "of", "keys"]' %>
+        <%= filters.input :repeated_classifications, collection: ExtractFilter::REPEATED_CLASSIFICATIONS, selected: 1 %>
       <% end %>
     </div>
   </div>

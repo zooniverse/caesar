@@ -37,21 +37,22 @@ class ReducersController < ApplicationController
     authorize reducible
 
     reducer_class = Reducer.of_type(params[:reducer][:type])
-    @reducer = reducer_class.new(reducer_params(reducer_class))
+    new_params = reducer_params(reducer_class)
 
-    if(@reducer.filters['from'].blank? && @reducer.filters['to'].blank? && @reducer.filters['extractor_keys'].blank?)
-      @reducer.filters = {}
+    new_params.fetch('filters', {}).reject!{ |k, v| v.blank? }
+    new_params.fetch('grouping', {}).reject!{ |k, v| v.blank? }
+
+    filters = new_params.fetch('filters', {})
+    if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
+      filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
 
-    if(@reducer.grouping['field_name'].blank?)
-      @reducer.grouping = {}
-    end
-
+    @reducer = reducer_class.new(new_params)
     @reducer.save
 
     respond_to do |format|
       format.html { respond_with @reducer, location: redirect_path }
-      format.json { respond_with @reducer }
+      format.json { respond_with @reducer, location: workflow_reducer_path(workflow, @reducer) }
     end
   end
 
@@ -61,12 +62,12 @@ class ReducersController < ApplicationController
     @reducer = reducible.reducers.find(params[:id])
     params = reducer_params(@reducer.class)
 
-    if params.dig('filters','from').blank? && params.dig('filters','to').blank? && params.dig('filters','extractor_keys').blank?
-      params['filters'] = {}
-    end
+    params.fetch('filters', nil)&.reject!{ |k, v| v.blank? }
+    params.fetch('grouping', nil)&.reject!{ |k, v| v.blank? }
 
-    if params.dig('grouping','field_name').blank?
-      params['grouping'] = {}
+    filters = params.fetch('filters', {})
+    if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
+      filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
 
     @reducer.update(params)
