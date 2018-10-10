@@ -22,10 +22,14 @@ module Reducers
     end
 
     def reduce_into(extractions, reduction)
-      #TODO: is this the right idea here?
-      #TODO: this has to be a store thing too
       if url
-        response = RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
+        response = if default_reduction?
+          RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
+        elsif running_reduction?
+          RestClient.post(url, { extracts: extractions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
+        else
+          raise StandardError.new("Impossible reducer configuration #{id}")
+        end
 
         reduction.tap do |r|
           r.data = (if response.code == 204
@@ -35,6 +39,11 @@ module Reducers
           else
             raise StandardError.new 'Remote reducer failed'
           end)
+
+          if r&.data&.key? '_store'
+            r.store = r.data['_store']
+            r.data = r.data.except '_store'
+          end
         end
       else
         raise StandardError.new "External extractor improperly configured: no URL"
