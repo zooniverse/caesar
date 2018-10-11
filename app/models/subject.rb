@@ -14,4 +14,12 @@ class Subject < ApplicationRecord
     retry unless (tries-=1).zero?
     raise
   end
+
+  def additional_subject_ids_for_reduction
+    if metadata["previous_subject_ids"]
+      JSON.parse(metadata["previous_subject_ids"]) 
+    else
+      []
+    end
+  end
 end

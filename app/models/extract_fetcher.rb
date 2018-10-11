@@ -2,7 +2,7 @@ class ExtractFetcher
   attr_accessor :reduction_mode, :topic, :extract_ids, :strategy
   attr_reader :filter
 
-  @@strategies = [ :fetch_all, :fetch_minimal ]
+  @@strategies = [ :fetch_all, :fetch_minimal, :fetch_additional ]
   def self.strategies
     @@strategies
   end
@@ -41,6 +41,8 @@ class ExtractFetcher
   def extracts
     if fetch_minimal?
       exact_extracts
+    elsif fetch_additional?
+      subject_extracts + exact_extracts
     elsif fetch_subjects?
       subject_extracts
     elsif fetch_users?
@@ -50,6 +52,10 @@ class ExtractFetcher
 
   def fetch_minimal?
     @strategy == :fetch_minimal
+  end
+
+  def fetch_additional?
+    @strategy == :fetch_additional
   end
 
   def fetch_users?
