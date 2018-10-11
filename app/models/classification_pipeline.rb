@@ -105,7 +105,7 @@ class ClassificationPipeline
     end
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids + prior_extracts)
 
-    if prior_extracts
+    if prior_extracts.any?
       extract_fetcher.strategy! :fetch_additional
     end
 
