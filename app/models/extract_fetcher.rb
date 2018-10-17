@@ -19,7 +19,7 @@ class ExtractFetcher
     @strategy = strategy.to_sym
     @user_extracts = nil
     @subject_extracts = nil
-    @exact_extracts = nil
+    @specified_extracts = nil
   end
 
   def for(topic)
@@ -40,9 +40,9 @@ class ExtractFetcher
 
   def extracts
     if fetch_minimal?
-      exact_extracts
+      specified_extracts
     elsif fetch_additional?
-      subject_extracts + exact_extracts
+      subject_extracts + specified_extracts
     elsif fetch_subjects?
       subject_extracts
     elsif fetch_users?
@@ -74,7 +74,7 @@ class ExtractFetcher
     @subject_extracts ||= Extract.where(filter.except(:user_id)).order(classification_at: :desc)
   end
 
-  def exact_extracts
-    @exact_extracts ||= Extract.find(@extract_ids).sort_by{ |e| e.classification_at }
+  def specified_extracts
+    @specified_extracts ||= Extract.find(@extract_ids).sort_by{ |e| e.classification_at }
   end
 end
