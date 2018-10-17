@@ -103,7 +103,7 @@ class ClassificationPipeline
     elsif reducible_class.to_s == "Project"
       filter[:project_id] = reducible_id
     end
-    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids + prior_extracts)
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids | prior_extracts)
 
     if prior_extracts.any?
       extract_fetcher.strategy! :fetch_additional
