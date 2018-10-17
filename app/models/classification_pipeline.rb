@@ -94,7 +94,9 @@ class ClassificationPipeline
     if subject_id
       subject = Subject.find(subject_id)
       prior_subject_ids = subject.additional_subject_ids_for_reduction
-      prior_extracts = Extract.where(subject_id: prior_subject_ids).pluck(:id)
+      if prior_subject_ids.any?
+        prior_extracts = Extract.where(subject_id: prior_subject_ids).pluck(:id)
+      end
     end
 
     filter = { subject_id: subject_id, user_id: user_id }
