@@ -105,10 +105,6 @@ class ClassificationPipeline
     end
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids | prior_extracts)
 
-    if prior_extracts.any?
-      extract_fetcher.strategy! :fetch_additional
-    end
-
     reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
 
