@@ -19,7 +19,10 @@ class CreatesDataRequests < ApplicationOperation
     data_request.status = DataRequest.statuses[:pending]
     data_request.save!
 
-    DataRequestWorker.perform_async(data_request.id)
+    # sometimes the worker gets started before the save is persisted, which makes no sense
+    # but it doesn't hurt to wait a few seconds for a job that is going to take a while to
+    # run anyways
+    DataRequestWorker.perform_in(5.seconds, data_request.id)
     data_request
   end
 end
