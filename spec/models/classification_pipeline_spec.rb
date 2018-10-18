@@ -130,6 +130,25 @@ describe ClassificationPipeline do
     expect(SubjectReduction.where(subgroup: 2).first.data).to include({"LN" => 2, "BR" => 1})
   end
 
+  it 'reduces using extracts from multiple subjects when indicated by metadata' do
+    workflow = create(:workflow)
+    previous_subject = create(:subject)
+    subject = create(:subject, metadata: { previous_subject_ids: "[#{previous_subject.id}]" })
+
+    create :extract, id: 99999, extractor_key: 's', workflow_id: workflow.id, subject_id: previous_subject.id, classification_id: 22222, data: { TGR: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
+    create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { LN: 1 }
+
+    reducer = create(:stats_reducer, key: 's', reducible: workflow)
+    
+    expect_any_instance_of(ExtractFetcher).to receive(:including).at_least(:once).with([99999]).and_call_original
+
+    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
+    pipeline.reduce(workflow.id, subject.id, nil)
+
+    expect(SubjectReduction.first.data).to include({"TGR" => 1})
+  end
+
   it 'reduces by user instead of subject if we tell it to' do
     workflow = create(:workflow)
     subject = create(:subject)
