@@ -29,6 +29,10 @@ module Exporters
           csv << extract_row(item)
           progress += 1
           yield(progress, total) if block_given?
+
+          # let someone else use the CPU for a bit to try to appease docker
+          # https://stackoverflow.com/questions/36753094/sleep-0-has-special-meaning
+          sleep(0) unless progress % 1000
         end
       end
     end
