@@ -54,6 +54,8 @@ To make this more concrete, an example would be a survey-task workflow where:
 * A reducer combines multiple classifications by adding up the lion counts, emitting `lion=5, coyote=1`
 * A rule then checks `lion > 4`, which returns true, and therefore Caesar retires the image.
 
+Reducers can reduce across multiple subjects' extracts if the following is included in the new subject's metadata (when uploaded to Panoptes): `{ previous_subject_ids: [1234] }`. Extracts whose subject ids match an id in that array will be included in reductions for the new subject.
+
 ## Development
 
 Prepare the Docker containers:
