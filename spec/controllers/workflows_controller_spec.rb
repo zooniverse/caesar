@@ -54,47 +54,57 @@ RSpec.describe WorkflowsController, type: :controller do
   end
 
   describe 'POST #create' do
-    it 'creates a workflow json' do
-      workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
-      allow(@credential).to receive(:project_ids)
-                              .and_return([10])
-      allow(@credential).to receive(:accessible_workflow?)
-                              .with(workflow_hash["id"])
-                              .and_return(workflow_hash)
+    context "the user has access to the workflow" do
+      let(:workflow_hash) { {"id" => '123', "links" => {"project" => "10"}} }
+      before do
+        allow(@credential).to receive(:project_ids)
+                                .and_return([10])
+        allow(@credential).to receive(:accessible_workflow?)
+                                .with(workflow_hash["id"])
+                                .and_return(workflow_hash)
+      end
 
-      post :create, params: {workflow: {id: workflow_hash["id"],
-                                        project_id: workflow_hash["links"]["project_id"],
-                                        public_reductions: true}}, format: :json
+      it 'creates a workflow json' do
+        post :create, params: {workflow: {id: workflow_hash["id"],
+                                          project_id: workflow_hash["links"]["project_id"],
+                                          public_reductions: true}}, format: :json
 
-      expect(response.status).to eq(200)
-      expect(Workflow.find(workflow_hash["id"])).to be_present
-      expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
+        expect(response.status).to eq(200)
+        expect(Workflow.find(workflow_hash["id"])).to be_present
+        expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
+      end
+
+      it 'creates a workflow html' do
+        post :create, params: {workflow: {id: workflow_hash["id"],
+                                          project_id: workflow_hash["links"]["project_id"],
+                                          public_reductions: true}}
+
+        expect(response).to redirect_to(workflows_path)
+        expect(Workflow.find(workflow_hash["id"])).to be_present
+        expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
+      end
+
+      it 'redirects with a 302 if the workflow already exists' do
+        workflow = create(:workflow, id: workflow_hash["id"])
+        post :create, params: {workflow: {id: workflow_hash["id"],
+                                          project_id: workflow_hash["links"]["project_id"],
+                                          public_reductions: true}}
+
+        expect(response).to redirect_to workflow
+        expect(response.status).to eq(302)
+        expect(flash[:alert]).to be_present
+      end
     end
 
-    it 'creates a workflow html' do
-      workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
-      allow(@credential).to receive(:project_ids)
-                              .and_return([10])
-      allow(@credential).to receive(:accessible_workflow?)
-                              .with(workflow_hash["id"])
-                              .and_return(workflow_hash)
+    context "the user does not have access to the project" do
+      it 'returns 403 for a project the user does not have access to' do
+        workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
+        allow(@credential).to receive(:project_ids).and_return([])
+        allow(@credential).to receive(:accessible_workflow?).with(workflow_hash["id"]).and_return(nil)
 
-      post :create, params: {workflow: {id: workflow_hash["id"],
-                                        project_id: workflow_hash["links"]["project_id"],
-                                        public_reductions: true}}
-
-      expect(response).to redirect_to(workflows_path)
-      expect(Workflow.find(workflow_hash["id"])).to be_present
-      expect(Workflow.find(workflow_hash["id"]).public_reductions).to be_truthy
-    end
-
-    it 'returns 403 for a project the user does not have access to' do
-      workflow_hash = {"id" => '123', "links" => {"project" => "10"}}
-      allow(@credential).to receive(:project_ids).and_return([])
-      allow(@credential).to receive(:accessible_workflow?).with(workflow_hash["id"]).and_return(nil)
-
-      post :create, params: {workflow: {id: workflow_hash["id"], project_id: workflow_hash["links"]["project_id"]}, format: :json}
-      expect(response).to have_http_status(:forbidden)
+        post :create, params: {workflow: {id: workflow_hash["id"], project_id: workflow_hash["links"]["project_id"]}, format: :json}
+        expect(response).to have_http_status(:forbidden)
+      end
     end
   end
 
