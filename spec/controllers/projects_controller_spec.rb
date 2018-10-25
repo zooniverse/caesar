@@ -37,6 +37,15 @@ describe ProjectsController, type: :controller do
       post :create, params: { project: { id: 9, display_name: 'nein' } }, format: :json
       expect(response.status).to eq(403)
     end
+
+    it 'redirects with a 302 if the project already exists' do
+      allow(@credential).to receive(:accessible_project?).and_return(true)
+      project = create :project
+      post :create, params: { project: { id: project.id } }, format: :json
+      expect(response).to redirect_to project
+      expect(response.status).to eq(302)
+      expect(flash[:alert]).to be_present
+    end
   end
 
   describe 'PUT #update' do

@@ -50,6 +50,11 @@ class WorkflowsController < ApplicationController
       return
     end
 
+    if Workflow.exists?(workflow_id)
+      flash[:alert] = "Workflow already exists"
+      redirect_to Workflow.find(workflow_id) and return
+    end
+
     @workflow = Workflow.new(workflow_params.merge(
       id: workflow_id,
       project_id: workflow_hash["project_id"] || -1,

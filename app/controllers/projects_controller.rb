@@ -42,6 +42,11 @@ class ProjectsController < ApplicationController
 
     panoptes_project = Effects.panoptes.project(project_id) || { id: project_id, display_name: 'New Project' }
 
+    if Project.exists?(project_id)
+      flash[:alert] = "Project already exists"
+      redirect_to Project.find(project_id) and return
+    end
+
     @project = Project.new(project_params.merge(
       id: project_id,
       display_name: panoptes_project['display_name']
