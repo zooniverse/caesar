@@ -15,6 +15,10 @@ class ExtractsForClassification
     self.class.new(extracts.select(&block))
   end
 
+  def reject(&block)
+    self.class.new(extracts.reject(&block))
+  end
+
   def classification_id
     extracts.first.classification_id
   end

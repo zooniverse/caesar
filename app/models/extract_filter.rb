@@ -3,9 +3,11 @@ class ExtractFilter
 
   REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
   EMPTY_EXTRACTS = ["keep_all", "ignore_empty"]
+  TRAINING_BEHAVIOR = ["ignore_training", "training_only", "experiment_only"]
 
   validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
   validates :empty_extracts, inclusion: {in: EMPTY_EXTRACTS}
+  validates :training_behavior, inclusion: {in: TRAINING_BEHAVIOR}
   validates :from, numericality: true
   validates :to, numericality: true
 
@@ -16,88 +18,33 @@ class ExtractFilter
   end
 
   def filter(extracts)
-    extracts = ExtractsForClassification.from(extracts)
-    filter_by_subrange(filter_by_emptyness(filter_by_extractor_keys(filter_by_repeatedness(extracts)))).flat_map(&:extracts)
+    @extracts = extracts
+    apply_filters(extract_groups, filter_objects)
   end
 
   private
 
-  def filter_by_repeatedness(extracts)
-    case repeated_classifications
-    when "keep_all"
-      extracts
-    when "keep_first"
-      keep_first_classification(extracts)
-    when "keep_last"
-      keep_first_classification(extracts.reverse).reverse
-    end
+  def extract_groups
+    ExtractsForClassification.from(@extracts)
   end
 
-  def filter_by_subrange(extracts)
-    extracts.select do |extract_group|
-      extract_group.extracts.length > 0
-    end.sort_by(&:classification_at)[subrange]
+  def filter_objects
+    @filter_objects ||= [
+      ::Filters::FilterByRepeatedness,
+      ::Filters::FilterByExtractorKeys,
+      ::Filters::FilterByEmptiness,
+      ::Filters::FilterByTrainingBehavior,
+      ::Filters::FilterBySubrange
+    ].map{ |klass| klass.new(filters) }
   end
 
-  def filter_by_extractor_keys(extracts)
-    return extracts if extractor_keys.blank?
-
-    extracts.map do |group|
-      group.select do |extract|
-        extractor_keys.include?(extract.extractor_key)
-      end
-    end
-  end
-
-  def filter_by_emptyness(extracts)
-    case empty_extracts
-    when "keep_all"
-      extracts
-    when "ignore_empty"
-      extracts.map do |extract_group|
-        extract_group.select { |extract| extract.data.present? }
-      end
-    end
-  end
-
-  def keep_first_classification(extracts)
-    subjects ||= Hash.new
-
-    extracts.select do |extracts_for_classification|
-      subject_id = extracts_for_classification.subject_id
-      user_id = extracts_for_classification.user_id
-
-      subjects[subject_id] = Set.new unless subjects.has_key? subject_id
-      id_list = subjects[subject_id]
-
-      next true unless extracts_for_classification.user_id
-      next false if id_list.include?(user_id)
-      id_list << user_id
-      true
-    end.to_a
-  end
-
-  def from
-    (filters["from"] || 0).to_i
-  end
-
-  def to
-    (filters["to"] || -1).to_i
-  end
-
-  def subrange
-    Range.new(from, to)
-  end
-
-  def extractor_keys
-    Array.wrap(filters["extractor_keys"] || [])
-  end
-
-  def repeated_classifications
-    filters["repeated_classifications"] || "keep_first"
-  end
-
-  def empty_extracts
-    filters["empty_extracts"] || "keep_all"
+  def apply_filters(extract_groups, filters)
+    # this is a weird reduce: instead of applying a single aggregation method
+    # to a series of data values, we apply a series of aggregation methods
+    # to a single data object, with reduce threading the object through the
+    # methods for us
+    filters.reduce(extract_groups){
+      |current_extracts, filter| filter.apply(current_extracts)
+    }.flat_map(&:extracts)
   end
 end
