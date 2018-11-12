@@ -33,7 +33,11 @@ module Extractors
           []
         end
       when "nothing_here"
-        [{"value" => [{"choice" => nothing_here_choice}]}]
+        begin
+          classification.annotations.fetch(task_key)
+        rescue KeyError
+          [{"value" => [{"choice" => nothing_here_choice}]}]
+        end
       else
         begin
           classification.annotations.fetch(task_key)

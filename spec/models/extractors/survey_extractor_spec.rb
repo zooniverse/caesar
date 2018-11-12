@@ -65,5 +65,18 @@ describe Extractors::SurveyExtractor do
       annotations[2] = make_annotation("BBN")
       expect(extractor.process(classification)).to eq("RCCN" => 2, "BBN" => 1)
     end
+
+    it 'detects choices when nothing_here option is selected' do
+      extractor.config["if_missing"] = "nothing_here"
+      extractor.config["nothing_here_choice"] = "NTHNGHR"
+      annotations[0] = {
+        "task"=>"T0",
+        "value"=>[
+          {"choice"=>"WILDEBEEST", "answers"=>{"HOWMANY"=>"2", "WHATBEHAVIORSDOYOUSEE"=>["STANDING"], "ARETHEREANYYOUNGPRESENT"=>"NO"}, "filters"=>{}}
+        ]
+      }
+      expect(extractor.process(classification)).to eq("WILDEBEEST" => 1)
+    end
+
   end
 end
