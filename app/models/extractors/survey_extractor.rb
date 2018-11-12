@@ -25,25 +25,15 @@ module Extractors
     private
 
     def fetch_values(classification)
+      classification.annotations.fetch(task_key)
+    rescue KeyError
       case if_missing
       when "ignore"
-        begin
-          classification.annotations.fetch(task_key)
-        rescue KeyError
-          []
-        end
+        []
       when "nothing_here"
-        begin
-          classification.annotations.fetch(task_key)
-        rescue KeyError
-          [{"value" => [{"choice" => nothing_here_choice}]}]
-        end
+        [{"value" => [{"choice" => nothing_here_choice}]}]
       else
-        begin
-          classification.annotations.fetch(task_key)
-        rescue KeyError
-          raise MissingAnnotation, "No annotations for task #{task_key}"
-        end
+        raise MissingAnnotation, "No annotations for task #{task_key}"
       end
     end
   end
