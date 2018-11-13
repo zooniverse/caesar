@@ -75,6 +75,21 @@ describe ClassificationPipeline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
+  describe 'extraction' do
+    it 'updates attributes if not set yet' do
+      extract = create :extract,
+                       workflow_id: classification.workflow_id,
+                       subject_id: classification.subject_id,
+                       classification_id: classification.id,
+                       extractor_key: 's',
+                       project_id: nil,
+                       user_id: nil
+      pipeline.extract(classification)
+      expect(extract.reload.project_id).to eq(2439)
+      expect(extract.reload.user_id).to eq(1)
+    end
+  end
+
   it 'retires the image', sidekiq: :inline do
     pipeline.process(classification)
     expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once

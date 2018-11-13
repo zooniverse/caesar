@@ -49,13 +49,13 @@ class ClassificationPipeline
         workflow_id: classification.workflow_id,
         subject_id: classification.subject_id,
         classification_id: classification.id,
-        extractor_key: extractor.key,
-        project_id: classification.project_id
+        extractor_key: extractor.key
       ).first_or_initialize
 
       extract.tap do |an_extract|
         an_extract.user_id = classification.user_id
         an_extract.classification_at = classification.created_at
+        an_extract.project_id = classification.project_id
         an_extract.data = data
       end
     end
@@ -69,7 +69,6 @@ class ClassificationPipeline
         extract.save!
       end
     end
-
 
     if workflow.concerns_subjects? and novel_subject
       FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
@@ -105,6 +104,7 @@ class ClassificationPipeline
     elsif reducible_class.to_s == "Project"
       filter[:project_id] = reducible_id
     end
+
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids | prior_extracts)
 
     reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
