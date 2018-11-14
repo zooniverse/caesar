@@ -1,9 +1,7 @@
 module Filters
   class FilterBySubrange < Filter
     def apply(extract_groups)
-      extract_groups.select do |extract_group|
-        extract_group.extracts.length > 0
-      end.sort_by(&:classification_at)[subrange]
+      extract_groups.sort_by(&:classification_at)[subrange]
     end
 
     private

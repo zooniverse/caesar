@@ -11,6 +11,10 @@ class ExtractsForClassification
     @extracts = extracts
   end
 
+  def empty?
+    extracts.empty?
+  end
+
   def select(&block)
     self.class.new(extracts.select(&block))
   end

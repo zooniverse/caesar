@@ -1,7 +1,7 @@
 module Filters
   class Filter
     def initialize(config)
-      @config = config
+      @config = config.with_indifferent_access
     end
 
     def filter(_)

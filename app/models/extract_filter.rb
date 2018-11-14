@@ -43,8 +43,10 @@ class ExtractFilter
     # to a series of data values, we apply a series of aggregation methods
     # to a single data object, with reduce threading the object through the
     # methods for us
-    filters.reduce(extract_groups){
-      |current_extracts, filter| filter.apply(current_extracts)
-    }.flat_map(&:extracts)
+    filters.reduce(extract_groups) do |current_extracts, filter|
+      filter.apply(current_extracts).reject do |extract_group|
+        extract_group.empty?
+      end
+    end.flat_map(&:extracts)
   end
 end
