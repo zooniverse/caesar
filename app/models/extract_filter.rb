@@ -1,15 +1,10 @@
 class ExtractFilter
   include ActiveModel::Validations
 
-  REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
-  EMPTY_EXTRACTS = ["keep_all", "ignore_empty"]
-  TRAINING_BEHAVIOR = ["ignore_training", "training_only", "experiment_only"]
-
-  def valid?
-    filter_objects.map{ |filter| filter.valid? }.all?
-  end
-
   attr_reader :filters
+
+  validates_with ActiveRecord::Validations::AssociatedValidator,
+    _merge_attributes([:filter_objects])
 
   def initialize(filters)
     @filters = filters.with_indifferent_access
@@ -21,10 +16,6 @@ class ExtractFilter
   end
 
   private
-
-  def foo
-    false
-  end
 
   def extract_groups
     ExtractsForClassification.from(@extracts)
