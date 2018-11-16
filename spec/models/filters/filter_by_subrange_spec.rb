@@ -1,10 +1,24 @@
 require 'models/filters/filter_spec_helper'
 
 describe Filters::FilterBySubrange do
-  let(:extracts){ EXTRACTS }
+  let(:subjects){ helper_subjects }
+  let(:extracts){ helper_extracts(subjects) }
   let(:extract_groups) { ExtractsForClassification.from(extracts) }
 
-  xdescribe 'validates correctly' do
+  describe 'validates correctly' do
+    it 'validates the from field' do
+      expect(described_class.new({})).to be_valid
+      expect(described_class.new(from: 5)).to be_valid
+      expect(described_class.new(from: '5')).to be_valid
+      expect(described_class.new(from: 'aaaa')).not_to be_valid
+    end
+
+    it 'validates the to field' do
+      expect(described_class.new({})).to be_valid
+      expect(described_class.new(to: 5)).to be_valid
+      expect(described_class.new(to: '5')).to be_valid
+      expect(described_class.new(to: 'aaaa')).not_to be_valid
+    end
   end
 
   describe 'filters extract_groups by subrange' do

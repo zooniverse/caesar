@@ -1,8 +1,7 @@
-
 require 'spec_helper'
 
 describe Filters::FilterByRepeatedness do
-  xdescribe 'validates correctly' do
+  describe 'validates correctly' do
     it 'validates keep all' do
       filter = described_class.new(repeated_classifications: "keep_all")
       expect(filter).to be_valid

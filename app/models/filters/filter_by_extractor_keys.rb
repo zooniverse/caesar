@@ -1,5 +1,11 @@
 module Filters
   class FilterByExtractorKeys < Filter
+    include ActiveModel::Validations
+
+    def valid?
+      (extractor_keys.is_a? String) || (extractor_keys.all?{ |key| key.is_a? String })
+    end
+
     def apply(extract_groups)
       return extract_groups if extractor_keys.blank?
 

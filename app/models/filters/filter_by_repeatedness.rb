@@ -1,5 +1,10 @@
 module Filters
   class FilterByRepeatedness < Filter
+    include ActiveModel::Validations
+
+    REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
+    validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
+
     def apply(extract_groups)
       case repeated_classifications
       when "keep_all"

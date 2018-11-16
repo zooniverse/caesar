@@ -79,4 +79,25 @@ describe ExtractFilter do
       expect(filter.filter(extracts)).to eq([extracts[2]])
     end
   end
+
+  describe 'validation' do
+    let(:filter){ described_class.new Hash.new }
+    it 'validates an empty config' do
+      expect(filter).to be_valid
+    end
+
+    it 'validates all of the filters' do
+      expect_any_instance_of(Filters::FilterByTrainingBehavior).to receive(:valid?)
+      expect_any_instance_of(Filters::FilterBySubrange).to receive(:valid?)
+      expect_any_instance_of(Filters::FilterByExtractorKeys).to receive(:valid?)
+      expect_any_instance_of(Filters::FilterByEmptiness).to receive(:valid?)
+      expect_any_instance_of(Filters::FilterByRepeatedness).to receive(:valid?)
+      filter.valid?
+    end
+
+    it 'fails when something is broken' do
+      allow_any_instance_of(Filters::FilterByTrainingBehavior).to receive(:valid?).and_return(false)
+      expect(filter).not_to be_valid
+    end
+  end
 end

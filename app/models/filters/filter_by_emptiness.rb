@@ -1,5 +1,11 @@
 module Filters
   class FilterByEmptiness < Filter
+    include ActiveModel::Validations
+
+    EMPTY_EXTRACTS = ["keep_all", "ignore_empty"]
+
+    validates :empty_extracts, inclusion: {in: EMPTY_EXTRACTS}
+
     def apply(extract_groups)
       case empty_extracts
       when "keep_all"

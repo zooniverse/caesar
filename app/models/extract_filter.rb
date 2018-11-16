@@ -5,11 +5,9 @@ class ExtractFilter
   EMPTY_EXTRACTS = ["keep_all", "ignore_empty"]
   TRAINING_BEHAVIOR = ["ignore_training", "training_only", "experiment_only"]
 
-  validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
-  validates :empty_extracts, inclusion: {in: EMPTY_EXTRACTS}
-  validates :training_behavior, inclusion: {in: TRAINING_BEHAVIOR}
-  validates :from, numericality: true
-  validates :to, numericality: true
+  def valid?
+    filter_objects.map{ |filter| filter.valid? }.all?
+  end
 
   attr_reader :filters
 
@@ -23,6 +21,10 @@ class ExtractFilter
   end
 
   private
+
+  def foo
+    false
+  end
 
   def extract_groups
     ExtractsForClassification.from(@extracts)

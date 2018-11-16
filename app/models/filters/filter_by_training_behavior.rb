@@ -1,5 +1,11 @@
 module Filters
   class FilterByTrainingBehavior < Filter
+    include ActiveModel::Validations
+
+    TRAINING_BEHAVIOR = ["ignore_training", "training_only", "experiment_only"]
+
+    validates :training_behavior, inclusion: {in: TRAINING_BEHAVIOR}
+
     def apply(extract_groups)
       case training_behavior
       when "ignore_training"

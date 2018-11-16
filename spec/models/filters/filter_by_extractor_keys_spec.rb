@@ -1,10 +1,18 @@
 require 'models/filters/filter_spec_helper'
 
 describe Filters::FilterByExtractorKeys do
-  let(:extracts){ EXTRACTS }
+  let(:subjects){ helper_subjects }
+  let(:extracts){ helper_extracts(subjects) }
   let(:extract_groups) { ExtractsForClassification.from(extracts) }
 
-  xdescribe 'validates correctly' do
+  describe 'validates correctly' do
+    it 'validates extractor_keys' do
+      expect( described_class.new(extractor_keys: 'foo')).to be_valid
+      expect( described_class.new(extractor_keys: ['foo'])).to be_valid
+      expect( described_class.new(extractor_keys: [])).to be_valid
+      expect( described_class.new(extractor_keys: 4)).not_to be_valid
+      expect( described_class.new(extractor_keys: [4])).not_to be_valid
+    end
   end
 
   describe 'filters correctly' do

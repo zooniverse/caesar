@@ -1,10 +1,11 @@
 require 'models/filters/filter_spec_helper'
 
 describe Filters::FilterByEmptiness do
-  let(:extracts){ EXTRACTS }
+  let(:subjects){ helper_subjects }
+  let(:extracts){ helper_extracts(subjects) }
   let(:extract_groups) { ExtractsForClassification.from(extracts) }
 
-  xdescribe 'validates correctly' do
+  describe 'validates correctly' do
     it 'can be configured to keep all' do
       filter = described_class.new(empty_extracts: "keep_all")
       expect(filter).to be_valid
@@ -13,6 +14,11 @@ describe Filters::FilterByEmptiness do
     it 'can be configured to ignore empty' do
       filter = described_class.new(empty_extracts: "ignore_empty")
       expect(filter).to be_valid
+    end
+
+    it 'can not be configured to random stuff' do
+      filter = described_class.new(empty_extracts: "blah blah")
+      expect(filter).not_to be_valid
     end
   end
 
