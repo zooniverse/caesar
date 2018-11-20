@@ -3,20 +3,24 @@ class Extractor < ApplicationRecord
 
   def self.of_type(type)
     case type.to_s
-    when "blank"
+    when 'blank'
       Extractors::BlankExtractor
-    when "external"
+    when 'external'
       Extractors::ExternalExtractor
-    when "question"
+    when 'question'
       Extractors::QuestionExtractor
-    when "survey"
+    when 'survey'
       Extractors::SurveyExtractor
-    when "who"
+    when 'who'
       Extractors::WhoExtractor
-    when "pluck_field"
+    when 'pluck_field'
       Extractors::PluckFieldExtractor
+    when 'retrieve_user_reduction'
+      Extractors::RetrieveUserReductionExtractor
+    when 'retrieve_subject_reduction'
+      Extractors::RetrieveSubjectReductionExtractor
     else
-      raise "Unknown type #{type}"
+      raise "Unknown extractor type #{type}"
     end
   end
 
