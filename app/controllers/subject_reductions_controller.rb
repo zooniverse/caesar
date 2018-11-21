@@ -15,7 +15,6 @@ class SubjectReductionsController < ApplicationController
     authorize reduction
 
     Subject.maybe_create_subject(subject.id, reducible)
-    reduction.update! reduction_params
 
     if reduction.data != reduction_params[:data]
       reduction.update! reduction_params

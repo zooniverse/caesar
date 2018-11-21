@@ -18,7 +18,7 @@ describe Subject, type: :model do
     it 'does not create a subject when one already exists' do
       subject = create :subject
       expect(Subject.maybe_create_subject subject.id, nil).to be(nil)
-      expect(panoptes).not_to have_received(:subject_in_project?)
+      expect(panoptes_yes).not_to have_received(:subject_in_project?)
     end
 
     it 'creates a subject if allowed' do
