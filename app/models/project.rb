@@ -1,6 +1,7 @@
 class Project < ApplicationRecord
   include Configurable
   include IsReducible
+  include ClassificationPipeline
 
   has_many :extractors
   has_many :reducers, as: :reducible
@@ -29,15 +30,6 @@ class Project < ApplicationRecord
 
   def paused?
     false
-  end
-
-  def classification_pipeline
-    ClassificationPipeline.new(Project,
-                               extractors,
-                               reducers,
-                               subject_rules.rank(:row_order),
-                               user_rules.rank(:row_order),
-                               rules_applied)
   end
 
   def has_reducers?

@@ -9,6 +9,6 @@ class CheckRulesWorker
 
     return if reducible.class.name.demodulize=='Workflow' && reducible.paused?
 
-    reducible.classification_pipeline.check_rules(reducible_id, subject_id, user_id)
+    reducible.rules_runner.check_rules(reducible_id, subject_id, user_id)
   end
 end

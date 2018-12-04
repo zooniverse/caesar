@@ -35,7 +35,7 @@ Rollbar.configure do |config|
                                         'RestClient::GatewayTimeout' => 'ignore',
                                         'RestClient::BadGateway' => 'ignore',
                                         'Extractors::PluckFieldExtractor::FailedMatch' => 'ignore',
-                                        'ClassificationPipeline::ReductionConflict' => 'ignore',
+                                        'RunsReducers::ReductionConflict' => 'ignore',
                                         'Reducers::ExternalReducer::ExternalReducerFailed' => 'ignore')
   #
   # You can also specify a callable, which will be called with the exception instance.

@@ -1,5 +1,6 @@
 class Workflow < ApplicationRecord
   include IsReducible
+  include ClassificationPipeline
 
   Type = GraphQL::ObjectType.define do
     name "Workflow"
@@ -115,15 +116,6 @@ class Workflow < ApplicationRecord
     return none unless credential.project_ids.present?
 
     where(project_id: credential.project_ids)
-  end
-
-  def classification_pipeline
-    ClassificationPipeline.new(Workflow,
-                               extractors,
-                               reducers,
-                               subject_rules.rank(:row_order),
-                               user_rules.rank(:row_order),
-                               rules_applied)
   end
 
   def configured?

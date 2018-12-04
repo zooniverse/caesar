@@ -1,4 +1,6 @@
 class RunsReducers
+  class ReductionConflict < StandardError; end
+
   attr_reader :reducible_class, :reducers
 
   def initialize(reducible_class, reducers)
