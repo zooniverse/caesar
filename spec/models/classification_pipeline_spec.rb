@@ -56,10 +56,6 @@ describe ClassificationPipeline do
 
   let(:subject) { Subject.create }
 
-  let(:pipeline) do
-    Workflow.find(workflow.id).classification_pipeline
-  end
-
   let(:panoptes) {
     instance_double(
       Panoptes::Client,
@@ -75,8 +71,12 @@ describe ClassificationPipeline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
-  it 'retires the image', sidekiq: :inline do
-    pipeline.process(classification)
-    expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
+  describe 'on a full run through extractors, reducers and rules' do
+    it 'retires the image', sidekiq: :inline do
+      workflow.extractors_runner.extract(classification)
+      workflow.reducers_runner.reduce(workflow.id, classification.subject_id, classification.user_id)
+      workflow.rules_runner.check_rules(workflow.id, classification.subject_id, classification.user_id)
+      expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
+    end
   end
 end
