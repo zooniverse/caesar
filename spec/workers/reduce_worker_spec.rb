@@ -8,7 +8,7 @@ describe ReduceWorker, type: :worker do
     let(:runner) { reducible.reducers_runner }
 
     it "calls #reduce on the correct pipeline" do
-      expect_any_instance_of(RunsReducers).to receive(:reduce).once.with(reducible.id, subject.id, nil, [])
+      expect_any_instance_of(RunsReducers).to receive(:reduce).once.with(subject.id, nil, [])
       described_class.new.perform(reducible.id, reducible.class.to_s, subject.id, nil)
     end
 

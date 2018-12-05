@@ -74,8 +74,8 @@ describe ClassificationPipeline do
   describe 'on a full run through extractors, reducers and rules' do
     it 'retires the image', sidekiq: :inline do
       workflow.extractors_runner.extract(classification)
-      workflow.reducers_runner.reduce(workflow.id, classification.subject_id, classification.user_id)
-      workflow.rules_runner.check_rules(workflow.id, classification.subject_id, classification.user_id)
+      workflow.reducers_runner.reduce(classification.subject_id, classification.user_id)
+      workflow.rules_runner.check_rules(classification.subject_id, classification.user_id)
       expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
     end
   end

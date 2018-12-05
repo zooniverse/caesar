@@ -28,8 +28,8 @@ describe RunsRules do
     subject = create :subject
     user_id = 1234
 
-    runner = described_class.new(Workflow, [subject_rule], [user_rule])
-    runner.check_rules(workflow.id, subject.id, user_id)
+    runner = described_class.new(workflow, [subject_rule], [user_rule])
+    runner.check_rules(subject.id, user_id)
 
     expect(user_rule).to have_received(:process).with(user_id, any_args).once
     expect(subject_rule).to have_received(:process).with(subject.id, any_args).once
@@ -42,8 +42,8 @@ describe RunsRules do
     workflow = create :workflow
     subject = create :subject
 
-    runner = described_class.new(Workflow, [subject_rule1, subject_rule2], [], :first_matching_rule)
-    runner.check_rules(workflow.id, subject.id, nil)
+    runner = described_class.new(workflow, [subject_rule1, subject_rule2], [], :first_matching_rule)
+    runner.check_rules(subject.id, nil)
 
     expect(subject_rule1).to have_received(:process).with(subject.id, any_args).once
     expect(subject_rule2).not_to have_received(:process)
@@ -57,8 +57,8 @@ describe RunsRules do
     subject = create :subject
     user_id = 1234
 
-    runner = described_class.new(Workflow, [], [user_rule1, user_rule2], :first_matching_rule)
-    runner.check_rules(workflow.id, subject.id, user_id)
+    runner = described_class.new(workflow, [], [user_rule1, user_rule2], :first_matching_rule)
+    runner.check_rules(subject.id, user_id)
 
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once
     expect(user_rule2).not_to have_received(:process)

@@ -1,8 +1,8 @@
 class RunsExtractors
-  attr_reader :reducible_class, :extractors
+  attr_reader :reducible, :extractors
 
-  def initialize(reducible_class, extractors)
-    @reducible_class = reducible_class
+  def initialize(reducible, extractors)
+    @reducible = reducible
     @extractors = extractors
   end
 

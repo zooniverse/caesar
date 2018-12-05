@@ -57,7 +57,7 @@ describe RunsReducers do
   let(:subject) { Subject.create }
 
   let(:runner) do
-    RunsReducers.new(Workflow, reducers)
+    RunsReducers.new(workflow, reducers)
   end
 
   let(:panoptes) {
@@ -97,8 +97,8 @@ describe RunsReducers do
 
     # build a simplified pipeline to reduce these extracts
     reducer = create(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, reducible: workflow)
-    runner = described_class.new(Workflow, [reducer])
-    runner.reduce(workflow.id, subject.id, nil)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(subject.id, nil)
 
 
     expect(SubjectReduction.count).to eq(2)
@@ -119,8 +119,8 @@ describe RunsReducers do
 
     expect_any_instance_of(ExtractFetcher).to receive(:including).at_least(:once).with([99999]).and_call_original
 
-    runner = described_class.new(Workflow, [reducer])
-    runner.reduce(workflow.id, subject.id, nil)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(subject.id, nil)
 
     expect(SubjectReduction.first.data).to include({"TGR" => 1})
   end
@@ -137,8 +137,8 @@ describe RunsReducers do
 
     reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "Workflow")
 
-    runner = described_class.new(Workflow, [reducer])
-    runner.reduce(workflow.id, nil, 1234)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(nil, 1234)
 
     expect(UserReduction.count).to eq(1)
     expect(UserReduction.first.user_id).to eq(1234)
@@ -151,16 +151,16 @@ describe RunsReducers do
     let(:subject) { create(:subject) }
 
     let(:runner) do
-      described_class.new(Project, [reducer])
+      described_class.new(project, [reducer])
     end
 
     it "creates reductions from project extractions" do
       create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
       create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
 
-      runner = described_class.new(Project, [reducer])
+      runner = described_class.new(project, [reducer])
       expect{
-        runner.reduce(project.id, subject.id, nil)
+        runner.reduce(subject.id, nil)
       }.to change{SubjectReduction.count}.by(1)
     end
 
@@ -171,7 +171,7 @@ describe RunsReducers do
       expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
-      runner.reduce(project.id, subject.id, nil)
+      runner.reduce(subject.id, nil)
     end
   end
 end

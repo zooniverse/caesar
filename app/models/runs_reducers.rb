@@ -1,14 +1,14 @@
 class RunsReducers
   class ReductionConflict < StandardError; end
 
-  attr_reader :reducible_class, :reducers
+  attr_reader :reducible, :reducers
 
-  def initialize(reducible_class, reducers)
-    @reducible_class = reducible_class
+  def initialize(reducible, reducers)
+    @reducible = reducible
     @reducers = reducers
   end
 
-  def reduce(reducible_id, subject_id, user_id, extract_ids=[])
+  def reduce(subject_id, user_id, extract_ids=[])
     return [] unless reducers&.present?
     retries ||= 2
 
@@ -22,15 +22,16 @@ class RunsReducers
     end
 
     filter = { subject_id: subject_id, user_id: user_id }
-    if reducible_class.to_s == "Workflow"
-      filter[:workflow_id] = reducible_id
-    elsif reducible_class.to_s == "Project"
-      filter[:project_id] = reducible_id
+    case reducible
+    when Workflow
+      filter[:workflow_id] = reducible.id
+    when Project
+      filter[:project_id] = reducible.id
     end
 
     extract_fetcher = ExtractFetcher.new(filter).including(extract_ids | prior_extracts)
 
-    reduction_filter = { reducible_id: reducible_id, reducible_type: reducible_class.to_s, subject_id: subject_id, user_id: user_id }
+    reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
 
     # if we don't need to fetch everything, try not to
