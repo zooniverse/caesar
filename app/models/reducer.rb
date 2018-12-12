@@ -14,22 +14,24 @@ class Reducer < ApplicationRecord
 
   def self.of_type(type)
     case type.to_s
-    when "consensus"
+    when 'consensus'
       Reducers::ConsensusReducer
-    when "count"
+    when 'count'
       Reducers::CountReducer
     when 'placeholder'
       Reducers::PlaceholderReducer
-    when "external"
+    when 'external'
       Reducers::ExternalReducer
-    when "first_extract"
+    when 'first_extract'
       Reducers::FirstExtractReducer
-    when "stats"
+    when 'stats'
       Reducers::StatsReducer
-    when "summary_stats"
+    when 'summary_stats'
       Reducers::SummaryStatisticsReducer
-    when "unique_count"
+    when 'unique_count'
       Reducers::UniqueCountReducer
+    when 'sqs'
+      Reducers::SqsReducer
     else
       raise "Unknown type #{type}"
     end
