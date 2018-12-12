@@ -19,7 +19,7 @@ ADD ./ /app
 
 RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
 RUN (cd /app && mkdir -p tmp/pids)
-RUN (cd /app && bundle exec rails assets:precompile)
+RUN (cd /app && SECRET_KEY_BASE=1 bundle exec rails assets:precompile)
 
 RUN mkdir -p log && \
     ln -sf /dev/stdout log/production.log && \
