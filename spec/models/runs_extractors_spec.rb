@@ -106,7 +106,7 @@ describe RunsExtractors do
     let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
     let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
     let(:extractors){ [blank_extractor, question_extractor] }
-    let(:runner) { RunsExtractors.new(Workflow, extractors) }
+    let(:runner) { RunsExtractors.new(extractors) }
 
     it 'calls all defined extractors' do
       expect(blank_extractor).to receive(:process).once

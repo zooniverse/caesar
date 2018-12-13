@@ -1,8 +1,4 @@
 module ClassificationPipeline
-  def extractors_runner
-    RunsExtractors.new(self, extractors)
-  end
-
   def reducers_runner
     RunsReducers.new(self, reducers)
   end
