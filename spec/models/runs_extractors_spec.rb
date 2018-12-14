@@ -1,0 +1,129 @@
+describe RunsExtractors do
+  let(:classification) do
+    Classification.new(
+      "id"=>"12281870",
+      "created_at"=>"2016-05-16T09:34:23.682Z",
+      "updated_at"=>"2016-05-16T09:34:23.750Z",
+      "workflow_version"=>"332.94",
+      "annotations"=>[
+        {
+          "task"=>"T1",
+          "value"=>[
+            {"choice"=>"LK", "answers"=>{"BHVR"=>["RSTNG"], "DLTS"=>"1", "CLLRPRSNT"=>"S"}, "filters"=>{}}
+          ]
+        }
+      ],
+      "metadata"=>{
+        "session"=>"8911f478cc88fba60af9e9960531aea7bf5c724cc17970dd64ee129f1881f5e6",
+        "viewport"=>{"width"=>1360, "height"=>653},
+        "started_at"=>"2016-05-16T09:33:40.181Z",
+        "user_agent"=>"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
+        "utc_offset"=>"-10800",
+        "finished_at"=>"2016-05-16T09:34:23.243Z",
+        "live_project"=>true,
+        "user_language"=>"en",
+        "user_group_ids"=>[],
+        "subject_dimensions"=>[
+          {"clientWidth"=>732, "clientHeight"=>549, "naturalWidth"=>800, "naturalHeight"=>600},
+          {"clientWidth"=>732, "clientHeight"=>549, "naturalWidth"=>800, "naturalHeight"=>600},
+          {"clientWidth"=>732, "clientHeight"=>549, "naturalWidth"=>800, "naturalHeight"=>600}
+        ],
+        "workflow_version"=>"332.94"
+      },
+      "links"=>{
+        "project"=>"2439",
+        "user"=>"1",
+        "workflow"=>workflow.id.to_s,
+        "workflow_content"=>"1716",
+        "subjects"=>[subject.id.to_s]
+      }
+    )
+  end
+
+  let(:workflow) do
+    create(:workflow, project_id: 1,
+                      extractors: [build(:survey_extractor, key: 's', config: {"task_key" => "T1"})]) do |w|
+      create :subject_rule, workflow: w, subject_rule_effects: [build(:subject_rule_effect, config: {reason: "consensus"})]
+    end
+  end
+
+  let(:subject) { Subject.create }
+
+  let(:runner) do
+    Workflow.find(workflow.id).extractors_runner
+  end
+
+  let(:panoptes) {
+    instance_double(
+      Panoptes::Client,
+      retire_subject: true,
+      workflow: {},
+      project: {},
+      get_subject_classifications: {"classifications" => []},
+      get_user_classifications: {"classifications" => []}
+    )
+  }
+
+  before do
+    allow(Effects).to receive(:panoptes).and_return(panoptes)
+  end
+
+  describe 'extraction' do
+    it 'updates attributes if not set yet' do
+      extract = create :extract,
+                       workflow_id: classification.workflow_id,
+                       subject_id: classification.subject_id,
+                       classification_id: classification.id,
+                       extractor_key: 's',
+                       project_id: nil,
+                       user_id: nil
+      runner.extract(classification)
+      expect(extract.reload.project_id).to eq(2439)
+      expect(extract.reload.user_id).to eq(1)
+    end
+  end
+
+  it 'fetches classifications from panoptes when there are no other extracts' do
+    expect { runner.extract(classification) }.
+      to change(FetchClassificationsWorker.jobs, :size).by(1)
+  end
+
+  it 'does not fetch subject classifications when extracts already present' do
+    create(
+      :extract,
+      classification_id: classification.id,
+      extractor_key: "zzz",
+      subject_id: classification.subject_id,
+      workflow_id: classification.workflow_id,
+      data: {"ZZZ" => 1}
+    )
+
+    expect { runner.extract(classification) }.
+      not_to change(FetchClassificationsWorker.jobs, :size)
+  end
+
+  describe '#extract' do
+    let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
+    let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
+    let(:extractors){ [blank_extractor, question_extractor] }
+    let(:runner) { RunsExtractors.new(extractors) }
+
+    it 'calls all defined extractors' do
+      expect(blank_extractor).to receive(:process).once
+      expect(question_extractor).to receive(:process).once
+
+      runner.extract(classification)
+    end
+
+    it 'calls all defined extractors even when one fails' do
+      allow(blank_extractor).to receive(:process).and_raise(StandardError.new('boo'))
+      expect(blank_extractor).to receive(:process).once
+      expect(question_extractor).to receive(:process).once
+
+      expect do
+        runner.extract(classification)
+      end.to raise_error(StandardError)
+    end
+  end
+
+end

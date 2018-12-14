@@ -31,15 +31,6 @@ class Project < ApplicationRecord
     false
   end
 
-  def classification_pipeline
-    ClassificationPipeline.new(Project,
-                               extractors,
-                               reducers,
-                               subject_rules.rank(:row_order),
-                               user_rules.rank(:row_order),
-                               rules_applied)
-  end
-
   def has_reducers?
     !reducers&.empty?
   end

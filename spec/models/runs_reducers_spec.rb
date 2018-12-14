@@ -1,4 +1,4 @@
-describe ClassificationPipeline do
+describe RunsReducers do
   let(:classification) do
     Classification.new(
       "id"=>"12281870",
@@ -56,8 +56,8 @@ describe ClassificationPipeline do
 
   let(:subject) { Subject.create }
 
-  let(:pipeline) do
-    Workflow.find(workflow.id).classification_pipeline
+  let(:runner) do
+    RunsReducers.new(workflow, reducers)
   end
 
   let(:panoptes) {
@@ -73,45 +73,6 @@ describe ClassificationPipeline do
 
   before do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
-  end
-
-  describe 'extraction' do
-    it 'updates attributes if not set yet' do
-      extract = create :extract,
-                       workflow_id: classification.workflow_id,
-                       subject_id: classification.subject_id,
-                       classification_id: classification.id,
-                       extractor_key: 's',
-                       project_id: nil,
-                       user_id: nil
-      pipeline.extract(classification)
-      expect(extract.reload.project_id).to eq(2439)
-      expect(extract.reload.user_id).to eq(1)
-    end
-  end
-
-  it 'retires the image', sidekiq: :inline do
-    pipeline.process(classification)
-    expect(panoptes).to have_received(:retire_subject).with(workflow.id, subject.id, reason: "consensus").once
-  end
-
-  it 'fetches classifications from panoptes when there are no other extracts' do
-    expect { pipeline.extract(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
-  end
-
-  it 'does not fetch subject classifications when extracts already present' do
-    create(
-      :extract,
-      classification_id: classification.id,
-      extractor_key: "zzz",
-      subject_id: classification.subject_id,
-      workflow_id: classification.workflow_id,
-      data: {"ZZZ" => 1}
-    )
-
-    expect { pipeline.process(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size)
   end
 
   it 'groups extracts before reduction' do
@@ -136,8 +97,8 @@ describe ClassificationPipeline do
 
     # build a simplified pipeline to reduce these extracts
     reducer = create(:stats_reducer, key: 's', grouping: {"field_name" => "g.classroom"}, reducible: workflow)
-    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, subject.id, nil)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(subject.id, nil)
 
 
     expect(SubjectReduction.count).to eq(2)
@@ -155,11 +116,11 @@ describe ClassificationPipeline do
     create :extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 33333, data: { LN: 1 }
 
     reducer = create(:stats_reducer, key: 's', reducible: workflow)
-    
+
     expect_any_instance_of(ExtractFetcher).to receive(:including).at_least(:once).with([99999]).and_call_original
 
-    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, subject.id, nil)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(subject.id, nil)
 
     expect(SubjectReduction.first.data).to include({"TGR" => 1})
   end
@@ -176,56 +137,12 @@ describe ClassificationPipeline do
 
     reducer = build(:stats_reducer, key: 's', topic: Reducer.topics[:reduce_by_user], reducible_id: workflow.id, reducible_type: "Workflow")
 
-    pipeline = described_class.new(Workflow, nil, [reducer], nil, nil)
-    pipeline.reduce(workflow.id, nil, 1234)
+    runner = described_class.new(workflow, [reducer])
+    runner.reduce(nil, 1234)
 
     expect(UserReduction.count).to eq(1)
     expect(UserReduction.first.user_id).to eq(1234)
     expect(UserReduction.first.data).to eq({"LN" => 2})
-  end
-
-  it 'calls both user rules and subject rules' do
-    user_rule = instance_double( UserRule, process: true)
-    subject_rule = instance_double( SubjectRule, process: true)
-
-    workflow = create :workflow
-    subject = create :subject
-    user_id = 1234
-
-    pipeline = described_class.new(Workflow, nil, nil, [subject_rule], [user_rule])
-    pipeline.check_rules(workflow.id, subject.id, user_id)
-
-    expect(user_rule).to have_received(:process).with(user_id, any_args).once
-    expect(subject_rule).to have_received(:process).with(subject.id, any_args).once
-  end
-
-  it 'stops at first matching subject rule' do
-    subject_rule1 = instance_double(SubjectRule, process: true)
-    subject_rule2 = instance_double(SubjectRule, process: true)
-
-    workflow = create :workflow
-    subject = create :subject
-
-    pipeline = described_class.new(Workflow, nil, nil, [subject_rule1, subject_rule2], [], :first_matching_rule)
-    pipeline.check_rules(workflow.id, subject.id, nil)
-
-    expect(subject_rule1).to have_received(:process).with(subject.id, any_args).once
-    expect(subject_rule2).not_to have_received(:process)
-  end
-
-  it 'stops at first matching user rule' do
-    user_rule1 = instance_double(UserRule, process: true)
-    user_rule2 = instance_double(UserRule, process: true)
-
-    workflow = create :workflow
-    subject = create :subject
-    user_id = 1234
-
-    pipeline = described_class.new(Workflow, nil, nil, [], [user_rule1, user_rule2], :first_matching_rule)
-    pipeline.check_rules(workflow.id, subject.id, user_id)
-
-    expect(user_rule1).to have_received(:process).with(user_id, any_args).once
-    expect(user_rule2).not_to have_received(:process)
   end
 
   context "reducing by project" do
@@ -233,17 +150,17 @@ describe ClassificationPipeline do
     let(:reducer) { create(:stats_reducer, key: 's', reducible: project) }
     let(:subject) { create(:subject) }
 
-    let(:pipeline) do
-      described_class.new(Project, nil, [reducer], nil, nil)
+    let(:runner) do
+      described_class.new(project, [reducer])
     end
 
     it "creates reductions from project extractions" do
       create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 11111, data: { LN: 1 }
       create :extract, extractor_key: 's', project_id: project.id, user_id: 1234, subject_id: subject.id, classification_id: 22222, data: { LN: 1 }
 
-      pipeline = described_class.new(Project, nil, [reducer], nil, nil)
+      runner = described_class.new(project, [reducer])
       expect{
-        pipeline.reduce(project.id, subject.id, nil)
+        runner.reduce(subject.id, nil)
       }.to change{SubjectReduction.count}.by(1)
     end
 
@@ -254,35 +171,7 @@ describe ClassificationPipeline do
       expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
-      pipeline.reduce(project.id, subject.id, nil)
+      runner.reduce(subject.id, nil)
     end
   end
-
-  describe '#extract' do
-    let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
-    let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
-    let(:extractors){ [blank_extractor, question_extractor] }
-
-    it 'calls all defined extractors' do
-      allow_any_instance_of(ClassificationPipeline).to receive(:extractors).and_return(extractors)
-
-      expect(blank_extractor).to receive(:process).once
-      expect(question_extractor).to receive(:process).once
-
-      workflow.classification_pipeline.extract(classification)
-    end
-
-    it 'calls all defined extractors even when one fails' do
-      allow_any_instance_of(ClassificationPipeline).to receive(:extractors).and_return(extractors)
-      allow(blank_extractor).to receive(:process).and_raise(StandardError.new('boo'))
-
-      expect(blank_extractor).to receive(:process).once
-      expect(question_extractor).to receive(:process).once
-
-      expect do
-        workflow.classification_pipeline.extract(classification)
-      end.to raise_error(StandardError)
-    end
-  end
-
 end

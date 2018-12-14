@@ -117,15 +117,6 @@ class Workflow < ApplicationRecord
     where(project_id: credential.project_ids)
   end
 
-  def classification_pipeline
-    ClassificationPipeline.new(Workflow,
-                               extractors,
-                               reducers,
-                               subject_rules.rank(:row_order),
-                               user_rules.rank(:row_order),
-                               rules_applied)
-  end
-
   def configured?
     (not (extractors&.empty? and reducers&.empty?))
   end
@@ -139,6 +130,10 @@ class Workflow < ApplicationRecord
     else
       false
     end
+  end
+
+  def extractors_runner
+    RunsExtractors.new(extractors)
   end
 
   def rerun_extractors(duration = 3.hours)

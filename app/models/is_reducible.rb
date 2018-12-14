@@ -9,6 +9,14 @@ module IsReducible
     user_rules.present? or reducers.where(topic: 'reduce_by_user').present?
   end
 
+  def reducers_runner
+    RunsReducers.new(self, reducers)
+  end
+
+  def rules_runner
+    RunsRules.new(self, subject_rules.rank(:row_order), user_rules.rank(:row_order), rules_applied)
+  end
+
   def rerun_reducers(duration = 3.hours)
     if concerns_subjects?
       extracts.group_by(&:subject_id).each do |subject_id, extracts|

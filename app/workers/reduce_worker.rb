@@ -24,10 +24,11 @@ class ReduceWorker
     reducible = reducible_class.constantize.find(reducible_id)
     return if reducible.paused?
 
-    reductions = reducible.classification_pipeline.reduce(reducible_id, subject_id, user_id, extract_ids)
+    reductions = reducible.reducers_runner.reduce(subject_id, user_id, extract_ids)
 
-    return if reducible_class=='Project'
-    CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id) unless reductions.blank?
+    if reducible.is_a?(Workflow)
+      CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id) unless reductions.blank?
+    end
   end
 
   def self.test_uniq(testing)
