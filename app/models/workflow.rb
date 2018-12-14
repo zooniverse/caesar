@@ -1,6 +1,5 @@
 class Workflow < ApplicationRecord
   include IsReducible
-  include ClassificationPipeline
 
   Type = GraphQL::ObjectType.define do
     name "Workflow"

@@ -1,7 +1,6 @@
 class Project < ApplicationRecord
   include Configurable
   include IsReducible
-  include ClassificationPipeline
 
   has_many :extractors
   has_many :reducers, as: :reducible
