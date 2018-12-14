@@ -1,5 +1,5 @@
 class RunsExtractors
-  attr_reader :reducible, :extractors
+  attr_reader :extractors
 
   def initialize(extractors)
     @extractors = extractors
