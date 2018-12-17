@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180911164253) do
+ActiveRecord::Schema.define(version: 2018_12_17_191627) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
   enable_extension "pgcrypto"
+  enable_extension "plpgsql"
 
   create_table "classifications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "project_id", null: false
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20180911164253) do
     t.datetime "updated_at", null: false
     t.integer "project_id"
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
+    t.index ["project_id"], name: "index_extracts_on_project_id"
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
     t.index ["user_id"], name: "index_extracts_on_user_id"
     t.index ["workflow_id", "updated_at"], name: "extracts_updated_by_workflow"
