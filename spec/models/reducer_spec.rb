@@ -41,6 +41,13 @@ RSpec.describe Reducer, type: :model do
     klass.new
   end
 
+  it "loads a user's skill level" do
+    create :user_reduction, data: {skill: 15}, user_id: 1, reducible: workflow, reducer_key: 'skillz'
+
+    reducer = build :reducer, topic: :reduce_by_subject, config: {user_reducer_keys: ['skillz']}
+    expect(reducer.process(blah)).to eq("user_skill" => 15)
+  end
+
   it 'filters extracts' do
     extract_filter = instance_double(ExtractFilter, filter: [])
     expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)

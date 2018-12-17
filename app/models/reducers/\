@@ -27,11 +27,7 @@ module Reducers
         response = if default_reduction?
           RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
         elsif running_reduction?
-          if topic == :user
-            RestClient.post(url, { extracts: extractions, subject_reductions: user_or_subject_reductions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
-          elsif topic == :subject
-            RestClient.post(url, { extracts: extractions, user_reductions: user_or_subject_reductions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
-          end
+          RestClient.post(url, { extracts: extractions, the_other_type_reductions: user_or_subject_reductions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
         else
           raise StandardError.new("Impossible reducer configuration #{id}")
         end

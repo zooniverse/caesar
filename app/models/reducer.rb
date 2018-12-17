@@ -43,9 +43,14 @@ class Reducer < ApplicationRecord
 
   before_validation :nilify_empty_fields
 
+  # if this reducer is a subject_reducer then:
+  config_field :user_reducer_keys, default: []
+  # if this reducer is a user reducer then:
+  config_field :subject_reducer_keys, default: []
+
   NoData = Class.new
 
-  def process(extract_fetcher, reduction_fetcher)
+  def process(extract_fetcher, subject_or_user_reductions, reduction_fetcher)
     light = Stoplight("reducer-#{id}") do
       # if any of the reductions that this reducer cares about have expired, we're
       # going to need to fetch all of the relevant extracts in order to rebuild them
@@ -59,7 +64,7 @@ class Reducer < ApplicationRecord
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
-        reduce_into(extracts, reduction).tap do |r|
+        reduce_into(extracts, subject_or_user_reductions, reduction).tap do |r|
           r.expired = false
 
           # note that because we use deferred associations, this won't actually hit the database

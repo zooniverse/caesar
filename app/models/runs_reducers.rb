@@ -45,7 +45,18 @@ class RunsReducers
     end
 
     new_reductions = reducers.map do |reducer|
-      reducer.process(extract_fetcher.for(reducer.topic), reduction_fetcher.for!(reducer.topic))
+      extracts = extract_fetcher.for(reducer.topic)
+
+      subject_or_user_reductions = case reducer.topic
+                                   when 0, :reduce_by_subject
+                                     user_ids = extracts.map(&:user_id)
+                                     UserReduction.where(user_id: user_ids, reducible: reducible, reducer_key: reducer.user_reducer_keys)
+                                   when 1, :reduce_by_user
+                                     subject_ids = extracts.map(&:subject_id)
+                                     SubjectReduction.where(subject_id: subject_ids, reducible: reducible, reducer_key: reducer.subject_reducer_keys)
+                                   end
+
+      reducer.process(extracts, subject_or_user_reductions, reduction_fetcher.for!(reducer.topic))
     end.flatten
 
     ActiveRecord::Base.transaction do
