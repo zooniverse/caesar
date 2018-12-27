@@ -14,6 +14,8 @@ class SubjectReductionsController < ApplicationController
                                                 subgroup: subgroup)
     authorize reduction
 
+    Subject.maybe_create_subject(subject.id, reducible)
+
     if reduction.data != reduction_params[:data]
       reduction.update! reduction_params
       CheckRulesWorker.perform_async(reducible.id, reducible_type, subject.id) if workflow.configured?
@@ -26,9 +28,9 @@ class SubjectReductionsController < ApplicationController
 
   def reducible
     @reducible ||=  if params[:workflow_id]
-                      policy_scope(Workflow).find(params[:workflow_id]) 
+                      policy_scope(Workflow).find(params[:workflow_id])
                     elsif params[:project_id]
-                      policy_scope(Project).find(params[:project_id]) 
+                      policy_scope(Project).find(params[:project_id])
                     end
   end
 
