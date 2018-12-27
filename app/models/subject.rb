@@ -32,6 +32,10 @@ class Subject < ApplicationRecord
     raise
   end
 
+  def training_subject?
+    metadata&.fetch("#training_subject", "false").to_s.downcase == "true"
+  end
+
   def additional_subject_ids_for_reduction
     if metadata["previous_subject_ids"]
       JSON.parse(metadata["previous_subject_ids"])
