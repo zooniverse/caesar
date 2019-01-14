@@ -2,11 +2,11 @@ module IsReducible
   extend ActiveSupport::Concern
 
   def concerns_subjects?
-    subject_rules.present? or reducers.where(topic: 'reduce_by_subject').present?
+    reducers.where(topic: 'reduce_by_subject').present?
   end
 
   def concerns_users?
-    user_rules.present? or reducers.where(topic: 'reduce_by_user').present?
+    reducers.where(topic: 'reduce_by_user').present?
   end
 
   def reducers_runner
