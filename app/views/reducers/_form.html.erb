@@ -35,7 +35,7 @@
         <%= filters.input :from %>
         <%= filters.input :to %>
         <%= filters.input :extractor_keys, placeholder: '["list", "of", "keys"]' %>
-        <%= filters.input :repeated_classifications, collection: ExtractFilter::REPEATED_CLASSIFICATIONS, selected: 1 %>
+        <%= filters.input :repeated_classifications, collection: ::Filters::FilterByRepeatedness::REPEATED_CLASSIFICATIONS, selected: 1 %>
       <% end %>
     </div>
   </div>
