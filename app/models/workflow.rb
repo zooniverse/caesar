@@ -138,7 +138,7 @@ class Workflow < ApplicationRecord
 
   def rerun_extractors(duration = 3.hours)
     extracts.pluck(:subject_id).uniq.each do |subject_id|
-      FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, workflow.id, subject_id, FetchClassificationsWorker.fetch_for_subject)
+      FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, id, subject_id, FetchClassificationsWorker.fetch_for_subject)
     end
   end
 end
