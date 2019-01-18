@@ -85,6 +85,7 @@ RSpec.describe Workflow, type: :model do
   describe 'rerun_reducers', sidekiq: :fake do
     context 'if there are subject rules' do
       before { create :subject_rule, workflow: workflow }
+      before { create :placeholder_reducer, :reduce_by_subject, reducible: workflow }
 
       it 'reruns reducers for each subject' do
         extracts = create_list(:extract, 3, workflow: workflow)
@@ -99,6 +100,7 @@ RSpec.describe Workflow, type: :model do
 
     context 'if there are user rules' do
       before { create :user_rule, workflow: workflow }
+      before { create :placeholder_reducer, :reduce_by_user, reducible: workflow }
 
       it 'reruns reducers for each user' do
         extract1 = create(:extract, workflow: workflow, user_id: 1)
