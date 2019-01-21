@@ -123,14 +123,21 @@ RSpec.describe WorkflowsController, type: :controller do
       expect(response).to have_http_status(:success)
       expect(workflow.reload.extractors[0]).to be_present
     end
-  end
 
-  describe 'rerun_reducers' do
-    it 'calls rerun_reducers not rerun_extractors' do
-      wf_double = instance_double(Workflow, rerun_reducers: true)
-      allow_any_instance_of(WorkflowsController).to receive(:workflow).and_return(wf_double)
-      controller.send(:rerun_reducers)
-      expect(wf_double).to have_received(:rerun_reducers).once
+    describe 'rerunning' do
+      let(:workflow) { create(:workflow) }
+      before { allow(controller).to receive(:workflow).and_return(workflow) }
+
+      it 'calls rerun_extractors on the workflow' do
+        expect(workflow).to receive(:rerun_extractors).once
+        put :update, params: {id: workflow.id, workflow: {rerun: 'extractors'}}
+      end
+
+      it 'calls rerun_reducers on the workflow' do
+        expect(workflow).to receive(:rerun_reducers).once
+        put :update, params: {id: workflow.id, workflow: {rerun: 'reducers'}}
+      end
     end
   end
+
 end

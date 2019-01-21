@@ -76,10 +76,10 @@ class WorkflowsController < ApplicationController
 
     if params[:workflow][:rerun] == 'extractors'
       rerun_extractors
-      respond_with workflow, location: workflow_path(@workflow, anchor: 'extractors')
+      respond_with workflow, location: workflow_path(workflow, anchor: 'extractors')
     elsif params[:workflow][:rerun] == 'reducers'
       rerun_reducers
-      respond_with workflow, location: workflow_path(@workflow, anchor: 'reducers')
+      respond_with workflow, location: workflow_path(workflow, anchor: 'reducers')
     else
       was_paused = workflow.paused?
       workflow.update(workflow_params)
