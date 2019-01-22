@@ -114,22 +114,6 @@ RSpec.describe Reducer, type: :model do
     expect(reductions[1][:data].count).to eq(1)
   end
 
-  # it "passes on relevant reductions" do
-  #   workflow = create(:workflow)
-  #   reduction = create(:subject_reduction, reducible: workflow)
-  #   relevant_reduction = create :user_reduction, data: {skill: 15}, user_id: 1, reducible: workflow, reducer_key: 'skillz'
-  #   reducer = build :reducer, topic: :reduce_by_subject, config: {user_reducer_keys: ['skillz']}
-
-  #   allow(reducer).to receive(:get_reduction).and_return(reduction)
-
-  #   extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-  #   reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
-
-  #   expect(reducer).to receive(:reduce_into).with(extract_fetcher.extracts, reduction, [relevant_reduction])
-
-  #   reducer.process(extract_fetcher, reduction_fetcher, relevant_reduction: [relevant_reduction])
-  # end
-
   describe 'validations' do
     it 'is not valid with invalid filters' do
       reducer = Reducer.new filters: {repeated_classifications: "something"}

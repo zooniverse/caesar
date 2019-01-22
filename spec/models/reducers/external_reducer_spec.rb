@@ -57,14 +57,6 @@ describe Reducers::ExternalReducer do
     end.to raise_error(StandardError)
   end
 
-  it 'includes relevant reductions' do
-    reducer = described_class.new(reducible: workflow, config: {user_reducer_keys: "skillz", "url" => "http://foo.com"})
-    extract = create :extract, workflow_id: workflow.id, user_id: 111, data: { test: 1 }
-    relevant_reduction = create :user_reduction, data: {skill: 15}, user_id: 111, reducible: workflow, reducer_key: 'skillz'
-
-    result = reducer.reduce_into(extracts, build(:subject_reduction), [relevant_reduction])
-  end
-
   describe 'validations' do
     it 'is not valid with a non-https url' do
       reducer = described_class.new(config: {"url" => "http://foo.com"})
@@ -91,7 +83,8 @@ describe Reducers::ExternalReducer do
 
     let(:request_data){{
       extracts: extracts,
-      store: running_reduction.store
+      store: running_reduction.store,
+      relevant_reductions: []
     }}
 
     it 'sends the extracts and the store' do
@@ -119,6 +112,24 @@ describe Reducers::ExternalReducer do
 
       reducer.reduce_into(extracts, running_reduction)
       expect(running_reduction.store).to have_key('bar')
+    end
+
+    it 'includes relevant reductions' do
+      relevant_reduction = create :user_reduction, data: {skill: 15}, user_id: 111, reducible: workflow, reducer_key: 'skillz'
+      running_reducer.user_reducer_keys = "skillz"
+
+      request_data[:relevant_reductions] = [relevant_reduction]
+
+      stub_request(:post, valid_url)
+        .with(:headers => {'Accept'=>'application/json',
+                          'Content-Type'=>'application/json',
+                          'Host'=>'example.org'})
+        .to_return(:status => 200, :body => request_data.to_json, :headers => {})
+
+      reducer.reduce_into(extracts, running_reduction, [relevant_reduction])
+      expect(a_request(:post, valid_url)
+              .with(body: request_data.to_json))
+        .to have_been_made.once
     end
   end
 end
