@@ -57,6 +57,14 @@ describe Reducers::ExternalReducer do
     end.to raise_error(StandardError)
   end
 
+  it 'includes relevant reductions' do
+    reducer = described_class.new(reducible: workflow, config: {user_reducer_keys: "skillz", "url" => "http://foo.com"})
+    extract = create :extract, workflow_id: workflow.id, user_id: 111, data: { test: 1 }
+    relevant_reduction = create :user_reduction, data: {skill: 15}, user_id: 111, reducible: workflow, reducer_key: 'skillz'
+
+    result = reducer.reduce_into(extracts, build(:subject_reduction), [relevant_reduction])
+  end
+
   describe 'validations' do
     it 'is not valid with a non-https url' do
       reducer = described_class.new(config: {"url" => "http://foo.com"})

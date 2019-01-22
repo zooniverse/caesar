@@ -145,6 +145,21 @@ describe RunsReducers do
     expect(UserReduction.first.data).to eq({"LN" => 2})
   end
 
+  it 'includes relevant reductions' do
+    subject = create(:subject)
+    workflow = create(:workflow)
+
+    extract = create :extract, workflow_id: workflow.id, user_id: 111, subject_id: subject.id, classification_id: 11111, data: { test: 1 }
+    relevant_reduction = create :user_reduction, data: {skill: 15}, user_id: 111, reducible: workflow, reducer_key: 'skillz'
+
+    reducer = create :stats_reducer, reducible: workflow, config: {user_reducer_keys: "skillz"}
+    runner = described_class.new(workflow, [reducer])
+
+    reductions = runner.reduce(subject.id, nil)
+    expect(reducer).to have_received(:reduce_into).with([extract], [reduction], [relevant_reduction]).and_call_original
+
+  end
+
   context "reducing by project" do
     let(:project) { create :project }
     let(:reducer) { create(:stats_reducer, key: 's', reducible: project) }

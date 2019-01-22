@@ -43,9 +43,12 @@ class Reducer < ApplicationRecord
 
   before_validation :nilify_empty_fields
 
+  config_field :user_reducer_keys, default: nil
+  config_field :subject_reducer_keys, default: nil
+
   NoData = Class.new
 
-  def process(extract_fetcher, reduction_fetcher)
+  def process(extract_fetcher, reduction_fetcher, relevant_reductions)
     light = Stoplight("reducer-#{id}") do
       # if any of the reductions that this reducer cares about have expired, we're
       # going to need to fetch all of the relevant extracts in order to rebuild them
@@ -59,7 +62,9 @@ class Reducer < ApplicationRecord
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
-        reduce_into(extracts, reduction).tap do |r|
+        # relevant_reductions are any previously reduced user or subject reductions
+        # that are required by this reducer to properly calculate
+        reduce_into(extracts, reduction, relevant_reductions).tap do |r|
           r.expired = false
 
           # note that because we use deferred associations, this won't actually hit the database
@@ -90,7 +95,7 @@ class Reducer < ApplicationRecord
     end
   end
 
-  def reduce_into(extracts, reduction)
+  def reduce_into(extracts, reduction, relevant_reductions)
     raise NotImplementedError
   end
 
