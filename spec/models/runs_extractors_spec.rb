@@ -43,7 +43,7 @@ describe RunsExtractors do
   let(:workflow) do
     create(:workflow, project_id: 1,
                       extractors: [build(:survey_extractor, key: 's', config: {"task_key" => "T1"})]) do |w|
-      create :subject_rule, workflow: w, subject_rule_effects: [build(:subject_rule_effect, config: {reason: "consensus"})]
+      create :reducer, reducible: w, key: 'r', type: 'Reducers::PlaceholderReducer'
     end
   end
 

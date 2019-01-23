@@ -65,7 +65,7 @@ RSpec.describe Workflow, type: :model do
 
   describe 'rerun_extractors', sidekiq: :fake do
     it 'enqueues jobs' do
-      extracts = create_list(:extract, 3, workflow: workflow)
+      create_list(:extract, 3, workflow: workflow)
       workflow.rerun_extractors
       expect(FetchClassificationsWorker.jobs.size).to eq(3)
     end
@@ -113,6 +113,11 @@ RSpec.describe Workflow, type: :model do
         expect(ReduceWorker).not_to receive(:perform_in).with(anything, workflow.id, 'Workflow', nil, nil, anything)
         workflow.rerun_reducers
       end
+    end
+  end
+  describe 'IsReducible' do
+    it 'can re-run reducers' do
+      expect{workflow.rerun_reducers}.not_to raise_error
     end
   end
 end

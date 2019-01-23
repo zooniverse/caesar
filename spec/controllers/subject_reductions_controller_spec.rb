@@ -24,7 +24,7 @@ describe SubjectReductionsController, :type => :controller do
       response = get :index, params: { workflow_id: workflow.id, reducer_key: 'r', subject_id: subject1.id }
       results = JSON.parse(response.body)
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(results.size).to be(1)
       expect(results[0]).to include("reducer_key" => "r", "subject_id" => subject1.id)
       expect(results[0]).not_to include("reducer_key" => "s")
