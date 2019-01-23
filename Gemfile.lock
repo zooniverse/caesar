@@ -129,7 +129,7 @@ GEM
       rack-protection (>= 1.5.3, < 2.1.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    graphiql-rails (1.5.0)
+    graphiql-rails (1.6.0)
       railties
       sprockets-rails
     graphql (1.8.13)
@@ -137,7 +137,7 @@ GEM
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    i18n (1.5.2)
+    i18n (1.5.3)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.1)
     jmespath (1.4.0)
