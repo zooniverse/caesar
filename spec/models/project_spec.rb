@@ -33,4 +33,10 @@ RSpec.describe Project, type: :model do
       expect(Project.find(project.id).user_reductions_count).to eq(1)
     end
   end
+
+  describe 'IsReducible' do
+    it 'can re-run reducers' do
+      expect{project.rerun_reducers}.not_to raise_error
+    end
+  end
 end
