@@ -2,7 +2,7 @@
 
 Caesar is an evolution of the Nero codebase, which is made more generic. In
 essence, Caesar receives classifications from the event stream (a Lambda
-script sends them to Caesars HTTP API). 
+script sends them to Caesars HTTP API).
 
 * [Documentation](https://zooniverse.github.io/caesar)
 * [Production](https://caesar.zooniverse.org)
@@ -56,3 +56,5 @@ directory.
 ```
 RAILS_ENV=test bundle exec mutant -r ./config/environment --use rspec Reducers::ExternalReducer
 ```
+
+[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
