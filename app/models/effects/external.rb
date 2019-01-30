@@ -9,19 +9,22 @@ module Effects
       reductions = SubjectReduction.where(
         workflow_id: workflow_id,
         subject_id: subject_id,
+        reducer_key: reducer_key
       )
-      reductions = reductions.where(reducer_key: config[:reducer_key]) if config[:reducer_key]
+
+      if reductions.length != 1
+        raise ExternalEffectFailed, "Incorrect number of reductions found"
+      end
 
       begin
-        body = reductions.map{|r| r.prepare}.to_json
-        response = RestClient.post(url, body, {content_type: :json, accept: :json})
+        response = RestClient.post(url, reductions.first.prepare.to_json, {content_type: :json, accept: :json})
       rescue RestClient::InternalServerError
         raise ExternalEffectFailed
       end
     end
 
     def valid?
-      url.present? && valid_url?
+      reducer_key.present? && url.present? && valid_url?
     end
 
     def self.config_fields
@@ -30,6 +33,10 @@ module Effects
 
     def url
       config[:url]
+    end
+
+    def reducer_key
+      config[:reducer_key]
     end
 
     def valid_url?

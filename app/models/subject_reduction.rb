@@ -23,6 +23,7 @@ class SubjectReduction < ApplicationRecord
       id: id,
       reducible: { id: reducible_id, type: reducible_type },
       data: data,
+      user_ids: extracts.pluck(:user_id),
       subject: subject.attributes,
       created_at: created_at,
       updated_at: updated_at
