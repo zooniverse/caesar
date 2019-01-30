@@ -7,13 +7,14 @@ module Effects
       raise InvalidConfiguration unless valid?
 
       reductions = SubjectReduction.where(
-        workflow_id: workflow_id, 
-        subject_id: subject_id, 
+        workflow_id: workflow_id,
+        subject_id: subject_id,
       )
       reductions = reductions.where(reducer_key: config[:reducer_key]) if config[:reducer_key]
 
       begin
-        response = RestClient.post(url, reductions.to_json, {content_type: :json, accept: :json})
+        body = reductions.map{|r| r.prepare}.to_json
+        response = RestClient.post(url, body, {content_type: :json, accept: :json})
       rescue RestClient::InternalServerError
         raise ExternalEffectFailed
       end
@@ -27,7 +28,7 @@ module Effects
       [:url, :reducer_key].freeze
     end
 
-    def url 
+    def url
       config[:url]
     end
 

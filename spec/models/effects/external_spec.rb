@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Effects::External do
-  let(:reduction) { create(:subject_reduction, reducer_key: "key") }
+  let(:subject) { create(:subject) }
+  let(:reduction) { create(:subject_reduction, reducer_key: "key", subject: subject, data: {}) }
   let(:url) { "https://example.org/post/reduction/here" }
   let(:effect) { described_class.new(url: url, reducer_key: "key") }
 
@@ -11,7 +12,8 @@ describe Effects::External do
 
   it 'sends the reductions to the external API' do
     effect.perform(reduction.workflow_id, reduction.subject_id)
-    expect(a_request(:post, url).with(body: [reduction].to_json))
+    # expect(a_request(:post, url).with(body: [reduction_json]))
+    expect(a_request(:post, url).with(body: [reduction.prepare].to_json))
       .to have_been_made.once
   end
 
@@ -27,7 +29,7 @@ describe Effects::External do
     effect = described_class.new(url: url)
     effect.perform(reduction.workflow_id, reduction.subject_id)
 
-    expect(a_request(:post, url).with(body: [reduction].to_json))
+    expect(a_request(:post, url).with(body: [reduction.prepare].to_json))
       .to have_been_made.once
   end
 
