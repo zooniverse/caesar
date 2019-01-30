@@ -7,7 +7,7 @@
 #
 module Reducers
   class CountReducer < Reducer
-    def reduce_into(extracts, reduction)
+    def reduce_into(extracts, reduction, _relevant_reductions=[])
       data = reduction.data || {}
 
       classifications_count = data.fetch("classifications", 0)

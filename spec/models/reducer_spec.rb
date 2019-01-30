@@ -232,7 +232,7 @@ RSpec.describe Reducer, type: :model do
       allow(subject_reduction_double).to receive(:expired=)
 
       running_reducer.process(extract_fetcher, reduction_fetcher)
-      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)
+      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double, [])
     end
   end
 end

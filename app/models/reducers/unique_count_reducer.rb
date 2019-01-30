@@ -2,7 +2,7 @@ module Reducers
   class UniqueCountReducer < Reducer
     config_field :field
 
-    def reduce_into(extracts, reduction)
+    def reduce_into(extracts, reduction, _relevant_reductions=[])
       store = reduction.store || {}
       store["items"] = [] unless store.key? "items"
 

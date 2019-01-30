@@ -9,7 +9,7 @@ module Reducers
       end
     end
 
-    def reduce_into(extracts, reduction)
+    def reduce_into(extracts, reduction, _relevant_reductions=[])
       extracts.map do |extract|
         {
           message_body: prepare_extract(extract).to_json,
