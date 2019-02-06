@@ -22,6 +22,20 @@ class UserReductionsController < ApplicationController
     render json: reduction
   end
 
+  def current_user_reductions
+    reducible_type = params[:reducible_type].titleize.singularize
+    reducible_id = params[:reducible_id]
+
+    reductions = UserReduction.where(
+      user_id: credential.current_user_id,
+      reducible_type: reducible_type,
+      reducible_id: reducible_id
+    )
+
+    authorize reductions
+    render json: reductions
+  end
+
   private
 
   def reducible

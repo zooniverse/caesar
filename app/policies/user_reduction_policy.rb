@@ -21,6 +21,11 @@ class UserReductionPolicy < ApplicationPolicy
     credential.project_ids.include?(record.reducible.project_id)
   end
 
+  def current_user_reductions?
+    return true if credential.admin?
+    record.all? { |reduction| credential.current_user_id == reduction.user_id }
+  end
+
   def destroy?
     credential.admin?
   end
