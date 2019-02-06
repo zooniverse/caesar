@@ -136,8 +136,13 @@ class Workflow < ApplicationRecord
     RunsExtractors.new(extractors)
   end
 
-  def rerun_extractors(duration = 3.hours)
-    extracts.pluck(:subject_id).uniq.each do |subject_id|
+  def rerun_extractors
+    subject_ids = extracts.pluck(:subject_id).uniq
+
+    # allow up to 100 rerun jobs per minute
+    duration = (subject_ids.count / 100.0).ceil.minutes
+
+    subject_ids.each do |subject_id|
       FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, id, subject_id, FetchClassificationsWorker.fetch_for_subject)
     end
   end
