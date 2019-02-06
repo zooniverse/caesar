@@ -26,9 +26,9 @@ class UserReductionsController < ApplicationController
 
   def reducible
     @reducible ||=  if params[:workflow_id]
-                      policy_scope(Workflow).find(params[:workflow_id]) 
+                      policy_scope(Workflow).find(params[:workflow_id])
                     elsif params[:project_id]
-                      policy_scope(Project).find(params[:project_id]) 
+                      policy_scope(Project).find(params[:project_id])
                     end
   end
 

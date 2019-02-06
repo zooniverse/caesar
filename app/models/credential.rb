@@ -17,6 +17,10 @@ class Credential < ApplicationRecord
     jwt_payload.fetch("login")
   end
 
+  def current_user_id
+    jwt_payload["id"]
+  end
+
   def admin?
     return true if Rails.env.development?
     jwt_payload.fetch("admin", false)

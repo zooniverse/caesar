@@ -3,6 +3,10 @@ class FakeCredential
     'dev'
   end
 
+  def current_user_id
+    3
+  end
+
   def ok?
     true
   end
