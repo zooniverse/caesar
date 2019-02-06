@@ -326,7 +326,7 @@ GEM
     sidekiq-congestion (0.1.0)
       congestion (~> 0.0.3)
       sidekiq (>= 3.0)
-    sidekiq-logstash (1.0.1)
+    sidekiq-logstash (1.1.0)
       logstash-event (~> 1.2)
       sidekiq (>= 3.0, < 6)
     sidekiq-unique-jobs (6.0.8)
