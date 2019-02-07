@@ -23,8 +23,10 @@ describe UserReductionsController, :type => :controller do
       reductions
       create(:user_reduction, reducible: workflow2, user_id: user1_id, reducer_key: reducer2.key, data: {'2' => 1})
 
-      response = get :current_user_reductions, params: { reducible_type: 'Workflow', reducible_id: workflow.id }, format: :json
+      response = get :index, params: { workflow_id: workflow.id, user_id: user1_id }
       results = JSON.parse(response.body)
+
+      # binding.pry
 
       # there are four total reductions but only two belong to this user in this workflow
       expect(response).to be_successful

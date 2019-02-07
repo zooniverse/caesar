@@ -9,6 +9,7 @@ class UserReductionPolicy < ApplicationPolicy
 
       self.scope.where(reducible_type: 'Workflow', reducible_id: workflow_ids)
         .or(self.scope.where(reducible_type: 'Project', reducible_id: project_ids))
+        .or(self.scope.where(user_id: credential.user_id))
     end
   end
 
@@ -19,11 +20,6 @@ class UserReductionPolicy < ApplicationPolicy
   def update?
     return true if credential.admin?
     credential.project_ids.include?(record.reducible.project_id)
-  end
-
-  def current_user_reductions?
-    return true if credential.admin?
-    record.all? { |reduction| credential.user_id == reduction.user_id }
   end
 
   def destroy?

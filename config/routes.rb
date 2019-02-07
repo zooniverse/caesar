@@ -68,6 +68,4 @@ Rails.application.routes.draw do
     end
     resources :data_requests
   end
-
-  get 'my/user_reductions/:reducible_type/:reducible_id', to: 'user_reductions#current_user_reductions', format: :json
 end
