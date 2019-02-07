@@ -44,11 +44,6 @@ RSpec.describe UserReductionPolicy do
       expect(subject).not_to permit(credential, reduction)
     end
 
-    it 'denies access when token has expired' do
-      credential = build(:credential, :expired, workflows: [reduction.reducible])
-      expect(subject).not_to permit(credential, reduction)
-    end
-
     it 'denies access when not a collaborator on the project' do
       credential = build(:credential, workflows: [])
       expect(subject).not_to permit(credential, reduction)

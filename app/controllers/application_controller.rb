@@ -21,13 +21,11 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate!
-    handle_unauthenticated_request("Login required.") unless authenticated?
-  rescue JWT::ExpiredSignature
+    credential.authenticate!
+  rescue Panoptes::Client::NotLoggedIn
+    handle_unauthenticated_request("Login required.")
+  rescue Panoptes::Client::AuthenticationExpired
     handle_unauthenticated_request("Session expired. Please log in again.")
-  end
-
-  def authenticated?
-    credential.ok?
   rescue ActiveRecord::RecordNotUnique
     raise StandardError.new('A session with these credentials already exists')
   end

@@ -31,12 +31,9 @@ RSpec.describe ExtractPolicy do
     let(:extract) { create :extract }
 
     it 'denies access when not logged in' do
-      credential = build(:credential, :not_logged_in)
-      expect(subject).not_to permit(credential, extract)
-    end
+      allow_any_instance_of(Panoptes::Client).to receive(:authenticated?).and_return(false)
 
-    it 'denies access when token has expired' do
-      credential = build(:credential, :expired, workflows: [extract.workflow])
+      credential = build(:credential, :not_logged_in)
       expect(subject).not_to permit(credential, extract)
     end
 
