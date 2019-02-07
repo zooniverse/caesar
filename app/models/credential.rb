@@ -17,7 +17,7 @@ class Credential < ApplicationRecord
     jwt_payload.fetch("login")
   end
 
-  def current_user_id
+  def user_id
     jwt_payload["id"]
   end
 

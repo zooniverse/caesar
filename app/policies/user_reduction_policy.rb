@@ -23,7 +23,7 @@ class UserReductionPolicy < ApplicationPolicy
 
   def current_user_reductions?
     return true if credential.admin?
-    record.all? { |reduction| credential.current_user_id == reduction.user_id }
+    record.all? { |reduction| credential.user_id == reduction.user_id }
   end
 
   def destroy?

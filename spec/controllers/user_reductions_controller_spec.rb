@@ -16,7 +16,7 @@ describe UserReductionsController, :type => :controller do
   }
 
   describe 'as user' do
-    before { fake_session(admin: false, current_user_id: user1_id) }
+    before { fake_session(admin: false, user_id: user1_id) }
     let(:workflow2) { create :workflow }
 
     it 'returns user reductions for the user' do

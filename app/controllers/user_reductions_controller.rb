@@ -27,7 +27,7 @@ class UserReductionsController < ApplicationController
     reducible_id = params[:reducible_id]
 
     reductions = UserReduction.where(
-      user_id: credential.current_user_id,
+      user_id: credential.user_id,
       reducible_type: reducible_type,
       reducible_id: reducible_id
     )

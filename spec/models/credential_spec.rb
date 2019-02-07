@@ -28,7 +28,7 @@ describe Credential, type: :model do
     allow_any_instance_of(Panoptes::Client).to receive(:jwt_signing_public_key).and_return(rsa_public)
 
     credential = Credential.create!(token: token)
-    expect(credential.current_user_id).to eq(3)
+    expect(credential.user_id).to eq(3)
   end
 
   it 'defaults expires_at to the date in the token' do

@@ -112,13 +112,13 @@ RSpec.describe UserReductionPolicy do
 
     it 'allows the current user to get their own reductions' do
       reduction2 = create :user_reduction, user_id: 55555
-      allow_any_instance_of(Credential).to receive(:current_user_id).and_return(55555)
+      allow_any_instance_of(Credential).to receive(:user_id).and_return(55555)
       expect(subject).to permit(credential, [reduction1, reduction2])
     end
 
     it 'only allows the current user to get their own reductions' do
       reduction2 = create :user_reduction, user_id: 55556
-      allow_any_instance_of(Credential).to receive(:current_user_id).and_return(55555)
+      allow_any_instance_of(Credential).to receive(:user_id).and_return(55555)
       expect(subject).not_to permit(credential, [reduction1, reduction2])
     end
   end
