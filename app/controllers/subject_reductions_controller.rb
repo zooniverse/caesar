@@ -1,6 +1,6 @@
 class SubjectReductionsController < ApplicationController
   def index
-    reductions = policy_scope(SubjectReduction).where(reducible_id: reducible.id, subject_id: params[:subject_id])
+    reductions = policy_scope(SubjectReduction).where(reducible_id: reducible.id, reducible_type: reducible_type, subject_id: params[:subject_id])
     reductions = reductions.where(reducer_key: params[:reducer_key]) if params.key?(:reducer_key)
 
     render json: reductions

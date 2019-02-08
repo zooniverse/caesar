@@ -9,6 +9,7 @@ class UserReductionPolicy < ApplicationPolicy
 
       self.scope.where(reducible_type: 'Workflow', reducible_id: workflow_ids)
         .or(self.scope.where(reducible_type: 'Project', reducible_id: project_ids))
+        .or(self.scope.where(user_id: credential.user_id))
     end
   end
 

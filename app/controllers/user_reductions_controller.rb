@@ -1,6 +1,6 @@
 class UserReductionsController < ApplicationController
   def index
-    reductions = policy_scope(UserReduction).where(reducible_id: reducible.id, user_id: params[:user_id])
+    reductions = policy_scope(UserReduction).where(reducible_id: reducible_id, reducible_type: reducible_type, user_id: params[:user_id])
     reductions = reductions.where(reducer_key: params[:reducer_key]) if params.key?(:reducer_key)
 
     render json: reductions
@@ -26,10 +26,14 @@ class UserReductionsController < ApplicationController
 
   def reducible
     @reducible ||=  if params[:workflow_id]
-                      policy_scope(Workflow).find(params[:workflow_id]) 
+                      policy_scope(Workflow).find(params[:workflow_id])
                     elsif params[:project_id]
-                      policy_scope(Project).find(params[:project_id]) 
+                      policy_scope(Project).find(params[:project_id])
                     end
+  end
+
+  def reducible_id
+    params[:workflow_id] || params[:project_id]
   end
 
   def reducible_type

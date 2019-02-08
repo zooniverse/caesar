@@ -6,6 +6,14 @@ RSpec.describe UserReductionPolicy do
   permissions ".scope" do
     let!(:reductions) { create_list :user_reduction, 4 }
 
+    it 'allows any authenticated user to get their own reductions' do
+      credential = build(:credential)
+      reduction2 = create :user_reduction, user_id: 55555
+
+      allow_any_instance_of(Credential).to receive(:user_id).and_return(55555)
+      expect(records_for(credential)).to match_array([reduction2])
+    end
+
     it 'returns no records when not logged in' do
       credential = build(:credential, :not_logged_in)
       expect(records_for(credential)).to match_array(UserReduction.none)
