@@ -41,7 +41,7 @@ class Credential < ApplicationRecord
   end
 
   def accessible_project?(id)
-    admin? || project_ids.include?(id)
+    admin? || project_ids.map(&:to_s).include?(id.to_s)
   end
 
   def accessible_workflow?(id)

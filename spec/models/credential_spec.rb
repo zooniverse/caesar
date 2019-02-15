@@ -48,6 +48,10 @@ describe Credential, type: :model do
         expect(credential.accessible_project? 1).to be(true)
       end
 
+      it 'allows access to projects with string ids' do
+        expect(credential.accessible_project?("1")).to be_truthy
+      end
+
       it 'prevents access to projects' do
         expect(credential.accessible_project? 5).to be(false)
       end
