@@ -21,19 +21,27 @@ class SubjectRule < ApplicationRecord
   end
 
   def process(subject_id, bindings)
-    if condition.apply(bindings)
-      subject_rule_effects.each do |effect|
-        pending_action = effect.prepare(id, workflow_id, subject_id)
-        PerformSubjectActionWorker.perform_async(pending_action.id)
+    light = Stoplight("subject-rule-#{id}") do
+      if condition.apply(bindings)
+        subject_rule_effects.each do |effect|
+          pending_action = effect.prepare(id, workflow_id, subject_id)
+          PerformSubjectActionWorker.perform_async(pending_action.id)
+        end
+      else
+        false
       end
-    else
-      false
     end
+
+    light.run
   end
 
   def valid_condition?
     condition
   rescue Conditions::FromConfig::InvalidConfig => ex
     errors.add(:condition, ex.message)
+  end
+
+  def stoplight_color
+    @color ||= Stoplight("subject-rule-#{id}").color
   end
 end
