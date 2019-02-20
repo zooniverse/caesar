@@ -33,7 +33,7 @@ module Reducers
     end
 
     def queue_url
-      @queue_url = config['queue_url'] || sqs_client.get_queue_url(queue_name: queue_name).queue_url
+      @queue_url = config['queue_url'] || (sqs_client.get_queue_url(queue_name: queue_name).queue_url unless queue_name.blank?)
     end
 
     def prepare_extract(extract)
