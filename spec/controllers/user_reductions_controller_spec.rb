@@ -26,8 +26,6 @@ describe UserReductionsController, :type => :controller do
       response = get :index, params: { workflow_id: workflow.id, user_id: user1_id }
       results = JSON.parse(response.body)
 
-      # binding.pry
-
       # there are four total reductions but only two belong to this user in this workflow
       expect(response).to be_successful
       expect(results.size).to be(2)
