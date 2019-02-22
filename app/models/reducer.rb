@@ -62,7 +62,7 @@ class Reducer < ApplicationRecord
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
-        # ADD CORRESPONDING RELEVANT REDUCTION TO EACH EXTRACT FOR ALL
+        # Set relevant reduction on each extract if required by external reducer
         augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
 
         # relevant_reductions are any previously reduced user or subject reductions
