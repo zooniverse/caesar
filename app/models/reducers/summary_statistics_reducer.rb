@@ -68,7 +68,7 @@ module Reducers
     end
 
 
-    def reduce_into(extracts, reduction, _relevant_reductions=[])
+    def reduce_into(extracts, reduction)
       @old_store = reduction.store || {}
       @new_store = {}
 

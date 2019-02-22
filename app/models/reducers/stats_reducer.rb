@@ -1,6 +1,6 @@
 module Reducers
   class StatsReducer < Reducer
-    def reduce_into(extractions, reduction, _relevant_reductions=[])
+    def reduce_into(extractions, reduction)
       data = reduction.data || {}
 
       reduction.tap do |r|

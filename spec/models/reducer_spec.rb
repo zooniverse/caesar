@@ -232,7 +232,62 @@ RSpec.describe Reducer, type: :model do
       allow(subject_reduction_double).to receive(:expired=)
 
       running_reducer.process(extract_fetcher, reduction_fetcher)
-      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double, [])
+      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)
+    end
+  end
+
+  describe "relevant reductions" do
+    let(:workflow) { create(:workflow) }
+
+    it 'include user reductions' do
+      subject_reducer = create(:stats_reducer,
+                                reducible: workflow,
+                                topic: Reducer.topics[:reduce_by_subject],
+                                config: {user_reducer_keys: "skillz"}
+                              )
+      new_extracts = [
+        build(:extract, classification_id: 1, subject_id: 1234, user_id: 1, data: {x: 1, y: 2}),
+        build(:extract, classification_id: 2, subject_id: 1234, user_id: 2, data: {x: 2, y: 2}),
+        build(:extract, classification_id: 3, subject_id: 1234, user_id: 3, data: {x: 3, y: 1})
+      ]
+
+      reductions = [
+        create(:user_reduction, data: {skill: 15}, user_id: 1, reducible: workflow, reducer_key: 'skillz'),
+        create(:user_reduction, data: {skill: 22}, user_id: 2, reducible: workflow, reducer_key: 'skillz')
+      ]
+
+      augmented_extracts = subject_reducer.add_relevant_reductions(new_extracts, reductions)
+
+      expect(augmented_extracts[0]).to have_attributes(relevant_reduction: reductions[0])
+      expect(augmented_extracts[1]).to have_attributes(relevant_reduction: reductions[1])
+      expect(augmented_extracts[2]).to have_attributes(relevant_reduction: nil)
+    end
+
+    it 'include subject reductions' do
+      subjects = create_list(:subject, 2)
+      user_reducer = create(:stats_reducer,
+                             reducible: workflow,
+                             topic: Reducer.topics[:reduce_by_user],
+                             reduction_mode: Reducer.reduction_modes[:running_reduction],
+                             config: {user_reducer_keys: "difficulty"}
+                           )
+
+      new_extracts = [
+        build(:extract, workflow_id: workflow.id, subject_id: subjects[0].id, user_id: 1, data: { feedback: {} } ),
+        build(:extract, workflow_id: workflow.id, subject_id: subjects[1].id, user_id: 1, data: { feedback: {} } ),
+        build(:extract, workflow_id: workflow.id, subject_id: 999, user_id: 1, data: { feedback: {} } ),
+      ]
+
+      reductions = [
+        create(:subject_reduction, data: {difficulty: [0.7, 0.3, 0.1] }, subject_id: subjects[0].id, reducible: workflow, reducer_key: 'difficulty'),
+        create(:subject_reduction, data: {difficulty: [0.4, 0.2, 0.8] }, subject_id: subjects[1].id, reducible: workflow, reducer_key: 'difficulty')
+      ]
+
+      augmented_extracts = user_reducer.add_relevant_reductions(new_extracts, reductions)
+
+      expect(augmented_extracts[0]).to have_attributes(relevant_reduction: reductions[0])
+      expect(augmented_extracts[1]).to have_attributes(relevant_reduction: reductions[1])
+      expect(augmented_extracts[2]).to have_attributes(relevant_reduction: nil)
     end
   end
 end
