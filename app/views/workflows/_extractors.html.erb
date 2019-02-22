@@ -70,13 +70,14 @@
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="glyphicon glyphicon-plus"></i> Create Extractor <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <li><%= link_to "Blank", new_workflow_extractor_path(@workflow, type: 'blank') %></li>
         <li><%= link_to "External", new_workflow_extractor_path(@workflow, type: 'external') %></li>
         <li><%= link_to "Pluck field", new_workflow_extractor_path(@workflow, type: 'pluck_field') %></li>
         <li><%= link_to "Question", new_workflow_extractor_path(@workflow, type: 'question') %></li>
         <li><%= link_to "Survey", new_workflow_extractor_path(@workflow, type: 'survey') %></li>
         <li><%= link_to "Who", new_workflow_extractor_path(@workflow, type: 'who') %></li>
+        <li><%= link_to "Shape", new_workflow_extractor_path(@workflow, type: 'shape') %></li>
       </ul>
     </div>
   <% end %>

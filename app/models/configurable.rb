@@ -29,6 +29,14 @@ module Configurable
       end
     end
 
+    def merge_configuration_fields
+      if self.superclass.respond_to? :merge_configuration_fields
+        self.configuration_fields.merge self.superclass.merge_configuration_fields
+      else
+        self.configuration_fields
+      end
+    end
+
     def configuration_fields
       @configuration_fields ||= {}
     end

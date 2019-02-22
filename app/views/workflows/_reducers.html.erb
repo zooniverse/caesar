@@ -80,7 +80,7 @@
         <i class="glyphicon glyphicon-plus"></i> Create <span class="caret"></span>
       </button>
 
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <li><%= link_to "Consensus", new_workflow_reducer_path(@workflow, type: 'consensus') %></li>
         <li><%= link_to "Count", new_workflow_reducer_path(@workflow, type: 'count') %></li>
         <li><%= link_to "Placeholder", new_workflow_reducer_path(@workflow, type: 'placeholder') %></li>
@@ -90,6 +90,7 @@
         <li><%= link_to "Summary Stats", new_workflow_reducer_path(@workflow, type: 'summary_stats') %></li>
         <li><%= link_to "Unique Count", new_workflow_reducer_path(@workflow, type: 'unique_count') %></li>
         <li><%= link_to "SQS", new_workflow_reducer_path(@workflow, type: 'sqs') %></li>
+        <li><%= link_to "Rectangle", new_workflow_reducer_path(@workflow, type: 'rectangle') %></li>
       </ul>
     </div>
   <% end %>

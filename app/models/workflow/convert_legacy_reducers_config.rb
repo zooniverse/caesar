@@ -38,6 +38,8 @@ class Workflow::ConvertLegacyReducersConfig
       Reducers::PlaceholderReducer
     when "summary_stats"
       Reducers::SummaryStatisticsReducer
+    when "rectangle"
+      Reducers::AggregationReducers::RectangleReducer
     when "sqs"
       Reducers::SqsReducer
     else
