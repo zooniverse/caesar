@@ -152,6 +152,6 @@ class Workflow < ApplicationRecord
   end
 
   def random_n_subjects(n)
-    (extracts.pluck(:subject_id).sample(n) + subject_reductions.pluck(:subject_id).sample(n)).uniq.sample(n)
+    (extracts.pluck(:subject_id).sample(n*3) + subject_reductions.pluck(:subject_id).sample(n*3)).uniq.sample(n)
   end
 end

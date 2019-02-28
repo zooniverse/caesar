@@ -42,4 +42,12 @@ class Project < ApplicationRecord
   def project_id
     id
   end
+
+  def last_n_subjects(n, source)
+    source.last(n*5).pluck(:subject_id).uniq.last(n)
+  end
+
+  def random_n_subjects(n)
+    subject_reductions.pluck(:subject_id).sample(n*5).uniq.sample(n)
+  end
 end

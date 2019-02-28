@@ -1,8 +1,8 @@
 class SubjectsController < ApplicationController
   def show
     skip_authorization
-    @extracts = workflow.extracts.where(subject_id: subject.id)
-    @reductions = workflow.subject_reductions.where(subject_id: subject.id)
+    @extracts = if workflow.nil? then [] else workflow.extracts.where(subject_id: subject.id) end
+    @reductions = (workflow||project).subject_reductions.where(subject_id: subject.id)
   end
 
   def search
@@ -12,7 +12,8 @@ class SubjectsController < ApplicationController
     subject_id = search_params[:id]
 
     if Subject.exists?(subject_id)
-      redirect_to workflow_subject_path(workflow, subject_id)
+      redirect_to workflow_subject_path(workflow, subject_id) unless workflow.nil?
+      redirect_to project_subject_path(project, subject_id) unless project.nil?
     else
       @subject = Subject.new(id: subject_id)
       render 'not_found'
@@ -21,8 +22,12 @@ class SubjectsController < ApplicationController
 
   private
 
+  def project
+    @project ||= policy_scope(Project).find(params[:project_id]) if params.key? :project_id
+  end
+
   def workflow
-    @workflow ||= policy_scope(Workflow).find(params[:workflow_id])
+    @workflow ||= policy_scope(Workflow).find(params[:workflow_id]) if params.key? :workflow_id
   end
 
   def subject
