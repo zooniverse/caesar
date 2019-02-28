@@ -66,10 +66,20 @@ class ProjectsController < ApplicationController
 
     if params[:project][:rerun] == 'reducers'
       rerun_reducers
-      respond_with project, location: project_path(@project, anchor: 'reducers')
+      respond_with project, location: project_path(project, anchor: 'reducers')
     else
+      was_paused = project.paused?
       project.update(project_params.except('display_name'))
-      respond_with project
+
+      if !was_paused && project.paused?
+        flash[:notice] = 'Pausing project'
+      end
+
+      if was_paused && project.active?
+        flash[:notice] = 'Resuming project'
+      end
+
+      respond_with project, location: project_path(project, anchor: 'settings')
     end
   end
 
@@ -96,6 +106,8 @@ class ProjectsController < ApplicationController
     params.require(:project).permit(
       :display_name,
       :rerun,
+      :public_reductions,
+      :status,
     )
   end
 end

@@ -1,0 +1,34 @@
+<%= simple_form_for(@project, url: [@project]) do |f| %>
+  <%= f.error_notification %>
+  <div class="form-inline form-inputs">
+    <div class="form-group">
+      <%= f.check_box :public_reductions, class: 'form-control' %>
+      <label for="project_public_reductions" style="vertical-align: sub; margin-left: 0.5em;">Public Reductions</label>
+    </div>
+  </div>
+  <br/>
+  <div class="form-actions">
+    <%= f.button :button, class: 'btn btn-primary pull-right' do %>
+        <span class="glyphicon glyphicon-floppy-disk"></span> Save Settings
+    <% end %>
+  </div>
+<% end %>
+
+<p class="pull-right">&nbsp;</p>
+<% if @project.active? %>
+  <%= simple_form_for(@project, url: [@project]) do |f| %>
+    <%= f.hidden_field :status, :value => 'paused' %>
+    <%= f.button :button, class: 'btn btn-default pull-right' do %>
+      <span class="glyphicon glyphicon-pause"></span> Pause Project
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @project.paused? %>
+  <%= simple_form_for(@project, url: [@project]) do |f| %>
+    <%= f.hidden_field :status, :value => 'active' %>
+    <%= f.button :button, class: 'btn btn-default pull-right' do %>
+      <span class="glyphicon glyphicon-play"></span> Resume Project
+    <% end %>
+  <% end %>
+<% end %>

@@ -100,7 +100,7 @@ class WorkflowsController < ApplicationController
       Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
       Workflow::ConvertLegacyReducersConfig.new(workflow).update(params[:workflow][:reducers_config])
       Workflow::ConvertLegacyRulesConfig.new(workflow).update(params[:workflow][:rules_config])
-      respond_with workflow
+      respond_with workflow, location: workflow_path(workflow, anchor: 'settings')
     end
   end
 

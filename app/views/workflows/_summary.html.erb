@@ -5,6 +5,8 @@
       <dd><%= @workflow.id %>
       <dt>Workflow Name</dt>
       <dd><%= @workflow.name %>
+      <dt>Status</dt>
+      <dd><%= if @workflow.paused? then "Paused" else "Active" end %>
       <br/><br/>
       <dt>Project Id</dt>
       <dd><%= @workflow.project_id %>
@@ -50,6 +52,14 @@
           <dd><%= @summary.reductions_count %></dd>
           <dt>Total Actions</dt>
           <dd><%= @summary.actions_count %></dd>
+          <br/><br/>
+          <dt>Public Extracts</dt>
+          <dd><%= if @workflow.public_extracts? then "Yes" else "No" end %>
+          <dt>Public Reductions</dt>
+          <dd><%= if @workflow.public_reductions? then "Yes" else "No" end %>
+          <br/><br/>
+          <dt>Rule Application</dt>
+          <dd><%= @workflow.rules_applied.humanize %></dd>
         </dl>
       </div>
       <div class="col-md-6">
@@ -62,58 +72,6 @@
           <dd><%= @summary.last_action || "Never" %></dd>
         </dl>
       </div>
-    </div>
-    <div class="row"><div class="col-md-12">&nbsp;</div></div>
-    <div class="row">
-      <div class="col-md-12">
-        <%= simple_form_for(@workflow, url: [@workflow], :html => { class: 'panel panel-info clearfix' }) do |f| %>
-          <div class="panel-heading">Settings</div>
-          <div class="panel-body">
-            <%= f.error_notification %>
-            <div class="form-inline form-inputs">
-              <div class="form-group">
-                <%= f.check_box :public_extracts, class: 'form-control' %>
-                <label for="workflow_public_extracts" style="vertical-align: sub; margin-left: 0.5em;">Public Extracts</label>
-              </div>
-              <br/>
-              <div class="form-group">
-                <%= f.check_box :public_reductions, class: 'form-control' %>
-                <label for="workflow_public_reductions" style="vertical-align: sub; margin-left: 0.5em;">Public Reductions</label>
-              </div>
-            </div>
-            <br/>
-            <div class="form-inputs">
-              <label for="workflow_rules_applied">Rules Applied</label>
-              <%= f.select :rules_applied, @workflow.class.rules_applieds.map{|key, val| [key.humanize, key]}, {}, { class: 'form-control' } %>
-            </div>
-            <br/>
-            <div class="form-actions">
-              <%= f.button :submit, class: 'btn btn-primary pull-right' %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12" style="height: 2em;">
-    <div class="pull-right">
-      <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
-        <%= f.hidden_field :status, :value => 'paused' %>
-        <%= f.button :button, class: 'btn btn-default', disabled: @workflow.paused? do %>
-          <span class="glyphicon glyphicon-pause"></span> Pause Workflow
-        <% end %>
-      <% end %>
-    </div>
-    <p class="pull-right">&nbsp;</p>
-    <div class="pull-right">
-      <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
-        <%= f.hidden_field :status, :value => 'active' %>
-        <%= f.button :button, class: 'btn btn-default', disabled: @workflow.active? do %>
-          <span class="glyphicon glyphicon-play"></span> Resume Workflow
-        <% end %>
-      <% end %>
     </div>
   </div>
 </div>
