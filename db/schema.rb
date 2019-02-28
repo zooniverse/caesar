@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_28_155456) do
+ActiveRecord::Schema.define(version: 2019_02_28_170119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2019_02_28_155456) do
     t.integer "subject_reductions_count"
     t.integer "user_reductions_count"
     t.integer "reducers_count"
+    t.integer "status", default: 1, null: false
   end
 
   create_table "reducers", force: :cascade do |t|

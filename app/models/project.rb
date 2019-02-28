@@ -14,7 +14,7 @@ class Project < ApplicationRecord
   has_many :user_actions
   has_many :data_requests, as: :exportable
 
-  enum rules_applied: [:all_matching_rules, :first_matching_rule]
+  enum status: { paused: 0, active: 1 }
 
   attr_accessor :rerun
 
@@ -25,10 +25,6 @@ class Project < ApplicationRecord
     return none unless credential.project_ids.present?
 
     where(id: credential.project_ids)
-  end
-
-  def paused?
-    false
   end
 
   def has_reducers?

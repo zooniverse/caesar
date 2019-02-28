@@ -5,6 +5,8 @@
       <dd><%= @project.id %>
       <dt>Project Name</dt>
       <dd><%= @project.display_name %>
+      <dt>Status</dt>
+      <dd><%= if @project.paused? then "Paused" else "Active" end %>
       <br/><br/>
       <dt>Reducers</dt>
       <dd>
@@ -26,6 +28,9 @@
         <dl class="dl-horizontal">
           <dt>Total Reductions</dt>
           <dd><%= @summary.reductions_count %></dd>
+          <br/><br/>
+          <dt>Public Reductions</dt>
+          <dd><%= if @project.public_reductions? then "Yes" else "No" end %>
         </dl>
       </div>
     </div>
