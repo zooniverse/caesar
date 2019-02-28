@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_17_191627) do
+ActiveRecord::Schema.define(version: 2019_02_28_155456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_191627) do
     t.string "display_name"
     t.integer "subject_reductions_count"
     t.integer "user_reductions_count"
+    t.integer "reducers_count"
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -261,6 +262,10 @@ ActiveRecord::Schema.define(version: 2018_12_17_191627) do
     t.integer "user_reductions_count"
     t.integer "subject_actions_count"
     t.integer "user_actions_count"
+    t.integer "extractors_count"
+    t.integer "reducers_count"
+    t.integer "subject_rules_count"
+    t.integer "user_rules_count"
   end
 
   add_foreign_key "classifications", "subjects"
