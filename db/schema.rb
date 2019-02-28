@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_28_170119) do
+ActiveRecord::Schema.define(version: 2019_02_28_195338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -104,7 +104,6 @@ ActiveRecord::Schema.define(version: 2019_02_28_170119) do
   create_table "projects", force: :cascade do |t|
     t.jsonb "reducers_config"
     t.jsonb "rules_config"
-    t.integer "rules_applied", default: 0, null: false
     t.boolean "public_reductions", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
