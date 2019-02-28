@@ -2,7 +2,7 @@ class SubjectRule < ApplicationRecord
   include RankedModel
   ranks :row_order, with_same: :workflow_id
 
-  belongs_to :workflow
+  belongs_to :workflow, counter_cache: true
   has_many :subject_rule_effects, dependent: :destroy
 
   validate :valid_condition?
