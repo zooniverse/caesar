@@ -81,13 +81,8 @@ class ProjectsController < ApplicationController
   end
 
   def rerun_reducers
-    duration = 3.hours
-
-    project.extracts.group_by(&:subject_id).each do |subject_id, extracts|
-      ReduceWorker.perform_in(rand(duration.to_i).seconds, project.id, 'Project', subject_id, nil, extracts.pluck(:id))
-    end
-
-    flash[:notice] = "Re-running reducers for the next #{duration / 1.hour.to_i} hours"
+    project.rerun_reducers
+    flash[:notice] = "Re-running reducers. Results may take some time to process."
   end
 
 
