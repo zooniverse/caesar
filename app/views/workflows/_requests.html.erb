@@ -25,7 +25,11 @@
             <%= data_request.status.capitalize %>
           </span>
           <% if data_request.processing? %>
-            (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)
+            <% if (data_request.records_exported || 0) > 0 %>
+              (<%= data_request.records_exported %> / <%= data_request.records_count %>)
+            <% else %>
+              (collecting <%= data_request.requested_data.pluralize.humanize.downcase %>)
+            <% end %>
           <% end %>
         </td>
         <td><% if data_request.complete? %><%= link_to "Download", data_request.url %><% end %></td>
