@@ -12,11 +12,7 @@ class SubjectsController < ApplicationController
     subject_id = search_params[:id]
 
     if Subject.exists?(subject_id)
-      @subject = Subject.find(subject_id) || Subject.new
-      @extracts = workflow.extracts.where(subject_id: subject_id)
-      @reductions = workflow.subject_reductions.where(subject_id: subject_id)
-
-      render 'show'
+      redirect_to workflow_subject_path(workflow, subject_id)
     else
       @subject = Subject.new(id: subject_id)
       render 'not_found'
