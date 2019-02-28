@@ -8,7 +8,7 @@ module Conditions
     end
 
     def to_a
-      [@transform, @operation.to_a]
+      [@transform.to_s, @operation.to_a]
     end
 
     def apply(bindings)
