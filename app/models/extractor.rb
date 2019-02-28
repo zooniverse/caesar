@@ -20,7 +20,7 @@ class Extractor < ApplicationRecord
     end
   end
 
-  belongs_to :workflow
+  belongs_to :workflow, counter_cache: true
 
   validates :workflow, presence: true
   validates :key, presence: true, uniqueness: {scope: [:workflow_id]}

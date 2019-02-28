@@ -8,9 +8,9 @@
 </h2>
 <ul class="nav nav-pills">
     <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
-    <li><a href="#extractors" data-toggle="tab">Extractors <span class="badge"><%= @workflow.extractors.count %></span></a></li>
-    <li><a href="#reducers" data-toggle="tab">Reducers <span class="badge"><%= @workflow.reducers.count %></span></a></li>
-    <li><a href="#rules" data-toggle="tab">Rules <span class="badge"><%= @workflow.subject_rules.count + @workflow.user_rules.count %></span></a></li>
+    <li><a href="#extractors" data-toggle="tab">Extractors <span class="badge"><%= @workflow.extractors_count %></span></a></li>
+    <li><a href="#reducers" data-toggle="tab">Reducers <span class="badge"><%= @workflow.reducers_count %></span></a></li>
+    <li><a href="#rules" data-toggle="tab">Rules <span class="badge"><%= @workflow.subject_rules_count + @workflow.user_rules_count %></span></a></li>
     <li><a href="#requests" data-toggle="tab">Data Requests <span class="badge"><%= @workflow.data_requests.count %></span></a></li>
     <li><a href="#subjects" data-toggle="tab">Subjects</a></li>
 </ul>
