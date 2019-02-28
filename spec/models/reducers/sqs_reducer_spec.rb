@@ -50,4 +50,9 @@ describe Reducers::SqsReducer do
       queue_url: "a_url"
     )
   end
+
+  it 'doesnt crash when queue_url is unset and requested and no queue_name set' do
+    r = described_class.new config: { queue_name: nil, queue_url: nil }
+    expect{ r.queue_url }.not_to raise_exception
+  end
 end
