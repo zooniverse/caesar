@@ -22,12 +22,12 @@ module Reducers
       end
     end
 
-    def reduce_into(extractions, reduction, relevant_reductions=[])
+    def reduce_into(extractions, reduction)
       if url
         response = if default_reduction?
           RestClient.post(url, extractions.to_json, {content_type: :json, accept: :json})
         elsif running_reduction?
-          RestClient.post(url, { extracts: extractions, store: reduction.store, relevant_reductions: relevant_reductions }.to_json, {content_type: :json, accept: :json})
+          RestClient.post(url, { extracts: extractions, store: reduction.store }.to_json, {content_type: :json, accept: :json})
         else
           raise StandardError.new("Impossible reducer configuration #{id}")
         end

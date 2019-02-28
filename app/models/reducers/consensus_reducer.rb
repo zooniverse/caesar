@@ -2,7 +2,7 @@ module Reducers
   class ConsensusReducer < Reducer
     config_field :ignore_empty_extracts, default: false
 
-    def reduce_into(extractions, reduction, _relevant_reductions=[])
+    def reduce_into(extractions, reduction)
       store_value = reduction.store || {}
       counter = CountingHash.new(store_value)
 

@@ -13,7 +13,6 @@ RSpec.describe SubjectReduction, type: :model do
     reduction = create(:subject_reduction, extracts: [extract1, extract2, extract3])
 
     prepared = reduction.prepare
-    expect(prepared[:user_ids]).to include(extract1.user_id, extract2.user_id, extract3.user_id)
     expect(prepared[:subject]).to eq(reduction.subject.attributes)
   end
 end

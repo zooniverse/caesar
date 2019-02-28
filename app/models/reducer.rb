@@ -62,9 +62,12 @@ class Reducer < ApplicationRecord
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
 
+        # Set relevant reduction on each extract if required by external reducer
+        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
+
         # relevant_reductions are any previously reduced user or subject reductions
         # that are required by this reducer to properly calculate
-        reduce_into(extracts, reduction, relevant_reductions).tap do |r|
+        reduce_into(augmented_extracts, reduction).tap do |r|
           r.expired = false
 
           # note that because we use deferred associations, this won't actually hit the database
@@ -95,7 +98,7 @@ class Reducer < ApplicationRecord
     end
   end
 
-  def reduce_into(extracts, reduction, relevant_reductions)
+  def reduce_into(extracts, reduction)
     raise NotImplementedError
   end
 
@@ -120,5 +123,17 @@ class Reducer < ApplicationRecord
   end
 
   def nilify_empty_fields
+  end
+
+  def add_relevant_reductions(extracts, relevant_reductions)
+    extracts.map do |ex|
+      ex.relevant_reduction = case topic
+                              when 0, "reduce_by_subject"
+                                relevant_reductions.find { |rr| rr.user_id == ex.user_id }
+                              when 1, "reduce_by_user"
+                                relevant_reductions.find { |rr| rr.subject_id == ex.subject_id }
+                              end
+    end
+    extracts
   end
 end
