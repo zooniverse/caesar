@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @workflow.data_requests.each do |data_request| %>
+    <% @workflow.data_requests.order(created_at: :desc).each do |data_request| %>
       <tr>
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data.capitalize %></td>
