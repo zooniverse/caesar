@@ -1,3 +1,5 @@
+class ExtractionFailed < StandardError; end
+
 class Extractor < ApplicationRecord
   include Configurable
 
