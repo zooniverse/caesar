@@ -111,7 +111,7 @@ describe DataRequestsController, :type => :controller do
       end
 
       it('should produce user reduction requests when asked') do
-        params = {workflow_id: workflow.id, data_request: {requested_data: 'user_reductions', exportable_id: workflow.id, exportable_type: 'Workflow'}} 
+        params = {workflow_id: workflow.id, data_request: {requested_data: 'user_reductions', exportable_id: workflow.id, exportable_type: 'Workflow'}}
         response = post :create, params: params, format: :json
 
         expect(response.status).to eq(201)

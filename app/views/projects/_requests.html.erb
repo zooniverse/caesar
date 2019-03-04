@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @workflow.data_requests.order(created_at: :desc).each do |data_request| %>
+    <% @project.data_requests.each do |data_request| %>
       <tr>
         <td><%= data_request.created_at %></td>
         <td><%= data_request.requested_data.humanize %></td>
@@ -25,11 +25,7 @@
             <%= data_request.status.capitalize %>
           </span>
           <% if data_request.processing? %>
-            <% if data_request.records_exported.to_i > 0 %>
-              (<%= data_request.records_exported %> / <%= data_request.records_count %>)
-            <% else %>
-              (collecting <%= data_request.requested_data.pluralize.humanize.downcase %>)
-            <% end %>
+            (<%= data_request.records_exported || "0" %> / <%= data_request.records_count || "N" %>)
           <% end %>
         </td>
         <td><% if data_request.complete? %><%= link_to "Download", data_request.url %><% end %></td>
@@ -44,9 +40,8 @@
   </button>
 
   <ul class="dropdown-menu">
-    <li><%= link_to "Request Extracts Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'extracts'}), method: :post %></li>
-    <li><%= link_to "Request Subject Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'subject_reductions'}), method: :post %></li>
-    <li><%= link_to "Request User Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'user_reductions'}), method: :post %></li>
+    <li><%= link_to "Request Subject Reductions Export", project_data_requests_path(@project, data_request: { requested_data: 'subject_reductions'}), method: :post %></li>
+    <li><%= link_to "Request User Reductions Export", project_data_requests_path(@project, data_request: { requested_data: 'user_reductions'}), method: :post %></li>
   </ul>
 </div>
 </div>
