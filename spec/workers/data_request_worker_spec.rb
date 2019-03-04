@@ -5,50 +5,98 @@ describe DataRequestWorker do
 
   let(:stored_export) { double("StoredExport", "download_url" => "hi", "upload" => nil)}
 
+  let(:project) { create :project }
   let(:workflow) { create :workflow }
 
-  let(:request) do
+  let(:project_request) do
     DataRequest.new(
       user_id: 1234,
-      exportable: workflow,
-      workflow_id: workflow.id,
+      exportable: project,
       subgroup: nil,
       requested_data: DataRequest.requested_data[:extracts]
     )
   end
 
-  let(:request_id) do
-    request.id
+  let(:workflow_request) do
+    DataRequest.new(
+      user_id: 1234,
+      exportable: workflow,
+      subgroup: nil,
+      requested_data: DataRequest.requested_data[:extracts]
+    )
   end
 
-  before do
-    allow(StoredExport).to receive(:new).and_return(stored_export)
-    request.status = DataRequest.statuses[:pending]
-    request.save!
+  let(:project_request_id) do
+    project_request.id
   end
 
-  describe '#perform' do
-    it 'does the thing' do
-      worker.perform(request_id)
-      expect(DataRequest.find(request_id).complete?).to be(true)
+  let(:workflow_request_id) do
+    workflow_request.id
+  end
+
+  describe 'for workflows' do
+    before do
+      allow(StoredExport).to receive(:new).and_return(stored_export)
+      workflow_request.status = DataRequest.statuses[:pending]
+      workflow_request.save!
     end
 
-    it 'creates the file' do
-      allow(File).to receive(:unlink).and_return(nil)
-      worker.perform(request_id)
-      expect(File.exist?("tmp/#{request_id}.csv")).to be(true)
+    describe '#perform' do
+      it 'performs the export' do
+        worker.perform(workflow_request_id)
+        expect(DataRequest.find(workflow_request_id).complete?).to be(true)
+      end
+
+      it 'creates the file' do
+        allow(File).to receive(:unlink).and_return(nil)
+        worker.perform(workflow_request_id)
+        expect(File.exist?("tmp/#{workflow_request_id}.csv")).to be(true)
+      end
+
+      it 'uploads the file' do
+        worker.perform(workflow_request_id)
+        expect(stored_export).to have_received(:upload)
+      end
     end
 
-    it 'uploads the file' do
-      worker.perform(request_id)
-      expect(stored_export).to have_received(:upload)
+    after do
+      DataRequest.delete_all
+      if(File.exist?("tmp/#{workflow_request_id}.csv"))
+        File.unlink "tmp/#{workflow_request_id}.csv"
+      end
     end
   end
 
-  after do
-    DataRequest.delete_all
-    if(File.exist?("tmp/#{request_id}.csv"))
-      File.unlink "tmp/#{request_id}.csv"
+  describe 'for projects' do
+    before do
+      allow(StoredExport).to receive(:new).and_return(stored_export)
+      project_request.status = DataRequest.statuses[:pending]
+      project_request.save!
+    end
+
+    describe '#perform' do
+      it 'performs the export' do
+        worker.perform(project_request_id)
+        expect(DataRequest.find(project_request_id).complete?).to be(true)
+      end
+
+      it 'creates the file' do
+        allow(File).to receive(:unlink).and_return(nil)
+        worker.perform(project_request_id)
+        expect(File.exist?("tmp/#{project_request_id}.csv")).to be(true)
+      end
+
+      it 'uploads the file' do
+        worker.perform(project_request_id)
+        expect(stored_export).to have_received(:upload)
+      end
+    end
+
+    after do
+      DataRequest.delete_all
+      if(File.exist?("tmp/#{project_request_id}.csv"))
+        File.unlink "tmp/#{project_request_id}.csv"
+      end
     end
   end
 end

@@ -1,10 +1,6 @@
 class CreatesDataRequests < ApplicationOperation
   def call(obj, args)
-    resource = if args[:workflow_id]
-      Workflow.find(args[:workflow_id])
-    elsif args[:project_id]
-      Project.find(args[:project_id])
-    end
+    resource = args[:exportable_type].constantize.find(args[:exportable_id])
 
     data_request = DataRequest.new(
       exportable: resource,

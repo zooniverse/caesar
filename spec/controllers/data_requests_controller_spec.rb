@@ -34,7 +34,7 @@ describe DataRequestsController, :type => :controller do
     it 'returns public requests for unauthorized users' do
       fake_session(logged_in: false)
       data_request1 = create(:data_request, exportable: workflow, created_at: 5.days.ago, public: true)
-      data_request2 = create(:data_request, exportable: workflow, created_at: 2.days.ago)
+      create(:data_request, exportable: workflow, created_at: 2.days.ago)
 
       get :index, params: params, format: :json
       expect(assigns[:workflow]).to be_nil
@@ -85,15 +85,38 @@ describe DataRequestsController, :type => :controller do
       end
     end
 
+    describe 'project reductions' do
+      let(:project) { create :project }
+      let(:params) { {project_id: project.id, data_request: {requested_data: 'subject_reductions', exportable_id: project.id, exportable_type: 'Project'}} }
+
+      it 'should let me create a data request for a project' do
+        fake_session project_ids: [project.id]
+        response = post :create, params: params, format: :json
+
+        expect(response.status).to eq(201)
+        expect(DataRequest.count).to eq(1)
+        expect(DataRequest.first.subject_reductions?).to be(true)
+      end
+    end
+
     describe 'reductions' do
-      let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'reductions'}} }
+      let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'subject_reductions', exportable_id: workflow.id, exportable_type: 'Workflow'}} }
 
       it('should produce reduction requests instead of extract requests') do
         response = post :create, params: params, format: :json
 
         expect(response.status).to eq(201)
         expect(DataRequest.count).to eq(1)
-        expect(DataRequest.first.reductions?).to be(true)
+        expect(DataRequest.first.subject_reductions?).to be(true)
+      end
+
+      it('should produce user reduction requests when asked') do
+        params = {workflow_id: workflow.id, data_request: {requested_data: 'user_reductions', exportable_id: workflow.id, exportable_type: 'Workflow'}} 
+        response = post :create, params: params, format: :json
+
+        expect(response.status).to eq(201)
+        expect(DataRequest.count).to eq(1)
+        expect(DataRequest.first.user_reductions?).to be(true)
       end
 
       context 'when not a project collaborator' do
