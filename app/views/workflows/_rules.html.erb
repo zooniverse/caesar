@@ -3,12 +3,16 @@
 <h2>Subject Rules</h2>
 <table class="table table-striped table-sm">
   <colgroup>
+    <col style="width: 4em;" />
+    <col style="width: 2em;" />
     <col style="width: 1em;" />
     <col />
     <col style="width: 6em;" />
   </colgroup>
   <thead>
     <tr>
+      <th>Status</th>
+      <th style="text-align: center">Id</th>
       <th colspan="2">Rule</th>
       <th>Actions</th>
     </tr>
@@ -16,6 +20,24 @@
   <tbody>
     <% for rule in @workflow.subject_rules %>
       <tr>
+        <td style="text-align: center; line-height: 250%">
+          <% case rule.stoplight_color when 'green' %>
+            <span class="text-success glyphicon glyphicon-ok-sign">
+              <span class="sr-only">OK</span>
+            </span>
+          <% when 'yellow' %>
+            <span class="text-warning glyphicon glyphicon-exclamation-sign">
+              <span class="sr-only">Warning</span>
+            </span>
+          <% when 'red' %>
+            <span class="text-danger glyphicon glyphicon-remove-sign">
+              <span class="sr-only">Error</span>
+            </span>
+          <% end %>
+        </td>
+        <td style="text-align: right; line-height: 250%">
+          SR<%= rule.id %>
+        </td>
         <td style="line-height: 250%"><span class="yields-text pull-right"><strong>If</strong></span></td>
         <td style="line-height: 250%;">
           <%= render_condition rule.condition %>
@@ -52,12 +74,16 @@
 <h2>User Rules</h2>
 <table class="table table-striped table-sm">
   <colgroup>
+    <col style="width: 4em;" />
+    <col style="width: 2em;" />
     <col style="width: 1em;" />
     <col />
     <col style="width: 6em;" />
   </colgroup>
   <thead>
     <tr>
+      <th>Status</th>
+      <th style="text-align: center;">Id</th>
       <th colspan="2">Rule</th>
       <th>Actions</th>
     </tr>
@@ -65,6 +91,24 @@
   <tbody>
     <% for rule in @workflow.user_rules %>
       <tr>
+        <td style="text-align: center; line-height: 250%;">
+          <% case rule.stoplight_color when 'green' %>
+            <span class="text-success glyphicon glyphicon-ok-sign">
+              <span class="sr-only">OK</span>
+            </span>
+          <% when 'yellow' %>
+            <span class="text-warning glyphicon glyphicon-exclamation-sign">
+              <span class="sr-only">Warning</span>
+            </span>
+          <% when 'red' %>
+            <span class="text-danger glyphicon glyphicon-remove-sign">
+              <span class="sr-only">Error</span>
+            </span>
+          <% end %>
+        </td>
+        <td style="text-align: right; line-height: 250%;">
+          UR<%= rule.id %>
+        </td>
         <td style="line-height: 250%"><span class="yields-text pull-right"><strong>If</strong></span></td>
         <td style="line-height: 250%;">
           <%= render_condition rule.condition %>

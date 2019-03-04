@@ -16,19 +16,27 @@ class UserRule < ApplicationRecord
   end
 
   def process(user_id, bindings)
-    if condition.apply(bindings)
-      user_rule_effects.each do |effect|
-        pending_action = effect.prepare(id, workflow_id, user_id)
-        PerformUserActionWorker.perform_async(pending_action.id)
+    light = Stoplight("user-rule-#{id}") do
+      if condition.apply(bindings)
+        user_rule_effects.each do |effect|
+          pending_action = effect.prepare(id, workflow_id, user_id)
+          PerformUserActionWorker.perform_async(pending_action.id)
+        end
+      else
+        false
       end
-    else
-      false
     end
+
+    light.run
   end
 
   def valid_condition?
     condition
   rescue Conditions::FromConfig::InvalidConfig => ex
     errors.add(:condition, ex.message)
+  end
+
+  def stoplight_color
+    @color ||= Stoplight("user-rule-#{id}").color
   end
 end
