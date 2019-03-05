@@ -4,13 +4,14 @@ module Exporters
   class UnknownExporter < StandardError; end
 
   class CsvExporter
-    attr_reader :resource_id, :resource_type, :user_id, :subgroup
+    attr_reader :resource_id, :resource_type, :user_id, :subgroup, :requested_data
 
     def initialize(params)
       @resource_id = params[:resource_id]
       @resource_type = params[:resource_type]
       @user_id = params[:user_id]
       @subgroup = params[:subgroup]
+      @requested_data = params[:requested_data]
     end
 
     def dump(path=nil)
@@ -62,6 +63,10 @@ module Exporters
         when Hash then item.to_json
         when DateTime, ActiveSupport::TimeWithZone then item
       end
+    end
+
+    def get_topic
+      requested_data.camelcase.singularize.constantize
     end
 
     def get_items

@@ -17,17 +17,12 @@ class DataRequestWorker
 
       request.processing!
 
-      exporter = if request.extracts?
-        Exporters::CsvExtractExporter
-      elsif request.subject_reductions?
-        Exporters::CsvSubjectReductionExporter
-      elsif request.user_reductions?
-        Exporters::CsvUserReductionExporter
-      end.new(
-        :resource_id => request.exportable.id,
-        :resource_type => request.exportable.class.name,
-        :user_id => request.user_id,
-        :subgroup => request.subgroup
+      exporter = Exporters::CsvExporter.new(
+        resource_id: request.exportable.id,
+        resource_type: request.exportable.class.name,
+        user_id: request.user_id,
+        subgroup: request.subgroup,
+        requested_data: request.requested_data
       )
 
       exporter.dump(path) do |progress, total|
