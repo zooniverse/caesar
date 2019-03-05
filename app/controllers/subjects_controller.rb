@@ -3,10 +3,10 @@ class SubjectsController < ApplicationController
     skip_authorization
     @extracts = if workflow.nil?
       []
-    else 
+    else
       workflow.extracts.where(subject_id: subject.id)
     end
-    @reductions = (workflow||project).subject_reductions.where(subject_id: subject.id)
+    @reductions = reducible.subject_reductions.where(subject_id: subject.id)
   end
 
   def search
@@ -23,7 +23,6 @@ class SubjectsController < ApplicationController
       else
         # should this raise if there isn't a workflow or project and subject exists?
       end
-      redirect_to project_subject_path(project, subject_id) unless project.nil?
     else
       @subject = Subject.new(id: subject_id)
       render 'not_found'
@@ -31,6 +30,16 @@ class SubjectsController < ApplicationController
   end
 
   private
+
+  def reducible
+    if params.has_key? :workflow_id
+      workflow
+    elsif params.has_key? :project_id
+      project
+    else
+        # should this raise if there isn't a workflow or project and subject exists?
+    end
+  end
 
   def project
     @project ||= policy_scope(Project).find(params[:project_id]) if params.key? :project_id
