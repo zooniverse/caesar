@@ -1,7 +1,11 @@
 class SubjectsController < ApplicationController
   def show
     skip_authorization
-    @extracts = if workflow.nil? then [] else workflow.extracts.where(subject_id: subject.id) end
+    @extracts = if workflow.nil?
+      []
+    else 
+      workflow.extracts.where(subject_id: subject.id)
+    end
     @reductions = (workflow||project).subject_reductions.where(subject_id: subject.id)
   end
 
