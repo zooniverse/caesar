@@ -66,12 +66,19 @@ module Exporters
 
     def get_items
       if get_topic == Extract
-        find_hash = { :workflow_id => resource_id }
+        find_hash = { workflow_id: resource_id }
       elsif get_topic == SubjectReduction
-        find_hash = { :reducible_id => resource_id }
+        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
+      elsif get_topic == UserReduction
+        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
       end
-      find_hash[:user_id] = user_id unless user_id.blank?
+
+      if get_topic != SubjectReduction
+        find_hash[:user_id] = user_id unless user_id.blank?
+      end
+
       find_hash[:subgroup] = subgroup unless subgroup.blank?
+
       get_topic.where(find_hash)
     end
 
