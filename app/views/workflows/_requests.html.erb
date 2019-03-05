@@ -25,7 +25,7 @@
             <%= data_request.status.capitalize %>
           </span>
           <% if data_request.processing? %>
-            <% if (data_request.records_exported || 0) > 0 %>
+            <% if data_request.records_exported.to_i > 0 %>
               (<%= data_request.records_exported %> / <%= data_request.records_count %>)
             <% else %>
               (collecting <%= data_request.requested_data.pluralize.humanize.downcase %>)
