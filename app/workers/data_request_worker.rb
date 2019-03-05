@@ -21,6 +21,8 @@ class DataRequestWorker
         Exporters::CsvExtractExporter
       elsif request.subject_reductions?
         Exporters::CsvSubjectReductionExporter
+      elsif request.user_reductions?
+        Exporters::CsvUserReductionExporter
       end.new(
         :resource_id => request.exportable.id,
         :resource_type => request.exportable.class.name,
@@ -42,7 +44,7 @@ class DataRequestWorker
       request.failed!
       raise
     ensure
-      if(path.present? and ::File.exists(path))
+      if(path.present? and ::File.exists?(path))
         ::File.unlink path
       end
     end
