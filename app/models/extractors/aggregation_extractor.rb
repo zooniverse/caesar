@@ -12,10 +12,8 @@ module Extractors
     end
 
     def collect_parameters
-      blacklist_fields = [:url]
-
       self.class.merge_configuration_fields.map do |field, options|
-        if (blacklist_fields.include? field) || (self.send(field).blank?)
+        if (AggregationExtractor::BLACKLIST_FIELDS.include? field) || (self.send(field).blank?)
           nil
         else
           "#{field}=#{self.send field}"
@@ -27,22 +25,7 @@ module Extractors
       "#{base_url}/#{extractor_name}?" + collect_parameters
     end
 
-    @@valid_shapes = [
-      'circle',
-      'column',
-      'ellipse',
-      'fullWidthLine',
-      'fullHeightLine',
-      'line',
-      'point',
-      'rectangle',
-      'rotateRectangle',
-      'triangle',
-      'fan'
-    ]
-
-    def self.valid_shapes
-      @@valid_shapes
-    end
+    BLACKLIST_FIELDS = [:url].freeze
+    VALID_SHAPES = %w(circle column ellipse fullWidthLine fullHeightLine line point rectangle rotateRectangle triangle fan).freeze
   end
 end

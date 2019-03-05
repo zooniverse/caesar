@@ -9,14 +9,13 @@ module Reducers
     config_field :url, default: nil
     config_field :version, default: 1
 
-    def reduce_into(extracts, reduction, relevant_reductions=[])
+    def reduce_into(extracts, reduction)
       if default_reduction?
         http_reduce(reduction, extracts)
       elsif running_reduction?
         http_reduce(reduction, {
           extracts: extracts,
           store: reduction.store,
-          relevant_reductions: relevant_reductions
         })
       else
         raise ExternalReducerFailed.new "Impossible configuration, select default_reduction or running_reduction"

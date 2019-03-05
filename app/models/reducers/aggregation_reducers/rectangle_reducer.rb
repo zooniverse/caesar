@@ -2,11 +2,7 @@ module Reducers
   module AggregationReducers
     class RectangleReducer < Reducers::AggregationReducer
       # refer to https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
-      @@algorithm_names = ['auto', 'ball_tree', 'kd_tree', 'brute']
-
-      def self.algorithm_names
-        @@algorithm_names
-      end
+      ALGORITHM_NAMES = %w(auto ball_tree kd_tree brute).freeze
 
       config_field :eps, default: 5.0
       config_field :min_samples, default: 3
@@ -17,8 +13,8 @@ module Reducers
 
       validates :eps, numericality: true
       validates :min_samples, numericality: true
-      validates :metric, inclusion: { in: AggregationReducer.metric_names }
-      validates :algorithm, inclusion: { in: algorithm_names }
+      validates :metric, inclusion: { in: AggregationReducer::METRIC_NAMES }
+      validates :algorithm, inclusion: { in: RectangleReducer::ALGORITHM_NAMES }
       validates :leaf_size, numericality: true
       validates :p, numericality: true, allow_blank: true
 

@@ -63,7 +63,6 @@ describe Reducers::ExternalReducer do
     let(:request_data){{
       extracts: extracts,
       store: running_reduction.store,
-      relevant_reductions: []
     }}
 
     it 'sends the extracts and the store' do
