@@ -115,15 +115,41 @@ describe RunsExtractors do
       runner.extract(classification)
     end
 
-    it 'calls all defined extractors even when one fails' do
-      allow(blank_extractor).to receive(:process).and_raise(StandardError.new('boo'))
-      expect(blank_extractor).to receive(:process).once
-      expect(question_extractor).to receive(:process).once
 
-      expect do
-        runner.extract(classification)
-      end.to raise_error(StandardError)
+    describe 'error handling' do
+      class DummyException < StandardError; end
+
+      it 'raises an overall error if one of the extractors doesnt work' do
+        allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
+        allow(question_extractor).to receive(:process)
+
+        expect do
+          runner.extract(classification)
+        end.to raise_error(Extractor::ExtractionFailed)
+      end
+
+      it 'calls all defined extractors even when one fails' do
+        allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
+        expect(blank_extractor).to receive(:process).once
+        expect(question_extractor).to receive(:process).once
+
+        begin
+          runner.extract(classification)
+        rescue
+        end
+      end
+
+      it 'logs all exceptions to rollbar' do
+        allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
+        expect(question_extractor).to receive(:process).and_raise(StandardError.new('boo'))
+
+        expect(Rollbar).to receive(:log).with('error', instance_of(DummyException))
+        expect(Rollbar).to receive(:log).with('error', instance_of(StandardError))
+        begin
+          runner.extract(classification)
+        rescue
+        end
+      end
     end
   end
-
 end

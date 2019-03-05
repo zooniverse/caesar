@@ -19,7 +19,7 @@ class RunsExtractors
     novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
     novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
 
-    exception = nil
+    has_errors = false
 
     extracts = extractors.map do |extractor|
       extract_ok = false
@@ -27,7 +27,8 @@ class RunsExtractors
         data = extractor.process(classification)
         extract_ok = true
       rescue Exception => e
-        exception = e
+        Rollbar.log('error', e)
+        has_errors = true
       end
 
       next unless extract_ok
@@ -47,7 +48,7 @@ class RunsExtractors
       end
     end
 
-    raise (StandardError.new('One or more extractors failed').tap{ |e| e.set_backtrace exception.backtrace }) unless exception.blank?
+    raise Extractor::ExtractionFailed.new('One or more extractors failed') if has_errors
 
     return if extracts&.compact.blank?
 

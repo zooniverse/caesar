@@ -1,6 +1,8 @@
 class Extractor < ApplicationRecord
   include Configurable
 
+  class ExtractionFailed < StandardError; end
+
   def self.of_type(type)
     case type.to_s
     when "blank"
