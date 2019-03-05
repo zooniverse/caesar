@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_reduction do
     reducible { create :workflow }
-    user_id 1234
+    user_id { 1234 }
 
-    reducer_key "foo"
+    reducer_key { "foo" }
   end
 end

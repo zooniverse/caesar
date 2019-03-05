@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :workflow do
-    project_id 123
+    project_id { 123 }
   end
 end

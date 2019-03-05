@@ -74,7 +74,7 @@ group :development, :test do
   gem 'webmock'
   gem 'spring-commands-rspec'
   gem 'rubocop'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'rails-controller-testing'
 end
 

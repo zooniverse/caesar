@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence :key do |n|
     "key#{n}"
   end
@@ -13,11 +13,11 @@ FactoryGirl.define do
     factory :external_reducer, class: Reducers::ExternalReducer
 
     trait :reduce_by_subject do
-      topic 'reduce_by_subject'
+      topic { 'reduce_by_subject' }
     end
 
     trait :reduce_by_user do
-      topic 'reduce_by_user'
+      topic { 'reduce_by_user' }
     end
   end
 end

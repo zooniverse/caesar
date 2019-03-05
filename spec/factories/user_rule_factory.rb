@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_rule do
-    condition [:const, true]
+    condition { [:const, true] }
   end
 end

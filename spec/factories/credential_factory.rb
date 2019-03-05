@@ -1,13 +1,13 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :credential do
     transient do
-      login "tester"
-      admin false
+      login { "tester" }
+      admin { false }
       workflows { [] }
     end
 
-    token "fake"
-    expires_at 1.day.from_now
+    token { "fake" }
+    expires_at { 1.day.from_now }
     project_ids { workflows.map(&:project_id).uniq }
 
     after(:build) do |credential, evaluator|
@@ -15,7 +15,7 @@ FactoryGirl.define do
     end
 
     trait :not_logged_in do
-      login nil
+      login { nil }
     end
 
     trait :expired do
@@ -23,7 +23,7 @@ FactoryGirl.define do
     end
 
     trait :admin do
-      admin true
+      admin { true }
     end
   end
 end
