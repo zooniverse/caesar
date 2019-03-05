@@ -1,5 +1,3 @@
-class DummyException < StandardError; end
-
 describe RunsExtractors do
   let(:classification) do
     Classification.new(
@@ -119,13 +117,15 @@ describe RunsExtractors do
 
 
     describe 'error handling' do
+      class DummyException < StandardError; end
+
       it 'raises an overall error if one of the extractors doesnt work' do
         allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
         allow(question_extractor).to receive(:process)
 
         expect do
           runner.extract(classification)
-        end.to raise_error(ExtractionFailed)
+        end.to raise_error(Extractor::ExtractionFailed)
       end
 
       it 'calls all defined extractors even when one fails' do
@@ -152,6 +152,4 @@ describe RunsExtractors do
       end
     end
   end
-
-
 end

@@ -38,7 +38,7 @@ Rollbar.configure do |config|
                                         'Extractors::PluckFieldExtractor::FailedMatch' => 'ignore',
                                         'RunsReducers::ReductionConflict' => 'ignore',
                                         'Reducers::ExternalReducer::ExternalReducerFailed' => 'ignore',
-                                        'ExtractionFailed ' => 'ignore')
+                                        'Extractor::ExtractionFailed ' => 'ignore')
   #
   # You can also specify a callable, which will be called with the exception instance.
   # config.exception_level_filters.merge!('MyCriticalException' => lambda { |e| 'critical' })
