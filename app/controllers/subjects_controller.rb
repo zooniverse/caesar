@@ -16,7 +16,13 @@ class SubjectsController < ApplicationController
     subject_id = search_params[:id]
 
     if Subject.exists?(subject_id)
-      redirect_to workflow_subject_path(workflow, subject_id) unless workflow.nil?
+      if workflow
+        redirect_to workflow_subject_path(workflow, subject_id)
+      elsif project
+        redirect_to project_subject_path(project, subject_id)
+      else
+        # should this raise if there isn't a workflow or project and subject exists?
+      end
       redirect_to project_subject_path(project, subject_id) unless project.nil?
     else
       @subject = Subject.new(id: subject_id)
