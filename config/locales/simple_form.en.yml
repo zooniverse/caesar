@@ -22,7 +22,7 @@ en:
     hints:
       extractor:
         key: 'Must be unique for this workflow, but does not impact anything beyond that.'
-        minimum_workflow_version: 'If you change your workflow during your project, you might make it impossible for Caesar to be compatible with all the versions of your workflow. This lets you specify a minimum version, classifications made on older workflow versions will be ignored. Workflow version numbers look like 4.69 where the first number increments with task changes, and the minor number after the decimal increments with textual changes.'
+        minimum_workflow_version: 'If you change your workflow during your project, you might make it impossible for Caesar to be compatible with all the versions of your workflow. This lets you specify a minimum version, classifications made on older workflow versions will be ignored. Workflow version numbers look like 4.69 where the first number increments with task changes, and the minor number after the decimal increments with textual changes. Leaving it blank will make this work on all versions.'
         task_key: 'Specify which task to extract.'
         if_missing: 'What to do when a value cannot be found. By default Caesar will error on the classification.'
         nothing_here_choice: 'Set this to the value for your "nothing here" choice (if you have one). Usually something like "NOTHING_HERE". When set and a classification has no annotations at all, Caesar will extract that classification as if an annotation for nothing-here was chosen.'
