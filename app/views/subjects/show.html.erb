@@ -90,6 +90,10 @@
         </div>
       <% end %>
     </p>
-    <%= link_to 'Back', workflow_path(@workflow, anchor: 'subjects'), class: 'btn btn-primary' %>
+    <% if @workflow.present? %>
+      <%= link_to 'Back', workflow_path(@workflow, anchor: 'subjects'), class: 'btn btn-primary' %>
+    <% else %>
+      <%= link_to 'Back', project_path(@project, anchor: 'subjects'), class: 'btn btn-primary' %>
+    <% end %>
   </div>
 </div>

@@ -63,6 +63,13 @@ Rails.application.routes.draw do
       resources :subject_reductions, only: [:index]
     end
 
+    resources :subjects, only: [:show] do
+      collection do
+        post 'search', to: 'subjects#search'
+      end
+      resources :subject_reductions, only: [:index]
+    end
+
     resources :users, only: [:show] do
       resources :user_reductions, only: [:index]
     end

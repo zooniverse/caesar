@@ -146,4 +146,12 @@ class Workflow < ApplicationRecord
       FetchClassificationsWorker.perform_in(rand(duration.to_i).seconds, id, subject_id, FetchClassificationsWorker.fetch_for_subject)
     end
   end
+
+  def last_n_subjects(n, source)
+    source.last(n*5).pluck(:subject_id).uniq.last(n)
+  end
+
+  def random_n_subjects(n)
+    (extracts.pluck(:subject_id).sample(n*3) + subject_reductions.pluck(:subject_id).sample(n*3)).uniq.sample(n)
+  end
 end
