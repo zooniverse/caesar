@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :classification_event, class: Hash do
     transient do
       workflow
