@@ -30,6 +30,8 @@ class Reducer < ApplicationRecord
       Reducers::SummaryStatisticsReducer
     when 'unique_count'
       Reducers::UniqueCountReducer
+    when 'rectangle'
+      Reducers::AggregationReducers::RectangleReducer
     when 'sqs'
       Reducers::SqsReducer
     else

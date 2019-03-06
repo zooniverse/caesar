@@ -17,6 +17,8 @@ class Extractor < ApplicationRecord
       Extractors::WhoExtractor
     when "pluck_field"
       Extractors::PluckFieldExtractor
+    when "shape"
+      Extractors::AggregationExtractors::ShapeExtractor
     else
       raise "Unknown type #{type}"
     end

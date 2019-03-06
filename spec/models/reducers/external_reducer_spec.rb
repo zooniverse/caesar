@@ -50,28 +50,6 @@ describe Reducers::ExternalReducer do
     expect(result.data).to be(nil)
   end
 
-  it 'does not post if no url is configured' do
-    reducer = described_class.new(config: {"url" => nil})
-
-    expect do
-      reducer.reduce_into(extracts, build(:subject_reduction))
-    end.to raise_error(StandardError)
-  end
-
-  describe 'validations' do
-    it 'is not valid with a non-https url' do
-      reducer = described_class.new(config: {"url" => "http://foo.com"})
-      expect(reducer).not_to be_valid
-      expect(reducer.errors[:url]).to be_present
-    end
-
-    it 'is not valid with some strange url' do
-      reducer = described_class.new(config: {"url" => "https:\\foo+3"})
-      expect(reducer).not_to be_valid
-      expect(reducer.errors[:url]).to include("URL could not be parsed")
-    end
-  end
-
   describe 'running_reduction' do
     let(:running_reducer){ reducer.tap{ |r| r.running_reduction! } }
     let(:store){ {"foo" => "bar"} }
@@ -84,7 +62,7 @@ describe Reducers::ExternalReducer do
 
     let(:request_data){{
       extracts: extracts,
-      store: running_reduction.store
+      store: running_reduction.store,
     }}
 
     it 'sends the extracts and the store' do
