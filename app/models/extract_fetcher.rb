@@ -7,12 +7,17 @@ class ExtractFetcher
     @@strategies
   end
 
-  def initialize(filter)
+  def initialize(filter, extract_ids: [], reducers:)
     @filter = filter
-
-    @extract_ids = []
+    @extract_ids = extract_ids.uniq
     @topic = :reduce_by_subject
-    @strategy = :fetch_all
+
+    # if we don't need to fetch everything, try not to
+    if reducers.all?{ |reducer| reducer.running_reduction? }
+      @strategy = :fetch_minimal
+    else
+      @strategy = :fetch_all
+    end
   end
 
   def strategy!(strategy)
@@ -26,14 +31,6 @@ class ExtractFetcher
     ExtractFetcher.new(filter).tap do |fetcher|
       fetcher.topic = topic.to_sym
       fetcher.extract_ids = @extract_ids
-      fetcher.strategy = @strategy
-    end
-  end
-
-  def including(extract_ids)
-    ExtractFetcher.new(filter).tap do |fetcher|
-      fetcher.extract_ids = (@extract_ids + extract_ids).uniq
-      fetcher.topic = @topic
       fetcher.strategy = @strategy
     end
   end
