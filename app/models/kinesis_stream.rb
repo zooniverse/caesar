@@ -1,15 +1,16 @@
 class KinesisStream
-  attr_reader :queue
-
-  def initialize
-    @queue = DeferredQueue.new
-  end
-
   def receive(payload)
-    ActiveRecord::Base.transaction do
-      payload.each { |event| StreamEvents.from(self, event).process }
+    results = ActiveRecord::Base.transaction do
+      payload.map { |event| StreamEvents.from(event).process }
     end
 
-    queue.commit
+    results.each do |result|
+      case result
+      when Classification
+        ExtractWorker.perform_async(classification.id) unless classification.workflow.paused?
+      else
+        # nothing to enqueue
+      end
+    end
   end
 end
