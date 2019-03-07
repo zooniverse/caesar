@@ -24,7 +24,15 @@ class RunsExtractors
     extracts = extractors.map do |extractor|
       extract_ok = false
       begin
-        data = extractor.process(classification)
+        light = extractor.stoplight do
+          if too_old?(classification)
+            NoData
+          else
+            data = extractor.process(classification)
+          end
+        end
+
+        light.run
         extract_ok = true
       rescue Exception => e
         Rollbar.log('error', e)

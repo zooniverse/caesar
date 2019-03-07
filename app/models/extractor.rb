@@ -32,23 +32,23 @@ class Extractor < ApplicationRecord
   NoData = Class.new
 
   def process(classification)
-    light = Stoplight("extractor-#{id}") do
-      if too_old?(classification)
-        NoData
-      else
         extract_data_for(classification)
-      end
-    end
-
-    light.run
   end
 
   def extract_data_for(classification)
     raise NotImplementedError
   end
 
+  def stoplight
+    if block_given?
+      Stoplight("extractor-#{id}") { yield }
+    else
+      Stoplight("extractor-#{id}")
+    end
+  end
+
   def stoplight_color
-    @color ||= Stoplight("extractor-#{id}").color
+    @color ||= stoplight.color
   end
 
   private
