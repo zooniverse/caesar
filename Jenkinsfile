@@ -12,7 +12,7 @@ pipeline {
       agent any
       steps {
         script {
-          def dockerRepoName = 'zooniverse/caesar-next'
+          def dockerRepoName = 'zooniverse/caesar'
           def dockerImageName = "${dockerRepoName}:${BRANCH_NAME}"
           def newImage = docker.build(dockerImageName)
           newImage.push()
