@@ -22,10 +22,17 @@ module Reducers
 
     def unpack(reduction, result)
       reduction.tap do |r|
-        r.data = result
-        if r&.data&.key? '_store'
-          r.store = r.data['_store']
-          r.data = r.data.except '_store'
+        if result.present? && (result.keys == [:data, :store])
+          # accept result format { data: {...}, store: {...} }
+          r.data = result[:data]
+          r.store = result[:store]
+        else
+          # accept result format {  _store: {}, ... }
+          r.data = result
+          if r&.data&.key? '_store'
+            r.store = r.data['_store']
+            r.data = r.data.except '_store'
+          end
         end
       end
     end
