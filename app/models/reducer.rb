@@ -55,7 +55,7 @@ class Reducer < ApplicationRecord
       # if any of the reductions that this reducer cares about have expired, we're
       # going to need to fetch all of the relevant extracts in order to rebuild them
       if reduction_fetcher.has_expired?
-        extract_fetcher.strategy! :fetch_all
+        extract_fetcher.strategy :fetch_all
       end
 
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h

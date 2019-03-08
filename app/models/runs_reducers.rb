@@ -36,7 +36,7 @@ class RunsReducers
 
     # if we don't need to fetch everything, try not to
     if reducers.all?{ |reducer| reducer.running_reduction? }
-      extract_fetcher.strategy! :fetch_minimal
+      extract_fetcher.strategy :fetch_minimal
     end
 
     # prefetch all reductions to avoid race conditions with optimistic locking
