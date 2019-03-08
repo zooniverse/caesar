@@ -54,6 +54,10 @@ class DataRequest < ApplicationRecord
     @stored_export ||= StoredExport.new("#{id}.csv")
   end
 
+  def simple?
+    user_id.nil? && subgroup.nil?
+  end
+
   def url
     return nil unless complete?
     stored_export.download_url

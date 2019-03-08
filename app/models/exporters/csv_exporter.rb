@@ -14,13 +14,13 @@ module Exporters
       @requested_data = params[:requested_data]
     end
 
-    def dump(path=nil)
+    def dump(path=nil, estimated_count: nil)
       if path.blank?
         path = "tmp/#{get_topic.name.demodulize.underscore.pluralize}_#{resource_id}.csv"
       end
 
       items = get_items
-      total = items.count
+      total = estimated_count || 0
       progress = 0
 
       CSV.open(path, "wb",
