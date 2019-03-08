@@ -42,10 +42,11 @@ RSpec.describe Reducer, type: :model do
   end
 
   it 'filters extracts' do
-    extract_filter = instance_double(ExtractFilter, filter: [])
-    expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)
+    extract_filter = instance_double(ExtractFilter)
+    expect(ExtractFilter).to receive(:new).and_return(extract_filter)
+
+    expect(extract_filter).to receive(:apply).once
     subject.filter_extracts(extracts, create(:subject_reduction))
-    expect(extract_filter).to have_received(:filter).once
   end
 
   it 'groups extracts' do
