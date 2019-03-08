@@ -4,25 +4,6 @@ class ExtractsController < ApplicationController
     render json: extracts
   end
 
-  def update
-    extract = Extract.find_or_initialize_by(workflow_id: workflow.id,
-                                            extractor_key: extractor.key,
-                                            classification_id: classification_id)
-    authorize extract
-
-    if extract.data != extract_params[:data]
-      Workflow.transaction do
-        extract.subject_reduction.update_all expired: true
-        extract.user_reduction.update_all expired: true
-        extract.update! extract_params
-      end
-
-      ReduceWorker.perform_async(workflow.id, "Workflow", subject.id, user_id) if workflow.configured?
-    end
-
-    render json: extract
-  end
-
   private
 
   def workflow
