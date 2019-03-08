@@ -39,14 +39,4 @@ class ReductionFetcher
     return @subject_reductions.where(query.except(:user_id)) if reduce_by_subject?
     return @user_reductions.where(query.except(:subject_id)) if reduce_by_user?
   end
-
-  def have_expired?
-    has_expired?
-  end
-
-  def has_expired?
-    true if (reduce_by_subject? && @subject_reductions.any?{ |reduction| reduction.expired? })
-    true if (reduce_by_user? && @user_reductions.any?{ |reduction| reduction.expired? })
-    false
-  end
 end

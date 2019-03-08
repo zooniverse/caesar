@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_28_195338) do
+ActiveRecord::Schema.define(version: 2019_03_08_222608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -157,7 +157,6 @@ ActiveRecord::Schema.define(version: 2019_02_28_195338) do
     t.string "subgroup", default: "_default", null: false
     t.integer "lock_version", default: 0, null: false
     t.jsonb "store"
-    t.boolean "expired", default: false
     t.integer "reducible_id"
     t.string "reducible_type"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "subject_reductions_recency"
@@ -219,7 +218,6 @@ ActiveRecord::Schema.define(version: 2019_02_28_195338) do
     t.datetime "updated_at", null: false
     t.integer "lock_version", default: 0, null: false
     t.jsonb "store"
-    t.boolean "expired", default: false
     t.integer "reducible_id"
     t.string "reducible_type"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "user_reductions_recency"

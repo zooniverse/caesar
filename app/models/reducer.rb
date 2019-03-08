@@ -52,12 +52,6 @@ class Reducer < ApplicationRecord
 
   def process(extract_fetcher, reduction_fetcher, relevant_reductions=[])
     light = Stoplight("reducer-#{id}") do
-      # if any of the reductions that this reducer cares about have expired, we're
-      # going to need to fetch all of the relevant extracts in order to rebuild them
-      if reduction_fetcher.has_expired?
-        extract_fetcher.strategy! :fetch_all
-      end
-
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
       grouped_extracts.map do |group_key, grouped|
@@ -65,13 +59,11 @@ class Reducer < ApplicationRecord
         extracts = filter_extracts(grouped, reduction)
 
         # Set relevant reduction on each extract if required by external reducer
-        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
-
         # relevant_reductions are any previously reduced user or subject reductions
         # that are required by this reducer to properly calculate
-        reduce_into(augmented_extracts, reduction).tap do |r|
-          r.expired = false
+        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
 
+        reduce_into(augmented_extracts, reduction).tap do |r|
           # note that because we use deferred associations, this won't actually hit the database
           # until the reduction is saved, meaning it happens inside the transaction
           associate_extracts(r, extracts) if running_reduction?
