@@ -16,9 +16,6 @@ class RunsExtractors
       DescribeWorkflowWorker.perform_async(classification.workflow_id)
     end
 
-    novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
-    novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
-
     has_errors = false
 
     extracts = extractors.map do |extractor|
@@ -56,14 +53,6 @@ class RunsExtractors
       extracts.each do |extract|
         extract.save!
       end
-    end
-
-    if workflow.concerns_subjects? and novel_subject
-      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
-    end
-
-    if workflow.concerns_users? and novel_user
-      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
     end
 
     extracts
