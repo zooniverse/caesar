@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   resources :workflows do
     resources :extractors
     resources :extractors, param: :key do
-      resource :extract, except: [:edit]
+      resource :extract, except: [:edit, :update]
       resources :extracts, only: [:index]
     end
 
