@@ -41,4 +41,22 @@ describe Reducers::HttpReduction do
       default_reducer.http_reduce(reduction, nil)
     end.to raise_error(Reducers::HttpReduction::ReductionFailed)
   end
+
+  describe 'result parsing' do
+    it 'correctly parses the old format (_store)' do
+      response = { '_store' => { 'contents' => 'store contents'}, 'contents' => 'data contents'}
+      default_reducer.unpack(reduction, response)
+
+      expect(reduction.store).to eq({'contents' => 'store contents'})
+      expect(reduction.data).to eq({'contents' => 'data contents'})
+    end
+
+    it 'correctly parses the new format' do
+      response = { 'store' => { 'contents' => 'store contents'}, 'data' => { 'contents' => 'data contents' }}
+      default_reducer.unpack(reduction, response)
+
+      expect(reduction.store).to eq({'contents' => 'store contents'})
+      expect(reduction.data).to eq({'contents' => 'data contents'})
+    end
+  end
 end
