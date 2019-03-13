@@ -28,7 +28,7 @@ class Credential < ApplicationRecord
   end
 
   def expired?
-    expires_at < Time.zone.now
+    client.token_expiry < Time.now.utc
   end
 
   def logged_in?
@@ -98,8 +98,6 @@ class Credential < ApplicationRecord
   end
 
   def set_expires_at
-    unless expires_at.present?
-      self.expires_at ||= Time.at(client.token_expiry)
-    end
+    self.expires_at ||= Time.at(client.token_expiry)
   end
 end
