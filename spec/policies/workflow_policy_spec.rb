@@ -29,7 +29,7 @@ RSpec.describe WorkflowPolicy do
     end
 
     it 'returns workflows that the user is a collaborator on' do
-      credential = create(:credential, project_ids: workflows.pluck(:project_id).uniq)
+      credential = build(:credential, project_ids: workflows.pluck(:project_id).uniq)
       expect(records_for(credential)).to match_array(Workflow.all)
     end
   end

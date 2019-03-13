@@ -6,10 +6,10 @@ FactoryBot.define do
       logged_in { true }
       user_id { -1 }
       workflows { [] }
+      expired { false }
     end
 
     token { "fake" }
-    expires_at { 1.day.from_now }
     project_ids { workflows.map(&:project_id).uniq }
 
     after(:build) do |credential, evaluator|
@@ -17,6 +17,7 @@ FactoryBot.define do
       credential.instance_variable_set(:@login, evaluator.login)
       credential.instance_variable_set(:@logged_in, evaluator.logged_in)
       credential.instance_variable_set(:@user_id, evaluator.user_id)
+      credential.instance_variable_set(:@expired, evaluator.expired)
     end
 
     trait :not_logged_in do
@@ -25,7 +26,7 @@ FactoryBot.define do
     end
 
     trait :expired do
-      expires_at { 5.minutes.ago }
+      expired { true }
     end
 
     trait :admin do

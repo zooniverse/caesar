@@ -28,7 +28,11 @@ class Credential < ApplicationRecord
   end
 
   def expired?
-    client.token_expiry < Time.now.utc
+    if @expired.nil?
+      client.token_expiry < Time.now.utc
+    else
+      @expired
+    end
   end
 
   def logged_in?
@@ -98,6 +102,6 @@ class Credential < ApplicationRecord
   end
 
   def set_expires_at
-    self.expires_at ||= Time.at(client.token_expiry)
+    self.expires_at ||= client.token_expiry
   end
 end

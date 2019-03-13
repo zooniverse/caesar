@@ -29,7 +29,7 @@ RSpec.describe ProjectPolicy do
     end
 
     it 'returns projects that the user is a collaborator on' do
-      credential = create(:credential, project_ids: projects.pluck(:id).uniq)
+      credential = build(:credential, project_ids: projects.pluck(:id).uniq)
       expect(records_for(credential)).to match_array(Project.all)
     end
   end
