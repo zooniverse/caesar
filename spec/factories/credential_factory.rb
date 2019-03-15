@@ -13,7 +13,6 @@ FactoryBot.define do
     project_ids { workflows.map(&:project_id).uniq }
 
     after(:build) do |credential, evaluator|
-      credential.instance_variable_set(:@admin, evaluator.admin)
       credential.instance_variable_set(:@login, evaluator.login)
       credential.instance_variable_set(:@logged_in, evaluator.logged_in)
       credential.instance_variable_set(:@user_id, evaluator.user_id)

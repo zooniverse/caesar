@@ -14,7 +14,7 @@ RSpec.describe DataRequestPolicy do
     end
 
     it 'returns all records for an admin' do
-      credential = build(:credential, :admin, project_ids: [])
+      credential = fake_credential(admin: true, project_ids: [])
       expect(records_for(credential)).to match_array(DataRequest.all)
     end
 
