@@ -45,7 +45,7 @@ describe ExtractFilter do
     let(:filter) { ExtractFilter.new({}) }
 
     it 'returns the unfiltered list of extracts, sorted by classification_at' do
-      expect(filter.filter(extracts)).to eq([extracts[2], extracts[0], extracts[1], extracts[3], extracts[4]])
+      expect(filter.apply(extracts)).to eq([extracts[2], extracts[0], extracts[1], extracts[3], extracts[4]])
     end
   end
 
@@ -61,7 +61,7 @@ describe ExtractFilter do
         # if we filtered by subrange/index before extractor key, then we would discard the only
         # extract produced by the 'bar' extractor
         filter = described_class.new(from: 0, to: 0, extractor_keys: ["bar"])
-        results = filter.filter(extracts)
+        results = filter.apply(extracts)
         expect(results).not_to be_empty
       end
     end
@@ -76,7 +76,7 @@ describe ExtractFilter do
       ]
 
       filter = described_class.new(empty_extracts: "ignore_empty", repeated_classifications: "keep_last")
-      expect(filter.filter(extracts)).to eq([extracts[2]])
+      expect(filter.apply(extracts)).to eq([extracts[2]])
     end
   end
 

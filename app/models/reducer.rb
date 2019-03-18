@@ -91,7 +91,7 @@ class Reducer < ApplicationRecord
 
   def filter_extracts(extracts, reduction)
     extracts = extracts.reject{ |extract| reduction.extract_ids.include? extract.id }
-    extract_filter.filter(extracts)
+    extract_filter.apply(extracts)
   end
 
   def associate_extracts(reduction, extracts)
