@@ -9,12 +9,7 @@ class Credential < ApplicationRecord
 
   def admin?
     return true if Rails.env.development?
-
-    if @admin.nil?
-      client.authenticated_admin?
-    else
-      @admin
-    end
+    client.authenticated_admin?
   rescue Panoptes::Client::NotLoggedIn, Panoptes::Client::AuthenticationExpired
     false
   end
@@ -28,39 +23,22 @@ class Credential < ApplicationRecord
   end
 
   def expired?
-    if @expired.nil?
-      client.token_expiry < Time.now.utc
-    else
-      @expired
-    end
+    client.token_expiry < Time.now.utc
   end
 
   def logged_in?
     return true if Rails.env.development?
-
-    if @logged_in.nil?
-      client.authenticated?
-    else
-      @logged_in
-    end
+    client.authenticated?
   rescue Panoptes::Client::NotLoggedIn, Panoptes::Client::AuthenticationExpired
     false
   end
 
   def login
-    if @login.nil?
-      client.authenticated_user_login
-    else
-      @login
-    end
+    client.authenticated_user_login
   end
 
   def user_id
-    if @user_id.nil?
-      client.authenticated_user_id
-    else
-      @user_id
-    end
+    client.authenticated_user_id
   end
 
   def fetch_accessible_projects

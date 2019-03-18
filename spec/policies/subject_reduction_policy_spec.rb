@@ -7,23 +7,23 @@ RSpec.describe SubjectReductionPolicy do
     let!(:reductions) { create_list :subject_reduction, 4 }
 
     it 'returns no records when not logged in' do
-      credential = build(:credential, :not_logged_in)
+      credential = fake_credential(logged_in: false)
       expect(records_for(credential)).to match_array(SubjectReduction.none)
     end
 
     it 'returns all records for an admin' do
-      credential = build(:credential, :admin, project_ids: [])
+      credential = fake_credential(admin: true, project_ids: [])
       expect(records_for(credential)).to match_array(SubjectReduction.all)
     end
 
     it 'returns no records when not a collaborator on any project' do
-      credential = build(:credential, project_ids: [])
+      credential = fake_credential(project_ids: [])
       expect(records_for(credential)).to match_array(SubjectReduction.none)
     end
 
     it 'returns records that the user is a collaborator on' do
       workflow = create(:workflow)
-      credential = build(:credential, project_ids: [workflow.project_id])
+      credential = fake_credential(project_ids: [workflow.project_id])
       expect(records_for(credential)).to match_array(SubjectReduction.all)
     end
   end
@@ -32,40 +32,41 @@ RSpec.describe SubjectReductionPolicy do
     let(:reduction) { create :subject_reduction }
 
     it 'denies access when not logged in' do
-      credential = build(:credential, :not_logged_in)
+      credential = fake_credential(logged_in: false)
       expect(subject).not_to permit(credential, reduction)
     end
 
     it 'denies access when token has expired' do
-      credential = build(:credential, :expired, workflows: [reduction.reducible])
+      credential = fake_credential(expired: true, project_ids: [reduction.reducible.project_id])
       expect(subject).not_to permit(credential, reduction)
     end
 
     it 'denies access when not a collaborator on the project' do
-      credential = build(:credential, workflows: [])
+      credential = fake_credential(project_ids: [])
       expect(subject).not_to permit(credential, reduction)
     end
 
     it 'grants access to an admin' do
-      credential = build(:credential, :admin, workflows: [])
+      credential = fake_credential(admin: true, project_ids: [])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'grants access to reductions of collaborated project' do
-      credential = build(:credential, workflows: [reduction.reducible])
+      credential = fake_credential(project_ids: [reduction.reducible.project_id])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'grants access if the workflow has public reductions' do
       reduction.reducible.update! public_reductions: true
-      credential = build(:credential, :not_logged_in)
+      credential = fake_credential(logged_in: false)
       expect(subject).to permit(credential, reduction)
     end
 
     it 'returns both public and scoped reductions' do
       public_reduction = create(:subject_reduction)
       public_reduction.reducible.update! public_reductions: true
-      credential = build(:credential, workflows: [reduction.reducible])
+
+      credential = fake_credential(project_ids: [reduction.reducible.project_id])
       expect(subject).to permit(credential, reduction)
       expect(subject).to permit(credential, public_reduction)
     end
@@ -73,7 +74,7 @@ RSpec.describe SubjectReductionPolicy do
     it 'returns project-scoped reductions' do
       project = create(:project)
       project_reduction = create(:subject_reduction, reducible: project)
-      credential = build(:credential, project_ids: [project_reduction.reducible.id])
+      credential = fake_credential(project_ids: [project_reduction.reducible.id])
       expect(subject).to permit(credential, project_reduction)
     end
   end
@@ -82,18 +83,18 @@ RSpec.describe SubjectReductionPolicy do
     let(:reduction) { create :subject_reduction }
 
     it 'grants access to an admin' do
-      credential = build(:credential, :admin, workflows: [])
+      credential = fake_credential(admin: true, project_ids: [])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'grants access to reduction of collaborated project' do
-      credential = build(:credential, workflows: [reduction.reducible])
+      credential = fake_credential(project_ids: [reduction.reducible.project_id])
       expect(subject).to permit(credential, reduction)
     end
 
     it 'denies access to non-collabs for public reduction' do
       reduction.reducible.update! public_reductions: true
-      credential = build(:credential)
+      credential = fake_credential
       expect(subject).not_to permit(credential, reduction)
     end
   end
@@ -101,7 +102,7 @@ RSpec.describe SubjectReductionPolicy do
   permissions :destroy? do
     it 'allows admin to destroy records' do
       reduction = create :subject_reduction
-      credential = build(:credential, :admin)
+      credential = fake_credential(admin: true)
       expect(subject).to permit(credential, reduction)
     end
   end

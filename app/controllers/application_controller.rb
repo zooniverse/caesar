@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   end
 
   def credential
-    return FakeCredential.new if Rails.env.development?
+    return (@credential = FakeCredential.new) if Rails.env.development?
 
     token = session_token || bearer_token
 
