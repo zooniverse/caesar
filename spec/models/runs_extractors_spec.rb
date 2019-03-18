@@ -83,25 +83,6 @@ describe RunsExtractors do
     end
   end
 
-  it 'fetches classifications from panoptes when there are no other extracts' do
-    expect { runner.extract(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
-  end
-
-  it 'does not fetch subject classifications when extracts already present' do
-    create(
-      :extract,
-      classification_id: classification.id,
-      extractor_key: "zzz",
-      subject_id: classification.subject_id,
-      workflow_id: classification.workflow_id,
-      data: {"ZZZ" => 1}
-    )
-
-    expect { runner.extract(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size)
-  end
-
   describe '#extract' do
     let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
     let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
