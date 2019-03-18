@@ -10,8 +10,8 @@ class ExtractFilter
   end
 
   def apply(extracts)
-    classification_groups = ExtractsForClassification.from(extracts)
-    apply_filters(classification_groups, filter_objects)
+    extracts_by_classification = ExtractsForClassification.from(extracts)
+    apply_filters(extracts_by_classification, filter_objects)
   end
 
   private
