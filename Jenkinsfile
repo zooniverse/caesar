@@ -7,6 +7,10 @@ pipeline {
     STAGING_AMI_ID = 'i-099015d22a397fcca'
   }
 
+  options {
+    disableConcurrentBuilds()
+  }
+
   stages {
     stage('Build Docker image') {
       agent any
