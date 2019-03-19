@@ -4,7 +4,7 @@ pipeline {
   agent none
 
   environment {
-    STAGING_AMI_ID = 'i-099015d22a397fcca'
+    STAGING_INSTANCE_ID = 'i-01f2884b0040c8809'
   }
 
   options {
@@ -47,7 +47,7 @@ pipeline {
           while true; do sleep 3; echo -n "."; done &
           KEEP_ALIVE_ECHO_JOB=\$!
           cd /operations
-          ./update_in_place.sh -i $STAGING_AMI_ID panoptes-redis-staging caesar
+          ./update_in_place.sh -i $STAGING_INSTANCE_ID panoptes-redis-staging caesar
           kill \${KEEP_ALIVE_ECHO_JOB}
         """
       }
