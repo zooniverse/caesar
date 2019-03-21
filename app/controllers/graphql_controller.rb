@@ -16,20 +16,25 @@ class GraphqlController < ApplicationController
 
   private
 
-  def authenticated?
-    # Hairy code warning:
+  def authenticate!
+    credential.authenticate!
+  rescue Panoptes::Client::AuthenticationExpired
     # We need to attempt to load the credential so that `authenticate!`
     # will catch errors associated with loading invalid tokens,
     # and will have a chance to handle redirects and expired session management.
-    credential
-
+    handle_unauthenticated_request("Session expired. Please log in again.")
+  rescue
     # But, we don't actually care whether or not there is a logged-in user, since
     # the GraphQL API also supports some anonymous calls.
     true
   end
 
+  def authenticated?
+    self.authenticate!
+  end
+
   def authorized?
-    true
+    self.authenticated?
   end
 
   def record_not_found(exception)

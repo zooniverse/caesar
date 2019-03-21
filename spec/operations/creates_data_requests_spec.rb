@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CreatesDataRequests do
-  let(:credential) { build :credential, admin: true }
+  let(:credential) { fake_credential admin: true }
   let(:workflow) { create :workflow }
 
   let(:obj) { nil }
@@ -26,7 +26,7 @@ describe CreatesDataRequests do
     end
 
     context 'when not a project collaborator' do
-      let(:credential) { build :credential, workflows: [] }
+      let(:credential) { fake_credential project_ids: [] }
 
       it 'allows creating request when workflow exposes extracts publicly' do
         workflow.update! public_extracts: true
@@ -52,7 +52,7 @@ describe CreatesDataRequests do
     end
 
     context 'when not a project collaborator' do
-      let(:credential) { build :credential, workflows: [] }
+      let(:credential) { fake_credential project_ids: [] }
 
       it 'allows creating request when workflow exposes reductions publicly' do
         workflow.update! public_reductions: true

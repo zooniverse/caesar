@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 describe ProjectsController, type: :controller do
-  before { fake_session admin: true }
 
   describe 'GET #index' do
     it 'returns json' do
-      create :project
+      project = create :project
+
+      credential = fake_credential project_ids: [project.id]
+      allow(credential).to receive(:accessible_project?).and_return(true)
+      allow(subject).to receive(:credential).and_return(credential)
+
       get :index, format: :json
       expect(response).to have_http_status(:success)
 
@@ -17,6 +21,11 @@ describe ProjectsController, type: :controller do
   describe 'GET #show' do
     it 'returns json' do
       project = create :project
+
+      credential = fake_credential project_ids: [project.id]
+      allow(credential).to receive(:accessible_project?).and_return(true)
+      allow(subject).to receive(:credential).and_return(credential)
+
       get :show, format: :json, params: {id: project.id}
 
       expect(response).to have_http_status(:success)
@@ -27,30 +36,47 @@ describe ProjectsController, type: :controller do
 
   describe 'POST #create' do
     it 'adds the project if it is accessible' do
-      allow(@credential).to receive(:accessible_project?).and_return(true)
+      credential = fake_credential
+      allow(credential).to receive(:accessible_project?).and_return(true)
+      allow(subject).to receive(:credential).and_return(credential)
+
       post :create, params: { project: { id: 9, display_name: 'nein' } }, format: :json
       expect(response.status).to eq(201)
     end
 
     it 'does not add inaccessible projects' do
-      allow(@credential).to receive(:accessible_project?).and_return(false)
+      credential = fake_credential
+      allow(credential).to receive(:accessible_project?).and_return(false)
+      allow(subject).to receive(:credential).and_return(credential)
+
       post :create, params: { project: { id: 9, display_name: 'nein' } }, format: :json
       expect(response.status).to eq(403)
     end
 
     it 'redirects with a 302 if the project already exists' do
-      allow(@credential).to receive(:accessible_project?).and_return(true)
+      credential = fake_credential
+      allow(credential).to receive(:accessible_project?).and_return(true)
+      allow(subject).to receive(:credential).and_return(credential)
+
       project = create :project
       post :create, params: { project: { id: project.id } }, format: :json
+
       expect(response).to redirect_to project
       expect(response.status).to eq(302)
+
+      #TODO: there shouldn't be a flash alert present for json, only html
       expect(flash[:alert]).to be_present
     end
   end
 
   describe 'PUT #update' do
     it 'updates the project' do
-      create :project, id: 8, display_name: 'seven'
+      pre_project = create :project, id: 8, display_name: 'seven'
+
+      credential = fake_credential project_ids: [pre_project.id]
+      allow(credential).to receive(:accessible_project?).and_return(true)
+      allow(subject).to receive(:credential).and_return(credential)
+
       put :update, params: {project:{display_name: 'eight'}, id: 8}, format: :json
 
       expect(response.status).to eq(204)

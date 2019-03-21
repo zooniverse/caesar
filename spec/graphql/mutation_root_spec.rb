@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MutationRoot do
-  let(:credential) { build :credential, admin: true }
+  let(:credential) { fake_credential admin: true }
   let(:context) { {credential: credential} }
   let(:variables) { {} }
   let(:result) {
@@ -19,6 +19,7 @@ describe MutationRoot do
     END
     end
 
+    #TODO: we should probably test this for project owners as well
     it 'creates data requests' do
       expect(result["data"]["createDataRequest"]["id"]).to eq(DataRequest.first.id)
     end
