@@ -124,8 +124,8 @@ describe RunsExtractors do
         allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
         expect(question_extractor).to receive(:process).and_raise(StandardError.new('boo'))
 
-        expect(Rollbar).to receive(:log).with('error', instance_of(DummyException))
-        expect(Rollbar).to receive(:log).with('error', instance_of(StandardError))
+        expect(Rollbar).to receive(:error).with(instance_of(DummyException), use_exception_level_filters: true)
+        expect(Rollbar).to receive(:error).with(instance_of(StandardError), use_exception_level_filters: true)
         begin
           runner.extract(classification)
         rescue
