@@ -9,9 +9,12 @@ toc_footers:
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
-  - how_to_swap
   - extracts
+  - reducer_configuration
+  - reduction_mode
+  - subject_metadata
   - rules
+  - how_to_swap
   - errors
 
 search: true
@@ -21,7 +24,7 @@ search: true
 
 Caesar is an evolution of the Nero codebase, which is made more generic. In
 essence, Caesar receives classifications from the event stream (a Lambda script
-sends them to Caesars HTTP API). 
+sends them to Caesars HTTP API).
 
 For each classification, it runs zero or more extractors defined in the
 workflow to generate "extracts". These extracts specify information summarized
