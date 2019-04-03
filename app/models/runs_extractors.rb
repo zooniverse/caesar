@@ -29,7 +29,7 @@ class RunsExtractors
       end
 
       next unless extract_ok
-      return data if data == Extractor::NoData
+      next data if data == Extractor::NoData
 
       extract = Extract.where(
         workflow_id: classification.workflow_id,
@@ -48,7 +48,8 @@ class RunsExtractors
 
     raise Extractor::ExtractionFailed.new('One or more extractors failed') if has_errors
 
-    return if extracts&.compact.blank?
+    extracts = extracts&.select{ |e| e != Extractor::NoData }&.compact
+    return if extracts&.blank?
 
     Workflow.transaction do
       extracts.each do |extract|

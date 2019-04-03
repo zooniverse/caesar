@@ -13,7 +13,6 @@ class ExtractWorker
     return if workflow.paused?
 
     extracts = workflow.extractors_runner.extract(classification)
-    extracts = extracts.select { |extract| extract != Extractor::NoData }
 
     classification.destroy
 
