@@ -96,6 +96,13 @@ describe RunsExtractors do
       runner.extract(classification)
     end
 
+    it 'does not save the extract if there is no data' do
+      plucker = instance_double(Extractors::PluckFieldExtractor, key: 'pluck', config: {if_missing: 'reject'}, process: nil)
+      allow(plucker).to receive(:process).and_return(Extractor::NoData)
+      expect do
+        RunsExtractors.new([plucker]).extract(classification)
+      end.to_not change{Extract.count}
+    end
 
     describe 'error handling' do
       class DummyException < StandardError; end

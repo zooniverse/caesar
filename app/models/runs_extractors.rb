@@ -29,6 +29,7 @@ class RunsExtractors
       end
 
       next unless extract_ok
+      return data if data == Extractor::NoData
 
       extract = Extract.where(
         workflow_id: classification.workflow_id,
