@@ -24,11 +24,6 @@ class RunsReducers
     reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
 
-    # if we don't need to fetch everything, try not to
-    if reducers.all?{ |reducer| reducer.running_reduction? }
-      extract_fetcher.strategy! :fetch_minimal
-    end
-
     # prefetch all reductions to avoid race conditions with optimistic locking
     if reducers.any?{ |reducer| reducer.running_reduction? }
       reduction_fetcher.load!

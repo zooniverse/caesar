@@ -52,6 +52,7 @@ RSpec.describe Reducer, type: :model do
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    allow(extract_fetcher).to receive(:strategy!)
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
 
     expect(ExtractGrouping).to receive(:new).
@@ -67,6 +68,7 @@ RSpec.describe Reducer, type: :model do
     reducer= build :reducer
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
+    allow(extract_fetcher).to receive(:strategy!)
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
@@ -95,6 +97,7 @@ RSpec.describe Reducer, type: :model do
     ]
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
+    allow(extract_fetcher).to receive(:strategy!)
     reduction_fetcher = instance_double(ReductionFetcher)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
@@ -182,6 +185,7 @@ RSpec.describe Reducer, type: :model do
         reducible_type: "Workflow"
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      allow(extract_fetcher).to receive(:strategy!)
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       allow(running_reducer).to receive(:associate_extracts)
@@ -215,6 +219,7 @@ RSpec.describe Reducer, type: :model do
       )
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
+      allow(extract_fetcher).to receive(:strategy!)
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       running_reducer = create :reducer,

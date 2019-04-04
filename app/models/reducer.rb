@@ -52,6 +52,7 @@ class Reducer < ApplicationRecord
 
   def process(extract_fetcher, reduction_fetcher, relevant_reductions=[])
     light = Stoplight("reducer-#{id}") do
+      extract_fetcher.strategy! (if running_reduction? then :fetch_minimal else :fetch_all end)
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
       grouped_extracts.map do |group_key, grouped|
