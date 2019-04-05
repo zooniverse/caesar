@@ -80,6 +80,9 @@ class ExtractFetcher
   end
 
   def augment_subject_ids(id_list)
-    (id_list + id_list.map{ |subject_id| Subject.find(subject_id).additional_subject_ids_for_reduction }.flatten).uniq
+    additional_linked_subject_ids = id_list.map do |subject_id|
+      Subject.find(subject_id).additional_subject_ids_for_reduction
+    end
+    (id_list + additional_linked_subject_ids.flatten).uniq
   end
 end
