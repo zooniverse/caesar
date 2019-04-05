@@ -41,6 +41,19 @@ RSpec.describe Reducer, type: :model do
     klass.new
   end
 
+  it 'does not try to reduce empty extract sets' do
+    allow_any_instance_of(ExtractFetcher).to receive(:extracts).and_return([])
+
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
+    expect(ReductionFetcher).to receive(:new).and_return(reduction_fetcher)
+
+    allow(subject).to receive(:filter_extracts).and_return([])
+    allow(subject).to receive(:reduce_into).and_call_original
+
+    expect(subject).not_to receive(:reduce_into)
+    subject.process(ExtractFetcher.new({}, []), ReductionFetcher.new({}), [])
+  end
+
   it 'filters extracts' do
     extract_filter = instance_double(ExtractFilter)
     expect(ExtractFilter).to receive(:new).and_return(extract_filter)
