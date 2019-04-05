@@ -54,24 +54,38 @@ class ExtractFetcher
   end
 
   def subject_extracts
-    extract_subject_ids = Extract.find(@extract_ids).pluck(:subject_id)
-    exact_subject_ids = extract_subject_ids.append(filter[:subject_id]).uniq
-    augmented_subject_ids = augment_subject_ids(exact_subject_ids)
-
     corrected_filter = filter.except(:user_id)
 
+    exact_subject_ids = Extract
+      .find(@extract_ids)
+      .pluck(:subject_id)
+      .append(filter[:subject_id])
+      .uniq
+
+    augmented_subject_ids = augment_subject_ids(exact_subject_ids)
+
     if fetch_minimal?
-      # is an extract exactly in the list of extracts with the specified subject
-      # or is an extract for one of those prior subjects but not the specified subjects
-      Extract.where(corrected_filter.merge(id: @extract_ids))
-        .or(Extract.where(
-          corrected_filter.except(:subject_id).merge(subject_id: augmented_subject_ids-exact_subject_ids)
-        )
-      )
+      get_minimal_subject_extracts(corrected_filter, augmented_subject_ids, exact_subject_ids)
     else
-      # is an extract for any of the subjects that were mentioned or any of their parents
-      Extract.where(corrected_filter.except(:subject_id).merge(subject_id: augmented_subject_ids))
+      get_all_subject_extracts(corrected_filter, augmented_subject_ids)
     end
+  end
+
+  def get_minimal_subject_extracts(filter, augmented_subject_ids, exact_subject_ids)
+    # is an extract exactly in the list of extracts with the specified subject
+    # or is an extract for one of those prior subjects but not the specified subjects
+    Extract.where(filter.merge(id: @extract_ids))
+      .or(Extract.where(
+        filter
+          .except(:subject_id)
+          .merge(subject_id: augmented_subject_ids-exact_subject_ids)
+      )
+    )
+  end
+
+  def get_all_subject_extracts(filter, augmented_subject_ids)
+    # is an extract for any of the subjects that were mentioned or any of their parents
+    Extract.where(filter.except(:subject_id).merge(subject_id: augmented_subject_ids))
   end
 
   def augment_subject_ids(id_list)
