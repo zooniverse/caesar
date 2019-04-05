@@ -2,10 +2,7 @@ class ExtractFetcher
   attr_accessor :reduction_mode, :topic, :extract_ids, :strategy
   attr_reader :filter
 
-  @@strategies = [ :fetch_all, :fetch_minimal ]
-  def self.strategies
-    @@strategies
-  end
+  STRATEGIES = [ :fetch_all, :fetch_minimal ]
 
   def initialize(filter)
     @filter = filter
@@ -17,43 +14,31 @@ class ExtractFetcher
 
   def strategy!(strategy)
     @strategy = strategy.to_sym
-    @user_extracts = nil
-    @subject_extracts = nil
-    @specified_extracts = nil
+    self
   end
 
   def for(topic)
-    ExtractFetcher.new(filter).tap do |fetcher|
-      fetcher.topic = topic.to_sym
-      fetcher.extract_ids = @extract_ids
-      fetcher.strategy = @strategy
-    end
+    @topic = topic.to_sym
+    self
   end
 
   def including(extract_ids)
-    ExtractFetcher.new(filter).tap do |fetcher|
-      fetcher.extract_ids = (@extract_ids + extract_ids).uniq
-      fetcher.topic = @topic
-      fetcher.strategy = @strategy
-    end
+    @extract_ids = (extract_ids + @extract_ids).uniq
+    self
   end
 
   def extracts
-    if fetch_minimal?
-      specified_extracts
-    elsif fetch_subjects?
-      subject_extracts | specified_extracts
+    if fetch_subjects?
+      subject_extracts
     elsif fetch_users?
-      user_extracts | specified_extracts
+      user_extracts
+    else
+      raise StandardError.new 'No fetch configured'
     end
   end
 
   def fetch_minimal?
     @strategy == :fetch_minimal
-  end
-
-  def fetch_additional?
-    @strategy == :fetch_additional
   end
 
   def fetch_users?
@@ -65,14 +50,36 @@ class ExtractFetcher
   end
 
   def user_extracts
-    @user_extracts ||= Extract.where(filter.except(:subject_id)).order(classification_at: :desc)
+    corrected_filter = filter.except(:subject_id)
+    if fetch_minimal?
+      Extract.where(corrected_filter.merge(id: @extract_ids))
+    else
+      Extract.where(corrected_filter)
+    end
   end
 
   def subject_extracts
-    @subject_extracts ||= Extract.where(filter.except(:user_id)).order(classification_at: :desc)
+    extract_subject_ids = Extract.find(@extract_ids).pluck(:subject_id)
+    exact_subject_ids = extract_subject_ids.append(filter[:subject_id]).uniq
+    augmented_subject_ids = augment_subject_ids(exact_subject_ids)
+
+    corrected_filter = filter.except(:user_id)
+
+    if fetch_minimal?
+      # is an extract exactly in the list of extracts with the specified subject
+      # or is an extract for one of those prior subjects but not the specified subjects
+      Extract.where(corrected_filter.merge(id: @extract_ids))
+        .or(Extract.where(
+          corrected_filter.except(:subject_id).merge(subject_id: augmented_subject_ids-exact_subject_ids)
+        )
+      )
+    else
+      # is an extract for any of the subjects that were mentioned or any of their parents
+      Extract.where(corrected_filter.except(:subject_id).merge(subject_id: augmented_subject_ids))
+    end
   end
 
-  def specified_extracts
-    @specified_extracts ||= Extract.find(@extract_ids).sort_by{ |e| e.classification_at }
+  def augment_subject_ids(id_list)
+    (id_list + id_list.map{ |subject_id| Subject.find(subject_id).additional_subject_ids_for_reduction }.flatten).uniq
   end
 end

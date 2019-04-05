@@ -12,15 +12,6 @@ class RunsReducers
     return [] unless reducers&.present?
     retries ||= 2
 
-    prior_extracts = []
-    if subject_id
-      subject = Subject.find(subject_id)
-      prior_subject_ids = subject.additional_subject_ids_for_reduction
-      if prior_subject_ids.any?
-        prior_extracts = Extract.where(subject_id: prior_subject_ids).pluck(:id)
-      end
-    end
-
     filter = { subject_id: subject_id, user_id: user_id }
     case reducible
     when Workflow
@@ -29,8 +20,7 @@ class RunsReducers
       filter[:project_id] = reducible.id
     end
 
-    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids | prior_extracts)
-
+    extract_fetcher = ExtractFetcher.new(filter).including(extract_ids)
     reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
 

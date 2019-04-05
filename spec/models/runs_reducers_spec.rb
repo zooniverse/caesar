@@ -117,8 +117,6 @@ describe RunsReducers do
 
     reducer = create(:stats_reducer, key: 's', reducible: workflow)
 
-    expect_any_instance_of(ExtractFetcher).to receive(:including).at_least(:once).with([99999]).and_call_original
-
     runner = described_class.new(workflow, [reducer])
     runner.reduce(subject.id, nil)
 
