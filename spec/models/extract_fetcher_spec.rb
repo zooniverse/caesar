@@ -15,11 +15,11 @@ describe ExtractFetcher do
       e2 = create :extract, subject_id: s1.id, user_id: user1_id, extractor_key: 'e2', workflow: wf
       e3 = create :extract, subject_id: s1.id, user_id: user1_id, extractor_key: 'e3', workflow: wf2
 
-      fetcher = ExtractFetcher.new(subject_id: s1.id, workflow_id: wf.id).for(:reduce_by_subject)
+      fetcher = ExtractFetcher.new({subject_id: s1.id, workflow_id: wf.id}, []).for(:reduce_by_subject)
       expect(fetcher.extracts).to contain_exactly(e1, e2)
       expect(fetcher.extracts).not_to include(e3)
 
-      fetcher = ExtractFetcher.new(user_id: user1_id, workflow_id: wf.id).for(:reduce_by_user)
+      fetcher = ExtractFetcher.new({user_id: user1_id, workflow_id: wf.id}, []).for(:reduce_by_user)
       expect(fetcher.extracts).to contain_exactly(e1, e2)
       expect(fetcher.extracts).not_to include(e3)
     end
@@ -29,7 +29,7 @@ describe ExtractFetcher do
       e2 = create :extract, subject_id: s1.id, user_id: user1_id, extractor_key: 'e2', workflow: wf
       e3 = create :extract, subject_id: s2.id, user_id: user2_id, extractor_key: 'e1', workflow: wf
 
-      fetcher = ExtractFetcher.new(subject_id: s1.id, workflow_id: wf.id).for(:reduce_by_subject)
+      fetcher = ExtractFetcher.new({subject_id: s1.id, workflow_id: wf.id}, []).for(:reduce_by_subject)
       expect(fetcher.extracts).to contain_exactly(e1, e2)
       expect(fetcher.extracts).not_to include(e3)
     end
@@ -39,7 +39,7 @@ describe ExtractFetcher do
       e2 = create :extract, subject_id: s2.id, user_id: user1_id, extractor_key: 'e1', workflow: wf
       e3 = create :extract, subject_id: s1.id, user_id: user2_id, extractor_key: 'e2', workflow: wf
 
-      fetcher = ExtractFetcher.new(user_id: user1_id, workflow_id: wf.id).for(:reduce_by_user)
+      fetcher = ExtractFetcher.new({user_id: user1_id, workflow_id: wf.id}, []).for(:reduce_by_user)
       expect(fetcher.extracts).to contain_exactly(e1, e2)
       expect(fetcher.extracts).not_to include(e3)
     end
@@ -51,8 +51,7 @@ describe ExtractFetcher do
       e2 = create :extract, subject_id: s1.id, user_id: user1_id, extractor_key: 'e2', workflow: wf
       e3 = create :extract, subject_id: s2.id, user_id: user2_id, extractor_key: 'e1', workflow: wf
 
-      fetcher = ExtractFetcher.new(subject_id: s1.id, workflow_id: wf.id)
-        .including([e1.id])
+      fetcher = ExtractFetcher.new({subject_id: s1.id, workflow_id: wf.id}, [e1.id])
         .for(:reduce_by_subject)
 
       fetcher.strategy! :fetch_minimal
@@ -67,8 +66,7 @@ describe ExtractFetcher do
       e2 = create :extract, subject_id: s2.id, user_id: user1_id, extractor_key: 'e1', workflow: wf
       e3 = create :extract, subject_id: s1.id, user_id: user2_id, extractor_key: 'e2', workflow: wf
 
-      fetcher = ExtractFetcher.new(user_id: user1_id, workflow_id: wf.id)
-        .including([e1.id])
+      fetcher = ExtractFetcher.new({user_id: user1_id, workflow_id: wf.id}, [e1.id])
         .for(:reduce_by_user)
 
       fetcher.strategy! :fetch_minimal
@@ -90,8 +88,7 @@ describe ExtractFetcher do
           if instance.id==s1.id then [s2.id] else [] end
         end
 
-      fetcher = ExtractFetcher.new(subject_id: s1.id, workflow_id: wf.id)
-        .including([e1.id])
+      fetcher = ExtractFetcher.new({subject_id: s1.id, workflow_id: wf.id}, [e1.id])
         .for(:reduce_by_subject)
 
       fetcher.strategy! :fetch_minimal
@@ -103,7 +100,7 @@ describe ExtractFetcher do
 
   describe 'figures out prior subject ids' do
     it 'when no prior subjects exist' do
-      fetch = ExtractFetcher.new @subject_id = s1.id
+      fetch = ExtractFetcher.new({subject_id: s1.id}, [])
 
       expect(fetch.augment_subject_ids([])).to eq([])
       expect(fetch.augment_subject_ids([s1.id])).to eq([s1.id])
@@ -112,7 +109,7 @@ describe ExtractFetcher do
     end
 
     it 'when a prior subject exists' do
-      fetch = ExtractFetcher.new @subject_id = s1.id
+      fetch = ExtractFetcher.new({subject_id: s1.id}, [])
 
       allow_any_instance_of(Subject)
         .to receive(:additional_subject_ids_for_reduction) do |instance|

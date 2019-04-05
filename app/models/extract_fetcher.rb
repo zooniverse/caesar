@@ -4,10 +4,10 @@ class ExtractFetcher
 
   STRATEGIES = [ :fetch_all, :fetch_minimal ]
 
-  def initialize(filter)
+  def initialize(filter, extract_ids)
     @filter = filter
 
-    @extract_ids = []
+    @extract_ids = extract_ids
     @topic = :reduce_by_subject
     @strategy = :fetch_all
   end
@@ -19,11 +19,6 @@ class ExtractFetcher
 
   def for(topic)
     @topic = topic.to_sym
-    self
-  end
-
-  def including(extract_ids)
-    @extract_ids = (extract_ids + @extract_ids).uniq
     self
   end
 
