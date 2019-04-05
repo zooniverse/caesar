@@ -190,7 +190,7 @@ describe RunsReducers do
       filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
       reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
 
-      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
+      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter, []).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
       runner.reduce(subject.id, nil)
