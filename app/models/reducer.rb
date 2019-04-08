@@ -59,6 +59,7 @@ class Reducer < ApplicationRecord
       grouped_extracts.map do |group_key, grouped|
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
+        next if extracts.empty?
 
         # Set relevant reduction on each extract if required by external reducer
         # relevant_reductions are any previously reduced user or subject reductions
@@ -70,7 +71,7 @@ class Reducer < ApplicationRecord
           # until the reduction is saved, meaning it happens inside the transaction
           associate_extracts(r, extracts) if running_reduction?
         end
-      end.reject{ |reduction| reduction.data.blank? }
+      end.select{ |reduction| reduction&.data&.present? }
     end
 
     light.run
