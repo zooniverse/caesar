@@ -26,6 +26,7 @@ pipeline {
         }
       }
     }
+  }
 
   stage('Deploy to Kubernetes') {
     when { branch 'master' }
