@@ -3,10 +3,6 @@
 pipeline {
   agent none
 
-  environment {
-    STAGING_INSTANCE_ID = 'i-01f2884b0040c8809'
-  }
-
   options {
     disableConcurrentBuilds()
   }
@@ -20,6 +16,7 @@ pipeline {
           def dockerImageName = "${dockerRepoName}:${BRANCH_NAME}"
           def newImage = docker.build(dockerImageName)
           newImage.push()
+          newImage.push('${GIT_COMMIT}')
 
           if (BRANCH_NAME == 'master') {
             stage('Update latest tag') {
@@ -30,50 +27,13 @@ pipeline {
       }
     }
 
-    stage('Update staging containers') {
+    stage('Deploy to Kubernetes') {
       when { branch 'master' }
-      failFast true
-      options {
-        skipDefaultCheckout true
-      }
-      agent {
-        docker {
-          image 'zooniverse/operations:latest'
-          args '-v "$HOME/.ssh/:/home/ubuntu/.ssh" -v "$HOME/.aws/:/home/ubuntu/.aws"'
-        }
-      }
+      agent any
       steps {
-        sh """#!/bin/bash -e
-          while true; do sleep 3; echo -n "."; done &
-          KEEP_ALIVE_ECHO_JOB=\$!
-          cd /operations
-          ./update_in_place.sh -i $STAGING_INSTANCE_ID panoptes-redis-staging caesar
-          kill \${KEEP_ALIVE_ECHO_JOB}
-        """
+        sh "kubectl apply --record -f kubernetes/"
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment.tmpl | kubectl apply --record -f -"
       }
     }
-
-    //stage('Update production containers') {
-      //when { tag 'production' }
-      //failFast true
-      //options {
-        //skipDefaultCheckout true
-      //}
-      //agent {
-        //docker {
-          //image 'zooniverse/operations:latest'
-          //args '-v "$HOME/.ssh/:/home/ubuntu/.ssh" -v "$HOME/.aws/:/home/ubuntu/.aws"'
-        //}
-      //}
-      //steps {
-        //sh """#!/bin/bash -e
-          //while true; do sleep 3; echo -n "."; done &
-          //KEEP_ALIVE_ECHO_JOB=\$!
-          //cd /operations
-          //./update_in_place.sh -i $STAGING_AMI_ID panoptes-redis-staging caesar
-          //kill \${KEEP_ALIVE_ECHO_JOB}
-        //"""
-      //}
-    //}
   }
 }

@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caesar-staging-app
+  labels:
+    app: caesar-staging-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: caesar-staging-app
+  template:
+    metadata:
+      labels:
+        app: caesar-staging-app
+    spec:
+      containers:
+        - name: caesar-staging-app
+          image: zooniverse/caesar:__IMAGE_TAG__
+          env:
+            - name: RAILS_ENV
+              value: staging
+            - name: REDIS_URL
+              value: redis://caesar-staging-redis:6379
+            - name: DOTENV_FILE
+              value: /run/secrets/environment
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: caesar-staging-environment
+              mountPath: "/run/secrets/environment"
+              subPath: "environment"
+              readOnly: true
+      volumes:
+        - name: caesar-staging-environment
+          secret:
+            secretName: caesar-staging-environment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caesar-staging-sidekiq
+  labels:
+    app: caesar-staging-sidekiq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: caesar-staging-sidekiq
+  template:
+    metadata:
+      labels:
+        app: caesar-staging-sidekiq
+    spec:
+      containers:
+        - name: caesar-staging-sidekiq
+          image: zooniverse/caesar:__IMAGE_TAG__
+          args: ["bash", "/app/docker/start-sidekiq.sh"]
+          env:
+            - name: RAILS_ENV
+              value: staging
+            - name: REDIS_URL
+              value: redis://caesar-staging-redis:6379
+            - name: DOTENV_FILE
+              value: /run/secrets/environment
+          ports:
+            - containerPort: 80
+          volumeMounts:
+          - name: caesar-staging-environment
+            mountPath: "/run/secrets/environment"
+            subPath: "environment"
+            readOnly: true
+      volumes:
+        - name: caesar-staging-environment
+          secret:
+            secretName: caesar-staging-environment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caesar-staging-app
+spec:
+  selector:
+    app: caesar-staging-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
