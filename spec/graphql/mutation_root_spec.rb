@@ -15,7 +15,7 @@ describe MutationRoot do
   describe 'createDataRequest' do
     let(:workflow) { create :workflow }
     let(:mutation_string) do <<-END
-      mutation { createDataRequest(workflowId: #{workflow.id}, requestedData: extracts) { id } }
+      mutation { createDataRequest(exportableId: #{workflow.id}, exportableType: "Workflow", requestedData: extracts) { id } }
     END
     end
 

@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(version: 2019_03_08_222608) do
 
   create_table "data_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "user_id"
-    t.bigint "workflow_id", null: false
     t.string "subgroup"
     t.integer "requested_data"
     t.integer "status", default: 0, null: false
@@ -52,8 +51,8 @@ ActiveRecord::Schema.define(version: 2019_03_08_222608) do
     t.integer "records_exported"
     t.integer "exportable_id"
     t.string "exportable_type"
-    t.index ["user_id", "workflow_id", "subgroup", "requested_data"], name: "look_up_existing", unique: true
-    t.index ["workflow_id"], name: "index_data_requests_on_workflow_id"
+    t.index ["exportable_id", "exportable_type"], name: "index_data_requests_on_exportable_id_and_exportable_type"
+    t.index ["user_id", "exportable_id", "exportable_type", "subgroup", "requested_data"], name: "look_up_existing", unique: true
   end
 
   create_table "extractors", force: :cascade do |t|

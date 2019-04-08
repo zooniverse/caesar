@@ -8,7 +8,8 @@ MutationRoot = GraphQL::ObjectType.define do
       export file.
     END
 
-    argument :workflowId, !types.ID
+    argument :exportableId, !types.ID
+    argument :exportableType, !types.ID
     argument :requestedData, DataRequest::RequestedData
     argument :subgroup, types.String
     argument :userId, types.Int
