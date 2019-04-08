@@ -18,13 +18,16 @@ class ReductionFetcher
     self
   end
 
-  def retrieve(reducer_key, subgroup, in_place: false)
-    where(@filter.merge(reducer_key: reducer_key, subgroup: subgroup), in_place: in_place)
+  def retrieve(**kwargs)
+    selector = @filter.merge(kwargs)
+    return @subject_reductions.where(selector.except(:user_id)).first_or_initialize if reduce_by_subject?
+    return @user_reductions.where(selector.except(:subject_id)).first_or_initialize if reduce_by_user?
   end
 
-  def reductions
-    return @subject_reductions if reduce_by_subject?
-    return @user_reductions if reduce_by_user?
+  def retrieve_in_place(**kwargs)
+    selector = @filter.merge(kwargs)
+    return locate_in_place(selector.except(:user_id), @subject_reductions, SubjectReduction) if reduce_by_subject?
+    return locate_in_place(selector.except(:subject_id), @user_reductions, UserReduction) if reduce_by_user?
   end
 
   def reduce_by_user?
@@ -33,16 +36,6 @@ class ReductionFetcher
 
   def reduce_by_subject?
     @topic == :reduce_by_subject
-  end
-
-  def where(selector, in_place: false)
-    if in_place
-      return locate_in_place(selector.except(:user_id), @subject_reductions, SubjectReduction) if reduce_by_subject?
-      return locate_in_place(selector.except(:subject_id), @user_reductions, UserReduction) if reduce_by_user?
-    else
-      return @subject_reductions.where(selector.except(:user_id)).first_or_initialize if reduce_by_subject?
-      return @user_reductions.where(selector.except(:subject_id)).first_or_initialize if reduce_by_user?
-    end
   end
 
   def locate_in_place(selector, relation, factory)
