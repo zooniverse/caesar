@@ -5,7 +5,7 @@ class RunsExtractors
     @extractors = extractors
   end
 
-  def extract(classification)
+  def extract(classification, and_reduce: false)
     return [] unless extractors&.present?
 
     tries ||= 2
@@ -54,6 +54,20 @@ class RunsExtractors
     Workflow.transaction do
       extracts.each do |extract|
         extract.save!
+      end
+    end
+
+    if and_reduce
+      extracts = extracts.select { |extract| extract != Extractor::NoData }
+
+      if extracts.present?
+        ids = extracts.map(&:id)
+        ReduceWorker.perform_async(classification.workflow_id, "Workflow", classification.subject_id, classification.user_id, ids)
+
+        project = Project.find_by_id(workflow.project_id)
+        if project && project.has_reducers?
+          ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
+        end
       end
     end
 

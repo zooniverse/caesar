@@ -8,7 +8,7 @@ class RunsReducers
     @reducers = reducers
   end
 
-  def reduce(subject_id, user_id, extract_ids=[])
+  def reduce(subject_id, user_id, extract_ids=[], and_check_rules: false)
     return [] unless reducers&.present?
     retries ||= 2
 
@@ -47,6 +47,10 @@ class RunsReducers
       new_reductions.each do |reduction|
         reduction.save!
       end
+    end
+
+    if reducible.is_a?(Workflow) && and_check_rules
+      CheckRulesWorker.perform_async(reducible.id, reducible.class, subject_id, user_id) unless new_reductions.blank?
     end
 
     new_reductions
