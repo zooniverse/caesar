@@ -28,7 +28,7 @@ describe CreatesDataRequests do
       end
 
       context 'when not a project collaborator' do
-        let(:credential) { build :credential, workflows: [] }
+        let(:credential) { fake_credential project_ids: [] }
 
         it 'allows creating request when workflow exposes extracts publicly' do
           workflow.update! public_extracts: true
@@ -54,7 +54,7 @@ describe CreatesDataRequests do
       end
 
       context 'when not a project collaborator' do
-        let(:credential) { build :credential, workflows: [] }
+        let(:credential) { fake_credential project_ids: [] }
 
         it 'allows creating request when workflow exposes subject_reductions publicly' do
           workflow.update! public_reductions: true
@@ -73,26 +73,14 @@ describe CreatesDataRequests do
       describe 'user_reductions' do
         let(:args) { {exportable_id: workflow.id, exportable_type: 'Workflow', requested_data: 'user_reductions'} }
 
-        it('should produce reduction requests instead of extract requests') do
+        it 'allows creating request when workflow exposes user_reductions publicly' do
+          workflow.update! public_reductions: true
           response = described_class.call(obj, args, ctx)
-
           expect(response).to be_truthy
-          expect(DataRequest.count).to eq(1)
-          expect(DataRequest.first.user_reductions?).to be(true)
         end
 
-        context 'when not a project collaborator' do
-          let(:credential) { build :credential, workflows: [] }
-
-          it 'allows creating request when workflow exposes user_reductions publicly' do
-            workflow.update! public_reductions: true
-            response = described_class.call(obj, args, ctx)
-            expect(response).to be_truthy
-          end
-
-          it 'fails when workflow does not expose user_reductions publicly' do
-            expect { described_class.call(obj, args, ctx) }.to raise_error(Pundit::NotAuthorizedError)
-          end
+        it 'fails when workflow does not expose user_reductions publicly' do
+          expect { described_class.call(obj, args, ctx) }.to raise_error(Pundit::NotAuthorizedError)
         end
       end
     end
@@ -111,7 +99,7 @@ describe CreatesDataRequests do
       end
 
       context 'when not a project collaborator' do
-        let(:credential) { build :credential, workflows: [] }
+        let(:credential) { fake_credential project_ids: [] }
 
         it 'allows creating request when workflow exposes subject_reductions publicly' do
           project.update! public_reductions: true
@@ -129,27 +117,14 @@ describe CreatesDataRequests do
       let(:credential) { fake_credential project_ids: [] }
       describe 'user_reductions' do
         let(:args) { {exportable_id: workflow.id, exportable_type: 'Workflow', requested_data: 'user_reductions'} }
-
-        it('should produce reduction requests instead of extract requests') do
+        it 'allows creating request when workflow exposes user_reductions publicly' do
+          workflow.update! public_reductions: true
           response = described_class.call(obj, args, ctx)
-
           expect(response).to be_truthy
-          expect(DataRequest.count).to eq(1)
-          expect(DataRequest.first.user_reductions?).to be(true)
         end
 
-        context 'when not a project collaborator' do
-          let(:credential) { build :credential, workflows: [] }
-
-          it 'allows creating request when workflow exposes user_reductions publicly' do
-            workflow.update! public_reductions: true
-            response = described_class.call(obj, args, ctx)
-            expect(response).to be_truthy
-          end
-
-          it 'fails when workflow does not expose user_reductions publicly' do
-            expect { described_class.call(obj, args, ctx) }.to raise_error(Pundit::NotAuthorizedError)
-          end
+        it 'fails when workflow does not expose user_reductions publicly' do
+          expect { described_class.call(obj, args, ctx) }.to raise_error(Pundit::NotAuthorizedError)
         end
       end
     end

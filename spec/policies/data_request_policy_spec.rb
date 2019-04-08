@@ -33,7 +33,7 @@ RSpec.describe DataRequestPolicy do
       r3 = create :data_request, exportable: p2
       create :data_request, exportable: p3
 
-      credential = build(:credential, project_ids: [p1.id, p2.id])
+      credential = fake_credential project_ids: [p1.id, p2.id]
       expect(records_for(credential)).to match_array([r1, r2, r3])
     end
   end
@@ -90,14 +90,14 @@ RSpec.describe DataRequestPolicy do
     it 'grants access to data_requests of a workflow with public reductions' do
       workflow.update! public_reductions: true
       data_request = build(:data_request, exportable: workflow, requested_data: 'subject_reductions')
-      credential = build(:credential, workflows: [])
+      credential = fake_credential project_ids: []
       expect(subject).to permit(credential, data_request)
     end
 
     it 'does not let non-collaborators create requests for non-public workflows', :aggregate_failures do
       workflow = build(:workflow, public_extracts: true) # <- Note extracts are public, but request reductions
       data_request = build(:data_request, exportable: workflow, requested_data: 'subject_reductions')
-      credential = build(:credential, workflows: [])
+      credential = fake_credential project_ids: []
       expect(subject).not_to permit(credential, data_request)
 
       workflow = build(:workflow, public_reductions: true) # <- Note reductions are public, but request extracts
