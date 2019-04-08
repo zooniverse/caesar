@@ -44,6 +44,6 @@ class ReductionFetcher
   end
 
   def key_match(record, selector)
-    selector.all? { |key, _ | record[key] == selector[key]}
+    selector.all? { |key, value | record[key] == value }
   end
 end
