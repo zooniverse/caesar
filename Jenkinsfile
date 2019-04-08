@@ -26,14 +26,14 @@ pipeline {
         }
       }
     }
-  }
 
-  stage('Deploy to Kubernetes') {
-    when { branch 'master' }
-    agent any
-    steps {
-      sh "kubectl apply --record -f kubernetes/"
-      sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment.tmpl | kubectl apply --record -f -"
+    stage('Deploy to Kubernetes') {
+      when { branch 'master' }
+      agent any
+      steps {
+        sh "kubectl apply --record -f kubernetes/"
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment.tmpl | kubectl apply --record -f -"
+      }
     }
   }
 }
