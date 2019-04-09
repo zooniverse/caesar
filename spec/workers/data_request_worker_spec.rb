@@ -12,7 +12,7 @@ describe DataRequestWorker do
   describe 'for workflows' do
     let(:workflow_request) do
       DataRequest.new(
-        user_id: 1234,
+        user_id: nil,
         exportable: workflow,
         subgroup: nil,
         requested_data: DataRequest.requested_data[:extracts]
@@ -31,6 +31,8 @@ describe DataRequestWorker do
 
     describe '#perform' do
       it 'performs the export' do
+        create :extract, workflow_id: workflow.id
+
         worker.perform(workflow_request_id)
         expect(DataRequest.find(workflow_request_id).complete?).to be(true)
       end
@@ -77,6 +79,8 @@ describe DataRequestWorker do
 
     describe '#perform' do
       it 'performs the export' do
+        create :subject_reduction, reducible: project
+
         worker.perform(project_request_id)
         expect(DataRequest.find(project_request_id).complete?).to be(true)
       end
@@ -123,6 +127,8 @@ describe DataRequestWorker do
 
     describe '#perform' do
       it 'performs the export' do
+        create :user_reduction, reducible: workflow
+
         worker.perform(workflow_request_id)
         expect(DataRequest.find(workflow_request_id).complete?).to be(true)
       end

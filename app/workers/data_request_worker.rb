@@ -37,7 +37,7 @@ class DataRequestWorker
       actual_count = 0
 
       exporter.dump(path, estimated_count: estimated_count) do |progress, total|
-        actual_count++
+        actual_count += 1
         if progress % 1000 == 0
           request.records_count = total
           request.records_exported = progress
