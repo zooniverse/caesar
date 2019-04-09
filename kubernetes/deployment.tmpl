@@ -24,35 +24,33 @@ spec:
               value: redis://caesar-staging-redis:6379
             - name: DOTENV_FILE
               value: /run/secrets/environment
-          ports:
-            - containerPort: 81
+            - name: PORT
+              value: "81"
           volumeMounts:
             - name: caesar-staging-environment
               mountPath: "/run/secrets/environment"
               subPath: "environment"
               readOnly: true
-          volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
-            - name: caesar_nginx_config
-              mountPath: "/etc/nginx-sites"
-              subPath: caesar_nginx.conf
-        - name: nginx
+        - name: caesar-staging-nginx
           image: zooniverse/apps-nginx:xenial
           ports:
             - containerPort: 80
           volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
+            - name: caesar-nginx-config
+              mountPath: "/etc/nginx-sites"
       volumes:
         - name: caesar-staging-environment
           secret:
             secretName: caesar-staging-environment
         - name: static-assets
           emptyDir: {}
-        - name: caesar_nginx_config
+        - name: caesar-nginx-config
           configMap:
-            name: caesar_nginx_config
+            name: caesar-nginx-conf
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -100,19 +98,6 @@ metadata:
 spec:
   selector:
     app: caesar-staging-app
-  ports:
-    - protocol: TCP
-      port: 81
-      targetPort: 80
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-spec:
-  selector:
-    app: nginx
   ports:
     - protocol: TCP
       port: 80

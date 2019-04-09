@@ -49,4 +49,4 @@ data:
 kind: ConfigMap
 metadata:
   creationTimestamp: null
-  name: caesar_nginx_conf
+  name: caesar-nginx-conf
