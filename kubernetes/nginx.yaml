@@ -10,10 +10,6 @@ data:
       include /etc/nginx/ssl.default.conf;
       gzip_types *;
 
-      proxy_buffer_size 8k;
-      proxy_set_header Host $http_host;
-      proxy_set_header X-Real-IP $remote_addr;
-
       location = /commit_id.txt {
         root /static-assets/;
         expires off;
@@ -43,6 +39,13 @@ data:
 
       location / {
         proxy_pass http://docker-caesar;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_buffer_size   128k;
+        proxy_buffers   4 256k;
+        proxy_busy_buffers_size   256k;
       }
     }
 
