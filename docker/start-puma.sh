@@ -11,6 +11,9 @@ rm -f tmp/pids/*.pid
 if [ "$RAILS_ENV" != "development" ]; then
   USER_DATA=$(curl --fail http://169.254.169.254/latest/user-data || echo "")
 
+  # Links static assets for nginx webserver
+  ln -s public/ /static-assets
+
   if [ "$USER_DATA" == "EMERGENCY_MODE" ]
   then
     git pull
