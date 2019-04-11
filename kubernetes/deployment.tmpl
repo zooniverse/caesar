@@ -33,6 +33,10 @@ spec:
               readOnly: true
             - name: static-assets
               mountPath: "/static-assets"
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-staging-nginx
           image: zooniverse/apps-nginx:xenial
           ports:
