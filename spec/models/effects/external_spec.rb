@@ -51,6 +51,13 @@ describe Effects::External do
       end.to raise_error(Effects::External::InvalidConfiguration)
     end
 
+    it 'does not care about symbol keys' do
+      effect = described_class.new("url": "https://www.google.com")
+      expect(effect.url).not_to be(nil)
+      effect = described_class.new(url: "https://www.google.com")
+      expect(effect.url).not_to be(nil)
+    end
+
     it 'does not post if no url is configured' do
       effect = described_class.new(url: nil)
 
