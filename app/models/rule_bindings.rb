@@ -19,9 +19,14 @@ class RuleBindings
 
   def fetch(key, default=nil)
     reducer_key, data_key = key.split(".")
-    return (@reductions.fetch(reducer_key, default) || default) if data_key.nil?
+
     return default unless @reductions.key?(reducer_key)
-    (@reductions.fetch(reducer_key).data.fetch(data_key, default) || default)
+
+    if data_key.nil?
+      isnull(@reductions.fetch(reducer_key, default), default)
+    else
+      isnull(@reductions.fetch(reducer_key).data.fetch(data_key, default), default)
+    end
   end
 
   def keys
@@ -37,5 +42,12 @@ class RuleBindings
 
   def self.overlap?(a, b)
     (a.keys & b.keys != [])
+  end
+
+  private
+
+  def isnull(value, default)
+    return default if value.nil?
+    value
   end
 end
