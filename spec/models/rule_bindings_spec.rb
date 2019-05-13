@@ -59,4 +59,14 @@ describe RuleBindings do
     expect(rule_bindings.fetch("count.a")).to eq(1)
     expect(rule_bindings.fetch("other.a")).to eq(2)
   end
+
+  it 'returns the default if the resolved value is nil' do
+    default = double
+    reductions = [
+      SubjectReduction.new(reducer_key: 'a', data: {"b" => nil})
+    ]
+
+    rule_bindings = described_class.new(reductions, nil)
+    expect(rule_bindings.fetch('a.b', default)).to eq(default)
+  end
 end

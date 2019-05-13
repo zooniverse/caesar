@@ -11,4 +11,16 @@ describe Conditions::Lookup do
     default = double
     expect(described_class.new("b", default).apply("a" => expected)).to eq(default)
   end
+
+  it 'returns default if the stored value is nil' do
+    default = double
+    expect(described_class.new("a.b", default).apply({
+      "a" => {
+        "data" => {
+          "b" => nil
+        }
+      }
+    })).to eq(default)
+
+  end
 end

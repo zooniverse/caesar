@@ -19,9 +19,9 @@ class RuleBindings
 
   def fetch(key, default=nil)
     reducer_key, data_key = key.split(".")
-    return @reductions.fetch(reducer_key) if data_key.nil?
+    return (@reductions.fetch(reducer_key, default) || default) if data_key.nil?
     return default unless @reductions.key?(reducer_key)
-    @reductions.fetch(reducer_key).data.fetch(data_key, default)
+    (@reductions.fetch(reducer_key).data.fetch(data_key, default) || default)
   end
 
   def keys
