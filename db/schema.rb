@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.jsonb "store"
     t.integer "reducible_id"
     t.string "reducible_type"
+    t.index ["id", "lock_version"], name: "index_subject_reductions_on_id_and_lock_version"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "subject_reductions_recency"
     t.index ["reducible_type", "reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_subject_reductions_covering", unique: true
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
@@ -189,7 +190,6 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "external_id"
   end
 
   create_table "user_actions", force: :cascade do |t|
