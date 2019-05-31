@@ -27,12 +27,12 @@ pipeline {
       }
     }
 
-    stage('Deploy to Kubernetes') {
+    stage('Deploy to Staging to Kubernetes') {
       when { branch 'master' }
       agent any
       steps {
         sh "kubectl apply --record -f kubernetes/"
-        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment.tmpl | kubectl apply --record -f -"
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl apply --record -f -"
       }
     }
   }

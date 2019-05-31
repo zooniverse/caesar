@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caesar-production-app
+  labels:
+    app: caesar-production-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caesar-production-app
+  template:
+    metadata:
+      labels:
+        app: caesar-production-app
+    spec:
+      containers:
+        - name: caesar-production-app
+          image: zooniverse/caesar:__IMAGE_TAG__
+          env:
+            - name: RAILS_ENV
+              value: production
+            - name: REDIS_URL
+              value: redis://caesar-production-redis:6379
+            - name: DOTENV_FILE
+              value: /run/secrets/environment
+            - name: PORT
+              value: "81"
+          volumeMounts:
+            - name: caesar-production-environment
+              mountPath: "/run/secrets/environment"
+              subPath: "environment"
+              readOnly: true
+            - name: static-assets
+              mountPath: "/static-assets"
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
+        - name: caesar-production-nginx
+          image: zooniverse/apps-nginx:xenial
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: static-assets
+              mountPath: "/static-assets"
+            - name: caesar-nginx-config
+              mountPath: "/etc/nginx-sites"
+      volumes:
+        - name: caesar-production-environment
+          secret:
+            secretName: caesar-production-environment
+        - name: static-assets
+          emptyDir: {}
+        - name: caesar-nginx-config
+          configMap:
+            name: caesar-nginx-conf
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caesar-production-sidekiq
+  labels:
+    app: caesar-production-sidekiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caesar-production-sidekiq
+  template:
+    metadata:
+      labels:
+        app: caesar-production-sidekiq
+    spec:
+      containers:
+        - name: caesar-production-sidekiq
+          image: zooniverse/caesar:__IMAGE_TAG__
+          args: ["bash", "/app/docker/start-sidekiq.sh"]
+          env:
+            - name: RAILS_ENV
+              value: production
+            - name: REDIS_URL
+              value: redis://caesar-production-redis:6379
+            - name: DOTENV_FILE
+              value: /run/secrets/environment
+          ports:
+            - containerPort: 80
+          volumeMounts:
+          - name: caesar-production-environment
+            mountPath: "/run/secrets/environment"
+            subPath: "environment"
+            readOnly: true
+      volumes:
+        - name: caesar-production-environment
+          secret:
+            secretName: caesar-production-environment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caesar-production-app
+spec:
+  selector:
+    app: caesar-production-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
