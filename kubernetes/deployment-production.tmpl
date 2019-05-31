@@ -20,8 +20,6 @@ spec:
           env:
             - name: RAILS_ENV
               value: production
-            - name: REDIS_URL
-              value: redis://caesar-production-redis:6379
             - name: DOTENV_FILE
               value: /run/secrets/environment
             - name: PORT
@@ -79,8 +77,6 @@ spec:
           env:
             - name: RAILS_ENV
               value: production
-            - name: REDIS_URL
-              value: redis://caesar-production-redis:6379
             - name: DOTENV_FILE
               value: /run/secrets/environment
           ports:

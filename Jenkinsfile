@@ -27,7 +27,15 @@ pipeline {
       }
     }
 
-    stage('Deploy to Staging to Kubernetes') {
+    stage('Deploy production to Kubernetes') {
+      when { tag 'production-release' }
+      agent any
+      steps {
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-production.tmpl | kubectl apply --record -f -"
+      }
+    }
+
+    stage('Deploy to staging to Kubernetes') {
       when { branch 'master' }
       agent any
       steps {
