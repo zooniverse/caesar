@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe DeferredQueue do
-  let(:worker) { double(perform_async: true) }
+  let(:worker) { double(perform_in: true) }
 
   it 'commits added jobs' do
     queue = described_class.new
@@ -9,7 +9,6 @@ RSpec.describe DeferredQueue do
     queue.add(worker, 2)
     queue.commit
 
-    expect(worker).to have_received(:perform_async).with(1).ordered
-    expect(worker).to have_received(:perform_async).with(2).ordered
+    expect(worker).to have_received(:perform_in).twice
   end
 end

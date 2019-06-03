@@ -5,7 +5,9 @@ class DeferredQueue
 
   def commit
     @jobs.each do |worker, args|
-      worker.perform_async(*args)
+      delay = rand(5).seconds
+      args.unshift(delay)
+      worker.perform_in(*args)
     end
   end
 
