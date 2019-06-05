@@ -9,6 +9,8 @@ class Extractor < ApplicationRecord
       Extractors::BlankExtractor
     when "external"
       Extractors::ExternalExtractor
+    when "dropdown"
+      Extractors::DropdownExtractor
     when "question"
       Extractors::QuestionExtractor
     when "survey"
