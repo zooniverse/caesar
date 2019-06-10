@@ -5,7 +5,7 @@ metadata:
   labels:
     app: caesar-production-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: caesar-production-app
@@ -61,7 +61,7 @@ metadata:
   labels:
     app: caesar-production-sidekiq
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: caesar-production-sidekiq
