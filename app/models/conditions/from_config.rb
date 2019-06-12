@@ -27,9 +27,9 @@ module Conditions
         TextTransform.new(:upcase, build(config[1]))
       when 'downcase'
         TextTransform.new(:downcase, build(config[1]))
-      when 'int'
+      when 'int', 'to_i'
         TextTransform.new(:to_i, build(config[1]))
-      when 'float'
+      when 'float', 'to_f'
         TextTransform.new(:to_f, build(config[1]))
       else
         raise InvalidConfig, "Unknown rule type: #{config[0]} (in #{config.inspect})"
