@@ -36,6 +36,7 @@ class ExtractGrouping
   def validate_group(group, extractor, field)
     return false unless group.key?(extractor)
     return false unless group[extractor].data.key?(field)
+    return false if group[extractor].data[field].nil?
     true
   end
 

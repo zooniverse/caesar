@@ -12,19 +12,10 @@ class ExtractWorker
     workflow = classification.workflow
     return if workflow.paused?
 
-    extracts = workflow.extractors_runner.extract(classification)
-
+    extracts = workflow.extractors_runner.extract(classification, and_reduce: true)
     classification.destroy
 
-    if extracts.present?
-      ids = extracts.map(&:id)
-      ReduceWorker.perform_async(classification.workflow_id, "Workflow", classification.subject_id, classification.user_id, ids)
-
-      project = Project.find_by_id(workflow.project_id)
-      if project && project.has_reducers?
-        ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
-      end
-    end
+    extracts
   rescue ActiveRecord::RecordNotFound => e
     if Extract.where(classification_id: classification_id).any?
       # This will sometimes happen in the following sequence of events:

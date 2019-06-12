@@ -5,6 +5,8 @@ class DataRequest < ApplicationRecord
 
     value("extracts", "Extracts")
     value("reductions", "Reductions")
+    value("subject_reductions", "Subject Reductions")
+    value("user_reductions", "User Reductions")
   end
 
   Status = GraphQL::EnumType.define do
@@ -38,22 +40,22 @@ class DataRequest < ApplicationRecord
 
   enum requested_data: {
     extracts: 0,
-    reductions: 1
+    subject_reductions: 1,
+    user_reductions: 2
   }
 
   validates :status, presence: true
   validates :requested_data, presence: true
 
   belongs_to :exportable, polymorphic: true
-  before_save :set_workflow
-
-  def set_workflow
-    self.workflow_id = exportable.id
-  end
 
   def stored_export
     raise "DataRequest needs to be saved to database first" unless id.present?
     @stored_export ||= StoredExport.new("#{id}.csv")
+  end
+
+  def simple?
+    user_id.nil? && subgroup.nil?
   end
 
   def url

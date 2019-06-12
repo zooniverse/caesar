@@ -29,7 +29,7 @@ describe Conditions::Any do
     rule = make_rule('friends', 'gte', 5)
     expect {
       rule.apply(nil)
-    }.to raise_error(NoMethodError)
+    }.to raise_error(KeyError)
   end
 
   it('throws an error on bindings that lack the requested dictionary') do
