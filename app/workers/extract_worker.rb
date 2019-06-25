@@ -7,7 +7,8 @@ class ExtractWorker
   end
 
   def perform(classification_id)
-    classification = Classification.find(classification_id)
+    classification = Classification.find_by_id(classification_id)
+    return unless classification
 
     workflow = classification.workflow
     return if workflow.paused?
