@@ -7,13 +7,14 @@ class ExtractWorker
   end
 
   def perform(classification_id)
-    classification = Classification.find(classification_id)
+    classification = Classification.find_by_id(classification_id)
+    return unless classification
 
     workflow = classification.workflow
     return if workflow.paused?
 
     extracts = workflow.extractors_runner.extract(classification, and_reduce: true)
-    classification.destroy
+    DeleteClassificationWorker.perform_in(rand(30.minutes.to_i).seconds, classification.id)
 
     extracts
   rescue ActiveRecord::RecordNotFound => e
