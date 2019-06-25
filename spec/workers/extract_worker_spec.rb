@@ -9,11 +9,11 @@ RSpec.describe ExtractWorker, type: :worker do
     described_class.new.perform(classification.id)
   end
 
-  it 'marks the classification as processed' do
+  it 'queues the classification to be deleted' do
     classification = create :classification, workflow: workflow, subject: subject
     expect do
       described_class.new.perform(classification.id)
-    end.to change { Classification.count }.from(1).to(0)
+    end.to change(DeleteClassificationWorker.jobs, :size).by(1)
   end
 
   context 'when classification is not in DB' do
