@@ -13,7 +13,6 @@ module Conditions
 
     def apply(bindings)
       value = operation.apply(bindings)
-      raise TypeError, "Cannot run text transformation in rules for type #{value.class}" unless String === value
 
       case transform
       when :upcase
