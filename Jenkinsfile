@@ -27,12 +27,45 @@ pipeline {
       }
     }
 
-    stage('Deploy to Kubernetes') {
+    stage('Deploy production to Kubernetes') {
+      when { tag 'production-release' }
+      agent any
+      steps {
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-production.tmpl | kubectl apply --record -f -"
+      }
+    }
+
+    stage('Deploy to staging to Kubernetes') {
       when { branch 'master' }
       agent any
       steps {
         sh "kubectl apply --record -f kubernetes/"
-        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment.tmpl | kubectl apply --record -f -"
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl apply --record -f -"
+      }
+    }
+  }
+  post {
+    success {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#00FF00',
+            message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
+      }
+    }
+
+    failure {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#FF0000',
+            message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
       }
     }
   }

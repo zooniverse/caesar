@@ -40,6 +40,7 @@ gem 'newrelic_rpm'
 gem 'lograge'
 gem 'logstash-event'
 gem 'rollbar'
+gem "sentry-raven"
 gem 'omniauth'
 gem 'omniauth-zooniverse'
 gem 'responders'
