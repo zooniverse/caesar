@@ -44,7 +44,7 @@ RSpec.describe Reducer, type: :model do
   it 'does not try to reduce empty extract sets' do
     allow_any_instance_of(ExtractFetcher).to receive(:extracts).and_return([])
 
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
     expect(ReductionFetcher).to receive(:new).and_return(reduction_fetcher)
 
     allow(subject).to receive(:filter_extracts).and_return([])
@@ -66,7 +66,7 @@ RSpec.describe Reducer, type: :model do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
     allow(extract_fetcher).to receive(:strategy=)
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, {}).
@@ -82,7 +82,7 @@ RSpec.describe Reducer, type: :model do
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
     allow(extract_fetcher).to receive(:strategy=)
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
