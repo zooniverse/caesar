@@ -17,4 +17,16 @@ describe Effects::AddSubjectToCollection do
     expect(panoptes).to have_received(:add_subjects_to_collection)
       .with(collection_id, [subject_id])
   end
+
+  it 'propagates normal errors normally' do
+    allow(panoptes).to receive(:add_subjects_to_collection).and_raise(Panoptes::Client::ServerError.new("foo"))
+    expect do
+      effect.perform(workflow_id, subject_id)
+    end.to raise_error(Panoptes::Client::ServerError)
+  end
+
+  it 'swallows error if subject is already in collection' do
+    allow(panoptes).to receive(:add_subjects_to_collection).and_raise(Panoptes::Client::ServerError.new("Subject is already in the collection"))
+    effect.perform(workflow_id, subject_id)
+  end
 end

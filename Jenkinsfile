@@ -44,4 +44,29 @@ pipeline {
       }
     }
   }
+  post {
+    success {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#00FF00',
+            message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
+      }
+    }
+
+    failure {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#FF0000',
+            message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
+      }
+    }
+  }
 }
