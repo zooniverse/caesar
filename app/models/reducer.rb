@@ -78,9 +78,17 @@ class Reducer < ApplicationRecord
   end
 
   def get_reduction(reduction_fetcher, group_key)
-    reduction_fetcher.retrieve(key, group_key).first_or_initialize.tap do |r|
-      r.data = if running_reduction? then (r.data || {}) else {} end
-      r.store = if running_reduction? then (r.store || {}) else {} end
+    if running_reduction?
+      reduction_fetcher.retrieve_in_place(reducer_key: key, subgroup: group_key).tap do |r|
+        r.data ||= {}
+        r.store ||= {}
+      end
+    else
+      reduction_fetcher.retrieve(reducer_key: key, subgroup: group_key).tap do |r|
+        # send empty data and store unless we're in running reduction mode
+        r.data = {}
+        r.store = {}
+      end
     end
   end
 
