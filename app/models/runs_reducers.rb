@@ -43,11 +43,7 @@ class RunsReducers
       reducer.process(fetcher, reduction_fetcher.for!(reducer.topic), relevant_reductions)
     end.flatten
 
-    ActiveRecord::Base.transaction do
-      new_reductions.each do |reduction|
-        reduction.save!
-      end
-    end
+    persist_reductions(new_reductions)
 
     if reducible.is_a?(Workflow) && and_check_rules
       CheckRulesWorker.perform_async(reducible.id, reducible.class, subject_id, user_id) unless new_reductions.blank?
@@ -60,5 +56,13 @@ class RunsReducers
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     retry unless (retries-=1).zero?
     raise ReductionConflict, "Transient uniqueness violation"
+  end
+
+  def persist_reductions(reductions)
+    ActiveRecord::Base.transaction do
+      reductions.each do |reduction|
+        reduction.save! unless (reduction.instance_of?(UserReduction) && reduction.user_id.nil?)
+      end
+    end
   end
 end
