@@ -41,17 +41,32 @@ RSpec.describe Reducer, type: :model do
     klass.new
   end
 
+  it 'does not try to reduce empty extract sets' do
+    allow_any_instance_of(ExtractFetcher).to receive(:extracts).and_return([])
+
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
+    expect(ReductionFetcher).to receive(:new).and_return(reduction_fetcher)
+
+    allow(subject).to receive(:filter_extracts).and_return([])
+    allow(subject).to receive(:reduce_into).and_call_original
+
+    expect(subject).not_to receive(:reduce_into)
+    subject.process(ExtractFetcher.new({}, []), ReductionFetcher.new({}), [])
+  end
+
   it 'filters extracts' do
-    extract_filter = instance_double(ExtractFilter, filter: [])
-    expect(ExtractFilter).to receive(:new).with({}).and_return(extract_filter)
+    extract_filter = instance_double(ExtractFilter)
+    expect(ExtractFilter).to receive(:new).and_return(extract_filter)
+
+    expect(extract_filter).to receive(:apply).once
     subject.filter_extracts(extracts, create(:subject_reduction))
-    expect(extract_filter).to have_received(:filter).once
   end
 
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
+    allow(extract_fetcher).to receive(:strategy=)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, {}).
@@ -66,7 +81,8 @@ RSpec.describe Reducer, type: :model do
     reducer= build :reducer
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction, has_expired?: false)
+    allow(extract_fetcher).to receive(:strategy=)
+    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
@@ -94,7 +110,8 @@ RSpec.describe Reducer, type: :model do
     ]
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
-    reduction_fetcher = instance_double(ReductionFetcher, has_expired?: false)
+    allow(extract_fetcher).to receive(:strategy=)
+    reduction_fetcher = instance_double(ReductionFetcher)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
     allow(reducer).to receive(:get_reduction) do |fetcher, key|
@@ -181,13 +198,13 @@ RSpec.describe Reducer, type: :model do
         reducible_type: "Workflow"
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
+      allow(extract_fetcher).to receive(:strategy=)
+      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
       allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(subject_reduction_double).to receive(:data=)
-      allow(subject_reduction_double).to receive(:expired=)
 
       running_reducer.process(extract_fetcher, reduction_fetcher)
       expect(running_reducer).to have_received(:associate_extracts).with(subject_reduction_double, [extract1, extract2])
@@ -215,7 +232,8 @@ RSpec.describe Reducer, type: :model do
       )
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double], has_expired?: false)
+      allow(extract_fetcher).to receive(:strategy=)
+      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       running_reducer = create :reducer,
         key: 'aaa',
@@ -229,7 +247,6 @@ RSpec.describe Reducer, type: :model do
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
       allow(running_reducer).to receive(:associate_extracts)
       allow(subject_reduction_double).to receive(:data=)
-      allow(subject_reduction_double).to receive(:expired=)
 
       running_reducer.process(extract_fetcher, reduction_fetcher)
       expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)

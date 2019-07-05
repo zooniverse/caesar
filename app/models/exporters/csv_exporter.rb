@@ -4,22 +4,23 @@ module Exporters
   class UnknownExporter < StandardError; end
 
   class CsvExporter
-    attr_reader :resource_id, :resource_type, :user_id, :subgroup
+    attr_reader :resource_id, :resource_type, :user_id, :subgroup, :requested_data
 
     def initialize(params)
       @resource_id = params[:resource_id]
       @resource_type = params[:resource_type]
       @user_id = params[:user_id]
       @subgroup = params[:subgroup]
+      @requested_data = params[:requested_data]
     end
 
-    def dump(path=nil)
+    def dump(path=nil, estimated_count: nil)
       if path.blank?
         path = "tmp/#{get_topic.name.demodulize.underscore.pluralize}_#{resource_id}.csv"
       end
 
       items = get_items
-      total = items.count
+      total = estimated_count || 0
       progress = 0
 
       CSV.open(path, "wb",
@@ -64,14 +65,25 @@ module Exporters
       end
     end
 
+    def get_topic
+      requested_data.camelcase.singularize.constantize
+    end
+
     def get_items
       if get_topic == Extract
-        find_hash = { :workflow_id => resource_id }
+        find_hash = { workflow_id: resource_id }
       elsif get_topic == SubjectReduction
-        find_hash = { :reducible_id => resource_id }
+        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
+      elsif get_topic == UserReduction
+        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
       end
-      find_hash[:user_id] = user_id unless user_id.blank?
+
+      if get_topic != SubjectReduction
+        find_hash[:user_id] = user_id unless user_id.blank?
+      end
+
       find_hash[:subgroup] = subgroup unless subgroup.blank?
+
       get_topic.where(find_hash)
     end
 

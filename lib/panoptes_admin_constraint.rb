@@ -8,7 +8,7 @@ class PanoptesAdminConstraint
 
     user = Credential.new(token: credentials["token"])
     user.logged_in? && user.admin?
-  rescue JWT::ExpiredSignature
+  rescue Panoptes::Client::AuthenticationExpired
     false
   end
 end

@@ -8,24 +8,8 @@ describe ReduceWorker, type: :worker do
     let(:runner) { reducible.reducers_runner }
 
     it "calls #reduce on the correct pipeline" do
-      expect_any_instance_of(RunsReducers).to receive(:reduce).once.with(subject.id, nil, [])
+      expect_any_instance_of(RunsReducers).to receive(:reduce).once.with(subject.id, nil, [], {and_check_rules: true})
       described_class.new.perform(reducible.id, reducible.class.to_s, subject.id, nil)
-    end
-
-    it "calls CheckRulesWorker when reducing for a workflow" do
-      workflow = create :workflow
-      allow_any_instance_of(RunsReducers).to receive(:reduce).and_return('not blank')
-      expect do
-        described_class.new.perform(workflow.id, 'Workflow', nil, nil, nil)
-      end.to change(CheckRulesWorker.jobs, :size).by(1)
-    end
-
-    it "will not try to run CheckRulesWorker when reducing for a project" do
-      project = create :project
-      allow_any_instance_of(RunsReducers).to receive(:reduce).and_return('not blank')
-      expect do
-        described_class.new.perform(project.id, 'Project', nil, nil, nil)
-      end.not_to change(CheckRulesWorker.jobs, :size)
     end
   end
 

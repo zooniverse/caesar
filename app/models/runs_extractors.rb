@@ -5,7 +5,7 @@ class RunsExtractors
     @extractors = extractors
   end
 
-  def extract(classification)
+  def extract(classification, and_reduce: false)
     return [] unless extractors&.present?
 
     tries ||= 2
@@ -16,9 +16,6 @@ class RunsExtractors
       DescribeWorkflowWorker.perform_async(classification.workflow_id)
     end
 
-    novel_subject = Extract.where(subject_id: classification.subject_id, workflow_id: classification.workflow_id).empty?
-    novel_user = classification.user_id.present? && Extract.where(user_id: classification.user_id, workflow_id: classification.workflow_id).empty?
-
     has_errors = false
 
     extracts = extractors.map do |extractor|
@@ -27,11 +24,12 @@ class RunsExtractors
         data = extractor.process(classification)
         extract_ok = true
       rescue Exception => e
-        Rollbar.log('error', e)
+        Rollbar.error(e, use_exception_level_filters: true)
         has_errors = true
       end
 
       next unless extract_ok
+      next data if data == Extractor::NoData
 
       extract = Extract.where(
         workflow_id: classification.workflow_id,
@@ -50,7 +48,8 @@ class RunsExtractors
 
     raise Extractor::ExtractionFailed.new('One or more extractors failed') if has_errors
 
-    return if extracts&.compact.blank?
+    extracts = extracts&.select{ |e| e != Extractor::NoData }&.compact
+    return if extracts&.blank?
 
     Workflow.transaction do
       extracts.each do |extract|
@@ -58,12 +57,18 @@ class RunsExtractors
       end
     end
 
-    if workflow.concerns_subjects? and novel_subject
-      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.subject_id, FetchClassificationsWorker.fetch_for_subject)
-    end
+    if and_reduce
+      extracts = extracts.select { |extract| extract != Extractor::NoData }
 
-    if workflow.concerns_users? and novel_user
-      FetchClassificationsWorker.perform_async(classification.workflow_id, classification.user_id, FetchClassificationsWorker.fetch_for_user)
+      if extracts.present?
+        ids = extracts.map(&:id)
+        ReduceWorker.perform_async(classification.workflow_id, "Workflow", classification.subject_id, classification.user_id, ids)
+
+        project = Project.find_by_id(workflow.project_id)
+        if project && project.has_reducers?
+          ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
+        end
+      end
     end
 
     extracts

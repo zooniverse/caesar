@@ -56,4 +56,16 @@ describe ExtractGrouping do
     end
   end
 
+  it 'throws away nil subgroups' do
+    extracts
+
+    # having a nil value in the grouping field should be treated as an error
+    create(:extract, extractor_key: 's', workflow_id: workflow.id, subject_id: subject.id, classification_id: 66666, data: { LN: 1 })
+    create(:extract, extractor_key: 'g', workflow_id: workflow.id, subject_id: subject.id, classification_id: 66666, data: { classroom: nil })
+
+    expect do
+      ExtractGrouping.new(Extract.all, { 'field_name' => 'g.classroom', 'if_missing' => 'error' }).to_h
+    end.to raise_error(MissingGroupingField)
+  end
+
 end

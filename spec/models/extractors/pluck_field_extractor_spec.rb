@@ -69,5 +69,11 @@ describe Extractors::PluckFieldExtractor do
       expect(result).to be_a(Hash)
       expect(result).to eq({"cantfind" => nil})
     end
+
+    it 'does not create an extract if no matches and reject' do
+      reject = described_class.new(key: "e", config: {"field_map" => {"nothin" => "$.busted"}, "if_missing" => "reject"})
+      result = reject.process(classification)
+      expect(result).to be(Extractor::NoData)
+    end
   end
 end

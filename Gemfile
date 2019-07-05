@@ -7,7 +7,7 @@ end
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.2'
+gem 'rails', '~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
 # Use Puma as the app server
@@ -35,11 +35,12 @@ gem 'sidekiq-logstash'
 gem 'flipper'
 gem 'flipper-active_record'
 gem 'flipper-ui'
-gem 'panoptes-client', '~> 0.3.8'
+gem 'panoptes-client', '~> 0.4.0'
 gem 'newrelic_rpm'
 gem 'lograge'
 gem 'logstash-event'
 gem 'rollbar'
+gem "sentry-raven"
 gem 'omniauth'
 gem 'omniauth-zooniverse'
 gem 'responders'
@@ -67,7 +68,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'pry-byebug'
-  gem 'capybara', '~> 3.14'
+  gem 'capybara', '~> 3.20'
   gem 'selenium-webdriver'
   gem 'rspec-rails', '~> 3.8'
   gem 'pry-rails'

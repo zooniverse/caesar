@@ -3,8 +3,8 @@
 pipeline {
   agent none
 
-  environment {
-    STAGING_AMI_ID = 'i-099015d22a397fcca'
+  options {
+    disableConcurrentBuilds()
   }
 
   stages {
@@ -16,6 +16,7 @@ pipeline {
           def dockerImageName = "${dockerRepoName}:${BRANCH_NAME}"
           def newImage = docker.build(dockerImageName)
           newImage.push()
+          newImage.push('${GIT_COMMIT}')
 
           if (BRANCH_NAME == 'master') {
             stage('Update latest tag') {
@@ -26,50 +27,46 @@ pipeline {
       }
     }
 
-    stage('Update staging containers') {
-      when { branch 'master' }
-      failFast true
-      options {
-        skipDefaultCheckout true
-      }
-      agent {
-        docker {
-          image 'zooniverse/operations:latest'
-          args '-v "$HOME/.ssh/:/home/ubuntu/.ssh" -v "$HOME/.aws/:/home/ubuntu/.aws"'
-        }
-      }
+    stage('Deploy production to Kubernetes') {
+      when { tag 'production-release' }
+      agent any
       steps {
-        sh """#!/bin/bash -e
-          while true; do sleep 3; echo -n "."; done &
-          KEEP_ALIVE_ECHO_JOB=\$!
-          cd /operations
-          ./update_in_place.sh -i $STAGING_AMI_ID panoptes-redis-staging caesar
-          kill \${KEEP_ALIVE_ECHO_JOB}
-        """
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-production.tmpl | kubectl apply --record -f -"
       }
     }
 
-    //stage('Update production containers') {
-      //when { tag 'production' }
-      //failFast true
-      //options {
-        //skipDefaultCheckout true
-      //}
-      //agent {
-        //docker {
-          //image 'zooniverse/operations:latest'
-          //args '-v "$HOME/.ssh/:/home/ubuntu/.ssh" -v "$HOME/.aws/:/home/ubuntu/.aws"'
-        //}
-      //}
-      //steps {
-        //sh """#!/bin/bash -e
-          //while true; do sleep 3; echo -n "."; done &
-          //KEEP_ALIVE_ECHO_JOB=\$!
-          //cd /operations
-          //./update_in_place.sh -i $STAGING_AMI_ID panoptes-redis-staging caesar
-          //kill \${KEEP_ALIVE_ECHO_JOB}
-        //"""
-      //}
-    //}
+    stage('Deploy to staging to Kubernetes') {
+      when { branch 'master' }
+      agent any
+      steps {
+        sh "kubectl apply --record -f kubernetes/"
+        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl apply --record -f -"
+      }
+    }
+  }
+  post {
+    success {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#00FF00',
+            message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
+      }
+    }
+
+    failure {
+      script {
+        if (env.BRANCH_NAME == 'master' || env.TAG_NAME == 'production-release') {
+          slackSend (
+            color: '#FF0000',
+            message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
+            channel: "#ops"
+          )
+        }
+      }
+    }
   }
 }

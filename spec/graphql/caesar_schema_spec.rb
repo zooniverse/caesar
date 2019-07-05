@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CaesarSchema do
-  let(:credential) { build :credential }
+  let(:credential) { fake_credential logged_in: true }
   let(:context) { {credential: credential} }
   let(:variables) { {} }
   let(:result) {
@@ -31,7 +31,7 @@ describe CaesarSchema do
     end
 
     context 'for a user with access' do
-      let(:credential) { build :credential, workflows: [workflow] }
+      let(:credential) { fake_credential project_ids: [workflow.project_id] }
 
       it 'returns a workflow' do
         expect(result["data"]["workflow"]).to eq("id" => workflow.id.to_s)

@@ -117,8 +117,6 @@ describe RunsReducers do
 
     reducer = create(:stats_reducer, key: 's', reducible: workflow)
 
-    expect_any_instance_of(ExtractFetcher).to receive(:including).at_least(:once).with([99999]).and_call_original
-
     runner = described_class.new(workflow, [reducer])
     runner.reduce(subject.id, nil)
 
@@ -192,10 +190,23 @@ describe RunsReducers do
       filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
       reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
 
-      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter).and_call_original
+      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter, []).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
       runner.reduce(subject.id, nil)
+    end
+
+    it "doesn't try to save user reductions with nil userid" do
+      u1 = build :user_reduction, user_id: nil, data: 'missing user id'
+      allow(u1).to receive(:save!)
+
+      u2 = build :user_reduction, user_id: 3, data: 'user id present'
+      allow(u2).to receive(:save!)
+
+      runner.persist_reductions([u1, u2])
+
+      expect(u1).not_to have_received(:save!)
+      expect(u2).to have_received(:save!)
     end
   end
 end

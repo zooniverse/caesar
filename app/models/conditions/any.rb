@@ -10,7 +10,8 @@ module Conditions
     end
 
     def apply(bindings)
-      dict = bindings.fetch(@dict_name).data
+      dict = bindings&.fetch(@dict_name)&.data
+      raise KeyError.new if dict.nil?
       dict.keys.any? { |key| @operation.apply({"key" => key, "value" => dict.fetch(key)}) }
     end
   end

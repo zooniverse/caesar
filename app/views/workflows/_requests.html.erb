@@ -13,7 +13,7 @@
     <% @workflow.data_requests.order(created_at: :desc).each do |data_request| %>
       <tr>
         <td><%= data_request.created_at %></td>
-        <td><%= data_request.requested_data.capitalize %></td>
+        <td><%= data_request.requested_data.humanize %></td>
         <td>
           <% case data_request.status when 'complete' %><span class="text-success">
           <% when 'failed' %><span class="text-danger">
@@ -45,7 +45,8 @@
 
   <ul class="dropdown-menu">
     <li><%= link_to "Request Extracts Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'extracts'}), method: :post %></li>
-    <li><%= link_to "Request Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'reductions'}), method: :post %></li>
+    <li><%= link_to "Request Subject Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'subject_reductions'}), method: :post %></li>
+    <li><%= link_to "Request User Reductions Export", workflow_data_requests_path(@workflow, data_request: { requested_data: 'user_reductions'}), method: :post %></li>
   </ul>
 </div>
 </div>

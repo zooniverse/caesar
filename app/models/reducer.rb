@@ -52,46 +52,49 @@ class Reducer < ApplicationRecord
 
   def process(extract_fetcher, reduction_fetcher, relevant_reductions=[])
     light = Stoplight("reducer-#{id}") do
-      # if any of the reductions that this reducer cares about have expired, we're
-      # going to need to fetch all of the relevant extracts in order to rebuild them
-      if reduction_fetcher.has_expired?
-        extract_fetcher.strategy! :fetch_all
-      end
-
+      fetcher_strategy = running_reduction?  ? :fetch_minimal : :fetch_all
+      extract_fetcher.strategy = fetcher_strategy
       grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
 
       grouped_extracts.map do |group_key, grouped|
         reduction = get_reduction(reduction_fetcher, group_key)
         extracts = filter_extracts(grouped, reduction)
+        next if extracts.empty?
 
         # Set relevant reduction on each extract if required by external reducer
-        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
-
         # relevant_reductions are any previously reduced user or subject reductions
         # that are required by this reducer to properly calculate
-        reduce_into(augmented_extracts, reduction).tap do |r|
-          r.expired = false
+        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
 
+        reduce_into(augmented_extracts, reduction).tap do |r|
           # note that because we use deferred associations, this won't actually hit the database
           # until the reduction is saved, meaning it happens inside the transaction
           associate_extracts(r, extracts) if running_reduction?
         end
-      end.reject{ |reduction| reduction.data.blank? }
+      end.select{ |reduction| reduction&.data&.present? }
     end
 
     light.run
   end
 
   def get_reduction(reduction_fetcher, group_key)
-    reduction_fetcher.retrieve(key, group_key).first_or_initialize.tap do |r|
-      r.data = if running_reduction? then (r.data || {}) else {} end
-      r.store = if running_reduction? then (r.store || {}) else {} end
+    if running_reduction?
+      reduction_fetcher.retrieve_in_place(reducer_key: key, subgroup: group_key).tap do |r|
+        r.data ||= {}
+        r.store ||= {}
+      end
+    else
+      reduction_fetcher.retrieve(reducer_key: key, subgroup: group_key).tap do |r|
+        # send empty data and store unless we're in running reduction mode
+        r.data = {}
+        r.store = {}
+      end
     end
   end
 
   def filter_extracts(extracts, reduction)
     extracts = extracts.reject{ |extract| reduction.extract_ids.include? extract.id }
-    extract_filter.filter(extracts)
+    extract_filter.apply(extracts)
   end
 
   def associate_extracts(reduction, extracts)

@@ -7,33 +7,38 @@ class Credential < ApplicationRecord
 
   before_create :set_expires_at
 
+  def admin?
+    return true if Rails.env.development?
+    client.authenticated_admin?
+  rescue Panoptes::Client::NotLoggedIn, Panoptes::Client::AuthenticationExpired
+    false
+  end
+
+  def authenticate!
+    client.authenticated?
+  end
+
+  def display_name
+    client.authenticated_user_display_name
+  end
+
+  def expired?
+    client.token_expiry < Time.now.utc
+  end
+
   def logged_in?
-    jwt_payload["login"].present?
-  rescue JWT::ExpiredSignature
+    return true if Rails.env.development?
+    client.authenticated?
+  rescue Panoptes::Client::NotLoggedIn, Panoptes::Client::AuthenticationExpired
     false
   end
 
   def login
-    jwt_payload.fetch("login")
+    client.authenticated_user_login
   end
 
   def user_id
-    jwt_payload["id"]
-  end
-
-  def admin?
-    return true if Rails.env.development?
-    jwt_payload.fetch("admin", false)
-  rescue JWT::ExpiredSignature
-    false
-  end
-
-  def ok?
-    jwt_payload.present? && !expired?
-  end
-
-  def expired?
-    expires_at < Time.zone.now
+    client.authenticated_user_id
   end
 
   def fetch_accessible_projects
@@ -59,14 +64,6 @@ class Credential < ApplicationRecord
 
   private
 
-  def jwt_payload
-    if token
-      @jwt_payload ||= client.current_user
-    else
-      @jwt_payload ||= {}
-    end
-  end
-
   def client
     @client ||= Panoptes::Client.new(env: panoptes_client_env, auth: {token: token})
   end
@@ -83,9 +80,6 @@ class Credential < ApplicationRecord
   end
 
   def set_expires_at
-    unless expires_at.present?
-      payload, _ = JWT.decode token, client.jwt_signing_public_key, algorithm: 'RS512'
-      self.expires_at ||= Time.at(payload.fetch("exp"))
-    end
+    self.expires_at ||= client.token_expiry
   end
 end

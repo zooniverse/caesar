@@ -23,12 +23,7 @@ class ReduceWorker
   def perform(reducible_id, reducible_class, subject_id, user_id, extract_ids = [])
     reducible = reducible_class.constantize.find(reducible_id)
     return if reducible.paused?
-
-    reductions = reducible.reducers_runner.reduce(subject_id, user_id, extract_ids)
-
-    if reducible.is_a?(Workflow)
-      CheckRulesWorker.perform_async(reducible_id, reducible_class, subject_id, user_id) unless reductions.blank?
-    end
+    reducible.reducers_runner.reduce(subject_id, user_id, extract_ids, and_check_rules: true)
   end
 
   def self.test_uniq(testing)

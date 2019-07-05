@@ -83,25 +83,6 @@ describe RunsExtractors do
     end
   end
 
-  it 'fetches classifications from panoptes when there are no other extracts' do
-    expect { runner.extract(classification) }.
-      to change(FetchClassificationsWorker.jobs, :size).by(1)
-  end
-
-  it 'does not fetch subject classifications when extracts already present' do
-    create(
-      :extract,
-      classification_id: classification.id,
-      extractor_key: "zzz",
-      subject_id: classification.subject_id,
-      workflow_id: classification.workflow_id,
-      data: {"ZZZ" => 1}
-    )
-
-    expect { runner.extract(classification) }.
-      not_to change(FetchClassificationsWorker.jobs, :size)
-  end
-
   describe '#extract' do
     let(:blank_extractor){ instance_double(Extractors::BlankExtractor, key: 'blank', config: {task_key: 'T1'}, process: nil) }
     let(:question_extractor){ instance_double(Extractors::QuestionExtractor, key: 'question', config: {task_key: 'T1'}, process: nil) }
@@ -115,6 +96,13 @@ describe RunsExtractors do
       runner.extract(classification)
     end
 
+    it 'does not save the extract if there is no data' do
+      plucker = instance_double(Extractors::PluckFieldExtractor, key: 'pluck', config: {if_missing: 'reject'}, process: nil)
+      allow(plucker).to receive(:process).and_return(Extractor::NoData)
+      expect do
+        RunsExtractors.new([plucker]).extract(classification)
+      end.to_not change{Extract.count}
+    end
 
     describe 'error handling' do
       class DummyException < StandardError; end
@@ -143,8 +131,8 @@ describe RunsExtractors do
         allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
         expect(question_extractor).to receive(:process).and_raise(StandardError.new('boo'))
 
-        expect(Rollbar).to receive(:log).with('error', instance_of(DummyException))
-        expect(Rollbar).to receive(:log).with('error', instance_of(StandardError))
+        expect(Rollbar).to receive(:error).with(instance_of(DummyException), use_exception_level_filters: true)
+        expect(Rollbar).to receive(:error).with(instance_of(StandardError), use_exception_level_filters: true)
         begin
           runner.extract(classification)
         rescue
