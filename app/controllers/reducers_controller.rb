@@ -79,7 +79,7 @@ class ReducersController < ApplicationController
   end
 
   def destroy
-    authorize reducible
+    authorize reducible, :edit?
 
     reducer = reducible.reducers.find(params[:id])
     reducer.destroy
