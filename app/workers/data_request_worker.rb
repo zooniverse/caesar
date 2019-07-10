@@ -19,8 +19,7 @@ class DataRequestWorker
       exporter = Exporters::CsvExporter.new(
         resource_id: request.exportable.id,
         resource_type: request.exportable.class.name,
-        user_id: request.user_id,
-        subgroup: request.subgroup,
+        user_id: request.user_id, subgroup: request.subgroup,
         requested_data: request.requested_data
       )
 
@@ -39,6 +38,7 @@ class DataRequestWorker
       exporter.dump(path, estimated_count: estimated_count) do |progress, total|
         actual_count += 1
         if progress % 1000 == 0
+          request = DataRequest.find(request.id)
           request.records_count = total
           request.records_exported = progress
 
@@ -47,6 +47,10 @@ class DataRequestWorker
           end
 
           request.save
+        end
+
+        if request.canceling?
+          raise DataRequest::DataRequestCanceled.new
         end
       end
 
@@ -58,6 +62,9 @@ class DataRequestWorker
 
       request.stored_export.upload(path)
       request.complete!
+    rescue DataRequest::DataRequestCanceled
+      binding.pry
+      DataRequest.find(request_id).canceled!
     rescue Exception          # bare rescue only rescues StandardError
       request.failed!
       raise

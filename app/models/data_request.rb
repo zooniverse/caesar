@@ -1,4 +1,6 @@
+
 class DataRequest < ApplicationRecord
+  class DataRequestCanceled < StandardError; end
   RequestedData = GraphQL::EnumType.define do
     name "RequestedData"
     description "What type of data is requested"
@@ -18,6 +20,8 @@ class DataRequest < ApplicationRecord
     value("processing", "Servers are currently exporting this data")
     value("failed", "Something went wrong while exporting")
     value("complete", "This export is ready to download")
+    value("canceling", "This export is being canceled")
+    value("canceled", "This export has been canceled")
   end
 
   Type = GraphQL::ObjectType.define do
@@ -35,7 +39,10 @@ class DataRequest < ApplicationRecord
     pending: 1,
     processing: 2,
     failed: 3,
-    complete: 4
+    complete: 4,
+
+    canceling: 11,
+    canceled: 12
   }
 
   enum requested_data: {
