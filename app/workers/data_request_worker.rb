@@ -19,7 +19,8 @@ class DataRequestWorker
       exporter = Exporters::CsvExporter.new(
         resource_id: request.exportable.id,
         resource_type: request.exportable.class.name,
-        user_id: request.user_id, subgroup: request.subgroup,
+        user_id: request.user_id,
+        subgroup: request.subgroup,
         requested_data: request.requested_data
       )
 
@@ -63,7 +64,6 @@ class DataRequestWorker
       request.stored_export.upload(path)
       request.complete!
     rescue DataRequest::DataRequestCanceled
-      binding.pry
       DataRequest.find(request_id).canceled!
     rescue Exception          # bare rescue only rescues StandardError
       request.failed!

@@ -1,4 +1,3 @@
-
 class DataRequest < ApplicationRecord
   class DataRequestCanceled < StandardError; end
   RequestedData = GraphQL::EnumType.define do
@@ -40,7 +39,6 @@ class DataRequest < ApplicationRecord
     processing: 2,
     failed: 3,
     complete: 4,
-
     canceling: 11,
     canceled: 12
   }
