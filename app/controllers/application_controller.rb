@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
 
   after_action :verify_authorized, except: :index
   after_action :verify_policy_scoped, only: :index
+  after_action :clear_xhr_flash
 
   respond_to :html, :json
 
@@ -19,6 +20,13 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :not_authorized
 
   private
+
+  # https://stackoverflow.com/questions/15482978/how-can-i-clear-out-the-rails-flash-object-after-responding-to-an-ajax-request
+  def clear_xhr_flash
+    if request.xhr?
+      flash.discard
+    end
+  end
 
   def authenticate!
     credential.authenticate!
