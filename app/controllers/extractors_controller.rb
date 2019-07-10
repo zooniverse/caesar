@@ -52,7 +52,7 @@ class ExtractorsController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
     extractor = workflow.extractors.find(params[:id])
 
     extractor.destroy
