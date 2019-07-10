@@ -18,13 +18,16 @@ class ReductionFetcher
     self
   end
 
-  def retrieve(reducer_key, subgroup)
-    where(@filter.merge(reducer_key: reducer_key, subgroup: subgroup))
+  def retrieve(**kwargs)
+    selector = @filter.merge(kwargs)
+    return @subject_reductions.where(selector.except(:user_id)).first_or_initialize if reduce_by_subject?
+    return @user_reductions.where(selector.except(:subject_id)).first_or_initialize if reduce_by_user?
   end
 
-  def reductions
-    return @subject_reductions if reduce_by_subject?
-    return @user_reductions if reduce_by_user?
+  def retrieve_in_place(**kwargs)
+    selector = @filter.merge(kwargs)
+    return locate_in_place(selector.except(:user_id), @subject_reductions, SubjectReduction) if reduce_by_subject?
+    return locate_in_place(selector.except(:subject_id), @user_reductions, UserReduction) if reduce_by_user?
   end
 
   def reduce_by_user?
@@ -35,8 +38,12 @@ class ReductionFetcher
     @topic == :reduce_by_subject
   end
 
-  def where(query)
-    return @subject_reductions.where(query.except(:user_id)) if reduce_by_subject?
-    return @user_reductions.where(query.except(:subject_id)) if reduce_by_user?
+  def locate_in_place(selector, relation, factory)
+    match = relation.to_a.map(&:serializable_hash).select{ |record| key_match(record, selector) }
+    match.empty? ? factory.new(selector) : match[0]
+  end
+
+  def key_match(record, selector)
+    selector.all? { |key, value | record[key] == value }
   end
 end

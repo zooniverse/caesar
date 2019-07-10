@@ -195,5 +195,18 @@ describe RunsReducers do
 
       runner.reduce(subject.id, nil)
     end
+
+    it "doesn't try to save user reductions with nil userid" do
+      u1 = build :user_reduction, user_id: nil, data: 'missing user id'
+      allow(u1).to receive(:save!)
+
+      u2 = build :user_reduction, user_id: 3, data: 'user id present'
+      allow(u2).to receive(:save!)
+
+      runner.persist_reductions([u1, u2])
+
+      expect(u1).not_to have_received(:save!)
+      expect(u2).to have_received(:save!)
+    end
   end
 end
