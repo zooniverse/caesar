@@ -32,7 +32,16 @@ class Project < ApplicationRecord
   end
 
   def public_data?(type)
-    public_reductions?
+    case type
+    when 'extracts'
+      false
+    when 'user_reductions'
+      public_reductions?
+    when 'subject_reductions'
+      public_reductions?
+    else
+      false
+    end
   end
 
   def project_id
