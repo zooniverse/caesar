@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_30_163752) do
+ActiveRecord::Schema.define(version: 2019_07_10_214129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "project_id"
+    t.string "workflow_version"
     t.index ["classification_id", "extractor_key"], name: "index_extracts_on_classification_id_and_extractor_key", unique: true
     t.index ["project_id"], name: "index_extracts_on_project_id"
     t.index ["subject_id"], name: "index_extracts_on_subject_id"
