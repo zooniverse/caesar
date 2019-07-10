@@ -16,17 +16,17 @@ describe ExtractorsController, :type => :controller do
         e2 = create :external_extractor, workflow: workflow
         response = delete :destroy, params: { id: e2.id, workflow_id: workflow.id }, format: :json
 
-        expect(Extractor.find_by_id(e2.id)).to be(nil)
         expect(response.status).to eq(204)
+        expect(Extractor.find_by_id(e2.id)).to be(nil)
       end
 
       it 'does not let a user delete extractors if they do not own the workflow' do
         other_workflow = create :workflow, project_id: workflow.project_id + 1
         e2 = create :external_extractor, workflow: other_workflow
-        response = delete :destroy, params: { id: e2.id, workflow_id: workflow.id }, format: :json
+        response = delete :destroy, params: { id: e2.id, workflow_id: other_workflow.id }, format: :json
 
-        expect(Extractor.find_by_id(e2.id)).not_to be(nil)
         expect(response.status).to eq(404)
+        expect(Extractor.find_by_id(e2.id)).not_to be(nil)
       end
     end
   end

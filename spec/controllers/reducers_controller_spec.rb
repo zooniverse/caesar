@@ -15,17 +15,17 @@ describe ReducersController, :type => :controller do
         r2 = create :external_reducer, reducible: workflow
         response = delete :destroy, params: { id: r2.id, workflow_id: workflow.id }, format: :json
 
-        expect(Reducer.find_by_id(r2.id)).to be(nil)
         expect(response.status).to eq(204)
+        expect(Reducer.find_by_id(r2.id)).to be(nil)
       end
 
       it 'does not let a user delete reducers if they do not own the workflow' do
         other_workflow = create :workflow, project_id: workflow.project_id + 1
         r2 = create :external_reducer, reducible: other_workflow
-        response = delete :destroy, params: { id: r2.id, workflow_id: workflow.id }, format: :json
+        response = delete :destroy, params: { id: r2.id, workflow_id: other_workflow.id }, format: :json
 
-        expect(Reducer.find_by_id(r2.id)).not_to be(nil)
         expect(response.status).to eq(404)
+        expect(Reducer.find_by_id(r2.id)).not_to be(nil)
       end
     end
   end

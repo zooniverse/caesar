@@ -18,7 +18,7 @@ class ReducersController < ApplicationController
   end
 
   def new
-    authorize reducible
+    authorize reducible, :edit?
     reducible_type
     @reducer = Reducer.of_type(params[:type]).new(reducible: reducible)
 
@@ -34,7 +34,7 @@ class ReducersController < ApplicationController
   end
 
   def create
-    authorize reducible
+    authorize reducible, :edit?
 
     reducer_class = Reducer.of_type(params[:reducer][:type])
     new_params = reducer_params(reducer_class)
