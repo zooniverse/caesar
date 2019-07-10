@@ -23,7 +23,7 @@ class DataRequestsController < ApplicationController
   def create
     DataRequest.transaction do
       obj = nil
-      args = ({requested_data: params.dig(:data_request, :requested_data)} || {})
+      args = params.fetch(:data_request, {})
         .merge(exportable_type: exportable_type)
         .merge(exportable_id: exportable_id)
       ctx = {credential: credential}

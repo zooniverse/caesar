@@ -49,8 +49,10 @@ describe DataRequestsController, :type => :controller do
 
   describe '#create' do
     describe 'malformed' do
-      let(:empty_params) { {workflow_id: workflow.id, data_request: {}} }
-      let(:bad_params) { {workflow_id: workflow.id, data_request: { requested_data: 'reductions' }} }
+      let(:data_request){ { requested_data: 'subject_reductions', subgroup: 'foo' } }
+      let(:empty_params) { { workflow_id: workflow.id, data_request: {} } }
+      let(:bad_params) { { workflow_id: workflow.id, data_request: { requested_data: 'reductions' } } }
+      let(:ok_params) { { workflow_id: workflow.id, data_request: data_request } }
 
       it('responds with the right error code') do
         response = post :create, params: empty_params, format: :json
@@ -59,6 +61,13 @@ describe DataRequestsController, :type => :controller do
         response = post :create, params: bad_params, format: :json
         expect(response.status).to eq(422)
       end
+
+      it('saves the subgroup parameter') do
+        response = post :create, params: ok_params, format: :json
+        resp = JSON.parse(response.body)
+        expect(resp.fetch('subgroup', nil)).not_to be_nil
+      end
+
     end
 
     describe 'extracts' do
