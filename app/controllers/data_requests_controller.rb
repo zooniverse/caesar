@@ -36,6 +36,9 @@ class DataRequestsController < ApplicationController
         format.json { respond_with unscoped_exportable, data_request }
       end
     end
+  rescue ArgumentError
+    skip_authorization
+    head 422
   end
 
   private

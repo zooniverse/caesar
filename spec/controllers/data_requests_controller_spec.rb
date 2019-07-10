@@ -49,11 +49,14 @@ describe DataRequestsController, :type => :controller do
 
   describe '#create' do
     describe 'malformed' do
-      let(:params) { {workflow_id: workflow.id, data_request: {}} }
+      let(:empty_params) { {workflow_id: workflow.id, data_request: {}} }
+      let(:bad_params) { {workflow_id: workflow.id, data_request: { requested_data: 'reductions' }} }
 
       it('responds with the right error code') do
-        response = post :create, params: params, format: :json
+        response = post :create, params: empty_params, format: :json
+        expect(response.status).to eq(422)
 
+        response = post :create, params: bad_params, format: :json
         expect(response.status).to eq(422)
       end
     end
