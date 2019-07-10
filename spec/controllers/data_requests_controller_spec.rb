@@ -45,6 +45,14 @@ describe DataRequestsController, :type => :controller do
       get :index, params: params
       expect(assigns[:workflow]).to eq(workflow)
     end
+
+    it 'responds with 404 to unknown workflow' do
+      expect do
+        response = get :index, params: { workflow_id: workflow.id + 1 }, format: :json
+      end.not_to raise_error
+
+      expect(response.status).to eq(404)
+    end
   end
 
   describe '#create' do

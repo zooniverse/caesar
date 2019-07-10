@@ -1,4 +1,5 @@
 class DataRequestsController < ApplicationController
+  before_action :verify_scope
   responders :flash
 
   def index
@@ -72,6 +73,10 @@ class DataRequestsController < ApplicationController
     else
       nil
     end
+  end
+
+  def verify_scope
+    head 404 unless unscoped_exportable
   end
 
   def project
