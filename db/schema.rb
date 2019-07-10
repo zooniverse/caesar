@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_30_163752) do
+ActiveRecord::Schema.define(version: 2019_07_10_204342) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.jsonb "store"
     t.integer "reducible_id"
     t.string "reducible_type"
-    t.index ["id", "lock_version"], name: "index_subject_reductions_on_id_and_lock_version"
+    t.index ["id", "lock_version"], name: "index_subject_reductions_on_id_and_lock_version", unique: true
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "subject_reductions_recency"
     t.index ["reducible_type", "reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_subject_reductions_covering", unique: true
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.jsonb "store"
     t.integer "reducible_id"
     t.string "reducible_type"
-    t.index ["id", "lock_version"], name: "index_user_reductions_on_id_and_lock_version"
+    t.index ["id", "lock_version"], name: "index_user_reductions_on_id_and_lock_version", unique: true
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "user_reductions_recency"
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
     t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
@@ -256,15 +256,15 @@ ActiveRecord::Schema.define(version: 2019_05_30_163752) do
     t.string "name"
     t.string "project_name"
     t.integer "status", default: 1, null: false
-    t.integer "extracts_count"
-    t.integer "subject_reductions_count"
-    t.integer "user_reductions_count"
-    t.integer "subject_actions_count"
-    t.integer "user_actions_count"
-    t.integer "extractors_count"
-    t.integer "reducers_count"
-    t.integer "subject_rules_count"
-    t.integer "user_rules_count"
+    t.integer "extracts_count", default: 0
+    t.integer "subject_reductions_count", default: 0
+    t.integer "user_reductions_count", default: 0
+    t.integer "subject_actions_count", default: 0
+    t.integer "user_actions_count", default: 0
+    t.integer "extractors_count", default: 0
+    t.integer "reducers_count", default: 0
+    t.integer "subject_rules_count", default: 0
+    t.integer "user_rules_count", default: 0
   end
 
   add_foreign_key "classifications", "subjects"
