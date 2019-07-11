@@ -51,10 +51,6 @@ class DataRequestWorker
 
           request.save
         end
-
-        if request.canceling?
-          raise DataRequest::DataRequestCanceled.new
-        end
       end
 
       # if our estimated count was from the counter_cache and it was off by enough, then
