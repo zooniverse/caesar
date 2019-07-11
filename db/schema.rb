@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 2019_07_10_204342) do
     t.jsonb "store"
     t.integer "reducible_id"
     t.string "reducible_type"
-    t.index ["id", "lock_version"], name: "index_subject_reductions_on_id_and_lock_version", unique: true
+    t.index ["id", "lock_version"], name: "index_subject_reductions_on_id_and_lock_version"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "subject_reductions_recency"
     t.index ["reducible_type", "reducible_id", "subject_id", "reducer_key", "subgroup"], name: "index_subject_reductions_covering", unique: true
     t.index ["subject_id"], name: "index_subject_reductions_on_subject_id"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2019_07_10_204342) do
     t.jsonb "store"
     t.integer "reducible_id"
     t.string "reducible_type"
-    t.index ["id", "lock_version"], name: "index_user_reductions_on_id_and_lock_version", unique: true
+    t.index ["id", "lock_version"], name: "index_user_reductions_on_id_and_lock_version"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "user_reductions_recency"
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
     t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
