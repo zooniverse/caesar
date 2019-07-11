@@ -63,6 +63,8 @@ class RunsExtractors
     end
 
     if and_reduce
+      project = Project.find_by_id(workflow.project_id)
+
       extracts = extracts.select { |extract| extract != Extractor::NoData }
       return unless extracts.present?
 
