@@ -37,7 +37,7 @@ services:
     volumes:
       - ./:/rails_app
     ports:
-      - "3000:80"
+      - "3001:80"
     environment:
       - "RAILS_ENV=development"
       - "REDIS_URL=redis://redis:6379"
