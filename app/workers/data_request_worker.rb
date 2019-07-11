@@ -12,7 +12,7 @@ class DataRequestWorker
     begin
       request = DataRequest.find(request_id)
       return if request.processing? || request.complete?
-      request.processing!
+      request.processing! unless request.canceling?
 
       self.path = Rails.root.join("tmp", "#{request.id}.csv")
 
@@ -38,7 +38,7 @@ class DataRequestWorker
 
       exporter.dump(path, estimated_count: estimated_count) do |progress, total|
         actual_count += 1
-        if progress % 1000 == 0
+        if (progress > 0) && (progress % progress_interval == 0)
           if request.reload.canceling?
             raise DataRequest::DataRequestCanceled.new
           end
@@ -71,5 +71,9 @@ class DataRequestWorker
         ::File.unlink path
       end
     end
+  end
+
+  def progress_interval
+    return 1000
   end
 end
