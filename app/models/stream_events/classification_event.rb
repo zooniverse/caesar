@@ -11,7 +11,18 @@ module StreamEvents
     def process
       return unless enabled?
       cache_linked_models!
-      stream.queue.add(ExtractWorker, classification.id) unless classification.workflow.paused?
+
+      workflow = classification.workflow
+      return if workflow.paused? || workflow.extractors.blank?
+
+      queue = 'internal'
+      queue = 'external' if workflow.has_external_extractors?
+
+      stream.queue.add(
+        'queue' => queue,
+        'class' => ExtractWorker,
+        'args' => [classification.id]
+      )
     end
 
     def cache_linked_models!

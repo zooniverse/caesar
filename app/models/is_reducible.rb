@@ -9,6 +9,10 @@ module IsReducible
     reducers.where(topic: 'reduce_by_user').present?
   end
 
+  def has_external_reducers?
+    reducers_runner.has_external?
+  end
+
   def reducers_runner
     RunsReducers.new(self, reducers)
   end

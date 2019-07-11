@@ -132,6 +132,10 @@ class Workflow < ApplicationRecord
     end
   end
 
+  def has_external_extractors?
+    extractors_runner.has_external?
+  end
+
   def extractors_runner
     RunsExtractors.new(extractors)
   end

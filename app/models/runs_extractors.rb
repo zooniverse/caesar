@@ -5,6 +5,10 @@ class RunsExtractors
     @extractors = extractors
   end
 
+  def has_external?
+    extractors.any?{ |extractor| extractor.type == 'Extractors::ExternalExtractor' }
+  end
+
   def extract(classification, and_reduce: false)
     return [] unless extractors&.present?
 
@@ -58,16 +62,35 @@ class RunsExtractors
     end
 
     if and_reduce
+      project = Project.find_by_id(workflow.project_id)
+
       extracts = extracts.select { |extract| extract != Extractor::NoData }
+      return unless extracts.present?
 
-      if extracts.present?
-        ids = extracts.map(&:id)
-        ReduceWorker.perform_async(classification.workflow_id, "Workflow", classification.subject_id, classification.user_id, ids)
+      ids = extracts.map(&:id)
 
-        project = Project.find_by_id(workflow.project_id)
-        if project && project.has_reducers?
-          ReduceWorker.perform_async(classification.project_id, "Project", classification.subject_id, classification.user_id, ids)
-        end
+      classification_args = [classification.subject_id, classification.user_id, ids]
+
+      if workflow && workflow.reducers.any?
+        queue = 'internal'
+        queue = 'external' if workflow.has_external_reducers?
+
+        Sidekiq::Client.push(
+          'queue' => queue,
+          'class' => ReduceWorker,
+          'args' => [classification.workflow_id, 'Workflow'] + classification_args
+        )
+      end
+
+      if project && project.has_reducers?
+        queue = 'internal'
+        queue = 'external' if workflow.has_external_reducers?
+
+        Sidekiq::Client.push(
+          'queue' => queue,
+          'class' => ReduceWorker,
+          'args' => [classification.project_id, 'Project'] + classification_args
+        )
       end
     end
 
