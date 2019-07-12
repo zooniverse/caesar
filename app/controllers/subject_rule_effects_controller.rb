@@ -14,7 +14,7 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def new
-    authorize workflow
+    authorize workflow, :edit?
     @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
     respond_with workflow, subject_rule, @subject_rule_effect
   end
@@ -26,7 +26,7 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def create
-    authorize workflow
+    authorize workflow, :edit?
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
     @subject_rule_effect.save
@@ -50,7 +50,7 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
     subject_rule
 
     effect = SubjectRuleEffect.find(params[:id])
