@@ -18,7 +18,7 @@ class SubjectRulesController < ApplicationController
   end
 
   def new
-    authorize workflow
+    authorize workflow, :edit?
     @subject_rule = SubjectRule.new(workflow: workflow)
   end
 
@@ -28,7 +28,7 @@ class SubjectRulesController < ApplicationController
   end
 
   def create
-    authorize workflow
+    authorize workflow, :edit?
 
     @subject_rule = SubjectRule.new(rule_params)
     @subject_rule.save
@@ -52,7 +52,7 @@ class SubjectRulesController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
 
     rule = workflow.subject_rules.find(params[:id])
     rule.destroy
