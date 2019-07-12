@@ -134,8 +134,8 @@ GEM
     graphiql-rails (1.5.0)
       railties
       sprockets-rails
-    hashdiff (0.4.0)
     graphql (1.9.6)
+    hashdiff (0.4.0)
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)

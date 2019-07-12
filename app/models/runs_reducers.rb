@@ -59,7 +59,7 @@ class RunsReducers
   end
 
   def persist_reductions(reductions)
-    ActiveRecord::Base.transaction do
+    reducible.with_lock do
       reductions.each do |reduction|
         reduction.save! unless (reduction.instance_of?(UserReduction) && reduction.user_id.nil?)
       end
