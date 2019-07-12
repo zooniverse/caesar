@@ -60,10 +60,6 @@ Rails.application.routes.draw do
     resources :user_reductions, param: :reducer_key
 
     resources :subjects, only: [:show] do
-      resources :subject_reductions, only: [:index]
-    end
-
-    resources :subjects, only: [:show] do
       collection do
         post 'search', to: 'subjects#search'
       end
