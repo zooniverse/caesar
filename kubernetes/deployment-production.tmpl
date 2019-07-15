@@ -31,26 +31,26 @@ spec:
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SECRET_KEY_BASE
             - name: DATABASE_POOL_SIZE
               value: 11
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: DATABASE_URL
             - name: AWS_REGION
               value: us-east-1
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: AWS_ACCESS_KEY_ID
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: AWS_SECRET_ACCESS_KEY
             - name: NEW_RELIC_APP_NAME
               value: Caesar
@@ -59,41 +59,41 @@ spec:
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: NEW_RELIC_LICENSE_KEY
             - name: PANOPTES_URL
               value: https://panoptes.zooniverse.org
             - name: PANOPTES_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: PANOPTES_CLIENT_ID
             - name: PANOPTES_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: PANOPTES_CLIENT_SECRET
             - name: ROLLBAR_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: ROLLBAR_ACCESS_TOKEN
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SENTRY_DSN
             - name: SIDEKIQ_CONCURRENCY
               value: 10
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_PASSWORD
             - name: SIDEKIQ_WEB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
           volumeMounts:
             - name: static-assets
@@ -148,31 +148,31 @@ spec:
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: REDIS_URL
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SECRET_KEY_BASE
             - name: DATABASE_POOL_SIZE
               value: 11
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: DATABASE_URL
             - name: AWS_REGION
               value: us-east-1
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: AWS_ACCESS_KEY_ID
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: AWS_SECRET_ACCESS_KEY
             - name: NEW_RELIC_APP_NAME
               value: Caesar
@@ -181,41 +181,41 @@ spec:
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: NEW_RELIC_LICENSE_KEY
             - name: PANOPTES_URL
               value: https://panoptes.zooniverse.org
             - name: PANOPTES_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: PANOPTES_CLIENT_ID
             - name: PANOPTES_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: PANOPTES_CLIENT_SECRET
             - name: ROLLBAR_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: ROLLBAR_ACCESS_TOKEN
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SENTRY_DSN
             - name: SIDEKIQ_CONCURRENCY
               value: 10
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_PASSWORD
             - name: SIDEKIQ_WEB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
 ---
 apiVersion: v1
