@@ -16,7 +16,7 @@ class UserRuleEffectsController < ApplicationController
   end
 
   def new
-    authorize workflow
+    authorize workflow, :edit?
     @user_rule_effect = UserRuleEffect.new(action: params[:action_type], user_rule: user_rule)
 
     respond_with workflow, user_rule, @user_rule_effect
@@ -29,7 +29,7 @@ class UserRuleEffectsController < ApplicationController
   end
 
   def create
-    authorize workflow
+    authorize workflow, :edit?
 
     @user_rule_effect = UserRuleEffect.new(effect_params)
     @user_rule_effect.save
@@ -53,7 +53,7 @@ class UserRuleEffectsController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
     user_rule
 
     effect = UserRuleEffect.find(params[:id])

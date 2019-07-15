@@ -107,7 +107,7 @@ describe DataRequestWorker do
 
   describe 'for user reductions' do
     let(:workflow_request) do
-      DataRequest.new(
+      DataRequest.create(
         user_id: nil,
         exportable: workflow,
         subgroup: nil,
@@ -121,8 +121,7 @@ describe DataRequestWorker do
 
     before(:each) do
       allow(StoredExport).to receive(:new).and_return(stored_export)
-      workflow_request.status = DataRequest.statuses[:pending]
-      workflow_request.save!
+      workflow_request.pending!
     end
 
     describe '#perform' do
@@ -142,6 +141,18 @@ describe DataRequestWorker do
       it 'uploads the file' do
         worker.perform(workflow_request_id)
         expect(stored_export).to have_received(:upload)
+      end
+
+      it 'cancels the export' do
+        create :user_reduction, reducible: workflow
+        create :user_reduction, reducible: workflow
+        create :user_reduction, reducible: workflow
+
+        workflow_request.canceling!
+
+        allow(worker).to receive(:progress_interval).and_return(2)
+        worker.perform(workflow_request_id)
+        expect(workflow_request.reload.canceled?).to be(true)
       end
     end
 
