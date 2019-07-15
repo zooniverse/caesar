@@ -77,6 +77,7 @@ group :development, :test do
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'strong_migrations'
 end
 
 group :development do
