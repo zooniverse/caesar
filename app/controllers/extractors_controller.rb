@@ -17,7 +17,7 @@ class ExtractorsController < ApplicationController
   end
 
   def new
-    authorize workflow
+    authorize workflow, :edit?
     @extractor = Extractor.of_type(params[:type]).new(workflow: workflow)
   end
 
@@ -27,7 +27,7 @@ class ExtractorsController < ApplicationController
   end
 
   def create
-    authorize workflow
+    authorize workflow, :edit?
 
     extractor_class = Extractor.of_type(params[:extractor][:type])
     @extractor = extractor_class.new(extractor_params(extractor_class))
@@ -52,7 +52,7 @@ class ExtractorsController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
     extractor = workflow.extractors.find(params[:id])
 
     extractor.destroy

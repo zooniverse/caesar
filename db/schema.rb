@@ -257,15 +257,15 @@ ActiveRecord::Schema.define(version: 2019_07_10_214129) do
     t.string "name"
     t.string "project_name"
     t.integer "status", default: 1, null: false
-    t.integer "extracts_count"
-    t.integer "subject_reductions_count"
-    t.integer "user_reductions_count"
-    t.integer "subject_actions_count"
-    t.integer "user_actions_count"
-    t.integer "extractors_count"
-    t.integer "reducers_count"
-    t.integer "subject_rules_count"
-    t.integer "user_rules_count"
+    t.integer "extracts_count", default: 0
+    t.integer "subject_reductions_count", default: 0
+    t.integer "user_reductions_count", default: 0
+    t.integer "subject_actions_count", default: 0
+    t.integer "user_actions_count", default: 0
+    t.integer "extractors_count", default: 0
+    t.integer "reducers_count", default: 0
+    t.integer "subject_rules_count", default: 0
+    t.integer "user_rules_count", default: 0
   end
 
   add_foreign_key "classifications", "subjects"
