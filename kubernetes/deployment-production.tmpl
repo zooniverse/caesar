@@ -27,10 +27,7 @@ spec:
             - name: RAILS_MAX_THREADS
               value: 2
             - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: caesar-staging-env-vars
-                  key: REDIS_URL
+              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
