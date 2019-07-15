@@ -49,7 +49,7 @@ GEM
     autoprefixer-rails (9.4.7)
       execjs
     aws-eventstream (1.0.3)
-    aws-partitions (1.184.0)
+    aws-partitions (1.189.0)
     aws-sdk-core (3.59.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1.0)
@@ -62,8 +62,8 @@ GEM
       aws-sdk-core (~> 3, >= 3.58.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.16.0)
-      aws-sdk-core (~> 3, >= 3.53.0)
+    aws-sdk-sqs (1.18.0)
+      aws-sdk-core (~> 3, >= 3.58.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
@@ -134,8 +134,8 @@ GEM
     graphiql-rails (1.5.0)
       railties
       sprockets-rails
-    hashdiff (0.4.0)
     graphql (1.9.6)
+    hashdiff (0.4.0)
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
