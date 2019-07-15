@@ -134,8 +134,8 @@ GEM
     graphiql-rails (1.5.0)
       railties
       sprockets-rails
-    hashdiff (0.4.0)
     graphql (1.9.6)
+    hashdiff (0.4.0)
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -181,7 +181,7 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.0.0)
     netrc (0.11.0)
-    newrelic_rpm (6.4.0.356)
+    newrelic_rpm (6.5.0.357)
     nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
