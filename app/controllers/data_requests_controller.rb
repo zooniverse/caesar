@@ -1,5 +1,5 @@
 class DataRequestsController < ApplicationController
-  before_action :verify_scope
+  before_action :verify_exportable_resource
   responders :flash
 
   def index
@@ -75,7 +75,7 @@ class DataRequestsController < ApplicationController
     end
   end
 
-  def verify_scope
+  def verify_exportable_resource
     head 404 unless unscoped_exportable
   end
 
