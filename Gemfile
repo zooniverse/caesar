@@ -57,6 +57,7 @@ gem 'ranked-model'
 gem 'deferred_associations'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sqs'
+gem 'strong_migrations'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -77,7 +78,6 @@ group :development, :test do
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
-  gem 'strong_migrations'
 end
 
 group :development do
