@@ -18,7 +18,7 @@ class UserRulesController < ApplicationController
   end
 
   def new
-    authorize workflow
+    authorize workflow, :edit?
     @user_rule = UserRule.new(workflow: workflow)
   end
 
@@ -29,7 +29,7 @@ class UserRulesController < ApplicationController
   end
 
   def create
-    authorize workflow
+    authorize workflow, :edit?
 
     @user_rule = UserRule.new(rule_params)
     @user_rule.save
@@ -53,7 +53,7 @@ class UserRulesController < ApplicationController
   end
 
   def destroy
-    authorize workflow
+    authorize workflow, :edit?
 
     rule = workflow.user_rules.find(params[:id])
     rule.destroy
