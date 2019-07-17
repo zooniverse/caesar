@@ -11,7 +11,7 @@ gem 'rails', '~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 gem 'bootstrap-sass', '~> 3.4.1'
@@ -67,7 +67,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'pry-byebug'
-  gem 'capybara', '~> 3.23'
+  gem 'capybara', '~> 3.25'
   gem 'selenium-webdriver'
   gem 'rspec-rails', '~> 3.8'
   gem 'pry-rails'
@@ -76,6 +76,7 @@ group :development, :test do
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'strong_migrations'
 end
 
 group :development do
