@@ -30,7 +30,7 @@ spec:
                   name: caesar-staging-env-vars
                   key: SECRET_KEY_BASE
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -51,7 +51,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar (staging)
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
@@ -143,7 +143,7 @@ spec:
                   name: caesar-staging-env-vars
                   key: SECRET_KEY_BASE
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -164,7 +164,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar (staging)
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
