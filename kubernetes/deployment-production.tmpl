@@ -23,7 +23,7 @@ spec:
             - name: PORT
               value: "81"
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: RAILS_MAX_THREADS
               value: 2
             - name: REDIS_URL
@@ -55,7 +55,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
@@ -142,7 +142,7 @@ spec:
             - name: RAILS_ENV
               value: production
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: RAILS_MAX_THREADS
               value: 2
             - name: REDIS_URL
@@ -177,7 +177,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
