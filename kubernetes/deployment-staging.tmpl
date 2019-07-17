@@ -89,6 +89,7 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: SIDEKIQ_WEB_USERNAME
+          volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
           lifecycle:
