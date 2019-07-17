@@ -25,7 +25,7 @@ spec:
             - name: RAILS_SERVE_STATIC_FILES
               value: 'true'
             - name: RAILS_MAX_THREADS
-              value: 2
+              value: '2'
             - name: REDIS_URL
               value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
             - name: SECRET_KEY_BASE
@@ -34,7 +34,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SECRET_KEY_BASE
             - name: DATABASE_POOL_SIZE
-              value: 11
+              value: '11'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -84,7 +84,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SENTRY_DSN
             - name: SIDEKIQ_CONCURRENCY
-              value: 10
+              value: '10'
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -144,7 +144,7 @@ spec:
             - name: RAILS_SERVE_STATIC_FILES
               value: 'true'
             - name: RAILS_MAX_THREADS
-              value: 2
+              value: '2'
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
@@ -156,7 +156,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SECRET_KEY_BASE
             - name: DATABASE_POOL_SIZE
-              value: 11
+              value: '11'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -206,7 +206,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SENTRY_DSN
             - name: SIDEKIQ_CONCURRENCY
-              value: 10
+              value: '10'
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
