@@ -30,7 +30,7 @@ spec:
                   name: caesar-staging-env-vars
                   key: SECRET_KEY_BASE
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -51,7 +51,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar (staging)
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
@@ -89,6 +89,17 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: SIDEKIQ_WEB_USERNAME
+            - name: KINESIS_STREAM_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-staging-env-vars
+                  key: KINESIS_STREAM_USERNAME
+            - name: KINESIS_STREAM_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-staging-env-vars
+                  key: KINESIS_STREAM_PASSWORD
+          volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
           lifecycle:
@@ -142,7 +153,7 @@ spec:
                   name: caesar-staging-env-vars
                   key: SECRET_KEY_BASE
             - name: RAILS_SERVE_STATIC_FILES
-              value: true
+              value: 'true'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -163,7 +174,7 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: Caesar (staging)
             - name: NEW_RELIC_MONITOR_MODE
-              value: true
+              value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
