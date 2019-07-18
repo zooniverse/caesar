@@ -98,12 +98,12 @@ spec:
             - name: KINESIS_STREAM_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: KINESIS_STREAM_USERNAME
             - name: KINESIS_STREAM_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: caesar-staging-env-vars
+                  name: caesar-production-env-vars
                   key: KINESIS_STREAM_PASSWORD
           volumeMounts:
             - name: static-assets
