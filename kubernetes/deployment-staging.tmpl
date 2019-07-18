@@ -89,6 +89,16 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: SIDEKIQ_WEB_USERNAME
+            - name: KINESIS_STREAM_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-staging-env-vars
+                  key: KINESIS_STREAM_USERNAME
+            - name: KINESIS_STREAM_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-staging-env-vars
+                  key: KINESIS_STREAM_PASSWORD
           volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
