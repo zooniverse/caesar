@@ -208,5 +208,21 @@ describe RunsReducers do
       expect(u1).not_to have_received(:save!)
       expect(u2).to have_received(:save!)
     end
+
+    it 'short-circuits the user reducers if there is no user id' do
+      fetcher = instance_double(ExtractFetcher, for: nil)
+
+      reducible = create :workflow
+      reducer = create(:placeholder_reducer,
+                        topic: Reducer.topics[:reduce_by_user],
+                        reducible: reducible,
+                        config: {user_reducer_keys: "testing"}
+                      )
+      runner = described_class.new(reducible, [reducer])
+
+      allow(ExtractFetcher).to receive(:new).and_return(fetcher)
+      runner.reduce(1234, nil, [])
+      expect(fetcher).not_to have_received(:for)
+    end
   end
 end

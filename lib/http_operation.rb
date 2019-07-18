@@ -38,7 +38,12 @@ module HttpOperation
       response = RestClient.post(url, payload.to_json, {content_type: :json, accept: :json})
 
       if ([200, 201, 202].include? response.code) and response.body.present?
-        JSON.parse(response.body)
+        result = JSON.parse(response.body)
+        if result.is_a? String
+          return no_data
+        else
+          return result
+        end
       elsif(response.code == 204)
         no_data
       else
