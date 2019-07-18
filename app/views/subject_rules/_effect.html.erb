@@ -7,6 +7,8 @@
   Retire subject with reason <span class="label label-info"><%= effect.reason %></span>
 <% when Effects::PromoteUser %>
   Promote user to workflow <span class="label label-info"><%= effect.target_workflow_id %></span>
+<% when Effects::External %>
+  Send <span class="label label-info"><%= effect.reducer_key %></span> to URL <span class="label label-info"><%= effect.url %></span>
 <% else %>
   <%= debug effect %>
 <% end %>
