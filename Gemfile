@@ -52,7 +52,6 @@ gem 'pundit', "~> 2.0.1"
 gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
-gem 'dotenv-rails'
 gem 'ranked-model'
 gem 'deferred_associations'
 gem 'aws-sdk-s3'
