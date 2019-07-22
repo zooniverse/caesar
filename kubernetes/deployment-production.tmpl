@@ -147,7 +147,7 @@ spec:
       containers:
         - name: caesar-production-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
-          args: ["bash", "-xe", "/app/docker/start-sidekiq.sh"]
+          command: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
               value: production
