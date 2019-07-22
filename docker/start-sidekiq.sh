@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-/app/docker/start_app.sh
+/app/docker/start-app.sh
 
 exec bundle exec sidekiq
