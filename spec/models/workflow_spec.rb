@@ -20,12 +20,12 @@ RSpec.describe Workflow, type: :model do
     describe 'public reductions' do
       it 'is true' do
         workflow.public_reductions = true
-        expect(workflow.public_data?("reductions")).to be_truthy
+        expect(workflow.public_data?("subject_reductions")).to be_truthy
       end
 
       it 'is false' do
         workflow.public_reductions = false
-        expect(workflow.public_data?("reductions")).to be_falsey
+        expect(workflow.public_data?("subject_reductions")).to be_falsey
       end
     end
 

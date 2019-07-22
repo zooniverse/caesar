@@ -125,7 +125,9 @@ class Workflow < ApplicationRecord
     case type
     when 'extracts'
       public_extracts?
-    when 'reductions'
+    when 'user_reductions'
+      public_reductions?
+    when 'subject_reductions'
       public_reductions?
     else
       false
