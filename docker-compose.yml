@@ -33,11 +33,9 @@ services:
       context: .
       args:
         RAILS_ENV: development
-    command: bash /app/docker/start-sidekiq.sh
+    command: ["/app/docker/start-sidekiq.sh"]
     volumes:
       - ./:/rails_app
-    ports:
-      - "3000:80"
     environment:
       - "RAILS_ENV=development"
       - "REDIS_URL=redis://redis:6379"
