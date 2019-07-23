@@ -1,4 +1,5 @@
 class DataRequestsController < ApplicationController
+  before_action :verify_exportable_resource
   responders :flash
 
   def index
@@ -21,21 +22,24 @@ class DataRequestsController < ApplicationController
   end
 
   def create
+    skip_authorization # operations do this themselves and raise if needed
+
     DataRequest.transaction do
       obj = nil
-      args = ({requested_data: params.dig(:data_request, :requested_data)} || {})
+      args = params.fetch(:data_request, {})
         .merge(exportable_type: exportable_type)
         .merge(exportable_id: exportable_id)
       ctx = {credential: credential}
 
       data_request = CreatesDataRequests.call(obj, args, ctx)
-      skip_authorization # operations do this themselves and raise if needed
 
       respond_to do |format|
         format.html { respond_with data_request, location: redirect_path }
         format.json { respond_with unscoped_exportable, data_request }
       end
     end
+  rescue ArgumentError
+    head 422
   end
 
   private
@@ -69,6 +73,10 @@ class DataRequestsController < ApplicationController
     else
       nil
     end
+  end
+
+  def verify_exportable_resource
+    head 404 unless unscoped_exportable
   end
 
   def project

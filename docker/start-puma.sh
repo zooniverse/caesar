@@ -1,5 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash
 
-/app/docker/start_app.sh
+# ensure we stop on error (-e) and log cmds (-x)
+set -ex
+
+/app/docker/start-app.sh
 
 exec bundle exec puma -C config/puma.rb

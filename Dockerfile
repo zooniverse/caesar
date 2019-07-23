@@ -29,4 +29,4 @@ RUN mkdir -p log && \
 
 EXPOSE 80
 
-CMD ["bash", "/app/docker/start-puma.sh"]
+CMD ["/app/docker/start-puma.sh"]
