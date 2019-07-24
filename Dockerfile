@@ -1,12 +1,14 @@
-FROM ruby:2.4
+FROM ruby:2.4-stretch
 WORKDIR /app
 ENV PORT=80
 ARG RAILS_ENV=production
 
 RUN apt-get update && \
     curl https://deb.nodesource.com/setup_6.x | bash - && \
-    apt-get install --no-install-recommends -y git curl libpq-dev nodejs && \
+    apt-get install --no-install-recommends -y git curl libpq-dev nodejs libjemalloc1 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.1
 
 RUN mkdir config && curl "https://ip-ranges.amazonaws.com/ip-ranges.json" > config/aws_ips.json
 
@@ -29,4 +31,4 @@ RUN mkdir -p log && \
 
 EXPOSE 80
 
-CMD ["bash", "/app/docker/start-puma.sh"]
+CMD ["/app/docker/start-puma.sh"]

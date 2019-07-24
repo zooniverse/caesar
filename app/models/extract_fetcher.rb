@@ -45,6 +45,8 @@ class ExtractFetcher
   end
 
   def user_extracts
+    return Extract.none if filter.fetch(:user_id, nil).blank?
+
     corrected_filter = filter.except(:subject_id)
     if fetch_minimal?
       Extract.where(corrected_filter.merge(id: @extract_ids))
