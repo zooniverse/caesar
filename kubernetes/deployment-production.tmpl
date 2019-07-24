@@ -144,25 +144,6 @@ spec:
       labels:
         app: caesar-production-sidekiq
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 2
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - caesar-production-sidekiq
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - caesar-staging-sidekiq
-            topologyKey: "kubernetes.io/hostname"
       containers:
         - name: caesar-production-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
