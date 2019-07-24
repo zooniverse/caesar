@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_10_214129) do
+ActiveRecord::Schema.define(version: 2019_07_24_192312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -223,8 +223,9 @@ ActiveRecord::Schema.define(version: 2019_07_10_214129) do
     t.string "reducible_type"
     t.index ["id", "lock_version"], name: "index_user_reductions_on_id_and_lock_version"
     t.index ["reducible_id", "reducible_type", "updated_at"], name: "user_reductions_recency"
+    t.index ["reducible_id", "reducible_type", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering", unique: true
+    t.index ["reducible_id", "reducible_type", "user_id"], name: "index_user_reductions_on_reducible_and_user"
     t.index ["user_id"], name: "index_user_reductions_on_user_id"
-    t.index ["workflow_id", "user_id", "reducer_key", "subgroup"], name: "index_user_reductions_covering"
     t.index ["workflow_id", "user_id"], name: "index_user_reductions_on_workflow_id_and_user_id"
     t.index ["workflow_id"], name: "index_user_reductions_on_workflow_id"
   end
