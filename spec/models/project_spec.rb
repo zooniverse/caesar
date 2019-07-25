@@ -8,12 +8,12 @@ RSpec.describe Project, type: :model do
     describe 'public reductions' do
       it 'is true' do
         project.public_reductions = true
-        expect(project.public_data?("reductions")).to be_truthy
+        expect(project.public_data?("subject_reductions")).to be_truthy
       end
 
       it 'is false' do
         project.public_reductions = false
-        expect(project.public_data?("reductions")).to be_falsey
+        expect(project.public_data?("subject_reductions")).to be_falsey
       end
     end
 
