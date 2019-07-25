@@ -27,9 +27,7 @@ namespace :data_repair do
           classifications: reductions.inject(0){ |sum, r| sum + r.data['classifications'] },
         }
 
-        reductions.delete_all
-
-        UserReduction.create!(
+        new_reduction = UserReduction.create!(
           reducible_type: 'Project',
           reducible_id: 1558,
           reducer_key: reducer_key,
@@ -37,6 +35,16 @@ namespace :data_repair do
           subgroup: subgroup,
           data: data
         )
+
+        reductions.each do |reduction|
+          reduction.extracts do |extract|
+            new_reduction.extracts << extract
+          end
+        end
+
+        new_reduction.save!
+
+        reductions.delete_all
       end
     end
   end
