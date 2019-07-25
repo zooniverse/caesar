@@ -144,10 +144,32 @@ spec:
       labels:
         app: caesar-production-sidekiq
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 2
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-production-sidekiq
+                topologyKey: "kubernetes.io/hostname"
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-staging-sidekiq
+                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: caesar-production-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
-          args: ["bash", "/app/docker/start-sidekiq.sh"]
+          args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
               value: production
@@ -156,10 +178,7 @@ spec:
             - name: RAILS_MAX_THREADS
               value: '2'
             - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: caesar-production-env-vars
-                  key: REDIS_URL
+              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:

@@ -5,7 +5,8 @@ describe DataRequestsController, :type => :controller do
 
   let(:uploader) { double("Uploader", "url" => "hi", "upload" => nil)}
 
-  let(:workflow) { create :workflow }
+  let(:project) { create :project, id: 234}
+  let(:workflow) { create :workflow, project_id: project.id }
 
   let(:data_request) do
     DataRequest.new(
@@ -17,6 +18,72 @@ describe DataRequestsController, :type => :controller do
 
   let(:request_id) do
     data_request.id
+  end
+
+  describe '#show' do
+    let(:public_workflow){ create :workflow, public_reductions: true }
+
+    context 'when authenticated' do
+      it 'returns a public data request' do
+        data_request = create :data_request,
+          exportable: public_workflow,
+          requested_data: 'subject_reductions',
+          public: true
+
+        params = { workflow_id: public_workflow.id, id: data_request.id }
+
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(200)
+      end
+
+      it 'returns a not public data request' do
+        data_request = create :data_request,
+          exportable: workflow,
+          requested_data: 'subject_reductions',
+          public: false
+
+        params = { workflow_id: workflow.id, id: data_request.id }
+
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context 'when not authenticated' do
+      it 'returns a public data request' do
+        fake_session logged_in: false
+        data_request = create :data_request,
+          exportable: public_workflow,
+          requested_data: 'subject_reductions',
+          public: true
+
+        params = { workflow_id: public_workflow.id, id: data_request.id }
+
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(200)
+      end
+
+      it 'does not return a not public data request' do
+        fake_session logged_in: false
+        data_request = create :data_request,
+          exportable: workflow,
+          requested_data: 'subject_reductions',
+          public: false
+
+        params = { workflow_id: workflow.id, id: data_request.id }
+
+        response = get :show, params: params, format: :json
+        expect(response.status).to eq(404)
+      end
+    end
+
+    it 'does not return the data request when not authenticated' do
+      fake_session(logged_in: false)
+    end
+
+    it 'returns the data request when not authenticated if data request is public' do
+      fake_session(logged_in: false)
+    end
   end
 
   describe '#index' do
@@ -45,16 +112,36 @@ describe DataRequestsController, :type => :controller do
       get :index, params: params
       expect(assigns[:workflow]).to eq(workflow)
     end
+
+    it 'responds with 404 to unknown workflow' do
+      response = nil
+      expect do
+        response = get :index, params: { workflow_id: workflow.id + 1 }, format: :json
+      end.not_to raise_error
+
+      expect(response.status).to eq(404)
+    end
   end
 
   describe '#create' do
     describe 'malformed' do
-      let(:params) { {workflow_id: workflow.id, data_request: {}} }
+      let(:data_request){ { requested_data: 'subject_reductions', subgroup: 'foo' } }
+      let(:empty_params) { { workflow_id: workflow.id, data_request: {} } }
+      let(:bad_params) { { workflow_id: workflow.id, data_request: { requested_data: 'reductions' } } }
+      let(:ok_params) { { workflow_id: workflow.id, data_request: data_request } }
 
-      it('responds with the right error code') do
-        response = post :create, params: params, format: :json
-
+      it 'responds with the right error code' do
+        response = post :create, params: empty_params, format: :json
         expect(response.status).to eq(422)
+
+        response = post :create, params: bad_params, format: :json
+        expect(response.status).to eq(422)
+      end
+
+      it 'saves the subgroup parameter' do
+        response = post :create, params: ok_params, format: :json
+        resp = JSON.parse(response.body)
+        expect(resp.fetch('subgroup', nil)).not_to be_nil
       end
     end
 
@@ -101,6 +188,17 @@ describe DataRequestsController, :type => :controller do
 
     describe 'reductions' do
       let(:params) { {workflow_id: workflow.id, data_request: {requested_data: 'subject_reductions', exportable_id: workflow.id, exportable_type: 'Workflow'}} }
+
+      it 'sets the public flag' do
+        public_workflow = create :workflow, public_reductions: true
+        response = post :create, params: {
+          workflow_id: public_workflow.id,
+          data_request: { requested_data: 'subject_reductions' },
+        }, format: :json
+
+        req = DataRequest.find(JSON.parse(response.body)['id'])
+        expect(req.public).to be(true)
+      end
 
       it('should produce reduction requests instead of extract requests') do
         response = post :create, params: params, format: :json

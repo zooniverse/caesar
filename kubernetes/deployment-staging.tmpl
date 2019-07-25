@@ -138,10 +138,22 @@ spec:
       labels:
         app: caesar-staging-sidekiq
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - caesar-production-sidekiq
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: caesar-staging-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
-          args: ["bash", "/app/docker/start-sidekiq.sh"]
+          args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
               value: staging

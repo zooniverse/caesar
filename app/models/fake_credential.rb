@@ -30,4 +30,8 @@ class FakeCredential
   def accessible_project?(id)
     true
   end
+
+  def authenticate!
+    true
+  end
 end
