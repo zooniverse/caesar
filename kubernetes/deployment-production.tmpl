@@ -147,22 +147,25 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 2
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - caesar-production-sidekiq
+            - weight: 2
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-production-sidekiq
+                topologyKey: "kubernetes.io/hostname"
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - caesar-staging-sidekiq
-            topologyKey: "kubernetes.io/hostname"
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-staging-sidekiq
+                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: caesar-production-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
