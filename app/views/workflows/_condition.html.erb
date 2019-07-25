@@ -42,7 +42,7 @@
   </span>
 <% when Conditions::Constant %>
   <span class="text-primary yields-text">
-    <%= condition.value %>
+    <%= condition.value.instance_of?(String) ? "'" + condition.value.to_s + "'" : condition.value %>
   </span>
 <% when Conditions::TextTransform %>
   <span class="nested-condition">
