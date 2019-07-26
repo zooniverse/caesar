@@ -36,8 +36,8 @@
   </span>
 <% when Conditions::Lookup %>
   <span class="text-info yields-text">
-    <abbr title="Default value: <%= condition.absent_val %>">
-      <%= condition.absent_val_display %>
+    <abbr title="Default value: <%= condition.absent_val_display %>">
+      <%= condition.key %>
     </abbr>
   </span>
 <% when Conditions::Constant %>
