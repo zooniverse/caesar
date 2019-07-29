@@ -1,5 +1,5 @@
 namespace :data_repair do
-  task :nfn do
+  task nfn: :environment do
     query = %q(
       select user_id, reducer_key, subgroup
       from user_reductions
@@ -8,7 +8,7 @@ namespace :data_repair do
       having count(*) > 1
     )
 
-    affected_items = ActiveRecord::Base::Connection.execute(query)
+    affected_items = ActiveRecord::Base.connection.execute(query)
 
     affected_items.each do |params|
       user_id,  reducer_key, subgroup = params

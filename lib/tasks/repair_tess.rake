@@ -1,5 +1,5 @@
 namespace :data_repair do
-  task :tess do
+  task tess: :environment do
     query = %q(
       select user_id
       from user_reductions
@@ -8,7 +8,8 @@ namespace :data_repair do
       having count(*) > 1
     )
 
-    affected_items = ActiveRecord::Base::Connection.execute(query)
+    affected_items = ActiveRecord::Base.connection.execute(query)
+
     affected_items.each do |user_id|
       ActiveRecord::Base.transaction do
         UserReductions.where(
