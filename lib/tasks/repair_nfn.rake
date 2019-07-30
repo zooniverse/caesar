@@ -14,7 +14,7 @@ namespace :data_repair do
       user_id,  reducer_key, subgroup = params
 
       ActiveRecord::Base.transaction do
-        reductions = UserReductions.where(
+        reductions = UserReduction.where(
           reducible_type: 'Project',
           reducible_id: 1558,
           user_id: user_id,
