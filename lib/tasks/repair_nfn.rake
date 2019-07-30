@@ -11,7 +11,10 @@ namespace :data_repair do
     affected_items = ActiveRecord::Base.connection.execute(query)
 
     affected_items.each do |params|
-      user_id,  reducer_key, subgroup = params
+      user_id, reducer_key, subgroup = params.values
+
+      puts "Combining reductions for user #{user_id}"
+      puts
 
       ActiveRecord::Base.transaction do
         reductions = UserReduction.where(
