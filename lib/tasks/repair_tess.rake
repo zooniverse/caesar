@@ -10,9 +10,14 @@ namespace :data_repair do
 
     affected_items = ActiveRecord::Base.connection.execute(query)
 
-    affected_items.each do |user_id|
+    affected_items.each do |params|
+      user_id, = params.values
+
+      puts "Deleting reductions for user #{user_id}"
+      puts
+
       ActiveRecord::Base.transaction do
-        UserReductions.where(
+        UserReduction.where(
           reducible_type: 'Workflow',
           reducible_id: 11235,
           user_id: user_id,
