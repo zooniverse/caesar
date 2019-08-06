@@ -1,5 +1,5 @@
 namespace :data_repair do
-  task :tess do
+  task tess: :environment do
     query = %q(
       select user_id
       from user_reductions
@@ -8,10 +8,16 @@ namespace :data_repair do
       having count(*) > 1
     )
 
-    affected_items = ActiveRecord::Base::Connection.execute(query)
-    affected_items.each do |user_id|
+    affected_items = ActiveRecord::Base.connection.execute(query)
+
+    affected_items.each do |params|
+      user_id, = params.values
+
+      puts "Deleting reductions for user #{user_id}"
+      puts
+
       ActiveRecord::Base.transaction do
-        UserReductions.where(
+        UserReduction.where(
           reducible_type: 'Workflow',
           reducible_id: 11235,
           user_id: user_id,
