@@ -11,7 +11,10 @@ class ExtractWorker
     return unless classification
 
     workflow = classification.workflow
-    return if workflow.paused?
+
+    # if reducible is only paused, continue processing everything but extracts
+    # if reducible is halted, do not process anything
+    return unless workflow.active?
 
     extracts = workflow.extractors_runner.extract(classification, and_reduce: true)
     DeleteClassificationWorker.perform_in(rand(30.minutes.to_i).seconds, classification.id)

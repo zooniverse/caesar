@@ -1,6 +1,18 @@
 module IsReducible
   extend ActiveSupport::Concern
 
+  def active?
+    raise NotImplementedError.new
+  end
+
+  def paused?
+    raise NotImplementedError.new
+  end
+
+  def halted?
+    raise NotImplementedError.new
+  end
+
   def concerns_subjects?
     reducers.where(topic: 'reduce_by_subject').present?
   end
