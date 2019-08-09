@@ -18,6 +18,10 @@ class Project < ApplicationRecord
 
   attr_accessor :rerun
 
+  def paused?
+    false
+  end
+
   def self.accessible_by(credential)
     return none unless credential.logged_in?
     return none if credential.expired?
