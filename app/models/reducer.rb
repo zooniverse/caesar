@@ -43,32 +43,25 @@ class Reducer < ApplicationRecord
   validates :topic, presence: true
   validates_associated :extract_filter
 
-  before_validation :nilify_empty_fields
-
   config_field :user_reducer_keys, default: nil
   config_field :subject_reducer_keys, default: nil
 
   NoData = Class.new
 
-  def process(extract_fetcher, reduction_fetcher, relevant_reductions=[])
+  def process(extracts, reductions)
     light = Stoplight("reducer-#{id}") do
-      extract_fetcher.strategy = running_reduction?  ? :fetch_minimal : :fetch_all
-      grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
+      grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
+      grouped_extracts.map do |group_key, extract_group|
+        reduction = get_group_reduction(reductions, group_key)
+        extracts = filter_extracts(extract_group, reduction)
 
-      grouped_extracts.map do |group_key, grouped|
-        reduction = get_reduction(reduction_fetcher, group_key)
-        extracts = filter_extracts(grouped, reduction)
-        next if extracts.empty?
-
-        # Set relevant reduction on each extract if required by external reducer
-        # relevant_reductions are any previously reduced user or subject reductions
-        # that are required by this reducer to properly calculate
-        augmented_extracts = add_relevant_reductions(extracts, relevant_reductions)
-
-        reduce_into(augmented_extracts, reduction).tap do |r|
-          # note that because we use deferred associations, this won't actually hit the database
-          # until the reduction is saved, meaning it happens inside the transaction
-          associate_extracts(r, extracts) if running_reduction?
+        # reduce the extracts into the correct reduction
+        reduce_into(extracts, reduction).tap do |r|
+          # if we are in running reduction, we never want to reduce the same extract twice so this
+          # means that we must keep an association of which extracts are already part of a reduction
+          if running_reduction?
+              associate_extracts(r, extracts)
+          end
         end
       end.select{ |reduction| reduction&.data&.present? }
     end
@@ -76,27 +69,51 @@ class Reducer < ApplicationRecord
     light.run
   end
 
-  def get_reduction(reduction_fetcher, group_key)
-    if running_reduction?
-      reduction_fetcher.retrieve_in_place(reducer_key: key, subgroup: group_key).tap do |r|
-        r.data ||= {}
-        r.store ||= {}
-      end
-    else
-      reduction_fetcher.retrieve(reducer_key: key, subgroup: group_key).tap do |r|
-        # send empty data and store unless we're in running reduction mode
-        r.data = {}
-        r.store = {}
+  def augment_extracts(extracts)
+    relevant_reductions = get_relevant_reductions(extracts)
+    if relevant_reductions.present?
+      extracts.map do |ex|
+        ex.relevant_reduction = if reduce_by_subject?
+            relevant_reductions.find { |rr| rr.user_id == ex.user_id }
+          elsif reduce_by_user?
+            relevant_reductions.find { |rr| rr.subject_id == ex.subject_id }
+          else
+            raise NotImplementedError.new 'This reduction topic is not supported'
+          end
       end
     end
   end
 
+  def get_relevant_reductions(extracts)
+    return [] unless reducer.user_reducer_keys.present? || reducer.subject_reducer_keys.present?
+
+    if reduce_by_subject?
+      UserReduction.where(user_id: extracts.map(&:user_id), reducible: reducible, reducer_key: reducer.user_reducer_keys)
+    elsif reduce_by_user?
+      SubjectReduction.where(subject_id: extracts.map(&:subject_id), reducible: reducible, reducer_key: reducer.subject_reducer_keys)
+    else
+      raise NotImplementedError.new 'This reduction mode is not supported'
+    end
+  end
+
   def filter_extracts(extracts, reduction)
+    return extracts if extracts.blank?
+    extracts = extract_filter.apply(extracts)
     extracts = extracts.reject{ |extract| reduction.extract_ids.include? extract.id }
-    extract_filter.apply(extracts)
+  end
+
+  def get_group_reduction(reductions, group_key)
+    match = reductions.find{ |reduction| reduction.subgroup = group_key }
+    if match.present?
+      match
+    else
+      # TODO: construct a new reduction
+    end
   end
 
   def associate_extracts(reduction, extracts)
+    # note that because we use deferred associations, this won't actually hit the database
+    # until the reduction is saved, meaning it happens inside the transaction
     extracts.each do |extract|
       reduction.extracts << extract
     end
@@ -126,18 +143,8 @@ class Reducer < ApplicationRecord
     super || {}
   end
 
-  def nilify_empty_fields
-  end
-
   def add_relevant_reductions(extracts, relevant_reductions)
-    extracts.map do |ex|
-      ex.relevant_reduction = case topic
-                              when 0, "reduce_by_subject"
-                                relevant_reductions.find { |rr| rr.user_id == ex.user_id }
-                              when 1, "reduce_by_user"
-                                relevant_reductions.find { |rr| rr.subject_id == ex.subject_id }
-                              end
-    end
-    extracts
+    return extracts unless relevant_reductions.present?
+
   end
 end
