@@ -55,6 +55,7 @@ class Reducer < ApplicationRecord
     @user_id = user_id
 
     light = Stoplight("reducer-#{id}") do
+      return [] unless extracts.present?
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
       grouped_extracts.map do |group_key, extract_group|
         reduction = get_group_reduction(reductions, group_key)
@@ -87,15 +88,17 @@ class Reducer < ApplicationRecord
           end
       end
     end
+
+    extracts
   end
 
   def get_relevant_reductions(extracts)
-    return [] unless reducer.user_reducer_keys.present? || reducer.subject_reducer_keys.present?
+    return [] unless user_reducer_keys.present? || subject_reducer_keys.present?
 
     if reduce_by_subject?
-      UserReduction.where(user_id: extracts.map(&:user_id), reducible: reducible, reducer_key: reducer.user_reducer_keys)
+      UserReduction.where(user_id: extracts.map(&:user_id), reducible: reducible, reducer_key: user_reducer_keys)
     elsif reduce_by_user?
-      SubjectReduction.where(subject_id: extracts.map(&:subject_id), reducible: reducible, reducer_key: reducer.subject_reducer_keys)
+      SubjectReduction.where(subject_id: extracts.map(&:subject_id), reducible: reducible, reducer_key: subject_reducer_keys)
     else
       raise NotImplementedError.new 'This reduction mode is not supported'
     end
@@ -164,10 +167,5 @@ class Reducer < ApplicationRecord
 
   def grouping
     super || {}
-  end
-
-  def add_relevant_reductions(extracts, relevant_reductions)
-    return extracts unless relevant_reductions.present?
-
   end
 end
