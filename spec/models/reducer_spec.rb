@@ -81,8 +81,8 @@ RSpec.describe Reducer, type: :model do
     reducer= build :reducer
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    allow(extract_fetcher).to receive(:strategy=)
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
+    allow(extract_fetcher).to receive(:strategy!)
+    reduction_fetcher = instance_double(ReductionFetcher, search: SubjectReduction.new)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
@@ -110,11 +110,10 @@ RSpec.describe Reducer, type: :model do
     ]
 
     extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
-    allow(extract_fetcher).to receive(:strategy=)
-    reduction_fetcher = instance_double(ReductionFetcher)
+    allow(extract_fetcher).to receive(:strategy!)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
-    allow(reducer).to receive(:get_reduction) do |fetcher, key|
+    allow(reducer).to receive(:get_group_reduction) do |fetcher, key|
       SubjectReduction.new(
         subject_id: 1234,
         workflow_id: workflow.id,
@@ -123,7 +122,7 @@ RSpec.describe Reducer, type: :model do
     end
     allow(reducer).to receive(:reduce_into){ |reduce_me, reduce_into_me| create(:subject_reduction, subgroup: reduce_into_me.subgroup, data: reduce_me.map(&:data)) }
 
-    reductions = reducer.process(extract_fetcher, reduction_fetcher)
+    reductions = reducer.process(fancy_extracts, [])
 
     expect(reductions[0][:subgroup]).to eq("33")
     expect(reductions[0][:data].count).to eq(3)
@@ -198,12 +197,12 @@ RSpec.describe Reducer, type: :model do
         reducible_type: "Workflow"
 
       extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      allow(extract_fetcher).to receive(:strategy=)
-      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
+      allow(extract_fetcher).to receive(:strategy!)
+      reduction_fetcher = instance_double(ReductionFetcher, search: [subject_reduction_double])
 
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
-      allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
+      allow(running_reducer).to receive(:get_group_reduction).and_return(subject_reduction_double)
       allow(subject_reduction_double).to receive(:data=)
 
       running_reducer.process(extract_fetcher, reduction_fetcher)

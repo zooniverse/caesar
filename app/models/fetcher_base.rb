@@ -12,7 +12,7 @@ class FetcherBase
     elsif topic.to_sym == :reduce_by_user
       :fetch_by_user
     else
-      raise NotImplementedError 'This topic is not supported'
+      raise ArgumentError.new 'This topic is not supported'
     end
 
     self

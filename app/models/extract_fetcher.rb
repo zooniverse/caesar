@@ -16,9 +16,9 @@ class ExtractFetcher < FetcherBase
   end
 
   def extracts
-    if fetch_subjects?
+    if fetch_by_subject?
       subject_extracts
-    elsif fetch_users?
+    elsif fetch_by_user?
       user_extracts
     else
       raise StandardError.new 'No fetch configured'

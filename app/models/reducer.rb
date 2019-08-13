@@ -2,6 +2,8 @@ class Reducer < ApplicationRecord
   include Configurable
   include BelongsToReducibleCached
 
+  attr_reader :subject_id, :user_id
+
   enum topic: {
     reduce_by_subject: 0,
     reduce_by_user: 1
@@ -48,7 +50,10 @@ class Reducer < ApplicationRecord
 
   NoData = Class.new
 
-  def process(extracts, reductions)
+  def process(extracts, reductions, subject_id=nil, user_id=nil)
+    @subject_id = subject_id
+    @user_id = user_id
+
     light = Stoplight("reducer-#{id}") do
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
       grouped_extracts.map do |group_key, extract_group|
@@ -107,7 +112,25 @@ class Reducer < ApplicationRecord
     if match.present?
       match
     else
-      # TODO: construct a new reduction
+      if reduce_by_subject?
+        SubjectReduction.new \
+          reducible: reducible,
+          reducer_key: key,
+          subgroup: group_key,
+          subject_id: subject_id,
+          data: {},
+          store: {}
+      elsif reduce_by_user?
+        UserReduction.new \
+          reducible: reducible,
+          reducer_key: key,
+          subgroup: group_key,
+          user_id: user_id,
+          data: {},
+          store: {}
+      else
+        raise NotImplementedError.new 'This topic is not supported'
+      end
     end
   end
 

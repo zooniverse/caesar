@@ -1,4 +1,4 @@
-class ReductionFetcher
+class ReductionFetcher < FetcherBase
   attr_reader :loaded
 
   def initialize(query)
@@ -7,14 +7,16 @@ class ReductionFetcher
 
     @subject_reductions = SubjectReduction.where(query.except(:user_id))
     @user_reductions = UserReduction.where(query.except(:subject_id))
-
-    @topic = :fetch_by_subject
   end
 
   def load!
+    return self if loaded
+
     @subject_reductions.load
     @user_reductions.load
     @loaded = true
+
+    self
   end
 
   def search(**kwargs)
@@ -23,9 +25,9 @@ class ReductionFetcher
     selector.delete(:subject_id) if fetch_by_user?
 
     if loaded
-      locate_in_place(selector, source_relation)
+      locate_in_place(selector)
     else
-      source_relation.where(selector).first_or_initialize.to_a
+      source_relation.where(selector).to_a
     end
   end
 
@@ -39,11 +41,11 @@ class ReductionFetcher
     end
   end
 
-  def locate_in_place(selector, relation)
-    relation.to_a.select{ |record| key_match(record, selector) }
+  def locate_in_place(selector)
+    source_relation.to_a.select{ |record| key_match(record, selector) }
   end
 
   def key_match(record, selector)
-    selector.all? { |key, value | record[key] == value }
+    selector.all? { |key, value| record[key] == value }
   end
 end
