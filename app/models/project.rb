@@ -18,6 +18,8 @@ class Project < ApplicationRecord
 
   attr_accessor :rerun
 
+  # projects can't be paused because they don't have extractors associated
+  # with them, which means the paused state is identical to the halted state
   def paused?
     false
   end
