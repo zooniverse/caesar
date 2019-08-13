@@ -104,6 +104,7 @@ RSpec.describe Reducer, type: :model do
     allow(extract_fetcher).to receive(:strategy!)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
+
     allow(reducer).to receive(:get_group_reduction) do |fetcher, key|
       SubjectReduction.new(
         subject_id: 1234,
@@ -111,7 +112,10 @@ RSpec.describe Reducer, type: :model do
         reducer_key: 'r'
       ).tap{ |r| r.subgroup = key }
     end
-    allow(reducer).to receive(:reduce_into){ |reduce_me, reduce_into_me| create(:subject_reduction, subgroup: reduce_into_me.subgroup, data: reduce_me.map(&:data)) }
+
+    allow(reducer).to receive(:reduce_into) do |reduce_me, reduce_into_me|
+      build :subject_reduction, subgroup: reduce_into_me.subgroup, data: reduce_me.map(&:data)
+    end
 
     reductions = reducer.process(fancy_extracts, [])
 
@@ -287,6 +291,145 @@ RSpec.describe Reducer, type: :model do
       expect(augmented_extracts[0]).to have_attributes(relevant_reduction: reductions[0])
       expect(augmented_extracts[1]).to have_attributes(relevant_reduction: reductions[1])
       expect(augmented_extracts[2]).to have_attributes(relevant_reduction: nil)
+    end
+  end
+
+  describe '#get_group_reduction' do
+    it 'returns an existing reduction' do
+      wf = create :workflow
+      reducer = create :reducer, reducible: wf, type: 'Reducers::PlaceholderReducer'
+
+      sr1 = build :subject_reduction, subgroup: 'bar', reducible: wf, data: 'bar'
+      sr2 = build :subject_reduction, subgroup: 'foo', reducible: wf, data: 'foo'
+
+      expect(reducer.get_group_reduction([sr1, sr2], 'foo')).to be(sr2)
+    end
+
+    it 'creates a subject reduction when needed' do
+      subject = create :subject
+      wf = create :workflow
+
+      reducer = create :reducer,
+        reducible: wf,
+        type: 'Reducers::PlaceholderReducer',
+        key: 'r',
+        topic: :reduce_by_subject
+
+      reducer.instance_variable_set(:@subject_id, subject.id)
+
+      sr1 = build :subject_reduction,
+        subgroup: 'bar',
+        reducible: wf,
+        data: 'bar',
+        subject_id: subject.id,
+        reducer_key: 'r'
+
+      result = reducer.get_group_reduction([sr1], 'foo')
+      expect(result).not_to be_nil
+      expect(result).to be_a(SubjectReduction)
+      expect(result.subgroup).to eq('foo')
+      expect(result.subject_id).to eq(subject.id)
+    end
+
+    it 'creates a user reduction when needed' do
+      wf = create :workflow
+
+      reducer = create :reducer,
+        reducible: wf,
+        type: 'Reducers::PlaceholderReducer',
+        key: 'r',
+        topic: :reduce_by_user
+
+      reducer.instance_variable_set(:@user_id, 1234)
+
+      ur1 = build :user_reduction,
+        subgroup: 'bar',
+        reducible: wf,
+        data: 'bar',
+        user_id: 1234,
+        reducer_key: 'r'
+
+      result = reducer.get_group_reduction([ur1], 'foo')
+      expect(result).not_to be_nil
+      expect(result).to be_a(UserReduction)
+      expect(result.subgroup).to eq('foo')
+      expect(result.user_id).to eq(1234)
+    end
+  end
+
+  describe '#filter_extracts' do
+    it 'does not reduce the same extract twice' do
+      ex1 = create :extract
+      sr1 = build :subject_reduction
+      reducer = build :reducer, reduction_mode: :running_reduction
+
+      expect(sr1).to receive(:extract_ids).and_return([ex1.id])
+      expect(reducer.filter_extracts([ex1], sr1)).to be_empty
+    end
+
+    it 'applies the configured filters' do
+      ex1 = create :extract
+      reducer = build :reducer
+
+      ef_double = instance_double(ExtractFilter, apply: [ex1])
+      expect(reducer).to receive(:extract_filter).and_return(ef_double)
+      expect(ef_double).to receive(:apply).with([ex1]).and_return([ex1])
+      reducer.filter_extracts([ex1], SubjectReduction.new)
+    end
+  end
+
+  describe '#get_relevant_reductions' do
+    it 'does nothing unless relevant reductions are configured' do
+      reducer = build :reducer
+
+      ex1 = build :extract
+      ex2 = build :extract
+
+      expect(reducer).to receive(:user_reducer_keys).once
+      expect(reducer).to receive(:subject_reducer_keys).once
+      expect(reducer).not_to receive(:reduce_by_subject?)
+      expect(reducer).not_to receive(:reduce_by_user?)
+
+      reducer.get_relevant_reductions([ex1, ex2])
+    end
+
+    it 'finds relevant user reductions' do
+      wf = create :workflow
+      reducer = build :reducer, topic: :reduce_by_subject, reducible: wf, user_reducer_keys: 'foo'
+      ex = build :extract, user_id: 1234
+      ur = build :user_reduction, user_id: 1234, reducer_key: 'foo'
+
+      reductions_double = instance_double(ActiveRecord::Relation)
+      allow(reductions_double).to receive(:to_a).and_return([ur])
+
+      expect(UserReduction).to receive(:where).with(
+        user_id: [1234],
+        reducible: wf,
+        reducer_key: 'foo'
+      ).and_return(reductions_double)
+
+      result = reducer.get_relevant_reductions([ex])
+      expect(result.to_a).to include(ur)
+    end
+
+    it 'finds relevant subject reductions' do
+      wf = create :workflow
+      subject = create :subject
+      reducer = build :reducer, topic: :reduce_by_user, reducible: wf, subject_reducer_keys: 'foo'
+      ex = build :extract, subject_id: subject.id
+      ur = build :subject_reduction, subject_id: subject.id, reducer_key: 'foo'
+
+      reductions_double = instance_double(ActiveRecord::Relation)
+      allow(reductions_double).to receive(:to_a).and_return([ur])
+
+      expect(SubjectReduction).to receive(:where).with(
+        subject_id: [subject.id],
+        reducible: wf,
+        reducer_key: 'foo'
+      ).and_return(reductions_double)
+
+      result = reducer.get_relevant_reductions([ex])
+      expect(result.to_a).to include(ur)
     end
   end
 end

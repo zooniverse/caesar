@@ -58,11 +58,16 @@ class Reducer < ApplicationRecord
       return [] unless extracts.present?
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
       grouped_extracts.map do |group_key, extract_group|
+        # find or create the reduction we want to reduce into
         reduction = get_group_reduction(reductions, group_key)
+
+        # now that we have the reduction, filter the extracts based
+        # on the filters and on reduction.extracts if it exists
         extracts = filter_extracts(extract_group, reduction)
 
         # reduce the extracts into the correct reduction
         reduce_into(extracts, reduction).tap do |r|
+
           # if we are in running reduction, we never want to reduce the same extract twice so this
           # means that we must keep an association of which extracts are already part of a reduction
           if running_reduction?
@@ -75,13 +80,17 @@ class Reducer < ApplicationRecord
     light.run
   end
 
+  # for each extract, try to find a relevant reduction if relevant
+  # reductions are configured
   def augment_extracts(extracts)
     relevant_reductions = get_relevant_reductions(extracts)
     if relevant_reductions.present?
       extracts.map do |ex|
         ex.relevant_reduction = if reduce_by_subject?
+            # find will only return the first match
             relevant_reductions.find { |rr| rr.user_id == ex.user_id }
           elsif reduce_by_user?
+            # find will only return the first match
             relevant_reductions.find { |rr| rr.subject_id == ex.subject_id }
           else
             raise NotImplementedError.new 'This reduction topic is not supported'
@@ -92,6 +101,8 @@ class Reducer < ApplicationRecord
     extracts
   end
 
+  # load all reductions that might be relevant to any of the extracts that are
+  # being reduced
   def get_relevant_reductions(extracts)
     return [] unless user_reducer_keys.present? || subject_reducer_keys.present?
 
@@ -104,14 +115,20 @@ class Reducer < ApplicationRecord
     end
   end
 
+  # apply extract filters and deduplicate extracts (do not allow a running reduction
+  # to contain the same extract twice)
   def filter_extracts(extracts, reduction)
     return extracts if extracts.blank?
     extracts = extract_filter.apply(extracts)
-    extracts = extracts.reject{ |extract| reduction.extract_ids.include? extract.id }
+    extracts = extracts.reject do |extract|
+      reduction.extract_ids.include? extract.id
+    end if running_reduction?
   end
 
+  # given an array of reductions to be updated, find or create one with the
+  # appropriate subgroup
   def get_group_reduction(reductions, group_key)
-    match = reductions.find{ |reduction| reduction.subgroup = group_key }
+    match = reductions.find{ |reduction| reduction.subgroup == group_key }
     if match.present?
       match
     else
