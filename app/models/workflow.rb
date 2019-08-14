@@ -139,7 +139,7 @@ class Workflow < ApplicationRecord
   end
 
   def extractors_runner
-    RunsExtractors.new(extractors)
+    @extractors_runner ||= RunsExtractors.new(extractors)
   end
 
   def rerun_extractors
