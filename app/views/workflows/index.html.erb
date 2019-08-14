@@ -39,6 +39,9 @@
           <% if workflow.paused? %>
             <i class="glyphicon glyphicon-pause text-muted"></i>
           <% end %>
+          <% if workflow.halted? %>
+            <i class="glyphicon glyphicon-stop text-muted"></i>
+          <% end %>
         </td>
         <td><%= link_to workflow.name || "[Name unknown]", workflow_path([workflow]) %></td>
         <td><%= workflow.project_id %></td>
