@@ -38,8 +38,30 @@ describe StreamEvents::ClassificationEvent do
       end
     end
 
-    context 'when workflow has extractors' do
+    context 'when workflow is paused or halted' do
+      it 'does not process' do
+        create :survey_extractor, workflow: workflow
 
+        workflow.paused!
+        described_class.new(stream, hash).process
+        expect(queue).not_to have_received(:add)
+
+        workflow.halted!
+        described_class.new(stream, hash).process
+        expect(queue).not_to have_received(:add)
+      end
+    end
+
+    context 'when workflow has custom queue' do
+      it 'records the custom queue if one is configured' do
+        workflow.update(custom_queue_name: 'custom')
+        create :survey_extractor, workflow: workflow
+        described_class.new(stream, hash).process
+        expect(queue).to have_received(:add).once.with(ExtractWorker, 'custom', any_args)
+      end
+    end
+
+    context 'when workflow has extractors' do
       context 'when all extractors are internal' do
         it 'processes an event with the internal queue' do
           create :survey_extractor, workflow: workflow
