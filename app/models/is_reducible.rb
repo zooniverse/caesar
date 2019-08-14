@@ -1,6 +1,18 @@
 module IsReducible
   extend ActiveSupport::Concern
 
+  def active?
+    raise NotImplementedError.new 'Reducible resources must implement this method'
+  end
+
+  def paused?
+    raise NotImplementedError.new 'Reducible resources must implement this method'
+  end
+
+  def halted?
+    raise NotImplementedError.new 'Reducible resources must implement this method'
+  end
+
   def concerns_subjects?
     reducers.where(topic: 'reduce_by_subject').present?
   end

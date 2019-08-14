@@ -34,6 +34,8 @@ class RunsReducers
     end
 
     new_reductions = reducers.map do |reducer|
+      next UserReduction.none if (reducer.reduce_by_user? && user_id.nil?)
+
       fetcher = extract_fetcher.for(reducer.topic)
 
       relevant_reductions = case reducer.topic

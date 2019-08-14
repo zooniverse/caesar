@@ -6,7 +6,7 @@
       <dt>Workflow Name</dt>
       <dd><%= @workflow.name %>
       <dt>Status</dt>
-      <dd><%= if @workflow.paused? then "Paused" else "Active" end %>
+      <dd><%= @workflow.status.humanize %></dd>
       <br/><br/>
       <dt>Project Id</dt>
       <dd><%= @workflow.project_id %>

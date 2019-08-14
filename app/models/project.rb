@@ -14,9 +14,15 @@ class Project < ApplicationRecord
   has_many :user_actions
   has_many :data_requests, as: :exportable
 
-  enum status: { paused: 0, active: 1 }
+  enum status: { halted: 0, active: 1 }
 
   attr_accessor :rerun
+
+  # projects can't be paused because they don't have extractors associated
+  # with them, which means the paused state is identical to the halted state
+  def paused?
+    false
+  end
 
   def self.accessible_by(credential)
     return none unless credential.logged_in?
@@ -32,7 +38,16 @@ class Project < ApplicationRecord
   end
 
   def public_data?(type)
-    public_reductions?
+    case type
+    when 'extracts'
+      false
+    when 'user_reductions'
+      public_reductions?
+    when 'subject_reductions'
+      public_reductions?
+    else
+      false
+    end
   end
 
   def project_id

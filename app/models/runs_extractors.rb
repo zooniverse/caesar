@@ -43,6 +43,7 @@ class RunsExtractors
       ).first_or_initialize
 
       extract.tap do |an_extract|
+        an_extract.workflow_version = classification.workflow_version
         an_extract.user_id = classification.user_id
         an_extract.classification_at = classification.created_at
         an_extract.project_id = classification.project_id

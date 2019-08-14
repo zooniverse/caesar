@@ -119,4 +119,17 @@ describe ExtractFetcher do
       expect(fetch.augment_subject_ids([s1.id])).to contain_exactly(s1.id, s2.id)
     end
   end
+
+  it 'skips getting user extracts if user id is nil' do
+    create :extract, workflow: wf, user_id: user1_id
+    nil_extract = create :extract, workflow: wf, user_id: nil
+
+    allow(Extract).to receive(:where).and_return([nil_extract])
+
+    fetch = ExtractFetcher.new({user_id: nil}, []).for(:reduce_by_user)
+    extracts = fetch.extracts
+
+    expect(Extract).not_to have_received(:where)
+    expect(extracts).to be_empty
+  end
 end
