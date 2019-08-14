@@ -15,14 +15,11 @@ module StreamEvents
       workflow = classification.workflow
       return if workflow.paused? || workflow.extractors.blank?
 
-      queue = 'internal'
-      queue = 'external' if workflow.has_external_extractors?
-
-      stream.queue.add(
-        'queue' => queue,
-        'class' => ExtractWorker,
-        'args' => [classification.id]
-      )
+      if workflow.has_external_extractors?
+        stream.queue.add(ExtractWorkerExternal, classification.id)
+      else
+        stream.queue.add(ExtractWorker, classification.id)
+      end
     end
 
     def cache_linked_models!

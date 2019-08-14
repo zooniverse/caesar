@@ -140,16 +140,14 @@ describe RunsExtractors do
       end
 
       it 'queues the reduction if we ask it to' do
-        allow(Sidekiq::Client).to receive(:push).and_return(:true)
+        expect(ReduceWorker).to receive(:perform_async).once
         runner.extract(classification, and_reduce: true)
-        expect(Sidekiq::Client).to have_received(:push).once.with(a_hash_including('queue' => 'internal'))
       end
 
       it 'queues the reduction correctly if there is an external reducer' do
         create :external_reducer, reducible: workflow
-        allow(Sidekiq::Client).to receive(:push).and_return(:true)
+        expect(ReduceWorkerExternal).to receive(:perform_async).once
         runner.extract(classification, and_reduce: true)
-        expect(Sidekiq::Client).to have_received(:push).once.with(a_hash_including('queue' => 'external'))
       end
     end
   end

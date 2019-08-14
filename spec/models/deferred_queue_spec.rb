@@ -1,42 +1,16 @@
 require 'spec_helper'
 
-class DummyWorker
-  include Sidekiq::Worker
-
-  def perform(id)
-  end
-end
-
-RSpec.describe DeferredQueue do
+describe DeferredQueue do
+  let(:worker){ double(perform_async: true) }
   it 'commits added jobs' do
     queue = described_class.new
 
-    queue.add(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [1]
-    )
-
-    queue.add(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [2]
-    )
-
-    allow(Sidekiq::Client).to receive(:push).and_return(:true)
+    queue.add(worker, 1)
+    queue.add(worker, 2)
 
     queue.commit
 
-    expect(Sidekiq::Client).to have_received(:push).with(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [1]
-    ).ordered
-
-    expect(Sidekiq::Client).to have_received(:push).with(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [2]
-    ).ordered
+    expect(worker).to have_received(:perform_async).with(1).ordered
+    expect(worker).to have_received(:perform_async).with(2).ordered
   end
 end

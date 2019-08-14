@@ -4,12 +4,12 @@ class DeferredQueue
   end
 
   def commit
-    @jobs.each do |job|
-      Sidekiq::Client.push(job)
+    @jobs.each do |worker, args|
+      worker.perform_async(*args)
     end
   end
 
-  def add(job)
-    @jobs << job
+  def add(worker, *args)
+    @jobs << [worker, args]
   end
 end
