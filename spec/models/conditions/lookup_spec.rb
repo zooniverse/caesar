@@ -11,4 +11,12 @@ describe Conditions::Lookup do
     default = double
     expect(described_class.new("b", default).apply("a" => expected)).to eq(default)
   end
+
+  it 'if absent_val is a string, absent_val_display() should wrap the value in single quotes' do
+    expect(described_class.new("a", "5").absent_val_display()).to eq("'5'")
+  end
+
+  it 'if absent_val is not a string, absent_val_display() should not wrap the value in single quotes' do
+    expect(described_class.new("a", 5).absent_val_display()).to eq(5)
+  end
 end

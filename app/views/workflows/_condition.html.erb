@@ -36,13 +36,13 @@
   </span>
 <% when Conditions::Lookup %>
   <span class="text-info yields-text">
-    <abbr title="Default value: <%= condition.absent_val %>">
+    <abbr title="Default value: <%= condition.absent_val_display %>">
       <%= condition.key %>
     </abbr>
   </span>
 <% when Conditions::Constant %>
   <span class="text-primary yields-text">
-    <%= condition.value %>
+    <%= condition.value.instance_of?(String) ? "'" + condition.value.to_s + "'" : condition.value %>
   </span>
 <% when Conditions::TextTransform %>
   <span class="nested-condition">
