@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe ReduceWorker, type: :worker do
+
   describe '#perform' do
     let(:reducible) { create :project }
     let(:subject) { create :subject }
@@ -10,6 +11,39 @@ describe ReduceWorker, type: :worker do
     it "calls #reduce on the correct pipeline" do
       expect_any_instance_of(RunsReducers).to receive(:reduce).once.with(subject.id, nil, [], {and_check_rules: true})
       described_class.new.perform(reducible.id, reducible.class.to_s, subject.id, nil)
+    end
+
+    it 'does reduce when the reducible is active' do
+      active_workflow = create :workflow, status: :active
+
+      dbl = instance_double(RunsReducers, reduce: [])
+      allow_any_instance_of(IsReducible).to receive(:reducers_runner).and_return(dbl)
+
+      described_class.new.perform(active_workflow.id, active_workflow.class.to_s, subject.id, nil)
+
+      expect(dbl).to have_received(:reduce).once
+    end
+
+    it 'does reduce when the reducible is paused' do
+      paused_workflow = create :workflow, status: :paused
+
+      dbl = instance_double(RunsReducers, reduce: [])
+      allow_any_instance_of(IsReducible).to receive(:reducers_runner).and_return(dbl)
+
+      described_class.new.perform(paused_workflow.id, paused_workflow.class.to_s, subject.id, nil)
+
+      expect(dbl).to have_received(:reduce).once
+    end
+
+    it 'does not extract when the reducible is halted' do
+      halted_workflow = create :workflow, status: :halted
+
+      dbl = instance_double(RunsReducers, reduce: [])
+      allow_any_instance_of(IsReducible).to receive(:reducers_runner).and_return(dbl)
+
+      described_class.new.perform(halted_workflow.id, halted_workflow.class.to_s, subject.id, nil)
+
+      expect(dbl).not_to have_received(:reduce)
     end
   end
 
