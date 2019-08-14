@@ -16,7 +16,7 @@ class RunsReducers
     return [] unless reducers&.present?
     retries ||= 2
 
-    extract_fetcher = ExtractFetcher.new(prepare_extract_query(subject_id, user_id))
+    extract_fetcher = ExtractFetcher.new(prepare_extract_query(subject_id, user_id), extract_ids)
     reduction_fetcher = ReductionFetcher.new(prepare_reduction_query(subject_id, user_id))
 
     # prefetch all reductions to avoid race conditions with optimistic locking
@@ -34,6 +34,8 @@ class RunsReducers
     new_reductions = reducers.map do |reducer|
       next UserReduction.none if (reducer.reduce_by_user? && user_id.nil?)
 
+      extract_fetcher.for! reducer.topic
+
       extracts = if reducer.running_reduction?
         extract_fetcher.strategy! :fetch_minimal
       else
@@ -43,11 +45,11 @@ class RunsReducers
       # Set relevant reduction on each extract if required by external reducer
       # relevant_reductions are any previously reduced user or subject reductions
       # that are required by this reducer to properly calculate
-      reducer.augment_extracts(extracts)
+      reducer.augment_extracts(extracts.to_a)
 
       reductions = reduction_fetcher.for!(reducer.topic).search(reducer_key: reducer.key)
 
-      reducer.process(extracts, reductions)
+      reducer.process(extracts, reductions, subject_id, user_id)
     end.flatten
 
     persist_reductions(new_reductions)

@@ -77,6 +77,7 @@ class ExtractFetcher < FetcherBase
 
   def augment_subject_ids(id_list)
     additional_linked_subject_ids = id_list.map do |subject_id|
+      next if subject_id.blank?
       Subject.find(subject_id).additional_subject_ids_for_reduction
     end
     (id_list + additional_linked_subject_ids.flatten).uniq

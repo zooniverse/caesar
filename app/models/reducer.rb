@@ -123,6 +123,8 @@ class Reducer < ApplicationRecord
     extracts = extracts.reject do |extract|
       reduction.extract_ids.include? extract.id
     end if running_reduction?
+
+    extracts
   end
 
   # given an array of reductions to be updated, find or create one with the
