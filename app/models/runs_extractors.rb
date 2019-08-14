@@ -75,17 +75,19 @@ class RunsExtractors
           ReduceWorker
         end
 
+        worker.set(queue: workflow.custom_queue_name.to_sym) if workflow.custom_queue_name.present?
         worker.perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
       end
 
       project = Project.find_by_id(classification.project_id)
       if project && project.has_reducers?
-        worker = if workflow.has_external_reducers?
+        worker = if project.has_external_reducers?
           ReduceWorkerExternal
         else
           ReduceWorker
         end
 
+        worker.set(queue: project.custom_queue_name.to_sym) if project.custom_queue_name.present?
         worker.perform_async(classification.project_id, 'Project', classification.subject_id, classification.user_id, ids)
       end
     end

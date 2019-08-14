@@ -224,5 +224,16 @@ describe RunsReducers do
       runner.reduce(1234, nil, [])
       expect(fetcher).not_to have_received(:for)
     end
+
+    it 'runs the rules in custom queue if specified' do
+      reduction = create :subject_reduction, subject_id: subject.id
+      reducible = create :workflow, custom_queue_name: 'custom'
+      reducer = create :placeholder_reducer, reducible: reducible
+      runner = described_class.new(reducible, [reducer])
+      allow(reducer).to receive(:process).and_return([reduction])
+      expect(CheckRulesWorker).to receive(:set).once.with(queue: :custom)
+
+      runner.reduce(subject.id, nil, and_check_rules: true)
+    end
   end
 end
