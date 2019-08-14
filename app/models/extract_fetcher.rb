@@ -32,16 +32,16 @@ class ExtractFetcher < FetcherBase
   def user_extracts
     return Extract.none if query.fetch(:user_id, nil).blank?
 
-    corrected_query = query.except(:subject_id)
+    user_extracts_query = query.except(:subject_id)
     if fetch_minimal?
-      Extract.where(corrected_query.merge(id: @extract_ids))
+      Extract.where(user_extracts_query.merge(id: @extract_ids))
     else
-      Extract.where(corrected_query)
+      Extract.where(user_extracts_query)
     end
   end
 
   def subject_extracts
-    corrected_query = query.except(:user_id)
+    subject_extracts_query = query.except(:user_id)
 
     exact_subject_ids = Extract
       .find(@extract_ids)
@@ -52,9 +52,9 @@ class ExtractFetcher < FetcherBase
     augmented_subject_ids = augment_subject_ids(exact_subject_ids)
 
     if fetch_minimal?
-      get_minimal_subject_extracts(corrected_query, augmented_subject_ids, exact_subject_ids)
+      get_minimal_subject_extracts(subject_extracts_query, augmented_subject_ids, exact_subject_ids)
     else
-      get_all_subject_extracts(corrected_query, augmented_subject_ids)
+      get_all_subject_extracts(subject_extracts_query, augmented_subject_ids)
     end
   end
 

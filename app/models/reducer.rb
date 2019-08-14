@@ -120,9 +120,9 @@ class Reducer < ApplicationRecord
   def filter_extracts(extracts, reduction)
     return extracts if extracts.blank?
     extracts = extract_filter.apply(extracts)
-    extracts = extracts.reject do |extract|
-      reduction.extract_ids.include? extract.id
-    end if running_reduction?
+    if running_reduction?
+      extracts = extracts.reject { |extract| reduction.extract_ids.include? extract.id }
+    end
 
     extracts
   end
@@ -130,9 +130,9 @@ class Reducer < ApplicationRecord
   # given an array of reductions to be updated, find or create one with the
   # appropriate subgroup
   def get_group_reduction(reductions, group_key)
-    match = reductions.find{ |reduction| reduction.subgroup == group_key }
-    if match.present?
-      match
+    requested_reduction = reductions.find{ |reduction| reduction.subgroup == group_key }
+    if requested_reduction.present?
+      requested_reduction
     else
       if reduce_by_subject?
         SubjectReduction.new \
