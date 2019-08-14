@@ -55,7 +55,7 @@ class Reducer < ApplicationRecord
     @user_id = user_id
 
     light = Stoplight("reducer-#{id}") do
-      return [] unless extracts.present?
+      return [] if extracts.empty?
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
       grouped_extracts.map do |group_key, extract_group|
         # find or create the reduction we want to reduce into
