@@ -23,6 +23,6 @@ describe DeferredQueue do
     queue.commit
 
     expect(worker).to have_received(:perform_async).with(1)
-    expect(worker).to have_received(:set).with(queue: :custom)
+    expect(worker).to have_received(:set).with(queue: 'custom')
   end
 end

@@ -231,7 +231,7 @@ describe RunsReducers do
       reducer = create :placeholder_reducer, reducible: reducible
       runner = described_class.new(reducible, [reducer])
       allow(reducer).to receive(:process).and_return([reduction])
-      expect(CheckRulesWorker).to receive(:set).once.with(queue: :custom)
+      expect(CheckRulesWorker).to receive(:set).once.with(queue: 'custom')
 
       runner.reduce(subject.id, nil, and_check_rules: true)
     end
