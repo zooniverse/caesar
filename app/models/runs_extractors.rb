@@ -64,7 +64,7 @@ class RunsExtractors
 
     if and_reduce
       extracts = extracts.select { |extract| extract != Extractor::NoData }
-      return unless extracts.present?
+      return if extracts.empty?
 
       ids = extracts.map(&:id)
 
