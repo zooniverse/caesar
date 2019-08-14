@@ -24,8 +24,18 @@
   </div>
 <% end %>
 
-<p class="pull-right">&nbsp;</p>
-<% if @workflow.active? %>
+<% unless @workflow.halted? %>
+  <p class="pull-right">&nbsp;</p>
+  <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
+    <%= f.hidden_field :status, :value => 'halted' %>
+    <%= f.button :button, class: 'btn btn-default pull-right' do %>
+      <span class="glyphicon glyphicon-stop"></span> Halt Workflow
+    <% end %>
+  <% end %>
+<% end %>
+
+<% unless @workflow.paused? %>
+  <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
     <%= f.hidden_field :status, :value => 'paused' %>
     <%= f.button :button, class: 'btn btn-default pull-right' do %>
@@ -34,7 +44,8 @@
   <% end %>
 <% end %>
 
-<% if @workflow.paused? %>
+<% unless @workflow.active? %>
+  <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
     <%= f.hidden_field :status, :value => 'active' %>
     <%= f.button :button, class: 'btn btn-default pull-right' do %>

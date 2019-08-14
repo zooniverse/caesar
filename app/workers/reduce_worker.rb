@@ -22,7 +22,11 @@ class ReduceWorker
 
   def perform(reducible_id, reducible_class, subject_id, user_id, extract_ids = [])
     reducible = reducible_class.constantize.find(reducible_id)
-    return if reducible.paused?
+
+    # if reducible is only paused, continue processing everything but extracts
+    # if reducible is halted, do not process anything
+    return if reducible.halted?
+
     reducible.reducers_runner.reduce(subject_id, user_id, extract_ids, and_check_rules: true)
   end
 

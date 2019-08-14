@@ -68,14 +68,14 @@ class ProjectsController < ApplicationController
       rerun_reducers
       respond_with project, location: project_path(project, anchor: 'reducers')
     else
-      was_paused = project.paused?
+      was_halted = project.halted?
       project.update(project_params.except('display_name'))
 
-      if !was_paused && project.paused?
-        flash[:notice] = 'Pausing project'
+      if !was_halted && project.halted?
+        flash[:notice] = 'Halting project'
       end
 
-      if was_paused && project.active?
+      if was_halted && project.active?
         flash[:notice] = 'Resuming project'
       end
 

@@ -14,17 +14,18 @@
   </div>
 <% end %>
 
-<p class="pull-right">&nbsp;</p>
-<% if @project.active? %>
+<% unless @project.halted? %>
+  <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@project, url: [@project]) do |f| %>
-    <%= f.hidden_field :status, :value => 'paused' %>
+    <%= f.hidden_field :status, :value => 'halted' %>
     <%= f.button :button, class: 'btn btn-default pull-right' do %>
-      <span class="glyphicon glyphicon-pause"></span> Pause Project
+      <span class="glyphicon glyphicon-stop"></span> Halt Project
     <% end %>
   <% end %>
 <% end %>
 
-<% if @project.paused? %>
+<% unless @project.active? %>
+  <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@project, url: [@project]) do |f| %>
     <%= f.hidden_field :status, :value => 'active' %>
     <%= f.button :button, class: 'btn btn-default pull-right' do %>
