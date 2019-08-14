@@ -11,6 +11,7 @@
 <table class="table table-striped">
   <colgroup>
     <col style="width: 8em"/>
+    <col style="width: 1em"/>
     <col />
     <col style="width: 8em"/>
     <col style="width: 8em"/>
@@ -19,8 +20,9 @@
   </colgroup>
   <thead>
     <tr>
-      <th>Id</th>
-      <th>Name</th>
+      <th>Project Id</th>
+      <th></th>
+      <th>Project Name</th>
       <th class="text-muted">Extractors</th>
       <th>Reducers</th>
       <th class="text-muted">Rules</th>
@@ -32,6 +34,11 @@
     <% @projects.each do |project| %>
       <tr>
         <td><%= project.id %></td>
+        <td>
+          <% if project.halted? %>
+            <i class="glyphicon glyphicon-stop text-muted"></i>
+          <% end %>
+        </td>
         <td><%= link_to project.display_name || "No Name", project_path(project) %></td>
         <td class="text-muted">N/A</td>
         <td><%= project.reducers_count %></td>
