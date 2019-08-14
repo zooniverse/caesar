@@ -82,9 +82,11 @@ class WorkflowsController < ApplicationController
       respond_with workflow, location: workflow_path(workflow, anchor: 'reducers')
     else
       was_paused = workflow.paused?
+      was_halted = workflow.halted?
+
       workflow.update(workflow_params)
 
-      if was_paused && workflow.active?
+      if (was_paused || was_halted) && workflow.active?
         UnpauseWorkflowWorker.perform_async workflow.id
         flash[:notice] = 'Resuming workflow'
       end
@@ -93,8 +95,8 @@ class WorkflowsController < ApplicationController
         flash[:notice] = 'Pausing workflow'
       end
 
-      if was_paused && workflow.active?
-        UnpauseWorkflowWorker.perform_async workflow.id
+      if !was_halted && workflow.halted?
+        flash[:notice] = 'Halting workflow'
       end
 
       Workflow::ConvertLegacyExtractorsConfig.new(workflow).update(params[:workflow][:extractors_config])
