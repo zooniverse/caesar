@@ -6,7 +6,7 @@
       <dt>Project Name</dt>
       <dd><%= @project.display_name %>
       <dt>Status</dt>
-      <dd><%= if @project.paused? then "Paused" else "Active" end %>
+      <dd><%= @project.status.humanize %></dd>
       <br/><br/>
       <dt>Reducers</dt>
       <dd>

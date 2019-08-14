@@ -4,7 +4,11 @@ class PerformSubjectActionWorker
 
   def perform(action_id)
     action = SubjectAction.find(action_id)
-    return if action.workflow.paused?
+
+    # if reducible is only paused, continue processing everything but extracts
+    # if reducible is halted, do not process anything
+    return if action.workflow.halted?
+
     action.perform
   end
 end
