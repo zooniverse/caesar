@@ -10,16 +10,7 @@ describe DeferredQueue do
 
     queue.commit
 
-    expect(Sidekiq::Client).to have_received(:push).with(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [1]
-    ).ordered
-
-    expect(Sidekiq::Client).to have_received(:push).with(
-      'queue' => 'q',
-      'class' => DummyWorker,
-      'args' => [2]
-    ).ordered
+    expect(worker).to have_received(:perform_async).with(1).ordered
+    expect(worker).to have_received(:perform_async).with(2).ordered
   end
 end
