@@ -39,7 +39,7 @@ class ReductionFetcher
   end
 
   def locate_in_place(selector, relation, factory)
-    match = relation.to_a.map(&:serializable_hash).select{ |record| key_match(record, selector) }
+    match = relation.to_a.select{ |record| key_match(record, selector) }
     match.empty? ? factory.new(selector) : match[0]
   end
 

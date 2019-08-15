@@ -68,4 +68,21 @@ describe ExtractGrouping do
     end.to raise_error(MissingGroupingField)
   end
 
+  it 'tolerates classifications with missing grouping fields' do
+    create :extract, extractor_key: 's', workflow: workflow, subject_id: subject.id, classification_id: 1234, data: { LN: 1 }
+    create :extract, extractor_key: 'g', workflow: workflow, subject_id: subject.id, classification_id: 1234, data: { classroom: 'aa' }
+
+    create :extract, extractor_key: 's', workflow: workflow, subject_id: subject.id, classification_id: 2345, data: { LN: 1 }
+    # do not create this extract; this way, the extracts for this classification will be ignored
+    # create :extract, extractor_key: 'g', workflow: workflow, subject_id: subject.id, classification_id: 2345, data: { classroom: 'aa' }
+
+    create :extract, extractor_key: 's', workflow: workflow, subject_id: subject.id, classification_id: 3456, data: { LN: 1 }
+    create :extract, extractor_key: 'g', workflow: workflow, subject_id: subject.id, classification_id: 3456, data: { classroom: 'aa' }
+
+    grouper = described_class.new(Extract.all, { 'field_name' => 'g.classroom', 'if_missing' => 'ignore'})
+    groups = grouper.to_h
+
+    expect(groups.keys).to eq(['aa'])
+    expect(groups['aa'].count).to eq(4)
+  end
 end
