@@ -28,3 +28,5 @@ The same extracts are processed by each reducer in the same order and we illustr
 Note that in default reduction mode, re-reduction is always triggered, regardless of whether an extract is being processed twice. Also notice that each computation in default reduction consumes all of the extracts. We calculate an average by summing together the values of all of the extracts and then dividing by the number of extracts.
 
 In running reduction, on the other hand, the store keeps a running count of how many items the reducer has seen. This store, with the previous value of the reduction, can be used to compute the new average using only the new value by using the formula `((old average * previous count) + new value)/(old count + 1)` and the store can be updated with the new count `(old count + 1)`.
+
+When using running reducers for performance reasons, please keep in mind that the performance benefits of running reduction are only realized if *every* reducer for that reducible is executed in running mode. The primary advantage of running reduction is that it eliminates the need to load large numbers of extracts for a given subject or user.
