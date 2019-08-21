@@ -29,11 +29,13 @@ class RunsReducers
 
       extract_fetcher.for! reducer.topic
 
-      extracts = if reducer.running_reduction?
+      if reducer.running_reduction?
         extract_fetcher.strategy! :fetch_minimal
       else
         extract_fetcher.strategy! :fetch_all
-      end.extracts
+      end
+
+      extracts = extract_fetcher.extracts
 
       # Set relevant reduction on each extract if required by external reducer
       # relevant_reductions are any previously reduced user or subject reductions
