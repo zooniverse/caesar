@@ -4,12 +4,13 @@ class DeferredQueue
   end
 
   def commit
-    @jobs.each do |worker, args|
+    @jobs.each do |worker, custom_queue_name, args|
+      worker.set(queue: custom_queue_name) if custom_queue_name.present?
       worker.perform_async(*args)
     end
   end
 
-  def add(worker, *args)
-    @jobs << [worker, args]
+  def add(worker, custom_queue_name, *args)
+    @jobs << [worker, custom_queue_name, args]
   end
 end

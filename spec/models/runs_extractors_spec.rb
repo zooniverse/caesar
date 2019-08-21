@@ -149,6 +149,12 @@ describe RunsExtractors do
         expect(ReduceWorkerExternal).to receive(:perform_async).once
         runner.extract(classification, and_reduce: true)
       end
+
+      it 'queues reduction correctly if a custom queue is defined' do
+        workflow.update(custom_queue_name: 'custom')
+        expect(ReduceWorker).to receive(:set).once.with(queue: 'custom').and_call_original
+        runner.extract(classification, and_reduce: true)
+      end
     end
   end
 end
