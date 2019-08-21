@@ -109,9 +109,9 @@ class Reducer < ApplicationRecord
     return [] if user_reducer_keys.blank? && subject_reducer_keys.blank?
 
     if reduce_by_subject?
-      @relevant_user_reductions ||= UserReduction.where(user_id: extracts.map(&:user_id), reducible: reducible, reducer_key: user_reducer_keys)
+      UserReduction.where(user_id: extracts.map(&:user_id), reducible: reducible, reducer_key: user_reducer_keys)
     elsif reduce_by_user?
-      @relevant_subject_reductions ||= SubjectReduction.where(subject_id: extracts.map(&:subject_id), reducible: reducible, reducer_key: subject_reducer_keys)
+      SubjectReduction.where(subject_id: extracts.map(&:subject_id), reducible: reducible, reducer_key: subject_reducer_keys)
     else
       raise NotImplementedError.new 'This reduction mode is not supported'
     end
