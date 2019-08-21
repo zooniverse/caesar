@@ -59,8 +59,6 @@ RSpec.describe Reducer, type: :model do
 
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
-    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    allow(extract_fetcher).to receive(:strategy!)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, {}).
