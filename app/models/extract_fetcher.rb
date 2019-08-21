@@ -34,9 +34,9 @@ class ExtractFetcher < FetcherBase
 
     user_extracts_query = query.except(:subject_id)
     if fetch_minimal?
-      Extract.where(user_extracts_query.merge(id: @extract_ids))
+      @minimal_user_extracts ||= Extract.where(user_extracts_query.merge(id: @extract_ids))
     else
-      Extract.where(user_extracts_query)
+      @maximal_user_extracts ||= Extract.where(user_extracts_query)
     end
   end
 
@@ -52,9 +52,9 @@ class ExtractFetcher < FetcherBase
     augmented_subject_ids = augment_subject_ids(exact_subject_ids)
 
     if fetch_minimal?
-      get_minimal_subject_extracts(subject_extracts_query, augmented_subject_ids, exact_subject_ids)
+      @minimal_subject_extracts ||= get_minimal_subject_extracts(subject_extracts_query, augmented_subject_ids, exact_subject_ids)
     else
-      get_all_subject_extracts(subject_extracts_query, augmented_subject_ids)
+      @maximal_subject_extracts ||= get_all_subject_extracts(subject_extracts_query, augmented_subject_ids)
     end
   end
 

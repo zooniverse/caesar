@@ -24,13 +24,6 @@ class RunsReducers
       reduction_fetcher.load!
     end
 
-    # if all of the reducers are configured in running mode, then we should
-    # set :fetch_minimal as early as possible so that trying to find relevant
-    # reductions doesn't require us to fetch all extracts
-    if reducers.all?{ |reducer| reducer.running_reduction? }
-      extract_fetcher.strategy! :fetch_minimal
-    end
-
     new_reductions = reducers.map do |reducer|
       next UserReduction.none if (reducer.reduce_by_user? && user_id.nil?)
 
@@ -54,7 +47,7 @@ class RunsReducers
 
     persist_reductions(new_reductions)
 
-    if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present?
+    if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present? && (not reducible.halted?)
       worker = CheckRulesWorker
       worker.set(queue: reducible.custom_queue_name) if reducible.custom_queue_name.present?
       worker.perform_async(reducible.id, reducible.class, subject_id, user_id)
