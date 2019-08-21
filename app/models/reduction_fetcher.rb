@@ -4,16 +4,13 @@ class ReductionFetcher < FetcherBase
   def initialize(query)
     super(query)
     @loaded = false
-
-    @subject_reductions = SubjectReduction.where(query.except(:user_id))
-    @user_reductions = UserReduction.where(query.except(:subject_id))
   end
 
   def load!
     return self if loaded
 
-    @subject_reductions.load
-    @user_reductions.load
+    subject_reductions.load
+    user_reductions.load
     @loaded = true
 
     self
@@ -31,11 +28,19 @@ class ReductionFetcher < FetcherBase
     end
   end
 
+  def subject_reductions
+    @subject_reductions ||= SubjectReduction.where(query.except(:user_id))
+  end
+
+  def user_reductions
+    @user_reductions = UserReduction.where(query.except(:subject_id))
+  end
+
   def source_relation
     if fetch_by_subject?
-      @subject_reductions
+      subject_reductions
     elsif fetch_by_user?
-      @user_reductions
+      user_reductions
     else
       raise NotImplementedError 'This topic is not supported'
     end

@@ -10,8 +10,12 @@ describe ReductionFetcher do
   describe 'prefetching' do
     let(:fetcher){ described_class.new({}) }
     it 'prefetches if you tell it to' do
-      expect(fetcher.instance_variable_get(:@subject_reductions)).to receive(:load)
-      expect(fetcher.instance_variable_get(:@user_reductions)).to receive(:load)
+      sr = instance_double(ActiveRecord::Relation, load: nil)
+      ur = instance_double(ActiveRecord::Relation, load: nil)
+      expect(fetcher).to receive(:subject_reductions).and_return(sr)
+      expect(fetcher).to receive(:user_reductions).and_return(ur)
+      expect(sr).to receive(:load)
+      expect(ur).to receive(:load)
 
       res = fetcher.load!
       expect(fetcher.loaded).to be_truthy
@@ -19,8 +23,12 @@ describe ReductionFetcher do
     end
 
     it 'only prefetches once' do
-      expect(fetcher.instance_variable_get(:@subject_reductions)).to receive(:load).once
-      expect(fetcher.instance_variable_get(:@user_reductions)).to receive(:load).once
+      sr = instance_double(ActiveRecord::Relation, load: nil)
+      ur = instance_double(ActiveRecord::Relation, load: nil)
+      expect(fetcher).to receive(:subject_reductions).and_return(sr)
+      expect(fetcher).to receive(:user_reductions).and_return(ur)
+      expect(sr).to receive(:load).once
+      expect(ur).to receive(:load).once
 
       fetcher.load!
       fetcher.load!
@@ -36,7 +44,9 @@ describe ReductionFetcher do
       it 'loads user reductions correctly' do
         fetcher.for! :reduce_by_user
 
-        expect(fetcher.instance_variable_get(:@user_reductions)).to receive(:where).with(
+        ur = instance_double(ActiveRecord::Relation, load: nil)
+        expect(fetcher).to receive(:user_reductions).and_return(ur)
+        expect(ur).to receive(:where).with(
           user_id: 1234,
           foo: 'bar'
         ).and_return(UserReduction.none)
@@ -48,7 +58,9 @@ describe ReductionFetcher do
       it 'loads subject reductions correctly' do
         fetcher.for! :reduce_by_subject
 
-        expect(fetcher.instance_variable_get(:@subject_reductions)).to receive(:where).with(
+        sr = instance_double(ActiveRecord::Relation, load: nil)
+        expect(fetcher).to receive(:subject_reductions).and_return(sr)
+        expect(sr).to receive(:where).with(
           subject_id: subject.id,
           foo: 'bar'
         ).and_return(SubjectReduction.none)
