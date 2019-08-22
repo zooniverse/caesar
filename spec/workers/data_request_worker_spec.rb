@@ -144,9 +144,9 @@ describe DataRequestWorker do
       end
 
       it 'cancels the export' do
-        create :user_reduction, reducible: workflow
-        create :user_reduction, reducible: workflow
-        create :user_reduction, reducible: workflow
+        create :user_reduction, user_id: 1234, reducible: workflow
+        create :user_reduction, user_id: 2345, reducible: workflow
+        create :user_reduction, user_id: 3456, reducible: workflow
 
         workflow_request.canceling!
 
