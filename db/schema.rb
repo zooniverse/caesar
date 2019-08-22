@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2019_07_24_192312) do
     t.integer "user_reductions_count"
     t.integer "reducers_count"
     t.integer "status", default: 1, null: false
+    t.string "custom_queue_name"
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -267,6 +268,7 @@ ActiveRecord::Schema.define(version: 2019_07_24_192312) do
     t.integer "reducers_count", default: 0
     t.integer "subject_rules_count", default: 0
     t.integer "user_rules_count", default: 0
+    t.string "custom_queue_name"
   end
 
   add_foreign_key "classifications", "subjects"

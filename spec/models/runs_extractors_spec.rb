@@ -138,6 +138,23 @@ describe RunsExtractors do
         rescue
         end
       end
+
+      it 'queues the reduction if we ask it to' do
+        expect(ReduceWorker).to receive(:perform_async).once
+        runner.extract(classification, and_reduce: true)
+      end
+
+      it 'queues the reduction correctly if there is an external reducer' do
+        create :external_reducer, reducible: workflow
+        expect(ReduceWorkerExternal).to receive(:perform_async).once
+        runner.extract(classification, and_reduce: true)
+      end
+
+      it 'queues reduction correctly if a custom queue is defined' do
+        workflow.update(custom_queue_name: 'custom')
+        expect(ReduceWorker).to receive(:set).once.with(queue: 'custom').and_call_original
+        runner.extract(classification, and_reduce: true)
+      end
     end
   end
 end
