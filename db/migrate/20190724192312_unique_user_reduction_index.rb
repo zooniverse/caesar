@@ -10,10 +10,5 @@ class UniqueUserReductionIndex < ActiveRecord::Migration[5.2]
         unique: true,
         algorithm: :concurrently
     end
-
-    add_index :user_reductions,
-      [:reducible_id, :reducible_type, :user_id],
-      name: "index_user_reductions_on_reducible_and_user",
-      algorithm: :concurrently
   end
 end
