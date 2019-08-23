@@ -67,6 +67,10 @@ class Reducer < ApplicationRecord
         # on the filters and on reduction.extracts if it exists
         extracts = filter_extracts(extract_group, reduction)
 
+        # if we have filtered out all possible extracts, just go on
+        # to the next group (if any) without making a reduction pass
+        next if extracts.empty?
+
         # reduce the extracts into the correct reduction
         reduce_into(extracts, reduction).tap do |r|
           # if we are in running reduction, we never want to reduce the same extract twice, so this

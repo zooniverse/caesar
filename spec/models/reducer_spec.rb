@@ -1,6 +1,6 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe Reducer, type: :model do
+describe Reducer, type: :model do
   let(:extracts) {
     [
       Extract.new(
@@ -429,5 +429,46 @@ RSpec.describe Reducer, type: :model do
       result = reducer.get_relevant_reductions([ex])
       expect(result.to_a).to include(ur)
     end
+  end
+
+  it 'avoids the tess user skill bug' do
+    wf = create :workflow
+
+    subject1 = create :subject, metadata: { '#training_subject' => 'true' }
+    subject2 = create :subject
+    # in the production bug the #training_subject metadata field was missing, not false
+    # subject2 = create :subject, metadata: { '#training_subject' => 'false' }
+
+    reducer = create :reducer,
+      key: 'user_skill',
+      type: 'Reducers::PlaceholderReducer',
+      topic: :reduce_by_user,
+      reducible: wf,
+      reduction_mode: :running_reduction,
+      filters: {
+        training_behavior: 'training_only'
+      }
+    allow(reducer).to receive(:reduce_into) do |extracts, reduction|
+      reduction
+    end
+
+    ex1 = create :extract, user_id: 1234, subject_id: subject1.id, data: { foo: 'bar' }
+    ex2 = create :extract, user_id: 1234, subject_id: subject2.id, data: { foo: 'bar' }
+
+    user_reduction = create :user_reduction,
+      reducible: wf,
+      user_id: 1234,
+      reducer_key: 'user_skill',
+      subgroup: '_default',
+      data: { foo: 'baz' }
+
+    reducer.process [ex1], [user_reduction], subject1.id, 1234
+    reducer.process [ex2], [user_reduction], subject2.id, 1234
+
+    expect(reducer).to      have_received(:reduce_into).with([ex1], user_reduction)
+    expect(reducer).not_to  have_received(:reduce_into).with([], user_reduction)
+    expect(reducer).not_to  have_received(:reduce_into).with([ex2], user_reduction)
+
+    expect(reducer).to      have_received(:reduce_into).exactly(:once)
   end
 end
