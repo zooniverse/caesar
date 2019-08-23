@@ -158,12 +158,7 @@ describe RunsReducers do
       create(:extract, extractor_key: 's', workflow_id: reducible.id, user_id: 2, subject_id: subject.id, data: {})
     ]
 
-    reductions = [
-      create(:user_reduction, data: {skill: 15}, user_id: 1, reducible: reducible, reducer_key: 'testing'),
-      create(:user_reduction, data: {skill: 22}, user_id: 2, reducible: reducible, reducer_key: 'testing')
-    ]
-
-    expect(reducer).to receive(:process).with(any_args, reductions).and_call_original
+    expect(reducer).to receive(:augment_extracts).with(extracts)
     runner.reduce(subject.id, nil)
   end
 
@@ -210,7 +205,7 @@ describe RunsReducers do
     end
 
     it 'short-circuits the user reducers if there is no user id' do
-      fetcher = instance_double(ExtractFetcher, for: nil)
+      fetcher = instance_double(ExtractFetcher, for!: nil)
 
       reducible = create :workflow
       reducer = create(:placeholder_reducer,
@@ -222,7 +217,18 @@ describe RunsReducers do
 
       allow(ExtractFetcher).to receive(:new).and_return(fetcher)
       runner.reduce(1234, nil, [])
-      expect(fetcher).not_to have_received(:for)
+      expect(fetcher).not_to have_received(:for!)
+    end
+
+    it 'runs the rules in custom queue if specified' do
+      reduction = create :subject_reduction, subject_id: subject.id
+      reducible = create :workflow, custom_queue_name: 'custom'
+      reducer = create :placeholder_reducer, reducible: reducible
+      runner = described_class.new(reducible, [reducer])
+      allow(reducer).to receive(:process).and_return([reduction])
+      expect(CheckRulesWorker).to receive(:set).once.with(queue: 'custom')
+
+      runner.reduce(subject.id, nil, and_check_rules: true)
     end
   end
 end
