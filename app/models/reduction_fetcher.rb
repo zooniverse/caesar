@@ -1,56 +1,49 @@
-class ReductionFetcher < FetcherBase
-  attr_reader :loaded
+class ReductionFetcher
+  attr_accessor :topic
+  def initialize(filter)
+    @filter = filter
+    @subject_reductions = SubjectReduction.where(filter.except(:user_id))
+    @user_reductions = UserReduction.where(filter.except(:subject_id))
 
-  def initialize(query)
-    super(query)
-    @loaded = false
+    @topic = :reduce_by_subject
   end
 
   def load!
-    return self if loaded
+    @subject_reductions.load
+    @user_reductions.load
+  end
 
-    subject_reductions.load
-    user_reductions.load
-    @loaded = true
-
+  def for!(topic)
+    @topic = topic.to_sym
     self
   end
 
-  def search(**kwargs)
-    selector = query.merge(kwargs)
-    selector.delete(:user_id) if fetch_by_subject?
-    selector.delete(:subject_id) if fetch_by_user?
-
-    if loaded
-      locate_in_place(selector)
-    else
-      source_relation.where(selector).to_a
-    end
+  def retrieve(**kwargs)
+    selector = @filter.merge(kwargs)
+    return @subject_reductions.where(selector.except(:user_id)).first_or_initialize if reduce_by_subject?
+    return @user_reductions.where(selector.except(:subject_id)).first_or_initialize if reduce_by_user?
   end
 
-  def subject_reductions
-    @subject_reductions ||= SubjectReduction.where(query.except(:user_id))
+  def retrieve_in_place(**kwargs)
+    selector = @filter.merge(kwargs)
+    return locate_in_place(selector.except(:user_id), @subject_reductions, SubjectReduction) if reduce_by_subject?
+    return locate_in_place(selector.except(:subject_id), @user_reductions, UserReduction) if reduce_by_user?
   end
 
-  def user_reductions
-    @user_reductions = UserReduction.where(query.except(:subject_id))
+  def reduce_by_user?
+    @topic == :reduce_by_user
   end
 
-  def source_relation
-    if fetch_by_subject?
-      subject_reductions
-    elsif fetch_by_user?
-      user_reductions
-    else
-      raise NotImplementedError 'This topic is not supported'
-    end
+  def reduce_by_subject?
+    @topic == :reduce_by_subject
   end
 
-  def locate_in_place(selector)
-    source_relation.to_a.select{ |record| key_match(record, selector) }
+  def locate_in_place(selector, relation, factory)
+    match = relation.to_a.select{ |record| key_match(record, selector) }
+    match.empty? ? factory.new(selector) : match[0]
   end
 
   def key_match(record, selector)
-    selector.all? { |key, value| record[key] == value }
+    selector.all? { |key, value | record[key] == value }
   end
 end
