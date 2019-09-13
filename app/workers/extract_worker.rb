@@ -11,7 +11,11 @@ class ExtractWorker
     return unless classification
 
     workflow = classification.workflow
-    return if workflow.paused?
+
+    # when deciding whether to run extractors, we need to handle both cases the same way, by doing nothing;
+    # when deciding whether to reduce or to run rules, they need to be handled in different ways
+    # checking to see if the workflow is active implies that it's not paused or halted
+    return unless workflow.active?
 
     extracts = workflow.extractors_runner.extract(classification, and_reduce: true)
     DeleteClassificationWorker.perform_in(rand(30.minutes.to_i).seconds, classification.id)

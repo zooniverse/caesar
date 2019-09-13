@@ -7,7 +7,9 @@ class CheckRulesWorker
   def perform(reducible_id, reducible_type, subject_id, user_id = nil)
     reducible = reducible_type.constantize.find(reducible_id)
 
-    return if reducible.class.name.demodulize=='Workflow' && reducible.paused?
+    # if reducible is only paused, continue processing everything but extracts
+    # if reducible is halted, do not process anything
+    return if reducible.halted?
 
     reducible.rules_runner.check_rules(subject_id, user_id)
   end

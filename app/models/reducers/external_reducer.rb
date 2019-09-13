@@ -10,6 +10,7 @@ module Reducers
     config_field :version, default: 1
 
     def reduce_into(extracts, reduction)
+      return nil if extracts.empty?
       if default_reduction?
         http_reduce(reduction, extracts)
       elsif running_reduction?

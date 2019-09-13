@@ -104,7 +104,7 @@ class Workflow < ApplicationRecord
   has_many :data_requests, as: :exportable
 
   enum rules_applied: [:all_matching_rules, :first_matching_rule]
-  enum status: { paused: 0, active: 1 }
+  enum status: { halted: 0, active: 1, paused: 2 }
 
   attr_accessor :rerun
 
@@ -134,8 +134,12 @@ class Workflow < ApplicationRecord
     end
   end
 
+  def has_external_extractors?
+    extractors_runner.has_external?
+  end
+
   def extractors_runner
-    RunsExtractors.new(extractors)
+    @extractors_runner ||= RunsExtractors.new(extractors)
   end
 
   def rerun_extractors

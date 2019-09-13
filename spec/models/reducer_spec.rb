@@ -1,6 +1,6 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe Reducer, type: :model do
+describe Reducer, type: :model do
   let(:extracts) {
     [
       Extract.new(
