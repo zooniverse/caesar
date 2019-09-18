@@ -4,7 +4,8 @@
 :concurrency: <%= ENV["SIDEKIQ_CONCURRENCY"] || 10 %>
 :timeout: 30
 :queues:
-  - [internal, 4]
-  - [default, 3]
-  - [external, 2]
-  - [batch, 1]
+  - [internal, 400]
+  - [default, 300]
+  - [external, 200]
+  - [batch, 100]
+  - [tess, 1]
