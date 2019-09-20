@@ -15,4 +15,6 @@ if [ "$RAILS_ENV" != "development" ]; then
   fi
 fi
 
-exec bundle exec sidekiq
+# allow the sidekiq args to come via the env variables
+CLI_ARGS=${SIDEKIQ_ARGS:-''}
+exec bundle exec sidekiq $CLI_ARGS
