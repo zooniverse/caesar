@@ -75,8 +75,12 @@ class RunsExtractors
           ReduceWorker
         end
 
-        worker.set(queue: workflow.custom_queue_name) if workflow.custom_queue_name.present?
-        worker.perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
+        if workflow.custom_queue_name.present?
+          worker.set(queue: workflow.custom_queue_name)
+                .perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
+        else
+          worker.perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
+        end
       end
 
       project = Project.find_by_id(classification.project_id)
@@ -87,8 +91,13 @@ class RunsExtractors
           ReduceWorker
         end
 
-        worker.set(queue: project.custom_queue_name.to_sym) if project.custom_queue_name.present?
-        worker.perform_async(classification.project_id, 'Project', classification.subject_id, classification.user_id, ids)
+        if project.custom_queue_name.present?
+          worker.set(queue: project.custom_queue_name)
+                .perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
+        else
+          worker.perform_async(classification.workflow_id, 'Workflow', classification.subject_id, classification.user_id, ids)
+        end
+
       end
     end
 
