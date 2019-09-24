@@ -247,6 +247,128 @@ spec:
                   name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caesar-production-tess-sidekiq
+  labels:
+    app: caesar-production-tess-sidekiq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: caesar-production-tess-sidekiq
+  template:
+    metadata:
+      labels:
+        app: caesar-production-tess-sidekiq
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 2
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-production-sidekiq
+                        - caesar-production-tess-sidekiq
+                topologyKey: "kubernetes.io/hostname"
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - caesar-staging-sidekiq
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: caesar-production-tess-sidekiq
+          image: zooniverse/caesar:__IMAGE_TAG__
+          args: ["/app/docker/start-sidekiq.sh"]
+          env:
+            - name: RAILS_ENV
+              value: production
+            - name: RAILS_SERVE_STATIC_FILES
+              value: 'true'
+            - name: RAILS_MAX_THREADS
+              value: '2'
+            - name: REDIS_URL
+              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: SECRET_KEY_BASE
+            - name: DATABASE_POOL_SIZE
+              value: '11'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: DATABASE_URL
+            - name: AWS_REGION
+              value: us-east-1
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: NEW_RELIC_APP_NAME
+              value: Caesar
+            - name: NEW_RELIC_MONITOR_MODE
+              value: 'true'
+            - name: NEW_RELIC_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: NEW_RELIC_LICENSE_KEY
+            - name: PANOPTES_URL
+              value: https://panoptes.zooniverse.org
+            - name: PANOPTES_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: PANOPTES_CLIENT_ID
+            - name: PANOPTES_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: PANOPTES_CLIENT_SECRET
+            - name: ROLLBAR_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: ROLLBAR_ACCESS_TOKEN
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: SENTRY_DSN
+            - name: SIDEKIQ_ARGS
+              value: '-q tess'
+            - name: SIDEKIQ_CONCURRENCY
+              value: '10'
+            - name: SIDEKIQ_WEB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: SIDEKIQ_WEB_PASSWORD
+            - name: SIDEKIQ_WEB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: SIDEKIQ_WEB_USERNAME
+---
 apiVersion: v1
 kind: Service
 metadata:

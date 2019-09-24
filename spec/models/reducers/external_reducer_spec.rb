@@ -91,5 +91,11 @@ describe Reducers::ExternalReducer do
       reducer.reduce_into(extracts, running_reduction)
       expect(running_reduction.store).to have_key('bar')
     end
+
+    it 'does not make a request if there are no extracts' do
+      expect(reducer).not_to receive(:http_reduce)
+      result = reducer.reduce_into([], build(:subject_reduction))
+      expect(result).to be(nil)
+    end
   end
 end

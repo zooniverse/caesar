@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_10_214129) do
+ActiveRecord::Schema.define(version: 2019_09_05_150713) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
@@ -112,6 +113,7 @@ ActiveRecord::Schema.define(version: 2019_07_10_214129) do
     t.integer "user_reductions_count"
     t.integer "reducers_count"
     t.integer "status", default: 1, null: false
+    t.string "custom_queue_name"
   end
 
   create_table "reducers", force: :cascade do |t|
@@ -266,6 +268,7 @@ ActiveRecord::Schema.define(version: 2019_07_10_214129) do
     t.integer "reducers_count", default: 0
     t.integer "subject_rules_count", default: 0
     t.integer "user_rules_count", default: 0
+    t.string "custom_queue_name"
   end
 
   add_foreign_key "classifications", "subjects"
