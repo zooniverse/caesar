@@ -1,5 +1,5 @@
 :verbose: false
-:logfile: ./log/sidekiq.log
+#:logfile: ./log/sidekiq.log
 :pidfile: ./tmp/pids/sidekiq.pid
 :concurrency: <%= ENV["SIDEKIQ_CONCURRENCY"] || 10 %>
 :timeout: 30
