@@ -287,7 +287,7 @@ spec:
                         - caesar-staging-sidekiq
                 topologyKey: "kubernetes.io/hostname"
       containers:
-        - name: caesar-production-sidekiq
+        - name: caesar-production-tess-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
           args: ["/app/docker/start-sidekiq.sh"]
           env:
