@@ -152,8 +152,9 @@ describe RunsExtractors do
 
       it 'queues reduction correctly if a custom queue is defined' do
         workflow.update(custom_queue_name: 'custom')
-        expect(ReduceWorker).to receive(:set).once.with(queue: 'custom').and_call_original
-        runner.extract(classification, and_reduce: true)
+        expect{
+          runner.extract(classification, and_reduce: true)
+        }.to change{Sidekiq::Queues["custom"].size}.by(1)
       end
     end
   end
