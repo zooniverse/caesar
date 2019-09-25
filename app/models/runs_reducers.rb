@@ -60,8 +60,12 @@ class RunsReducers
 
     if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present?
       worker = CheckRulesWorker
-      worker.set(queue: reducible.custom_queue_name) if reducible.custom_queue_name.present?
-      worker.perform_async(reducible.id, reducible.class, subject_id, user_id)
+      if reducible.custom_queue_name.present?
+        worker.set(queue: reducible.custom_queue_name)
+              .perform_async(reducible.id, reducible.class, subject_id, user_id)
+      else
+        worker.perform_async(reducible.id, reducible.class, subject_id, user_id)
+      end
     end
 
     new_reductions

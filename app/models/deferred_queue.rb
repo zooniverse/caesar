@@ -5,8 +5,12 @@ class DeferredQueue
 
   def commit
     @jobs.each do |worker, custom_queue_name, args|
-      worker.set(queue: custom_queue_name) if custom_queue_name.present?
-      worker.perform_async(*args)
+      if custom_queue_name
+        worker.set(queue: custom_queue_name)
+              .perform_async(*args)
+      else
+        worker.perform_async(*args)
+      end
     end
   end
 
