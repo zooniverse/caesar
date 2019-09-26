@@ -231,9 +231,10 @@ describe RunsReducers do
       reducer = create :placeholder_reducer, reducible: reducible
       runner = described_class.new(reducible, [reducer])
       allow(reducer).to receive(:process).and_return([reduction])
-      expect(CheckRulesWorker).to receive(:set).once.with(queue: 'custom')
 
-      runner.reduce(subject.id, nil, and_check_rules: true)
+      expect{
+        runner.reduce(subject.id, nil, and_check_rules: true)
+      }.to change{Sidekiq::Queues["custom"].size}.by(1)
     end
   end
 end
