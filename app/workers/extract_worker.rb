@@ -6,7 +6,10 @@ class ExtractWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  def perform(classification_id)
+  def perform(classification_id, reduce_after_extraction=nil)
+    if reduce_after_extraction.nil?
+      reduce_after_extraction = true
+    end
     classification = Classification.find_by_id(classification_id)
     return unless classification
 
@@ -17,7 +20,7 @@ class ExtractWorker
     # checking to see if the workflow is active implies that it's not paused or halted
     return unless workflow.active?
 
-    extracts = workflow.extractors_runner.extract(classification, and_reduce: true)
+    extracts = workflow.extractors_runner.extract(classification, and_reduce: reduce_after_extraction)
     DeleteClassificationWorker.perform_in(rand(30.minutes.to_i).seconds, classification.id)
 
     extracts
