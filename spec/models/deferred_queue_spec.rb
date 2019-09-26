@@ -15,14 +15,13 @@ describe DeferredQueue do
     expect(worker).not_to have_received(:set)
   end
 
-  it 'commits added jobs to a custom queue if asked' do
+  it 'commits and enqueues added jobs to a custom queue if asked' do
+    actual_worker = DescribeWorkflowWorker
     queue = described_class.new
+    queue.add(actual_worker, 'custom', 1)
 
-    queue.add(worker, 'custom', 1)
-
-    queue.commit
-
-    expect(worker).to have_received(:perform_async).with(1)
-    expect(worker).to have_received(:set).with(queue: 'custom')
+    expect{
+      queue.commit
+    }.to change{Sidekiq::Queues["custom"].size}.by(1)
   end
 end
