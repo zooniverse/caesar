@@ -16,49 +16,40 @@ class RunsReducers
     return [] unless reducers&.present?
     retries ||= 2
 
-    filter = { subject_id: subject_id, user_id: user_id }
-    case reducible
-    when Workflow
-      filter[:workflow_id] = reducible.id
-    when Project
-      filter[:project_id] = reducible.id
-    end
-
-    extract_fetcher = ExtractFetcher.new(filter, extract_ids)
-    reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id, user_id: user_id }
-    reduction_fetcher = ReductionFetcher.new(reduction_filter)
+    extract_fetcher = ExtractFetcher.new(prepare_extract_query(subject_id, user_id), extract_ids)
+    reduction_fetcher = ReductionFetcher.new(prepare_reduction_query(subject_id, user_id))
 
     # prefetch all reductions to avoid race conditions with optimistic locking
     if reducers.any?{ |reducer| reducer.running_reduction? }
       reduction_fetcher.load!
     end
 
-    # if all of the reducers are configured in running mode, then we should
-    # set :fetch_minimal as early as possible so that trying to find relevant
-    # reductions doesn't require us to fetch all extracts
-    if reducers.all?{ |reducer| reducer.running_reduction? }
-      extract_fetcher.strategy! :fetch_minimal
-    end
-
     new_reductions = reducers.map do |reducer|
       next UserReduction.none if (reducer.reduce_by_user? && user_id.nil?)
 
-      fetcher = extract_fetcher.for(reducer.topic)
+      extract_fetcher.for! reducer.topic
 
-      relevant_reductions = case reducer.topic
-                            when 0, "reduce_by_subject"
-                              user_ids = fetcher.extracts.map(&:user_id)
-                              UserReduction.where(user_id: user_ids, reducible: reducible, reducer_key: reducer.user_reducer_keys)
-                            when 1, "reduce_by_user"
-                              subject_ids = fetcher.extracts.map(&:subject_id)
-                              SubjectReduction.where(subject_id: subject_ids, reducible: reducible, reducer_key: reducer.subject_reducer_keys)
-                            end
-      reducer.process(fetcher, reduction_fetcher.for!(reducer.topic), relevant_reductions)
+      if reducer.running_reduction?
+        extract_fetcher.strategy! :fetch_minimal
+      else
+        extract_fetcher.strategy! :fetch_all
+      end
+
+      extracts = extract_fetcher.extracts
+
+      # Set relevant reduction on each extract if required by external reducer
+      # relevant_reductions are any previously reduced user or subject reductions
+      # that are required by this reducer to properly calculate
+      reducer.augment_extracts(extracts.to_a)
+
+      reductions = reduction_fetcher.for!(reducer.topic).search(reducer_key: reducer.key)
+
+      reducer.process(extracts, reductions, subject_id, user_id)
     end.flatten
 
     persist_reductions(new_reductions)
 
-    if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present?
+    if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present? && (not reducible.halted?)
       worker = CheckRulesWorker
       if reducible.custom_queue_name.present?
         worker.set(queue: reducible.custom_queue_name)
@@ -77,9 +68,25 @@ class RunsReducers
     raise ReductionConflict, "Transient uniqueness violation"
   end
 
+  def prepare_extract_query(subject_id, user_id)
+    { subject_id: subject_id, user_id: user_id }.tap do |extract_query|
+      case reducible
+      when Workflow
+        extract_query[:workflow_id] = reducible.id
+      when Project
+        extract_query[:project_id] = reducible.id
+      end
+    end
+  end
+
+  def prepare_reduction_query(subject_id, user_id)
+    { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id, user_id: user_id }
+  end
+
   def persist_reductions(reductions)
     ActiveRecord::Base.transaction do
       reductions.each do |reduction|
+        # never save user reductions with no user id because that doesn't make sense
         reduction.save! unless (reduction.instance_of?(UserReduction) && reduction.user_id.nil?)
       end
     end
