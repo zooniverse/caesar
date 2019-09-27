@@ -23,9 +23,9 @@ describe Reducers::CountReducer do
     ], build(:subject_reduction)).data).to include('extracts' => 4)
   end
 
-  it 'ignores existing reduction data in default mode' do
+  it 'ignores existing reduction data in default mode', :focus do
     default_reducer = described_class.new(reduction_mode: Reducer.reduction_modes[:default_reduction])
-    reduction = build :subject_reduction, reducer_key: 'data', subgroup: '_default'
+    reduction = build :subject_reduction, reducer_key: 'data', subgroup: '_default', data: { 'extracts' => 3, 'classifications' => 1 }
 
     result = default_reducer.reduce_into([Extract.new(classification_id: 1), Extract.new(classification_id: 1), Extract.new(classification_id: 2)], reduction)
     expect(result.data["classifications"]).to eq(2)
