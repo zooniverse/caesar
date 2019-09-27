@@ -6,10 +6,7 @@ class ExtractWorker
     (count ** 8) + 15 + (rand(30) * count + 1)
   end
 
-  def perform(classification_id, reduce_after_extraction=nil)
-    if reduce_after_extraction.nil?
-      reduce_after_extraction = true
-    end
+  def perform(classification_id, reduce_after_extraction=true)
     classification = Classification.find_by_id(classification_id)
     return unless classification
 
