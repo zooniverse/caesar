@@ -36,7 +36,6 @@ gem 'flipper'
 gem 'flipper-active_record'
 gem 'flipper-ui'
 gem 'panoptes-client', '~> 0.4.0'
-gem 'newrelic_rpm'
 gem 'lograge'
 gem 'logstash-event'
 gem 'rollbar'
@@ -63,6 +62,10 @@ gem 'strong_migrations'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+
+group :production, :staging do
+  gem 'newrelic_rpm'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
