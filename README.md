@@ -14,15 +14,24 @@ Prepare the Docker containers:
 
 ```
 docker-compose build
-docker-compose run app bin/rails db:setup
-docker-compose run -e RAILS_ENV=test app bin/rails db:create
+docker-compose run --rm app bin/rails db:setup
+docker-compose run --rm -e RAILS_ENV=test app bin/rails db:create
 ```
 
 Run tests with:
 
 ```
-docker-compose run -e RAILS_ENV=test app bin/rspec
+docker-compose run --rm -e RAILS_ENV=test app bin/rspec
 ```
+
+Or interactively / manually in a docker shell
+
+```
+docker-compose run --rm -e RAILS_ENV=test app bash
+# from the bash prompt
+bin/rspec
+```
+
 
 Start a local server with:
 
