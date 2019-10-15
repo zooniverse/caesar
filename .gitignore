@@ -23,3 +23,10 @@
 # Ignore Byebug command history file.
 .byebug_history
 .vscode
+
+# ignore mac files
+.DS_Store
+
+# ingore rvm gemset files
+.ruby-gemset
+
