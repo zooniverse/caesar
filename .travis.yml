@@ -1,6 +1,7 @@
 language: ruby
 rvm:
-  - 2.4.1
+  - 2.5
+  - 2.6
 branches:
   only:
   - master
@@ -9,7 +10,7 @@ sudo: false
 services:
   - redis-server
 addons:
-  postgresql: "9.4"
+  postgresql: "9.5"
 env:
   - DATABASE_URL_TEST=postgresql://localhost/caesar_test?user=postgres
 
