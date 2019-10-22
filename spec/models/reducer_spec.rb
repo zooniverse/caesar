@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reducer, type: :model do
+describe Reducer, type: :model, focus: true do
   let(:extracts) {
     [
       Extract.new(
@@ -47,6 +47,11 @@ describe Reducer, type: :model do
 
     expect(reducer).not_to receive(:reduce_into)
     reducer.process([], [], subject_id: s1.id)
+  end
+
+  it 'expects a reduction decorator instance to be passed to the custom reduce_into' do
+    expect(reducer).to receive(:reduce_into).with(instance_of(Array), instance_of(Reducer::ReductionState))
+    reducer.process(extracts, [], subject_id: 1)
   end
 
   it 'filters extracts' do
@@ -208,32 +213,36 @@ describe Reducer, type: :model do
       extract2 = create :extract,
         extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
 
-      extracts_double = instance_double(ActiveRecord::Relation)
-
-      subject_reduction_double = instance_double(SubjectReduction,
-        workflow_id: workflow.id,
-        subject_id: subject.id,
-        reducer_key: 'aaa',
-        extract_ids: [extract1.id],
-        extracts: extracts_double,
-        data: "foo"
+      subject_reduction = create(
+        :subject_reduction,
+        reducible: workflow,
+        subject: subject,
+        reducer_key: 'bbb',
+        extracts: [extract1],
+        data: 'foo'
       )
 
-      running_reducer = create :reducer,
+      running_reducer = create(
+        :placeholder_reducer,
         key: 'aaa',
         type: 'Reducers::PlaceholderReducer',
         topic: Reducer.topics[:reduce_by_subject],
         reduction_mode: Reducer.reduction_modes[:running_reduction],
         reducible_id: workflow.id,
-        reducible_type: "Workflow"
+        reducible_type: 'Workflow'
+      )
 
-      allow(running_reducer).to receive(:get_group_reduction).and_return(subject_reduction_double)
-      allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
-      allow(running_reducer).to receive(:associate_extracts)
-      allow(subject_reduction_double).to receive(:data=)
+      reduction_state_double = Reducer::ReductionState.new(
+        subject_reduction,
+        running_reducer.running_reduction?
+      )
+      allow(Reducer::ReductionState).to receive(:new).and_return(reduction_state_double)
 
-      running_reducer.process([extract1, extract2], [subject_reduction_double])
-      expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)
+      expect(running_reducer).to receive(:reduce_into).with(
+        [extract2],
+        reduction_state_double
+      ).and_call_original
+      running_reducer.process([extract1, extract2], [subject_reduction])
     end
   end
 

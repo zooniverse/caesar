@@ -59,7 +59,7 @@ class Reducer < ApplicationRecord
 
       grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
 
-      grouped_extracts.map do |group_key, extract_group|
+      reduced_extracts = grouped_extracts.map do |group_key, extract_group|
         # find or create the reduction we want to reduce into
         reduction = get_group_reduction(reductions, group_key)
 
@@ -67,15 +67,26 @@ class Reducer < ApplicationRecord
         # on the filters and on reduction.extracts if it exists
         extracts = filter_extracts(extract_group, reduction)
 
-        # reduce the extracts into the correct reduction
-        reduce_into(extracts, reduction).tap do |r|
-          # if we are in running reduction, we never want to reduce the same extract twice, so this
-          # means that we must keep an association of which extracts are already part of a reduction
-          if running_reduction?
-              associate_extracts(r, extracts)
-          end
+        # use the decorator to isolate reducer state in running vs default mode
+        reduction_state = ReductionState.new(reduction, running_reduction?)
+        # reduce the extracts with the specialized reduction behaviour
+        reduced_reduction_state = reduce_into(extracts, reduction_state)
+        reduced_reduction = reduced_reduction_state.reduction
+
+        # if we are in running reduction, we never want to reduce the same extract twice, so this
+        # means that we must keep an association of which extracts are already part of a reduction
+        if running_reduction?
+          # note that because we use deferred associations, this won't actually hit the database
+          # until the reduction is saved, meaning it happens inside the transaction that originates
+          # in RunsReducers#persist_reductions
+          reduced_reduction.extracts = extracts
         end
-      end.select{ |reduction| reduction&.data&.present? }
+
+        reduced_reduction
+      end
+
+      # only return the reductions that have data values
+      reduced_extracts.select { |reduction| reduction&.data }
     end
 
     light.run
@@ -134,9 +145,9 @@ class Reducer < ApplicationRecord
   # appropriate keys
   def get_group_reduction(reductions, group_key)
     requested_reduction = reductions.find{ |reduction| reduction.subgroup == group_key }
-    if requested_reduction.present?
-      requested_reduction
-    elsif reduce_by_subject?
+    return requested_reduction if requested_reduction
+
+    if reduce_by_subject?
       SubjectReduction.new \
         reducible: reducible,
         reducer_key: key,
@@ -157,19 +168,6 @@ class Reducer < ApplicationRecord
     end
   end
 
-  def associate_extracts(reduction, extracts)
-    # note that because we use deferred associations, this won't actually hit the database
-    # until the reduction is saved, meaning it happens inside the transaction that originates
-    # in RunsReducers#persist_reductions
-    extracts.each do |extract|
-      reduction.extracts << extract
-    end
-  end
-
-  def reduce_into(extracts, reduction)
-    raise NotImplementedError
-  end
-
   def extract_filter
     ExtractFilter.new(filters)
   end
@@ -188,5 +186,39 @@ class Reducer < ApplicationRecord
 
   def grouping
     super || {}
+  end
+
+  def reduce_into(extracts, reduction)
+    raise NotImplementedError
+  end
+
+  # use a decorator to ensure we repsect running / default mode reduction
+  # state when passing into the specialised reduce_into methods
+  # running mode uses existing state
+  # default mode ignores any known state
+  class ReductionState
+    attr_reader :reduction, :use_existing_state
+    delegate_missing_to :reduction
+
+    def initialize(reduction, use_existing_state)
+      @reduction = reduction
+      @use_existing_state = use_existing_state
+    end
+
+    def data
+      if use_existing_state
+        reduction.data
+      else
+        {}
+      end
+    end
+
+    def store
+      if use_existing_state
+        reduction.store
+      else
+        {}
+      end
+    end
   end
 end
