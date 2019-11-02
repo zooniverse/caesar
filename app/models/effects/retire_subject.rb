@@ -12,6 +12,8 @@ module Effects
     end
 
     def self.config_fields
+      # use 2-element response (key, choices) to enable dropdown in
+      # subject_rule_effect _form view, or 1-element (key) for text input
       [[:reason, CONFIG_CHOICES]].freeze
     end
 
