@@ -9,9 +9,13 @@
     <%= f.input :action, :as => :hidden %>
     <br />
     <div class="form-group">
-      <% Effects[@subject_rule_effect.action].config_fields.each do |key, options| %>
+      <% Effects[@subject_rule_effect.action].config_fields.each do |key, choices| %>
         <label><%= key.capitalize %></label><br/>
-        <%= text_field_tag "subject_rule_effect[config[#{key}]]", @subject_rule_effect.config[key], { class: 'form-control' } %>
+        <% if choices == nil %>
+          <%= text_field_tag "subject_rule_effect[config[#{key}]]", @subject_rule_effect.config[key.to_s], { class: 'form-control' } %>
+        <% else %>
+          <%= select_tag "subject_rule_effect[config[#{key}]]", options_for_select(choices, @subject_rule_effect.config[key.to_s]), { class: 'form-control' } %>
+        <% end %>
       <% end %>
     </div>
   </div>
