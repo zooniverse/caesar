@@ -19,7 +19,7 @@ MutationRoot = GraphQL::ObjectType.define do
 
   field :upsertExtract, Extract::Type do
     description <<-END.strip_heredoc
-      Creates/updates the data for an reduction. Triggers evaluation of reductions and then
+      Creates/updates the data for an extract. Triggers evaluation of reductions and then
       rules afterwards (asynchronously).
     END
 
@@ -44,7 +44,7 @@ MutationRoot = GraphQL::ObjectType.define do
 
   field :upsertReduction, SubjectReduction::Type do
     description <<-END.strip_heredoc
-      Creates/updates the data for an reduction. Triggers evaluation of the workflow rules
+      Creates/updates the data for a reduction. Triggers evaluation of the workflow rules
       afterwards (asynchronously).
     END
 
