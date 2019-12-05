@@ -50,10 +50,11 @@ class Reducer < ApplicationRecord
 
   NoData = Class.new
 
-  def process(extract_fetcher, reduction_fetcher, relevant_reductions=[])
+  def process(extracts, reduction_fetcher, relevant_reductions=[])
     light = Stoplight("reducer-#{id}") do
-      extract_fetcher.strategy = running_reduction?  ? :fetch_minimal : :fetch_all
-      grouped_extracts = ExtractGrouping.new(extract_fetcher.extracts, grouping).to_h
+      return [] if extracts.empty?
+
+      grouped_extracts = ExtractGrouping.new(extracts, grouping).to_h
 
       grouped_extracts.map do |group_key, grouped|
         reduction = get_reduction(reduction_fetcher, group_key)
@@ -104,6 +105,19 @@ class Reducer < ApplicationRecord
 
   def reduce_into(extracts, reduction)
     raise NotImplementedError
+  end
+
+  def extract_fetcher
+    strategy = running_reduction? ? :fetch_minimal : :fetch_all
+
+    case topic.to_sym
+    when :reduce_by_subject
+      FetchExtractsBySubject.new(strategy)
+    when :reduce_by_user
+      FetchExtractsByUser.new(strategy)
+    else
+      raise NotImplementedError, "Topic #{topic} is not supported"
+    end
   end
 
   def extract_filter

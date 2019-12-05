@@ -190,7 +190,7 @@ describe RunsReducers do
       filter = { project_id: project.id, subject_id: subject.id, user_id: nil }
       reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id, user_id: nil}
 
-      expect(ExtractFetcher).to receive(:new).at_least(:once).with(filter, []).and_call_original
+      expect_any_instance_of(FetchExtractsBySubject).to receive(:extracts).at_least(:once).with(filter, []).and_call_original
       expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
       runner.reduce(subject.id, nil)
@@ -210,7 +210,7 @@ describe RunsReducers do
     end
 
     it 'short-circuits the user reducers if there is no user id' do
-      fetcher = instance_double(ExtractFetcher, for: nil)
+      fetcher = instance_double(FetchExtractsByUser, extracts: [])
 
       reducible = create :workflow
       reducer = create(:placeholder_reducer,
@@ -220,9 +220,9 @@ describe RunsReducers do
                       )
       runner = described_class.new(reducible, [reducer])
 
-      allow(ExtractFetcher).to receive(:new).and_return(fetcher)
+      allow(FetchExtractsByUser).to receive(:new).and_return(fetcher)
       runner.reduce(1234, nil, [])
-      expect(fetcher).not_to have_received(:for)
+      expect(fetcher).not_to have_received(:extracts)
     end
 
     it 'runs the rules in custom queue if specified' do
