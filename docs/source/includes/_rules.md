@@ -68,7 +68,7 @@ Each rule can have one or more effects associated with it. Those effects will be
 
 <sub>\** `url` must be HTTPS</sub>
 
-### Subject Rule Effects
+### User Rule Effects
 
 | effect_type | `config` Parameters | Effect Code |
 | ---------- | ---------- | ------------|
