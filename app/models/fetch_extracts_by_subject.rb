@@ -3,7 +3,7 @@ class FetchExtractsBySubject < FetcherBase
     subject_extracts_query = query.except(:user_id)
 
     exact_subject_ids = Extract
-      .find(extract_ids)
+      .where(id: extract_ids)
       .pluck(:subject_id)
       .append(query[:subject_id])
       .uniq
