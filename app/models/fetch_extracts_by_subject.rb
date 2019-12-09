@@ -2,12 +2,8 @@ class FetchExtractsBySubject < FetcherBase
   def extracts(query, extract_ids)
     subject_extracts_query = query.except(:user_id)
 
-    exact_subject_ids = Extract
-      .where(id: extract_ids)
-      .pluck(:subject_id)
-      .append(query[:subject_id])
-      .uniq
-
+    subject_ids_from_specified_extracts = Extract.where(id: extract_ids).pluck(:subject_id)
+    exact_subject_ids = subject_ids_from_specified_extracts | query[:subject_id]
     augmented_subject_ids = augment_subject_ids(exact_subject_ids)
 
     case @strategy
