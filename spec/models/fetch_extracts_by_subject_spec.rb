@@ -67,10 +67,10 @@ describe FetchExtractsBySubject do
     it 'when no prior subjects exist' do
       fetcher = described_class.new
 
-      expect(fetcher.augment_subject_ids([])).to eq([])
-      expect(fetcher.augment_subject_ids([s1.id])).to eq([s1.id])
-      expect(fetcher.augment_subject_ids([s1.id, s1.id])).to eq([s1.id])
-      expect(fetcher.augment_subject_ids([s1.id, s2.id])).to contain_exactly(s1.id, s2.id)
+      expect(fetcher.exact_and_additional_subject_ids([])).to eq([])
+      expect(fetcher.exact_and_additional_subject_ids([s1.id])).to eq([s1.id])
+      expect(fetcher.exact_and_additional_subject_ids([s1.id, s1.id])).to eq([s1.id])
+      expect(fetcher.exact_and_additional_subject_ids([s1.id, s2.id])).to contain_exactly(s1.id, s2.id)
     end
 
     it 'when a prior subject exists' do
@@ -81,7 +81,7 @@ describe FetchExtractsBySubject do
           if instance.id==s1.id then [s2.id] else [] end
         end
 
-      expect(fetcher.augment_subject_ids([s1.id])).to contain_exactly(s1.id, s2.id)
+      expect(fetcher.exact_and_additional_subject_ids([s1.id])).to contain_exactly(s1.id, s2.id)
     end
   end
 end
