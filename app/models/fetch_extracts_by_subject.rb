@@ -25,7 +25,8 @@ class FetchExtractsBySubject < FetcherBase
 
   def get_all_subject_extracts(query, exact_and_additional_subject_ids)
     # is an extract for any of the subjects that were mentioned or any of their parents
-    Extract.where(query.except(:subject_id).merge(subject_id: exact_and_additional_subject_ids))
+    all_subject_extracts = query.except(:subject_id).merge(subject_id: exact_and_additional_subject_ids)
+    Extract.where(all_subject_extracts)
   end
 
   def exact_and_additional_subject_ids(subject_ids)
