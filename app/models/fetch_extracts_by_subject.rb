@@ -8,9 +8,9 @@ class FetchExtractsBySubject < FetcherBase
 
     case @strategy
     when :fetch_minimal
-      @minimal_subject_extracts ||= get_minimal_subject_extracts(subject_extracts_query, extract_ids, augmented_subject_ids, exact_subject_ids)
+      get_minimal_subject_extracts(subject_extracts_query, extract_ids, augmented_subject_ids, exact_subject_ids)
     else
-      @all_subject_extracts ||= get_all_subject_extracts(subject_extracts_query, augmented_subject_ids)
+      get_all_subject_extracts(subject_extracts_query, augmented_subject_ids)
     end
   end
 
