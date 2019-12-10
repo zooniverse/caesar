@@ -12,4 +12,3 @@ class FetchExtractsByUser < FetcherBase
     end
   end
 end
-
