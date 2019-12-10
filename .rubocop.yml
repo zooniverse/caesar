@@ -1,6 +1,9 @@
 Style/NumericLiterals:
   Enabled: false
 
+Metrics/LineLength:
+  Max: 160
+
 Metrics/BlockLength:
   Exclude:
     - "**/*_spec.rb"
