@@ -13,7 +13,7 @@
 
 ## `#previous_subject_ids`:
 * Array of Zooniverse subject ids
-* Subjects whose ids are included in array will be passed by RunsReducers to ExtractFetcher
+* Subjects whose ids are included in array will be passed by RunsReducers to FetchExtractsBySubject
 * Used to indicate that one or more prior subjects' extracts should be included when reducing a new subject.
 * Example: TESS takes a new image of the same piece of the sky as a previous subject on a subsequent pass. The previous subject's Zooniverse id is included in the subject metadata and all extracts for both subjects are included in the new subject's reduction.
 * See Subject#additional_subject_ids_for_reduction for use.

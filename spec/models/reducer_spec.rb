@@ -42,8 +42,6 @@ describe Reducer, type: :model do
   end
 
   it 'does not try to reduce empty extract sets' do
-    allow_any_instance_of(ExtractFetcher).to receive(:extracts).and_return([])
-
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
     expect(ReductionFetcher).to receive(:new).and_return(reduction_fetcher)
 
@@ -51,7 +49,7 @@ describe Reducer, type: :model do
     allow(subject).to receive(:reduce_into).and_call_original
 
     expect(subject).not_to receive(:reduce_into)
-    subject.process(ExtractFetcher.new({}, []), ReductionFetcher.new({}), [])
+    subject.process([], ReductionFetcher.new({}), [])
   end
 
   it 'filters extracts' do
@@ -64,34 +62,30 @@ describe Reducer, type: :model do
 
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
-    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    allow(extract_fetcher).to receive(:strategy=)
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, {}).
       and_return(grouping_filter)
 
-    subject.process(extract_fetcher, reduction_fetcher)
+    subject.process(extracts, reduction_fetcher)
 
     expect(grouping_filter).to have_received(:to_h).once
   end
 
   it 'does not attempt reduction on repeated failures' do
-    reducer= build :reducer
+    reducer = build :reducer
 
-    extract_fetcher = instance_double(ExtractFetcher, extracts: extracts)
-    allow(extract_fetcher).to receive(:strategy=)
     reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
-    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
-    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
-    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
+    expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
 
     expect(reducer).not_to receive(:reduce_into)
-    expect { reducer.process(extract_fetcher, reduction_fetcher) }.to raise_error(Stoplight::Error::RedLight)
+    expect { reducer.process(extracts, reduction_fetcher) }.to raise_error(Stoplight::Error::RedLight)
   end
 
   it 'composes grouping and filtering correctly' do
@@ -109,8 +103,6 @@ describe Reducer, type: :model do
       build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
     ]
 
-    extract_fetcher = instance_double(ExtractFetcher, extracts: fancy_extracts)
-    allow(extract_fetcher).to receive(:strategy=)
     reduction_fetcher = instance_double(ReductionFetcher)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
@@ -123,7 +115,7 @@ describe Reducer, type: :model do
     end
     allow(reducer).to receive(:reduce_into){ |reduce_me, reduce_into_me| create(:subject_reduction, subgroup: reduce_into_me.subgroup, data: reduce_me.map(&:data)) }
 
-    reductions = reducer.process(extract_fetcher, reduction_fetcher)
+    reductions = reducer.process(fancy_extracts, reduction_fetcher)
 
     expect(reductions[0][:subgroup]).to eq("33")
     expect(reductions[0][:data].count).to eq(3)
@@ -178,6 +170,8 @@ describe Reducer, type: :model do
       extract2 = create :extract,
         extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
 
+      extracts = [extract1, extract2]
+
       extracts_double = instance_double(ActiveRecord::Relation)
 
       subject_reduction_double = instance_double(SubjectReduction,
@@ -197,8 +191,6 @@ describe Reducer, type: :model do
         reducible_id: workflow.id,
         reducible_type: "Workflow"
 
-      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      allow(extract_fetcher).to receive(:strategy=)
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       allow(running_reducer).to receive(:associate_extracts)
@@ -206,7 +198,7 @@ describe Reducer, type: :model do
       allow(running_reducer).to receive(:get_reduction).and_return(subject_reduction_double)
       allow(subject_reduction_double).to receive(:data=)
 
-      running_reducer.process(extract_fetcher, reduction_fetcher)
+      running_reducer.process(extracts, reduction_fetcher)
       expect(running_reducer).to have_received(:associate_extracts).with(subject_reduction_double, [extract1, extract2])
     end
 
@@ -220,6 +212,8 @@ describe Reducer, type: :model do
       extract2 = create :extract,
         extractor_key: 'bbb', subject_id: subject.id, workflow_id: workflow.id
 
+      extracts = [extract1, extract2]
+
       extracts_double = instance_double(ActiveRecord::Relation)
 
       subject_reduction_double = instance_double(SubjectReduction,
@@ -231,8 +225,6 @@ describe Reducer, type: :model do
         data: "foo"
       )
 
-      extract_fetcher = instance_double(ExtractFetcher, extracts: [extract1, extract2])
-      allow(extract_fetcher).to receive(:strategy=)
       reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
 
       running_reducer = create :reducer,
@@ -248,7 +240,7 @@ describe Reducer, type: :model do
       allow(running_reducer).to receive(:associate_extracts)
       allow(subject_reduction_double).to receive(:data=)
 
-      running_reducer.process(extract_fetcher, reduction_fetcher)
+      running_reducer.process(extracts, reduction_fetcher)
       expect(running_reducer).to have_received(:reduce_into).with([extract2], subject_reduction_double)
     end
   end
