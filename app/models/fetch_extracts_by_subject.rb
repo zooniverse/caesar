@@ -18,11 +18,11 @@ class FetchExtractsBySubject < FetcherBase
     end
   end
 
-  def get_minimal_subject_extracts(query, extract_ids, exact_and_additional_subject_ids, exact_subject_ids)
+  def get_minimal_subject_extracts(query, extract_ids, additional_subject_ids)
     # is an extract exactly in the list of extracts with the specified subject
     requested_extracts = query.merge(id: extract_ids)
     # or is an extract for one of those prior subjects but not the specified subjects
-    previous_subject_extracts = query.except(:subject_id).merge(subject_id: exact_and_additional_subject_ids - exact_subject_ids)
+    previous_subject_extracts = query.except(:subject_id).merge(subject_id: additional_subject_ids)
 
     Extract.where(requested_extracts).or(Extract.where(previous_subject_extracts))
   end
