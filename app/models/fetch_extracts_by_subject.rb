@@ -1,3 +1,5 @@
+require 'set'
+
 class FetchExtractsBySubject < FetcherBase
   def extracts(query, extract_ids)
     subject_extracts_query = query.except(:user_id)
@@ -38,6 +40,12 @@ class FetchExtractsBySubject < FetcherBase
   end
 
   def additional_subject_ids(subject_ids)
-    Subject.where(id: subject_ids).map(&:additional_subject_ids_for_reduction).flatten.uniq
+    additional_subject_ids = Set.new
+
+    Subject.where(id: subject_ids).find_each do |subject|
+      additional_subject_ids += subject.additional_subject_ids_for_reduction
+    end
+
+    additional_subject_ids.to_a
   end
 end
