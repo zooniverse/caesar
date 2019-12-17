@@ -12,7 +12,7 @@ class RunsUserReducers
     reducers.any?{ |reducer| reducer.type == 'Reducers::ExternalReducer' }
   end
 
-  def reduce(user_id, extract_ids=[])
+  def reduce(user_id, extract_ids=[], and_check_rules: false)
     return [] unless reducers&.present?
     return [] unless user_id
     retries ||= 2
@@ -38,6 +38,10 @@ class RunsUserReducers
 
     persist_reductions(new_reductions)
 
+    if reducible.is_a?(Workflow) && and_check_rules && new_reductions.present?
+      check_rules(CheckUserRulesWorker, user_id)
+    end
+
     new_reductions
   rescue ActiveRecord::StaleObjectError
     retry unless (retries-=1).zero?
@@ -50,7 +54,7 @@ class RunsUserReducers
   def persist_reductions(reductions)
     ActiveRecord::Base.transaction do
       reductions.each do |reduction|
-        reduction.save! unless (reduction.instance_of?(UserReduction) && reduction.user_id.nil?)
+        reduction.save! unless reduction.user_id.nil?
       end
     end
   end
@@ -68,6 +72,15 @@ class RunsUserReducers
       when Project
         extract_query[:project_id] = reducible.id
       end
+    end
+  end
+
+  def check_rules(worker, user_id)
+    if reducible.custom_queue_name.present?
+      worker.set(queue: reducible.custom_queue_name)
+            .perform_async(reducible.id, reducible.class, user_id)
+    else
+      worker.perform_async(reducible.id, reducible.class, user_id)
     end
   end
 end
