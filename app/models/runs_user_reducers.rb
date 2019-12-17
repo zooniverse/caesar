@@ -8,10 +8,6 @@ class RunsUserReducers
     @reducers = reducers
   end
 
-  def has_external?
-    reducers.any?{ |reducer| reducer.type == 'Reducers::ExternalReducer' }
-  end
-
   def reduce(user_id, extract_ids=[], and_check_rules: false)
     return [] unless reducers&.present?
     return [] unless user_id
