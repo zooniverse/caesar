@@ -37,7 +37,7 @@ describe FetchExtractsByUser do
       e2 = create :extract, subject_id: s2.id, user_id: user1_id, extractor_key: 'e1', workflow: wf
       e3 = create :extract, subject_id: s1.id, user_id: user2_id, extractor_key: 'e2', workflow: wf
 
-      extracts = described_class.new(:fetch_minimal).extracts({user_id: user1_id, workflow_id: wf.id}, [e1.id])
+      extracts = described_class.new(strategy: :fetch_minimal).extracts({user_id: user1_id, workflow_id: wf.id}, [e1.id])
 
       expect(extracts).to contain_exactly(e1)
       expect(extracts).not_to include(e2)

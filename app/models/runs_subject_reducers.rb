@@ -13,7 +13,7 @@ class RunsSubjectReducers
     retries ||= 2
 
     extract_query = prepare_extract_query(subject_id)
-    extracts = FetchExtractsBySubject.for(reducers).extracts(extract_query, extract_ids)
+    extracts = FetchExtractsBySubject.new(reducers: reducers).extracts(extract_query, extract_ids)
 
     reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)

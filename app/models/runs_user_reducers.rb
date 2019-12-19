@@ -14,7 +14,7 @@ class RunsUserReducers
     retries ||= 2
 
     extract_query = prepare_extract_query(user_id)
-    extracts = FetchExtractsByUser.for(reducers).extracts(extract_query, extract_ids)
+    extracts = FetchExtractsByUser.new(reducers: reducers).extracts(extract_query, extract_ids)
 
     reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, user_id: user_id }
     reduction_fetcher = ReductionFetcher.new(reduction_filter)
