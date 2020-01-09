@@ -171,7 +171,7 @@ describe RunsSubjectReducers do
       reduction_filter = { reducible_id: project.id, reducible_type: "Project", subject_id: subject.id }
 
       expect_any_instance_of(FetchExtractsBySubject).to receive(:extracts).at_least(:once).with(filter, []).and_call_original
-      expect(ReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
+      expect(SubjectReductionFetcher).to receive(:new).at_least(:once).with(reduction_filter).and_call_original
 
       runner.reduce(subject.id)
     end

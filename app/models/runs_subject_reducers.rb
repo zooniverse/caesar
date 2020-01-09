@@ -16,7 +16,7 @@ class RunsSubjectReducers
     extracts = FetchExtractsBySubject.new(reducers: reducers).extracts(extract_query, extract_ids)
 
     reduction_filter = { reducible_id: reducible.id, reducible_type: reducible.class.to_s, subject_id: subject_id }
-    reduction_fetcher = ReductionFetcher.new(reduction_filter)
+    reduction_fetcher = SubjectReductionFetcher.new(reduction_filter)
 
     # prefetch all reductions to avoid race conditions with optimistic locking
     if reducers.any?{ |reducer| reducer.running_reduction? }
@@ -26,7 +26,7 @@ class RunsSubjectReducers
     new_reductions = reducers.map do |reducer|
       reducer.process(
         extracts, 
-        reduction_fetcher.for!(reducer.topic), 
+        reduction_fetcher,
         relevant_reductions(extracts, reducer)
       )
     end.flatten
