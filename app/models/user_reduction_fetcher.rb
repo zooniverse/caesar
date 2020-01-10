@@ -9,11 +9,6 @@ class UserReductionFetcher
     @user_reductions.load
   end
 
-  def for!(topic)
-    @topic = topic.to_sym
-    self
-  end
-
   def retrieve(**kwargs)
     selector = @filter.merge(kwargs)
     @user_reductions.where(selector).first_or_initialize
