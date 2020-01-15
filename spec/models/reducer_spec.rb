@@ -42,14 +42,14 @@ describe Reducer, type: :model do
   end
 
   it 'does not try to reduce empty extract sets' do
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
-    expect(ReductionFetcher).to receive(:new).and_return(reduction_fetcher)
+    reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
+    expect(SubjectReductionFetcher).to receive(:new).and_return(reduction_fetcher)
 
     allow(subject).to receive(:filter_extracts).and_return([])
     allow(subject).to receive(:reduce_into).and_call_original
 
     expect(subject).not_to receive(:reduce_into)
-    subject.process([], ReductionFetcher.new({}), [])
+    subject.process([], SubjectReductionFetcher.new({}), [])
   end
 
   it 'filters extracts' do
@@ -62,7 +62,7 @@ describe Reducer, type: :model do
 
   it 'groups extracts' do
     grouping_filter = instance_double(ExtractGrouping, to_h: {})
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
+    reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
 
     expect(ExtractGrouping).to receive(:new).
       with(extracts, {}).
@@ -76,7 +76,7 @@ describe Reducer, type: :model do
   it 'does not attempt reduction on repeated failures' do
     reducer = build :reducer
 
-    reduction_fetcher = instance_double(ReductionFetcher, retrieve: SubjectReduction.new)
+    reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
 
     allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
@@ -103,7 +103,7 @@ describe Reducer, type: :model do
       build(:extract, extractor_key: 'user_group', classification_id: 4, subject_id: 1234, user_id: 5679, data: {"id"=>"33"}),
     ]
 
-    reduction_fetcher = instance_double(ReductionFetcher)
+    reduction_fetcher = instance_double(SubjectReductionFetcher)
 
     reducer = build :reducer, key: 'r', grouping: {"field_name" => "user_group.id"}, filters: {"extractor_keys" => ["votes"]}, workflow_id: workflow.id
     allow(reducer).to receive(:get_reduction) do |fetcher, key|
@@ -191,7 +191,7 @@ describe Reducer, type: :model do
         reducible_id: workflow.id,
         reducible_type: "Workflow"
 
-      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
+      reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: [subject_reduction_double])
 
       allow(running_reducer).to receive(:associate_extracts)
       allow(running_reducer).to receive(:reduce_into).and_return(subject_reduction_double)
@@ -225,7 +225,7 @@ describe Reducer, type: :model do
         data: "foo"
       )
 
-      reduction_fetcher = instance_double(ReductionFetcher, retrieve: [subject_reduction_double])
+      reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: [subject_reduction_double])
 
       running_reducer = create :reducer,
         key: 'aaa',

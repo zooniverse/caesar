@@ -33,7 +33,7 @@ describe SubjectReductionsController, :type => :controller do
   end
 
   describe '#update' do
-    before { allow(CheckRulesWorker).to receive(:perform_async) }
+    before { allow(CheckSubjectRulesWorker).to receive(:perform_async) }
 
     it 'updates an existing reduction' do
       r = reductions
@@ -63,7 +63,7 @@ describe SubjectReductionsController, :type => :controller do
       expect(SubjectReduction.count).to eq(3)
       expect(updated.id).to eq(r[0].id)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject1.id).once
+      expect(CheckSubjectRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject1.id).once
     end
 
     it 'creates new reductions if needed' do
@@ -87,7 +87,7 @@ describe SubjectReductionsController, :type => :controller do
 
       expect(SubjectReduction.count).to eq(4)
       expect(updated.data).to eq("blah" => 10)
-      expect(CheckRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject2.id).once
+      expect(CheckSubjectRulesWorker).to have_received(:perform_async).with(workflow.id, "Workflow", subject2.id).once
     end
 
     it 'does not trigger rules if nothing changed' do
@@ -103,7 +103,7 @@ describe SubjectReductionsController, :type => :controller do
         }
       }, as: :json
 
-      expect(CheckRulesWorker).not_to have_received(:perform_async)
+      expect(CheckSubjectRulesWorker).not_to have_received(:perform_async)
     end
   end
 end

@@ -18,7 +18,7 @@ class SubjectReductionsController < ApplicationController
 
     if reduction.data != reduction_params[:data]
       reduction.update! reduction_params
-      CheckRulesWorker.perform_async(reducible.id, reducible_type, subject.id) if workflow.configured?
+      CheckSubjectRulesWorker.perform_async(reducible.id, reducible_type, subject.id) if workflow.configured?
     end
 
     render json: reduction

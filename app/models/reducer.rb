@@ -107,19 +107,6 @@ class Reducer < ApplicationRecord
     raise NotImplementedError
   end
 
-  def extract_fetcher
-    strategy = running_reduction? ? :fetch_minimal : :fetch_all
-
-    case topic.to_sym
-    when :reduce_by_subject
-      FetchExtractsBySubject.new(strategy)
-    when :reduce_by_user
-      FetchExtractsByUser.new(strategy)
-    else
-      raise NotImplementedError, "Topic #{topic} is not supported"
-    end
-  end
-
   def extract_filter
     ExtractFilter.new(filters)
   end
