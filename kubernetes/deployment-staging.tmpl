@@ -168,14 +168,14 @@ spec:
           volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"
-            - name: caesar-nginx-conf-staging
+            - name: caesar-nginx-config
               mountPath: "/etc/nginx-sites"
       volumes:
         - name: static-assets
           emptyDir: {}
         - name: caesar-nginx-config
           configMap:
-            name: caesar-nginx-conf
+            name: caesar-nginx-conf-staging
 ---
 apiVersion: apps/v1
 kind: Deployment
