@@ -18,7 +18,7 @@ class ApplicationStatus
   end
 
   def commit_id
-    path = Rails.root.join("commit_id.txt")
+    path = Rails.public_path.join("commit_id.txt")
     if File.exist? path
       File.read(path)
     else
