@@ -15,11 +15,6 @@ if [ "$RAILS_ENV" != "development" ]; then
   fi
 
   bin/rails db:migrate
-
-  if [ -f "commit_id.txt" ]
-  then
-    cp commit_id.txt public/
-  fi
 fi
 
 exec bundle exec puma -C config/puma.rb
