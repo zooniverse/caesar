@@ -19,7 +19,7 @@ RUN if [ "$RAILS_ENV" = "development" ]; then bundle install; else bundle instal
 
 ADD ./ /app
 
-RUN (cd /app && git log --format="%H" -n 1 > commit_id.txt)
+RUN (cd /app && git log --format="%H" -n 1 > ./public/commit_id.txt)
 RUN (cd /app && mkdir -p tmp/pids)
 RUN (cd /app && SECRET_KEY_BASE=1 bundle exec rails assets:precompile)
 
