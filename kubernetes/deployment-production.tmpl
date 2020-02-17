@@ -82,7 +82,10 @@ spec:
             - name: RAILS_MAX_THREADS
               value: '2'
             - name: REDIS_URL
-              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: REDIS_URL
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
@@ -233,7 +236,10 @@ spec:
             - name: RAILS_MAX_THREADS
               value: '2'
             - name: REDIS_URL
-              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: REDIS_URL
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
@@ -353,7 +359,10 @@ spec:
             - name: RAILS_MAX_THREADS
               value: '2'
             - name: REDIS_URL
-              value: redis://caesar-prod.lh4hyv.ng.0001.use1.cache.amazonaws.com
+              valueFrom:
+                secretKeyRef:
+                  name: caesar-production-env-vars
+                  key: REDIS_URL
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
