@@ -38,7 +38,6 @@ gem 'flipper-ui'
 gem 'panoptes-client', '~> 1.0'
 gem 'lograge'
 gem 'logstash-event'
-gem 'rollbar'
 gem "sentry-raven"
 gem 'omniauth'
 gem 'omniauth-zooniverse'
