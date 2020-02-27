@@ -28,7 +28,7 @@ class RunsExtractors
         data = extractor.process(classification)
         extract_ok = true
       rescue Exception => e
-        Rollbar.error(e, use_exception_level_filters: true)
+        ErrorLogger.report(e)
         has_errors = true
       end
 

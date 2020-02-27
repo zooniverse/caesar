@@ -124,11 +124,6 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: PANOPTES_CLIENT_SECRET
-            - name: ROLLBAR_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: caesar-staging-env-vars
-                  key: ROLLBAR_ACCESS_TOKEN
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
@@ -259,11 +254,6 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: PANOPTES_CLIENT_SECRET
-            - name: ROLLBAR_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: caesar-staging-env-vars
-                  key: ROLLBAR_ACCESS_TOKEN
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:

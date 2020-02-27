@@ -127,12 +127,12 @@ describe RunsExtractors do
         end
       end
 
-      it 'logs all exceptions to rollbar' do
+      it 'logs all exceptions to error logging service' do
         allow(blank_extractor).to receive(:process).and_raise(DummyException.new('boo'))
         expect(question_extractor).to receive(:process).and_raise(StandardError.new('boo'))
 
-        expect(Rollbar).to receive(:error).with(instance_of(DummyException), use_exception_level_filters: true)
-        expect(Rollbar).to receive(:error).with(instance_of(StandardError), use_exception_level_filters: true)
+        expect(ErrorLogger).to receive(:report).with(instance_of(DummyException))
+        expect(ErrorLogger).to receive(:report).with(instance_of(StandardError))
         begin
           runner.extract(classification)
         rescue
