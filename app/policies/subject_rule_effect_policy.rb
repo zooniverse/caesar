@@ -24,10 +24,6 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     if credential.admin?
       true
     else
-      binding.pry
-      # subject_rule_project_id = record.subject_rule.workflow.project_id
-      # credential.project_ids.include?(subject_rule_project_id)
-      #
       # this is a good place to check the defined subect set id in the
       # rule effect belongs to the scoped credential project ids using the API client
 
@@ -38,6 +34,11 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def destroy?
-    update?
+    if credential.admin?
+      true
+    else
+      subject_rule_project_id = record.subject_rule.workflow.project_id
+      credential.project_ids.include?(subject_rule_project_id)
+    end
   end
 end
