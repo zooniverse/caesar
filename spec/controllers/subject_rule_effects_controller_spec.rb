@@ -45,6 +45,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         expect(result["subject_rule_id"]).to eq(rule.id)
       end
 
+      # TODO: fix these pending specs when revisiting admin lockdown
       xit 'redirects to the subject rule in html mode' do
         post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
         expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
