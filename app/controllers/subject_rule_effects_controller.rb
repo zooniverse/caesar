@@ -2,7 +2,7 @@ class SubjectRuleEffectsController < ApplicationController
   responders :flash
 
   def index
-    authorize workflow, :policy_class
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     effects = policy_scope(SubjectRuleEffect).where(subject_rule_id: params[:subject_rule_id])
     respond_with effects
   end
@@ -72,13 +72,15 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def destroy
+    subject_rule_effect = SubjectRuleEffect.find(params[:id])
     authorize subject_rule_effect
-    subject_rule
 
-    effect = SubjectRuleEffect.find(params[:id])
-    effect.destroy
+    subject_rule_effect.destroy
 
-    respond_with effect, location: edit_workflow_subject_rule_path(workflow, subject_rule)
+    respond_with(
+      subject_rule_effect,
+      location: edit_workflow_subject_rule_path(workflow, subject_rule)
+    )
   end
 
   private
