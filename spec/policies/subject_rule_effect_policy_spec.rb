@@ -1,10 +1,12 @@
+# frozen_string_literal: true.
+
 require 'rails_helper'
 
 describe SubjectRuleEffectPolicy do
   subject { described_class }
-  let(:not_logged_in_credential){ fake_credential logged_in: false }
-  let(:expired_credential){ fake_credential expired: true }
-  let(:admin_credential){ fake_credential admin: true }
+  let(:not_logged_in_credential) { fake_credential logged_in: false }
+  let(:expired_credential) { fake_credential expired: true }
+  let(:admin_credential) { fake_credential admin: true }
 
   let(:workflow) { create :workflow }
   let(:rule) { create :subject_rule, workflow: workflow }
@@ -19,7 +21,7 @@ describe SubjectRuleEffectPolicy do
 
   before { effect }
 
-  permissions ".scope" do
+  permissions '.scope' do
     it 'returns no records when not logged in' do
       expect(records_for(not_logged_in_credential)).to match_array(SubjectRuleEffect.none)
     end
@@ -85,7 +87,7 @@ describe SubjectRuleEffectPolicy do
 
   permissions :index? do
     it 'denies access to non-collaborators on the project' do
-      credential = fake_credential(project_ids: [workflow.project_id+1])
+      credential = fake_credential(project_ids: [workflow.project_id + 1])
       expect(subject).not_to permit(credential, workflow)
     end
 
@@ -94,14 +96,14 @@ describe SubjectRuleEffectPolicy do
       expect(subject).to permit(credential, workflow)
     end
 
-    it "grants access to admins" do
+    it 'grants access to admins' do
       expect(subject).to permit(admin_credential, workflow)
     end
   end
 
   permissions :edit?, :destroy? do
     it 'denies access to non-collaborators on the project' do
-      credential = fake_credential(project_ids: [workflow.project_id+1])
+      credential = fake_credential(project_ids: [workflow.project_id + 1])
       expect(subject).not_to permit(credential, effect)
     end
 
@@ -110,7 +112,7 @@ describe SubjectRuleEffectPolicy do
       expect(subject).to permit(credential, effect)
     end
 
-    it "grants access to admins" do
+    it 'grants access to admins' do
       expect(subject).to permit(admin_credential, effect)
     end
   end

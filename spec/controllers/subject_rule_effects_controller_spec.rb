@@ -7,8 +7,8 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
     fake_session admin: false, project_ids: [workflow.project_id], logged_in: true
   end
 
-  context 'as a permissioned user'  do
-    before{ credentials }
+  context 'as a permissioned user' do
+    before { credentials }
 
     describe '#create' do
       let(:create_params) do
@@ -31,7 +31,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         )
       end
 
-      it "flashes an error message" do
+      it 'flashes an error message' do
         post :create, params: create_params, format: :html
         expect(flash[:alert]).to eq('Error creating a subject effect rule')
       end
@@ -76,7 +76,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         )
       end
 
-      it "flashes an error message" do
+      it 'flashes an error message' do
         put :update, params: update_params, format: :html
         expect(flash[:alert]).to eq('Error updating a subject effect rule')
       end

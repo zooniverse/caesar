@@ -41,12 +41,12 @@ class SubjectRuleEffectsController < ApplicationController
       format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
       format.json { respond_with workflow, subject_rule, @subject_rule_effect }
     end
-
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
-      format.html { flash[:alert] = 'Error creating a subject effect rule'
+      format.html do
+        flash[:alert] = 'Error creating a subject effect rule'
         redirect_to action: 'new'
-      }
+      end
       format.json { raise(Pundit::NotAuthorizedError) }
     end
   end
@@ -61,12 +61,12 @@ class SubjectRuleEffectsController < ApplicationController
       format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
       format.json { respond_with workflow, subject_rule, @subject_rule_effect }
     end
-
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
-      format.html { flash[:alert] = 'Error updating a subject effect rule'
+      format.html do
+        flash[:alert] = 'Error updating a subject effect rule'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
-      }
+      end
       format.json { raise(Pundit::NotAuthorizedError) }
     end
   end
