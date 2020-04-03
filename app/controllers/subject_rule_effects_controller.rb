@@ -45,7 +45,9 @@ class SubjectRuleEffectsController < ApplicationController
     respond_to do |format|
       format.html do
         flash[:alert] = 'Error creating a subject effect rule'
-        redirect_to action: 'new'
+        redirect_to new_workflow_subject_rule_subject_rule_effect_path(
+          action_type: effect_params[:action]
+        )
       end
       format.json { raise(Pundit::NotAuthorizedError) }
     end

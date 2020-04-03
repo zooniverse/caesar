@@ -26,8 +26,9 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
       it 'redirects to the new path in html mode' do
         post :create, params: create_params, format: :html
+        action_type = create_params.dig(:subject_rule_effect, :action)
         expect(response).to redirect_to(
-          new_workflow_subject_rule_subject_rule_effect_path
+          new_workflow_subject_rule_subject_rule_effect_path(action_type: action_type)
         )
       end
 
