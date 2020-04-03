@@ -43,9 +43,27 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :create?, :update? do
-    let(:workflow) { create :workflow }
+  permissions :create? do
+    it 'denies access when not logged in' do
+      expect(subject).not_to permit(not_logged_in_credential, workflow)
+    end
 
+    it 'denies access when token has expired' do
+      expect(subject).not_to permit(expired_credential, workflow)
+    end
+
+    # temp fix for to stop non-admin users modify the rule effects
+    it 'denies access to all user that are collaborators on the project' do
+      credential = fake_credential(project_ids: [workflow.project_id])
+      expect(subject).not_to permit(credential, workflow)
+    end
+
+    it 'grants access to an admin' do
+      expect(subject).to permit(admin_credential, workflow)
+    end
+  end
+
+  permissions :create?, :update? do
     it 'denies access when not logged in' do
       expect(subject).not_to permit(not_logged_in_credential, effect)
     end
@@ -65,7 +83,23 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :index?, :edit?, :destroy? do
+  permissions :index? do
+    it 'denies access to non-collaborators on the project' do
+      credential = fake_credential(project_ids: [workflow.project_id+1])
+      expect(subject).not_to permit(credential, workflow)
+    end
+
+    it 'grants access to project owner' do
+      credential = fake_credential project_ids: [workflow.project_id]
+      expect(subject).to permit(credential, workflow)
+    end
+
+    it "grants access to admins" do
+      expect(subject).to permit(admin_credential, workflow)
+    end
+  end
+
+  permissions :edit?, :destroy? do
     it 'denies access to non-collaborators on the project' do
       credential = fake_credential(project_ids: [workflow.project_id+1])
       expect(subject).not_to permit(credential, effect)

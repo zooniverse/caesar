@@ -8,19 +8,27 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def index?
+    # record is a workflow from the controller
     if credential.admin?
       true
     else
-      subject_rule_project_id = record.subject_rule.workflow.project_id
-      credential.project_ids.include?(subject_rule_project_id)
+      credential.project_ids.include?(record.project_id)
     end
   end
 
   def create?
-    update?
+    # record is a workflow from the controller
+    if credential.admin?
+      true
+    else
+      # temporarily disable the ability for users to create/update
+      # subject rule effects
+      false
+    end
   end
 
   def edit?
+    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else
@@ -30,6 +38,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def update?
+    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else
@@ -43,6 +52,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def destroy?
+    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else
