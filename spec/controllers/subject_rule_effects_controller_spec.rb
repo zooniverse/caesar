@@ -10,7 +10,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
   context 'as a permissioned user'  do
     before{ credentials }
 
-    describe '#create', :focus do
+    describe '#create' do
       let(:create_params) do
         {
           subject_rule_effect: { action: 'retire_subject', config: {} },
@@ -51,7 +51,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       end
     end
 
-    describe '#update', :focus do
+    describe '#update' do
       let(:effect) do
         create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
       end
