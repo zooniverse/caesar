@@ -8,19 +8,56 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def index?
-    update?
+    # record is a workflow from the controller
+    if credential.admin?
+      true
+    else
+      credential.project_ids.include?(record.project_id)
+    end
   end
 
   def create?
-    update?
+    # record is a workflow from the controller
+    if credential.admin?
+      true
+    else
+      # temporarily disable the ability for users to create/update
+      # subject rule effects
+      false
+    end
+  end
+
+  def edit?
+    # record is a subject_rule_effect from the controller
+    if credential.admin?
+      true
+    else
+      subject_rule_project_id = record.subject_rule.workflow.project_id
+      credential.project_ids.include?(subject_rule_project_id)
+    end
   end
 
   def update?
-    return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
+    # record is a subject_rule_effect from the controller
+    if credential.admin?
+      true
+    else
+      # this is a good place to check the defined subect set id in the
+      # rule effect belongs to the scoped credential project ids using the API client
+
+      # temporarily disable the ability for users to create/update
+      # subject rule effects
+      false
+    end
   end
 
   def destroy?
-    credential.admin?
+    # record is a subject_rule_effect from the controller
+    if credential.admin?
+      true
+    else
+      subject_rule_project_id = record.subject_rule.workflow.project_id
+      credential.project_ids.include?(subject_rule_project_id)
+    end
   end
 end
