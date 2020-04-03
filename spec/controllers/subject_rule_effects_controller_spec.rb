@@ -3,9 +3,12 @@ require 'spec_helper'
 RSpec.describe SubjectRuleEffectsController, type: :controller do
   let(:workflow) { create :workflow }
   let(:rule) { create :subject_rule, workflow: workflow }
+  let(:credentials) do
+    fake_session admin: false, project_ids: [workflow.project_id], logged_in: true
+  end
 
   context 'as a permissioned user'  do
-    before{ fake_session admin: false, project_ids: [workflow.project_id], logged_in: true }
+    before{ credentials }
 
     describe '#create', :focus do
       let(:create_params) do
@@ -94,25 +97,33 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       end
     end
 
-    # describe '#destroy' do
-    #   it 'lets a user delete subject_rule_effects if they own the workflow' do
-    #     sre2 = create :subject_rule_effect, subject_rule: rule
-    #     response = delete :destroy, params: { id: sre2.id, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
+    describe '#destroy' do
+      let(:effect) do
+        create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
+      end
+      let(:delete_params) do
+        { id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }
+      end
 
-    #     expect(response.status).to eq(204)
-    #     expect(SubjectRuleEffect.find_by_id(sre2.id)).to be(nil)
-    #   end
+      it 'destroys an effect' do
+        delete :destroy, params: delete_params, format: :json
 
-    #   it 'does not let a user delete subject_rule_effects if they do not own the workflow' do
-    #     other_workflow = create :workflow, project_id: workflow.project_id + 1
-    #     other_rule = create :subject_rule, workflow: other_workflow
-    #     sre2 = create :subject_rule_effect, subject_rule: other_rule
-    #     response = delete :destroy, params: { id: sre2.id, workflow_id: other_workflow.id, subject_rule_id: other_rule.id }, format: :json
+        expect(response.status).to eq(204)
+        expect(SubjectRuleEffect.where(id: effect.id)).to be_empty
+      end
 
-    #     expect(response.status).to eq(404)
-    #     expect(SubjectRuleEffect.find_by_id(sre2.id)).not_to be(nil)
-    #   end
-    # end
+      context 'as a user without rights' do
+        let(:credentials) do
+          fake_session admin: false, project_ids: [], logged_in: true
+        end
+
+        it 'does not destroy the effect' do
+          delete :destroy, params: delete_params, format: :json
+
+          expect(response.status).to eq(401)
+        end
+      end
+    end
   end
 
   context 'as an admin' do
