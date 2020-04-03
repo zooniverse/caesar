@@ -2,12 +2,14 @@ class SubjectRuleEffectsController < ApplicationController
   responders :flash
 
   def index
-    authorize workflow
+    authorize workflow, :policy_class
     effects = policy_scope(SubjectRuleEffect).where(subject_rule_id: params[:subject_rule_id])
     respond_with effects
   end
 
   def show
+    # TODO: Add this to the SubjectRuleEffect policy class
+    # and pass in the found subject_rule_effect
     authorize workflow
     @subject_rule_effect = policy_scope(SubjectRuleEffect).find(params[:id])
     respond_with workflow, subject_rule, @subject_rule_effect
@@ -20,16 +22,17 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def edit
-    authorize workflow
+    # TODO: the finders for SubjectRuleEffect in this controller
+    # are ripe for a preload / eager_load as we'll use the
+    # subject_rule.workflow relation in the policy scopes
     @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+    authorize @subject_rule_effect
+
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def create
-    binding.pry
-    authorize workflow, :edit?
-
-
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
     @subject_rule_effect.save
@@ -38,22 +41,38 @@ class SubjectRuleEffectsController < ApplicationController
       format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
       format.json { respond_with workflow, subject_rule, @subject_rule_effect }
     end
+
+  rescue Pundit::NotAuthorizedError
+    respond_to do |format|
+      format.html { flash[:alert] = 'Error creating a subject effect rule'
+        redirect_to action: 'new'
+      }
+      format.json { raise(Pundit::NotAuthorizedError) }
+    end
   end
 
   def update
-    authorize workflow
+    @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+    authorize @subject_rule_effect
 
-    @subject_rule_effect = SubjectRuleEffect.find(params[:id]) or not_found
     @subject_rule_effect.update(effect_params)
 
     respond_to do |format|
       format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
       format.json { respond_with workflow, subject_rule, @subject_rule_effect }
     end
+
+  rescue Pundit::NotAuthorizedError
+    respond_to do |format|
+      format.html { flash[:alert] = 'Error updating a subject effect rule'
+        redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
+      }
+      format.json { raise(Pundit::NotAuthorizedError) }
+    end
   end
 
   def destroy
-    authorize workflow, :edit?
+    authorize subject_rule_effect
     subject_rule
 
     effect = SubjectRuleEffect.find(params[:id])
@@ -69,11 +88,6 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def subject_rule
-    @subject_rule ||= SubjectRule.find(params[:subject_rule_id])
-  end
-
-  def subject_rule_effect
-    binding.pry
     @subject_rule ||= SubjectRule.find(params[:subject_rule_id])
   end
 
