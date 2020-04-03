@@ -8,7 +8,12 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def index?
-    update?
+    if credential.admin?
+      true
+    else
+      subject_rule_project_id = record.subject_rule.workflow.project_id
+      credential.project_ids.include?(subject_rule_project_id)
+    end
   end
 
   def create?
@@ -16,11 +21,23 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def update?
-    return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
+    if credential.admin?
+      true
+    else
+      binding.pry
+      # subject_rule_project_id = record.subject_rule.workflow.project_id
+      # credential.project_ids.include?(subject_rule_project_id)
+      #
+      # this is a good place to check the defined subect set id in the
+      # rule effect belongs to the scoped credential project ids using the API client
+
+      # temporarily disable the ability for users to create/update
+      # subject rule effects
+      false
+    end
   end
 
   def destroy?
-    credential.admin?
+    update?
   end
 end

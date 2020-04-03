@@ -7,58 +7,59 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
   context 'as a permissioned user'  do
     before{ fake_session admin: false, project_ids: [workflow.project_id], logged_in: true }
 
-    describe '#create', :focus do
-      xit 'does not allow to create a new effect' do
-        post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
+    # describe '#create', :focus do
+    #   xit 'does not allow to create a new effect' do
+    #     post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
-        expect(response.status).to eq(403)
-        result = JSON.parse(response.body)
-        binding.pry
-        expect(result["id"]).not_to be(nil)
-        expect(result["subject_rule_id"]).to eq(rule.id)
-      end
+    #     expect(response.status).to eq(403)
+    #     result = JSON.parse(response.body)
+    #     binding.pry
+    #     expect(result["id"]).not_to be(nil)
+    #     expect(result["subject_rule_id"]).to eq(rule.id)
+    #   end
 
-      xit 'makes a new effect' do
-        post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
-        expect(response.status).to eq(201)
-        result = JSON.parse(response.body)
-        expect(result["id"]).not_to be(nil)
-        expect(result["subject_rule_id"]).to eq(rule.id)
-      end
+    #   it 'makes a new effect', :focus do
+    #     post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
-      it 'redirects to the subject rule in html mode' do
-        post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
-        expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
-      end
-    end
+    #     expect(response.status).to eq(201)
+    #     result = JSON.parse(response.body)
+    #     expect(result["id"]).not_to be(nil)
+    #     expect(result["subject_rule_id"]).to eq(rule.id)
+    #   end
 
-    describe '#update', :focus do
-      it 'does not allow the update and redirects to subject rule edit' do
-        effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-        put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+    #   it 'redirects to the subject rule in html mode' do
+    #     post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
+    #     expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+    #   end
+    # end
 
-        expect(response.status).to eq(403)
-        binding.pry
-        effect = SubjectRuleEffect.find(effect.id)
-        expect(effect.config['foo']).to eq('baz')
-      end
+    # describe '#update', :focus do
+    #   it 'does not allow the update and redirects to subject rule edit' do
+    #     effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
+    #     put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
 
-      xit 'changes an effect' do
-        effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-        put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+    #     expect(response.status).to eq(403)
+    #     binding.pry
+    #     effect = SubjectRuleEffect.find(effect.id)
+    #     expect(effect.config['foo']).to eq('baz')
+    #   end
 
-        expect(response.status).to eq(204)
-        effect = SubjectRuleEffect.find(effect.id)
-        expect(effect.config['foo']).to eq('baz')
-      end
+    #   xit 'changes an effect' do
+    #     effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
+    #     put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
 
-      it 'redirects to the subject rule in html mode' do
-        effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-        put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :html
-        expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
-      end
-    end
+    #     expect(response.status).to eq(204)
+    #     effect = SubjectRuleEffect.find(effect.id)
+    #     expect(effect.config['foo']).to eq('baz')
+    #   end
+
+    #   it 'redirects to the subject rule in html mode' do
+    #     effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
+    #     put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :html
+    #     expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+    #   end
+    # end
 
     describe '#destroy' do
       it 'lets a user delete subject_rule_effects if they own the workflow' do

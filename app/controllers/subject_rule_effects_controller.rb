@@ -26,7 +26,10 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def create
+    binding.pry
     authorize workflow, :edit?
+
+
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
     @subject_rule_effect.save
@@ -66,6 +69,11 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def subject_rule
+    @subject_rule ||= SubjectRule.find(params[:subject_rule_id])
+  end
+
+  def subject_rule_effect
+    binding.pry
     @subject_rule ||= SubjectRule.find(params[:subject_rule_id])
   end
 
