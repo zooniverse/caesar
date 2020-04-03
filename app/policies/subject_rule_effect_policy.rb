@@ -20,6 +20,15 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     update?
   end
 
+  def edit?
+    if credential.admin?
+      true
+    else
+      subject_rule_project_id = record.subject_rule.workflow.project_id
+      credential.project_ids.include?(subject_rule_project_id)
+    end
+  end
+
   def update?
     if credential.admin?
       true

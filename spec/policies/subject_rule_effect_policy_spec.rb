@@ -65,7 +65,7 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :destroy? do
+  permissions :index?, :edit?, :destroy? do
     it 'denies access to non-collaborators on the project' do
       credential = fake_credential(project_ids: [workflow.project_id+1])
       expect(subject).not_to permit(credential, effect)
