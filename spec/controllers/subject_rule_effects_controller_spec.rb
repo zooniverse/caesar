@@ -36,6 +36,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         expect(flash[:alert]).to eq('Error creating a subject effect rule')
       end
 
+      # TODO: fix these pending specs when revisiting admin lockdown
       xit 'makes a new effect' do
         post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
