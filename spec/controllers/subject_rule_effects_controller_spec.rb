@@ -34,7 +34,8 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
       it 'flashes an error message' do
         post :create, params: create_params, format: :html
-        expect(flash[:alert]).to eq('Error creating a subject effect rule')
+        msg = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        expect(flash[:alert]).to eq(msg)
       end
 
       # TODO: fix these pending specs when revisiting admin lockdown
@@ -81,7 +82,8 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
       it 'flashes an error message' do
         put :update, params: update_params, format: :html
-        expect(flash[:alert]).to eq('Error updating a subject effect rule')
+        msg = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        expect(flash[:alert]).to eq(msg)
       end
 
       xit 'changes an effect' do

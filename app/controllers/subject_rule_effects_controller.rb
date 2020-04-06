@@ -44,7 +44,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error creating a subject effect rule'
+        flash[:alert] = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
         redirect_to new_workflow_subject_rule_subject_rule_effect_path(
           action_type: effect_params[:action]
         )
@@ -66,7 +66,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error updating a subject effect rule'
+        flash[:alert] = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
       end
       format.json { raise(Pundit::NotAuthorizedError) }
