@@ -2,7 +2,8 @@ class SubjectRuleEffectsController < ApplicationController
   responders :flash
 
   def index
-    authorize workflow, policy_class: SubjectRuleEffectPolicy
+    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
+    authorize workflow
     effects = policy_scope(SubjectRuleEffect).where(subject_rule_id: params[:subject_rule_id])
     respond_with effects
   end
@@ -16,6 +17,7 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def new
+    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
     authorize workflow, :edit?
     @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
     respond_with workflow, subject_rule, @subject_rule_effect
@@ -32,9 +34,11 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def create
-    authorize workflow, policy_class: SubjectRuleEffectPolicy
+    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
+    authorize workflow, :edit?
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
+    authorize @subject_rule_effect
     @subject_rule_effect.save
 
     respond_to do |format|
