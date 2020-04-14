@@ -17,14 +17,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def create?
-    # record is a workflow from the controller
-    if credential.admin?
-      true
-    else
-      # temporarily disable the ability for users to create/update
-      # subject rule effects
-      false
-    end
+    update?
   end
 
   def edit?
@@ -38,16 +31,20 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def update?
-    # record is a subject_rule_effect from the controller
-    if credential.admin?
-      true
-    else
-      # this is a good place to check the defined subect set id in the
-      # rule effect belongs to the scoped credential project ids using the API client
+    return true if credential.admin?
 
-      # temporarily disable the ability for users to create/update
-      # subject rule effects
-      false
+    if record.config.key?('subject_set_id')
+      subject_set = Effects.panoptes.subject_set(record.config['subject_set_id'])
+      raise ActiveRecord::RecordNotFound if subject_set.nil?
+
+      credential.project_ids.include?(subject_set['links']['project'])
+    elsif record.config.key?('collection_id')
+      collection = Effects.panoptes.collection(record.config[:subject_set_id])
+      raise ActiveRecord::RecordNotFound if collection.nil?
+
+      credential.project_ids.include?(collection['links']['projects'].first)
+    else
+      true
     end
   end
 
