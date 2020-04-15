@@ -106,7 +106,6 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         end
 
         it 'changes an effect' do
-          effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
           put :update, params: update_params, format: :json
 
           expect(response.status).to eq(204)
@@ -115,7 +114,6 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         end
 
         it 'redirects to the subject rule in html mode' do
-          effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
           put :update, params: update_params, format: :html
           expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
         end
