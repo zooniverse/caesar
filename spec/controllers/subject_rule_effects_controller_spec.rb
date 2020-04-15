@@ -21,7 +21,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         end
 
         it 'makes a new effect' do
-          post :create, params: { subject_rule_effect: { action: 'retire_subject', config: {} }, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
+          post :create, params: create_params, format: :json
 
           expect(response.status).to eq(201)
           result = JSON.parse(response.body)
@@ -30,7 +30,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         end
 
         it 'redirects to the subject rule in html mode' do
-          post :create, params: { subject_rule_effect: { action: 'retire_subject', config: {} }, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
+          post :create, params: create_params, format: :html
           expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
         end
       end
@@ -107,7 +107,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
         it 'changes an effect' do
           effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-          put :update, params: { subject_rule_effect: { config: { foo: 'baz' } }, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+          put :update, params: update_params, format: :json
 
           expect(response.status).to eq(204)
           effect = SubjectRuleEffect.find(effect.id)
@@ -116,7 +116,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
         it 'redirects to the subject rule in html mode' do
           effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-          put :update, params: { subject_rule_effect: { config: { foo: 'baz' } }, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :html
+          put :update, params: update_params, format: :html
           expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
         end
       end
@@ -216,8 +216,8 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         rules = [create(:subject_rule_effect, subject_rule: rule),
                  create(:subject_rule_effect, subject_rule: rule)]
 
-                 get :index, params: {workflow_id: workflow.id, subject_rule_id: rule.id}, format: :json
-                 expect(json_response.map { |i| i["id"] }).to match_array(rules.map(&:id))
+        get :index, params: {workflow_id: workflow.id, subject_rule_id: rule.id}, format: :json
+        expect(json_response.map { |i| i["id"] }).to match_array(rules.map(&:id))
       end
 
       it 'returns empty list when there are no subject rules' do

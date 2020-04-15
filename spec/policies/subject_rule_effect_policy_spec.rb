@@ -5,18 +5,18 @@ require 'rails_helper'
 describe SubjectRuleEffectPolicy do
   subject { described_class }
   let(:set_and_collection_project_id) { 76 }
-  let(:subject_set) {
+  let(:subject_set) do
     {
       'id' => 777,
       'links' => { 'project' => set_and_collection_project_id }
     }
-  }
-  let(:collection) {
+  end
+  let(:collection) do
     {
       'id' => 333,
       'links' => { 'projects' => [set_and_collection_project_id] }
     }
-   }
+  end
   let(:workflow) { create :workflow }
   let(:rule) { create :subject_rule, workflow: workflow }
 
@@ -24,7 +24,7 @@ describe SubjectRuleEffectPolicy do
   let(:expired_credential) { fake_credential expired: true }
   let(:admin_credential) { fake_credential admin: true }
   let(:workflow_owner_credential) { fake_credential(project_ids: [workflow.project_id]) }
-  let(:set_and_collection_owner_credential) { fake_credential(project_ids: [set_and_collection_project_id])}
+  let(:set_and_collection_owner_credential) { fake_credential(project_ids: [set_and_collection_project_id]) }
 
   let(:effect) do
     create(
@@ -54,7 +54,7 @@ describe SubjectRuleEffectPolicy do
   let(:panoptes) do
     double('PanoptesAdapter',
            subject_set: subject_set,
-           collection: collection )
+           collection: collection)
   end
 
   before { effect }

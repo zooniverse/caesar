@@ -34,7 +34,7 @@ class ApplicationPolicy
     false
   end
 
-  def has_valid_credentials?
+  def valid_credentials?
     credential.logged_in? && !credential.expired?
   end
 
