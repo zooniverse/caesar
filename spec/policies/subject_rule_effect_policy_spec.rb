@@ -101,7 +101,7 @@ describe SubjectRuleEffectPolicy do
         allow(Effects).to receive(:panoptes).and_return(panoptes)
       end
 
-      it 'grants access when effect\'s subject set belongs to project that user is owner of',  :focus do
+      it 'grants access when effect\'s subject set belongs to project that user is owner of' do
         expect(subject).to permit(set_and_collection_owner_credential, add_to_set_effect)
       end
 
@@ -109,7 +109,7 @@ describe SubjectRuleEffectPolicy do
         expect(subject).not_to permit(workflow_owner_credential, add_to_set_effect)
       end
 
-      it 'grants access when effect\'s subject set belongs to project that user is owner of', :focus do
+      it 'grants access when effect\'s subject set belongs to project that user is owner of' do
         # subject set and collection share project id, subj set owner is also the collection owner
         expect(subject).to permit(set_and_collection_owner_credential, add_to_collection_effect)
       end
@@ -127,12 +127,6 @@ describe SubjectRuleEffectPolicy do
 
     it 'denies access when token has expired' do
       expect(subject).not_to permit(expired_credential, effect)
-    end
-
-    # temp fix for to stop non-admin users modify the rule effects
-    it 'denies access to all user that are collaborators on the project' do
-      credential = fake_credential(project_ids: [workflow.project_id])
-      expect(subject).not_to permit(credential, effect)
     end
 
     it 'grants access to an admin' do

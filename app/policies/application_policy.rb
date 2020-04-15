@@ -34,6 +34,10 @@ class ApplicationPolicy
     false
   end
 
+  def has_valid_credentials?
+    credential.logged_in? && !credential.expired?
+  end
+
   def scope
     Pundit.policy_scope!(credential, record.class)
   end

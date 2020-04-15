@@ -32,6 +32,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
 
   def update?
     return true if credential.admin?
+    return false if !has_valid_credentials?
 
     if record.config.key?('subject_set_id')
       subject_set = Effects.panoptes.subject_set(record.config['subject_set_id'])
