@@ -109,8 +109,8 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
           put :update, params: update_params, format: :json
 
           expect(response.status).to eq(204)
-          effect = SubjectRuleEffect.find(effect.id)
-          expect(effect.config['foo']).to eq('baz')
+          effect_record = SubjectRuleEffect.find(effect.id)
+          expect(effect_record.config['foo']).to eq('baz')
         end
 
         it 'redirects to the subject rule in html mode' do
