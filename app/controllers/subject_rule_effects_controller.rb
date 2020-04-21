@@ -27,7 +27,7 @@ class SubjectRuleEffectsController < ApplicationController
     # TODO: the finders for SubjectRuleEffect in this controller
     # are ripe for a preload / eager_load as we'll use the
     # subject_rule.workflow relation in the policy scopes
-    @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+    @subject_rule_effect = SubjectRuleEffect.eager_load(:subject_rule).find(params[:id])
     authorize @subject_rule_effect
 
     respond_with workflow, subject_rule, @subject_rule_effect
@@ -38,6 +38,7 @@ class SubjectRuleEffectsController < ApplicationController
     authorize workflow, :edit?
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
+    # using the SubjectRuleEffectPolicy here
     authorize @subject_rule_effect
     @subject_rule_effect.save
 
@@ -48,7 +49,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        flash[:alert] = 'You do not have permission to create this effect. Please confirm that you have permissions to the associated workflow, subject set or collection.'
         redirect_to new_workflow_subject_rule_subject_rule_effect_path(
           action_type: effect_params[:action]
         )
@@ -70,7 +71,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        flash[:alert] = 'You do not have permission to make this change. Please confirm that you have permissions to the associated subject set or collection.'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
       end
       format.json { raise(Pundit::NotAuthorizedError) }

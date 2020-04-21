@@ -21,7 +21,6 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def edit?
-    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else
@@ -40,7 +39,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
 
       credential.project_ids.include?(subject_set['links']['project'])
     elsif record.config.key?('collection_id')
-      collection = Effects.panoptes.collection(record.config[:subject_set_id])
+      collection = Effects.panoptes.collection(record.config['collection_id'])
       raise ActiveRecord::RecordNotFound if collection.nil?
 
       credential.project_ids.include?(collection['links']['projects'].first)
@@ -50,7 +49,6 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   def destroy?
-    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else

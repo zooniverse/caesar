@@ -64,7 +64,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
           it 'flashes an error message' do
             post :create, params: create_params, format: :html
-            msg = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+            msg = 'You do not have permission to create this effect. Please confirm that you have permissions to the associated workflow, subject set or collection.'
             expect(flash[:alert]).to eq(msg)
           end
         end
@@ -151,7 +151,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
           it 'flashes an error message' do
             put :update, params: subject_set_update_params, format: :html
-            msg = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+            msg = 'You do not have permission to make this change. Please confirm that you have permissions to the associated subject set or collection.'
             expect(flash[:alert]).to eq(msg)
           end
         end
@@ -255,6 +255,15 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       it 'redirects to the subject rule in html mode' do
         post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
         expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+      end
+    end
+
+    describe '#edit' do
+      it 'returns an effect for editing' do
+        effect = create :subject_rule_effect, subject_rule: rule
+        get :edit, params: { id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+        result = JSON.parse(response.body)
+        expect(result["id"]).to eq(effect.id)
       end
     end
 
