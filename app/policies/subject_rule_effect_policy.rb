@@ -7,15 +7,6 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     end
   end
 
-  def index?
-    # record is a workflow from the controller
-    if credential.admin?
-      true
-    else
-      credential.project_ids.include?(record.project_id)
-    end
-  end
-
   def create?
     update?
   end
@@ -54,6 +45,14 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     else
       subject_rule_project_id = record.subject_rule.workflow.project_id
       credential.project_ids.include?(subject_rule_project_id)
+    end
+  end
+
+  def validate_workflow
+    if credential.admin?
+      true
+    else
+      credential.project_ids.include?(record.project_id)
     end
   end
 end

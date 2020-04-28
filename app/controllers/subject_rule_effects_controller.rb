@@ -2,43 +2,34 @@ class SubjectRuleEffectsController < ApplicationController
   responders :flash
 
   def index
-    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
-    authorize workflow
+    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
     effects = policy_scope(SubjectRuleEffect).where(subject_rule_id: params[:subject_rule_id])
     respond_with effects
   end
 
   def show
-    # TODO: Add this to the SubjectRuleEffect policy class
-    # and pass in the found subject_rule_effect
-    authorize workflow
+    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = policy_scope(SubjectRuleEffect).find(params[:id])
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def new
-    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
-    authorize workflow, :edit?
+    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def edit
-    # TODO: the finders for SubjectRuleEffect in this controller
-    # are ripe for a preload / eager_load as we'll use the
-    # subject_rule.workflow relation in the policy scopes
-    @subject_rule_effect = SubjectRuleEffect.eager_load(:subject_rule).find(params[:id])
+    @subject_rule_effect = SubjectRuleEffect.includes(subject_rule: [:workflow]).find(params[:id])
     authorize @subject_rule_effect
 
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def create
-    # using the WorkflowPolicy for 'authorize workflow' here, not the SubjectRuleEffectPolicy
-    authorize workflow, :edit?
+    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
 
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
-    # using the SubjectRuleEffectPolicy here
     authorize @subject_rule_effect
     @subject_rule_effect.save
 

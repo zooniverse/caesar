@@ -20,6 +20,7 @@ describe SubjectRuleEffectPolicy do
   let(:workflow) { create :workflow }
   let(:rule) { create :subject_rule, workflow: workflow }
 
+  let(:basic_credential) { fake_credential }
   let(:not_logged_in_credential) { fake_credential logged_in: false }
   let(:expired_credential) { fake_credential expired: true }
   let(:admin_credential) { fake_credential admin: true }
@@ -134,22 +135,6 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :index? do
-    it 'denies access to non-collaborators on the project' do
-      credential = fake_credential(project_ids: [workflow.project_id + 1])
-      expect(subject).not_to permit(credential, workflow)
-    end
-
-    it 'grants access to project owner' do
-      credential = fake_credential project_ids: [workflow.project_id]
-      expect(subject).to permit(credential, workflow)
-    end
-
-    it 'grants access to admins' do
-      expect(subject).to permit(admin_credential, workflow)
-    end
-  end
-
   permissions :edit?, :destroy? do
     it 'denies access to non-collaborators on the project' do
       credential = fake_credential(project_ids: [workflow.project_id + 1])
@@ -163,6 +148,28 @@ describe SubjectRuleEffectPolicy do
 
     it 'grants access to admins' do
       expect(subject).to permit(admin_credential, effect)
+    end
+  end
+
+  permissions :validate_workflow do
+    it 'denies access when not logged in' do
+      expect(subject).not_to permit(not_logged_in_credential, workflow)
+    end
+
+    it 'denies access when token has expired' do
+      expect(subject).not_to permit(expired_credential, workflow)
+    end
+
+    it 'grants access to an admin' do
+      expect(subject).to permit(admin_credential, workflow)
+    end
+
+    it 'grants access when user has permission to the project associated with the workflow' do
+      expect(subject).to permit(workflow_owner_credential, workflow)
+    end
+
+    it 'denies access when user does not have permission to the associated project' do
+      expect(subject).not_to permit(basic_credential, workflow)
     end
   end
 end
