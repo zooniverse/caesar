@@ -12,7 +12,7 @@ class Annotation
       else
         # ensure we preserve all the non-nested
         # annotations keys by returning the item as is
-        [ item ]
+        [item]
       end
     end.flatten(1)
   end
