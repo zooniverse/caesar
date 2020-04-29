@@ -38,5 +38,23 @@ describe Annotation do
       expect(parsed.keys).to include('T8')
       expect(parsed.keys).not_to include('T11')
     end
+
+    context 'for FEM transcription annotation strings' do
+      let(:annotations) do
+        '{"annotations": [{"task":"T1","value":[{"x1":217.00167846679688,"x2":794.4693603515625,"y1":245.3994903564453,"y2":239.76519775390625,"frame":0,"details":[{"task":"T1.0.0"}],"toolType":"transcriptionLine","toolIndex":0}],"taskType":"transcription"},{"task":"T1.0.0","value":"Am. Colonisation and Af. Ed. Societies","taskType":"text","markIndex":0},{"task":"T2","value":1,"taskType":"single"}]}'
+      end
+      let(:annotation_json) { JSON.parse(annotations) }
+      let(:expected_data) do
+        JSON.parse(
+          '{"T1":[{"task":"T1","value":[{"x1":217.00167846679688,"x2":794.4693603515625,"y1":245.3994903564453,"y2":239.76519775390625,"frame":0,"details":[{"task":"T1.0.0"}],"toolType":"transcriptionLine","toolIndex":0}],"taskType":"transcription"}],"T1.0.0":[{"task":"T1.0.0","value":"Am. Colonisation and Af. Ed. Societies","taskType":"text","markIndex":0}],"T2":[{"task":"T2","value":1,"taskType":"single"}]}'
+        )
+      end
+
+      it 'parses the annotations correctly' do
+        annotation_values = annotation_json['annotations']
+        parsed_data = Annotation.parse(annotation_values)
+        expect(parsed_data).to include(expected_data)
+      end
+    end
   end
 end
