@@ -10,7 +10,9 @@ class Annotation
       elsif Annotation.nested?(item['value'], 'value')
         item['value'].map{ |inneritem| inneritem.merge('task' => item['task'])}
       else
-        [ { 'task' => item['task'], 'value' => item['value'] } ]
+        # ensure we preserve all the non-nested
+        # annotations keys by returning the item as is
+        [item]
       end
     end.flatten(1)
   end
