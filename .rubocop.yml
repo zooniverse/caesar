@@ -1,7 +1,10 @@
+AllCops:
+  NewCops: enable
+
 Style/NumericLiterals:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 160
 
 Metrics/BlockLength:
