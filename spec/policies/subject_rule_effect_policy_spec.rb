@@ -25,7 +25,7 @@ describe SubjectRuleEffectPolicy do
   let(:expired_credential) { fake_credential expired: true }
   let(:admin_credential) { fake_credential admin: true }
   let(:workflow_owner_credential) { fake_credential(project_ids: [workflow.project_id]) }
-  let(:set_and_collection_owner_credential) { fake_credential(project_ids: [set_and_collection_project_id]) }
+  let(:set_and_collection_owner_credential) { fake_credential(project_ids: [set_and_collection_project_id, workflow.project_id]) }
 
   let(:effect) do
     create(
