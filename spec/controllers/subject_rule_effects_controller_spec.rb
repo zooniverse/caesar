@@ -64,7 +64,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
           it 'flashes an error message' do
             post :create, params: create_params, format: :html
-            msg = 'You do not have permission to create this effect. Please confirm that you have permissions to the associated workflow, subject set or collection.'
+            msg = 'You do not have permission to create a subject rule effect for this project.'
             expect(flash[:alert]).to eq(msg)
           end
         end
@@ -151,7 +151,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
           it 'flashes an error message' do
             put :update, params: subject_set_update_params, format: :html
-            msg = 'You do not have permission to make this change. Please confirm that you have permissions to the associated subject set or collection.'
+            msg = 'You do not have permission to update this subject rule effect for this project.'
             expect(flash[:alert]).to eq(msg)
           end
         end

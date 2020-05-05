@@ -7,44 +7,61 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     end
   end
 
+  # record passed in from controller is a workflow
+  def index?
+    if credential.admin?
+      true
+    else
+      valid_workflow?(record, credential)
+    end
+  end
+
+  # record passed in from controller is a workflow
+  def show?
+    index?
+  end
+
+  # record passed in from controller is a workflow
+  def new?
+    index?
+  end
+
+  # record passed in from controller is a subject_rule_effect
   def create?
     update?
   end
 
+  # record passed in from controller is a subject_rule_effect
   def edit?
     if credential.admin?
       true
     else
-      valid_subject_rule_project?(record)
+      valid_associated_project?(record)
     end
   end
 
+  # record passed in from controller is a subject_rule_effect
   def update?
-    return true if credential.admin?
     return false unless valid_credentials?
+    return true if credential.admin?
 
-    return false unless valid_subject_rule_project?(record)
+    return false unless valid_associated_project?(record)
     return valid_subject_set_or_collection?(record)
   end
 
+  # record passed in from controller is a subject_rule_effect
   def destroy?
-    if credential.admin?
-      true
-    else
-      valid_subject_rule_project?(record)
-    end
+    edit?
   end
 
-  def validate_workflow
-    if credential.admin?
-      true
-    else
-      credential.project_ids.include?(record.project_id)
-    end
+  private
+
+  def valid_workflow?(workflow, credential)
+    credential.project_ids.include?(workflow.project_id)
   end
 
   # pass in SubjectRuleEffect record
-  def valid_subject_rule_project?(record)
+  def valid_associated_project?(record)
     subject_rule_project_id = record.subject_rule.workflow.project_id
     credential.project_ids.include?(subject_rule_project_id)
   end

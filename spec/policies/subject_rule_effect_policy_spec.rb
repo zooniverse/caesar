@@ -106,16 +106,16 @@ describe SubjectRuleEffectPolicy do
         expect(subject).to permit(set_and_collection_owner_credential, add_to_set_effect)
       end
 
-      it 'denies access when effect\'s subject set belongs to project that user does not have access to' do
+      it "denies access when effect's subject set belongs to project that user does not have access to" do
         expect(subject).not_to permit(workflow_owner_credential, add_to_set_effect)
       end
 
-      it 'grants access when effect\'s subject set belongs to project that user is owner of' do
+      it "grants access when effect's subject set belongs to project that user is owner of" do
         # subject set and collection share project id, subj set owner is also the collection owner
         expect(subject).to permit(set_and_collection_owner_credential, add_to_collection_effect)
       end
 
-      it 'denies access when effect\'s collection belongs to project that user does not have access to' do
+      it "denies access when effect's collection belongs to project that user does not have access to" do
         expect(subject).not_to permit(workflow_owner_credential, add_to_collection_effect)
       end
     end
@@ -151,7 +151,7 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :validate_workflow do
+  permissions :index?, :show?, :new? do
     it 'denies access when not logged in' do
       expect(subject).not_to permit(not_logged_in_credential, workflow)
     end

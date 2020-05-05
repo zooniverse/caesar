@@ -2,19 +2,19 @@ class SubjectRuleEffectsController < ApplicationController
   responders :flash
 
   def index
-    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     effects = policy_scope(SubjectRuleEffect).where(subject_rule_id: params[:subject_rule_id])
     respond_with effects
   end
 
   def show
-    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = policy_scope(SubjectRuleEffect).find(params[:id])
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def new
-    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
     respond_with workflow, subject_rule, @subject_rule_effect
   end
@@ -27,8 +27,6 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def create
-    authorize workflow, :validate_workflow, policy_class: SubjectRuleEffectPolicy
-
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
     authorize @subject_rule_effect
     @subject_rule_effect.save
@@ -40,7 +38,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'You do not have permission to create this effect. Please confirm that you have permissions to the associated workflow, subject set or collection.'
+        flash[:alert] = 'You do not have permission to create a subject rule effect for this project.'
         redirect_to new_workflow_subject_rule_subject_rule_effect_path(
           action_type: effect_params[:action]
         )
@@ -62,7 +60,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'You do not have permission to make this change. Please confirm that you have permissions to the associated subject set or collection.'
+        flash[:alert] = 'You do not have permission to update this subject rule effect for this project.'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
       end
       format.json { raise(Pundit::NotAuthorizedError) }
