@@ -46,7 +46,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     return true if credential.admin?
 
     return false unless valid_associated_project?(record)
-    return valid_subject_set_or_collection?(record)
+    valid_subject_set_or_collection?(record)
   end
 
   # record passed in from controller is a subject_rule_effect
@@ -68,12 +68,12 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
 
   # pass in SubjectRuleEffect record
   def valid_subject_set_or_collection?(record)
-    if record.config.key?('subject_set_id')
+    if record.effect.is_a?(Effects::AddSubjectToSet)
       subject_set = Effects.panoptes.subject_set(record.config['subject_set_id'])
       raise ActiveRecord::RecordNotFound if subject_set.nil?
 
       credential.project_ids.include?(subject_set['links']['project'])
-    elsif record.config.key?('collection_id')
+    elsif record.effect.is_a?(Effects::AddSubjectToCollection)
       collection = Effects.panoptes.collection(record.config['collection_id'])
       raise ActiveRecord::RecordNotFound if collection.nil?
 

@@ -263,7 +263,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
         effect = create :subject_rule_effect, subject_rule: rule
         get :edit, params: { id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
         result = JSON.parse(response.body)
-        expect(result["id"]).to eq(effect.id)
+        expect(result['id']).to eq(effect.id)
       end
     end
 
