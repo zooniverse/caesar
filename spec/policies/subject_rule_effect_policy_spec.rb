@@ -102,7 +102,7 @@ describe SubjectRuleEffectPolicy do
         allow(Effects).to receive(:panoptes).and_return(panoptes)
       end
 
-      it 'grants access when effect\'s subject set belongs to project that user is owner of' do
+      it "grants access when effect's subject set belongs to project that user is owner of" do
         expect(subject).to permit(set_and_collection_owner_credential, add_to_set_effect)
       end
 
@@ -110,7 +110,7 @@ describe SubjectRuleEffectPolicy do
         expect(subject).not_to permit(workflow_owner_credential, add_to_set_effect)
       end
 
-      it "grants access when effect's subject set belongs to project that user is owner of" do
+      it "grants access when effect's collection belongs to project that user is owner of" do
         # subject set and collection share project id, subj set owner is also the collection owner
         expect(subject).to permit(set_and_collection_owner_credential, add_to_collection_effect)
       end
