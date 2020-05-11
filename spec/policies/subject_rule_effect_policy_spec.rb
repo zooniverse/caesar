@@ -84,7 +84,7 @@ describe SubjectRuleEffectPolicy do
     end
   end
 
-  permissions :create? do
+  permissions :create?, :update? do
     it 'denies access when not logged in' do
       expect(subject).not_to permit(not_logged_in_credential, effect)
     end
@@ -118,20 +118,6 @@ describe SubjectRuleEffectPolicy do
       it "denies access when effect's collection belongs to project that user does not have access to" do
         expect(subject).not_to permit(workflow_owner_credential, add_to_collection_effect)
       end
-    end
-  end
-
-  permissions :create?, :update? do
-    it 'denies access when not logged in' do
-      expect(subject).not_to permit(not_logged_in_credential, effect)
-    end
-
-    it 'denies access when token has expired' do
-      expect(subject).not_to permit(expired_credential, effect)
-    end
-
-    it 'grants access to an admin' do
-      expect(subject).to permit(admin_credential, effect)
     end
   end
 
