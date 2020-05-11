@@ -7,57 +7,86 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     end
   end
 
+  # record passed in from controller is a workflow
   def index?
-    # record is a workflow from the controller
     if credential.admin?
       true
     else
-      credential.project_ids.include?(record.project_id)
+      valid_workflow?(record, credential)
     end
   end
 
+  # record passed in from controller is a workflow
+  def show?
+    index?
+  end
+
+  # record passed in from controller is a workflow
+  def new?
+    index?
+  end
+
+  # record passed in from controller is a subject_rule_effect
   def create?
-    # record is a workflow from the controller
-    if credential.admin?
-      true
-    else
-      # temporarily disable the ability for users to create/update
-      # subject rule effects
-      false
-    end
+    update?
   end
 
+  # record passed in from controller is a subject_rule_effect
   def edit?
-    # record is a subject_rule_effect from the controller
     if credential.admin?
       true
     else
-      subject_rule_project_id = record.subject_rule.workflow.project_id
-      credential.project_ids.include?(subject_rule_project_id)
+      user_has_project_access?(record)
     end
   end
 
+  # record passed in from controller is a subject_rule_effect
   def update?
-    # record is a subject_rule_effect from the controller
-    if credential.admin?
-      true
-    else
-      # this is a good place to check the defined subect set id in the
-      # rule effect belongs to the scoped credential project ids using the API client
+    return false unless valid_credentials?
+    return true if credential.admin?
 
-      # temporarily disable the ability for users to create/update
-      # subject rule effects
-      false
+    return false unless user_has_project_access?(record)
+
+    if record.effect.is_a?(Effects::AddSubjectToSet)
+      valid_subject_set?(record)
+    elsif record.effect.is_a?(Effects::AddSubjectToCollection)
+      valid_collection?(record)
+    else
+      # at this point we have checked that user has project access, so return true
+      true
     end
   end
 
+  # record passed in from controller is a subject_rule_effect
   def destroy?
-    # record is a subject_rule_effect from the controller
-    if credential.admin?
-      true
-    else
-      subject_rule_project_id = record.subject_rule.workflow.project_id
-      credential.project_ids.include?(subject_rule_project_id)
-    end
+    edit?
+  end
+
+  private
+
+  def valid_workflow?(workflow, credential)
+    credential.project_ids.include?(workflow.project_id)
+  end
+
+  # pass in SubjectRuleEffect record
+  def user_has_project_access?(record)
+    subject_rule_project_id = record.subject_rule.workflow.project_id
+    credential.project_ids.include?(subject_rule_project_id)
+  end
+
+  # pass in SubjectRuleEffect record
+  def valid_subject_set?(record)
+    subject_set = Effects.panoptes.subject_set(record.config['subject_set_id'])
+    raise ActiveRecord::RecordNotFound if subject_set.nil?
+
+    credential.project_ids.include?(subject_set['links']['project'])
+  end
+
+  # pass in SubjectRuleEffect record
+  def valid_collection?(record)
+    collection = Effects.panoptes.collection(record.config['collection_id'])
+    raise ActiveRecord::RecordNotFound if collection.nil?
+
+    credential.project_ids.include?(collection['links']['projects'].first)
   end
 end

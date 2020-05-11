@@ -8,33 +8,27 @@ class SubjectRuleEffectsController < ApplicationController
   end
 
   def show
-    # TODO: Add this to the SubjectRuleEffect policy class
-    # and pass in the found subject_rule_effect
-    authorize workflow
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = policy_scope(SubjectRuleEffect).find(params[:id])
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def new
-    authorize workflow, :edit?
+    authorize workflow, policy_class: SubjectRuleEffectPolicy
     @subject_rule_effect = SubjectRuleEffect.new(action: params[:action_type], subject_rule: subject_rule)
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def edit
-    # TODO: the finders for SubjectRuleEffect in this controller
-    # are ripe for a preload / eager_load as we'll use the
-    # subject_rule.workflow relation in the policy scopes
-    @subject_rule_effect = SubjectRuleEffect.find(params[:id])
+    @subject_rule_effect = SubjectRuleEffect.includes(subject_rule: [:workflow]).find(params[:id])
     authorize @subject_rule_effect
 
     respond_with workflow, subject_rule, @subject_rule_effect
   end
 
   def create
-    authorize workflow, policy_class: SubjectRuleEffectPolicy
-
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
+    authorize @subject_rule_effect
     @subject_rule_effect.save
 
     respond_to do |format|
@@ -44,7 +38,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        flash[:alert] = 'You do not have permission to create a subject rule effect for this project.'
         redirect_to new_workflow_subject_rule_subject_rule_effect_path(
           action_type: effect_params[:action]
         )
@@ -66,7 +60,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
+        flash[:alert] = 'You do not have permission to update this subject rule effect for this project.'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
       end
       format.json { raise(Pundit::NotAuthorizedError) }

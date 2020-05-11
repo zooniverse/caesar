@@ -7,98 +7,173 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
     fake_session admin: false, project_ids: [workflow.project_id], logged_in: true
   end
 
-  context 'as a permissioned user' do
+  context 'as a user with permissions to workflow' do
     before { credentials }
 
     describe '#create' do
-      let(:create_params) do
-        {
-          subject_rule_effect: { action: 'retire_subject', config: {} },
-          workflow_id: workflow.id,
-          subject_rule_id: rule.id
-        }
+      context 'when effect does not add subjects to set or collection' do
+        let(:create_params) do
+          {
+            subject_rule_effect: { action: 'retire_subject', config: {} },
+            workflow_id: workflow.id,
+            subject_rule_id: rule.id
+          }
+        end
+
+        it 'makes a new effect' do
+          post :create, params: create_params, format: :json
+
+          expect(response.status).to eq(201)
+          result = JSON.parse(response.body)
+          expect(result['id']).not_to be(nil)
+          expect(result['subject_rule_id']).to eq(rule.id)
+        end
+
+        it 'redirects to the subject rule in html mode' do
+          post :create, params: create_params, format: :html
+          expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
+        end
       end
 
-      it 'does not create a new effect' do
-        post :create, params: create_params, format: :json
-        expect(response.status).to eq(401)
-      end
+      context 'when effect adds subjects to set' do
+        let(:create_params) do
+          {
+            subject_rule_effect: { action: 'add_subject_to_set', config: { 'subject_set_id': 777 } },
+            workflow_id: workflow.id,
+            subject_rule_id: rule.id
+          }
+        end
 
-      it 'redirects to the new path in html mode' do
-        post :create, params: create_params, format: :html
-        action_type = create_params.dig(:subject_rule_effect, :action)
-        expect(response).to redirect_to(
-          new_workflow_subject_rule_subject_rule_effect_path(action_type: action_type)
-        )
-      end
+        context 'when user does not have permission to that set' do
+          before do
+            allow_any_instance_of(SubjectRuleEffectPolicy).to receive(:create?).and_return(false)
+          end
 
-      it 'flashes an error message' do
-        post :create, params: create_params, format: :html
-        msg = 'Error creating a subject effect rule. To create these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
-        expect(flash[:alert]).to eq(msg)
-      end
+          it 'does not create a new effect' do
+            post :create, params: create_params, format: :json
+            expect(response.status).to eq(401)
+          end
 
-      # TODO: fix these pending specs when revisiting admin lockdown
-      xit 'makes a new effect' do
-        post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
+          it 'redirects to the new path in html mode' do
+            post :create, params: create_params, format: :html
+            action_type = create_params.dig(:subject_rule_effect, :action)
+            expect(response).to redirect_to(
+              new_workflow_subject_rule_subject_rule_effect_path(action_type: action_type)
+            )
+          end
 
-        expect(response.status).to eq(201)
-        result = JSON.parse(response.body)
-        expect(result["id"]).not_to be(nil)
-        expect(result["subject_rule_id"]).to eq(rule.id)
-      end
+          it 'flashes an error message' do
+            post :create, params: create_params, format: :html
+            msg = 'You do not have permission to create a subject rule effect for this project.'
+            expect(flash[:alert]).to eq(msg)
+          end
+        end
 
-      # TODO: fix these pending specs when revisiting admin lockdown
-      xit 'redirects to the subject rule in html mode' do
-        post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
-        expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+        context 'when user has permission to that set' do
+          before do
+            allow_any_instance_of(SubjectRuleEffectPolicy).to receive(:create?).and_return(true)
+          end
+
+          it 'makes a new effect' do
+            post :create, params: create_params, format: :json
+
+            expect(response.status).to eq(201)
+            result = JSON.parse(response.body)
+            expect(result['id']).not_to be(nil)
+            expect(result['subject_rule_id']).to eq(rule.id)
+          end
+
+          it 'redirects to the subject rule in html mode' do
+            post :create, params: create_params, format: :html
+            expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
+          end
+        end
       end
     end
 
     describe '#update' do
-      let(:effect) do
-        create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-      end
-      let(:update_params) do
-        {
-          subject_rule_effect: { config: { foo: 'baz' } },
-          id: effect.id,
-          subject_rule_id: rule.id,
-          workflow_id: workflow.id
-        }
-      end
+      context 'when effect does not add subjects to set or collection' do
+        let(:effect) do
+          create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
+        end
+        let(:update_params) do
+          {
+            subject_rule_effect: { config: { foo: 'baz' } },
+            id: effect.id,
+            subject_rule_id: rule.id,
+            workflow_id: workflow.id
+          }
+        end
 
-      it 'does not update a subject rule effect' do
-        put :update, params: update_params, format: :json
-        expect(response.status).to eq(401)
-      end
+        it 'changes an effect' do
+          put :update, params: update_params, format: :json
 
-      it 'redirects to the edit path in html mode' do
-        put :update, params: update_params, format: :html
-        expect(response).to redirect_to(
-          edit_workflow_subject_rule_subject_rule_effect_path(effect)
-        )
-      end
+          expect(response.status).to eq(204)
+          effect_record = SubjectRuleEffect.find(effect.id)
+          expect(effect_record.config['foo']).to eq('baz')
+        end
 
-      it 'flashes an error message' do
-        put :update, params: update_params, format: :html
-        msg = 'Error updating a subject effect rule. To edit these, please email contact@zooniverse.org with the workflow ID, rule ID, and desired effect details to request these be changes be made by a Zooniverse admin.'
-        expect(flash[:alert]).to eq(msg)
+        it 'redirects to the subject rule in html mode' do
+          put :update, params: update_params, format: :html
+          expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
+        end
       end
 
-      xit 'changes an effect' do
-        effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-        put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+      context 'when effect adds subjects to subject set' do
+        let(:subject_set_effect) do
+          create :subject_rule_effect, action: 'add_subject_to_set', config: { 'subject_set_id': 777 }, subject_rule: rule
+        end
+        let(:subject_set_update_params) do
+          {
+            subject_rule_effect: { action: 'add_subject_to_set', config: { 'subject_set_id': 333 } },
+            id: subject_set_effect.id,
+            subject_rule_id: rule.id,
+            workflow_id: workflow.id
+          }
+        end
 
-        expect(response.status).to eq(204)
-        effect = SubjectRuleEffect.find(effect.id)
-        expect(effect.config['foo']).to eq('baz')
-      end
+        context 'when user does not have permission to that set' do
+          before do
+            allow_any_instance_of(SubjectRuleEffectPolicy).to receive(:update?).and_return(false)
+          end
 
-      xit 'redirects to the subject rule in html mode' do
-        effect = create :subject_rule_effect, action: 'retire_subject', config: { foo: 'bar' }, subject_rule: rule
-        put :update, params: { subject_rule_effect: { config: { foo: 'baz' }}, id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :html
-        expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+          it 'does not update a subject rule effect' do
+            put :update, params: subject_set_update_params, format: :json
+            expect(response.status).to eq(401)
+          end
+
+          it 'redirects to the edit path in html mode' do
+            put :update, params: subject_set_update_params, format: :html
+            expect(response).to redirect_to(
+              edit_workflow_subject_rule_subject_rule_effect_path(subject_set_effect)
+            )
+          end
+
+          it 'flashes an error message' do
+            put :update, params: subject_set_update_params, format: :html
+            msg = 'You do not have permission to update this subject rule effect for this project.'
+            expect(flash[:alert]).to eq(msg)
+          end
+        end
+
+        context 'when user has permission to that set' do
+          before do
+            allow_any_instance_of(SubjectRuleEffectPolicy).to receive(:update?).and_return(true)
+          end
+
+          it 'changes an effect' do
+            put :update, params: subject_set_update_params, format: :json
+
+            expect(response.status).to eq(204)
+            updated_effect = SubjectRuleEffect.find(subject_set_effect.id)
+            expect(updated_effect.config['subject_set_id']).to eq('333')
+          end
+
+          it 'redirects to the subject rule in html mode' do
+            put :update, params: subject_set_update_params, format: :html
+            expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
+          end
+        end
       end
     end
 
@@ -137,7 +212,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
     describe '#index' do
       it 'lists effects for a rule' do
         rules = [create(:subject_rule_effect, subject_rule: rule),
-                    create(:subject_rule_effect, subject_rule: rule)]
+                 create(:subject_rule_effect, subject_rule: rule)]
 
         get :index, params: {workflow_id: workflow.id, subject_rule_id: rule.id}, format: :json
         expect(json_response.map { |i| i["id"] }).to match_array(rules.map(&:id))
@@ -180,6 +255,15 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       it 'redirects to the subject rule in html mode' do
         post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :html
         expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow,rule))
+      end
+    end
+
+    describe '#edit' do
+      it 'returns an effect for editing' do
+        effect = create :subject_rule_effect, subject_rule: rule
+        get :edit, params: { id: effect.id, subject_rule_id: rule.id, workflow_id: workflow.id }, format: :json
+        result = JSON.parse(response.body)
+        expect(result['id']).to eq(effect.id)
       end
     end
 
