@@ -36,7 +36,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     if credential.admin?
       true
     else
-      valid_associated_project?(record)
+      user_has_project_access?(record)
     end
   end
 
@@ -45,13 +45,14 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     return false unless valid_credentials?
     return true if credential.admin?
 
-    return false unless valid_associated_project?(record)
+    return false unless user_has_project_access?(record)
 
     if record.effect.is_a?(Effects::AddSubjectToSet)
       valid_subject_set?(record)
     elsif record.effect.is_a?(Effects::AddSubjectToCollection)
       valid_collection?(record)
     else
+      # at this point we have checked that user has project access, so return true
       true
     end
   end
@@ -68,7 +69,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
   end
 
   # pass in SubjectRuleEffect record
-  def valid_associated_project?(record)
+  def user_has_project_access?(record)
     subject_rule_project_id = record.subject_rule.workflow.project_id
     credential.project_ids.include?(subject_rule_project_id)
   end
