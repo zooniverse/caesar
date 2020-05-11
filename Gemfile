@@ -35,7 +35,7 @@ gem 'sidekiq-logstash'
 gem 'flipper'
 gem 'flipper-active_record'
 gem 'flipper-ui'
-gem 'panoptes-client', '~> 1.0'
+gem 'panoptes-client', '~> 1.1'
 gem 'lograge'
 gem 'logstash-event'
 gem "sentry-raven"
