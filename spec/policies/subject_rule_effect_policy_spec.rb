@@ -8,13 +8,13 @@ describe SubjectRuleEffectPolicy do
   let(:subject_set) do
     {
       'id' => 777,
-      'links' => { 'project' => set_and_collection_project_id }
+      'links' => { 'project' => set_and_collection_project_id.to_s }
     }
   end
   let(:collection) do
     {
       'id' => 333,
-      'links' => { 'projects' => [set_and_collection_project_id] }
+      'links' => { 'projects' => [set_and_collection_project_id.to_s] }
     }
   end
   let(:workflow) { create :workflow }

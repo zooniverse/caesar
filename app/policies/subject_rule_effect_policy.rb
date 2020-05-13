@@ -79,7 +79,7 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     subject_set = Effects.panoptes.subject_set(record.config['subject_set_id'])
     raise ActiveRecord::RecordNotFound if subject_set.nil?
 
-    credential.project_ids.include?(subject_set['links']['project'])
+    credential.project_ids.include?(subject_set['links']['project'].to_i)
   end
 
   # pass in SubjectRuleEffect record
@@ -87,6 +87,6 @@ class SubjectRuleEffectPolicy < ApplicationPolicy
     collection = Effects.panoptes.collection(record.config['collection_id'])
     raise ActiveRecord::RecordNotFound if collection.nil?
 
-    credential.project_ids.include?(collection['links']['projects'].first)
+    credential.project_ids.include?(collection['links']['projects'].first.to_i)
   end
 end
