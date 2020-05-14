@@ -38,7 +38,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'You do not have permission to create a subject rule effect for this project.'
+        flash[:alert] = 'You do not have permission to create this subject rule effect. Please check project collaborator status and subject set or collection IDs.'
         redirect_to new_workflow_subject_rule_subject_rule_effect_path(
           action_type: effect_params[:action]
         )
@@ -60,7 +60,7 @@ class SubjectRuleEffectsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
       format.html do
-        flash[:alert] = 'You do not have permission to update this subject rule effect for this project.'
+        flash[:alert] = 'You do not have permission to update this subject rule effect. Please check project collaborator status and subject set or collection IDs.'
         redirect_to edit_workflow_subject_rule_subject_rule_effect_path(@subject_rule_effect)
       end
       format.json { raise(Pundit::NotAuthorizedError) }
