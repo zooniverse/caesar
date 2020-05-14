@@ -72,6 +72,13 @@ spec:
       containers:
         - name: caesar-production-app
           image: zooniverse/caesar:__IMAGE_TAG__
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "50m"
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
           env:
             - name: RAILS_ENV
               value: production
@@ -222,6 +229,13 @@ spec:
       containers:
         - name: caesar-production-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
+          resources:
+            requests:
+              memory: "750Mi"
+              cpu: "200m"
+            limits:
+              memory: "750Mi"
+              cpu: "500m"
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -340,6 +354,13 @@ spec:
       containers:
         - name: caesar-production-tess-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
+          resources:
+            requests:
+              memory: "2500Mi"
+              cpu: "200m"
+            limits:
+              memory: "2500Mi"
+              cpu: "1000m"
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
