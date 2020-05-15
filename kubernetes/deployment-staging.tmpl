@@ -72,6 +72,13 @@ spec:
       containers:
         - name: caesar-staging-app
           image: zooniverse/caesar:__IMAGE_TAG__
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "10m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
           env:
             - name: RAILS_ENV
               value: staging
@@ -158,6 +165,13 @@ spec:
                 command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-staging-nginx
           image: zooniverse/apps-nginx:xenial
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "100Mi"
+              cpu: "500m"
           ports:
             - containerPort: 80
           volumeMounts:
@@ -203,6 +217,13 @@ spec:
       containers:
         - name: caesar-staging-sidekiq
           image: zooniverse/caesar:__IMAGE_TAG__
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "10m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -316,6 +337,13 @@ spec:
       containers:
         - name: caesar-staging-redis
           image: redis
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "10m"
+            limits:
+              memory: "10Mi"
+              cpu: "500m"
           volumeMounts:
           - name: caesar-staging-redis-data
             mountPath: "/data"
