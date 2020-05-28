@@ -79,6 +79,11 @@ spec:
             limits:
               memory: "500Mi"
               cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 81
+            initialDelaySeconds: 10
           env:
             - name: RAILS_ENV
               value: production
@@ -176,6 +181,18 @@ spec:
           image: zooniverse/apps-nginx:xenial
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "100Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
           volumeMounts:
             - name: static-assets
               mountPath: "/static-assets"

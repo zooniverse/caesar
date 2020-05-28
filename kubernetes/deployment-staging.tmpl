@@ -79,6 +79,11 @@ spec:
             limits:
               memory: "200Mi"
               cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 81
+            initialDelaySeconds: 10
           env:
             - name: RAILS_ENV
               value: staging
@@ -172,6 +177,11 @@ spec:
             limits:
               memory: "100Mi"
               cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
           ports:
             - containerPort: 80
           volumeMounts:
