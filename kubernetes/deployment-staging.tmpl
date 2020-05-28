@@ -83,6 +83,9 @@ spec:
             httpGet:
               path: /
               port: 81
+              httpHeaders:
+                 - name: X-Forwarded-Proto
+                   value: https
             initialDelaySeconds: 10
           env:
             - name: RAILS_ENV
