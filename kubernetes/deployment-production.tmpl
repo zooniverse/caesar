@@ -60,7 +60,6 @@ metadata:
   labels:
     app: caesar-production-app
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: caesar-production-app
@@ -208,6 +207,19 @@ spec:
           configMap:
             name: caesar-nginx-conf-production
 ---
+apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: caesar-production-app
+ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+     name: caesar-production-app
+   minReplicas: 2
+   maxReplicas: 4
+   targetCPUUtilizationPercentage: 80
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -256,6 +268,10 @@ spec:
             limits:
               memory: "750Mi"
               cpu: "500m"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/app/docker/stop-sidekiq.sh"]
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -332,6 +348,19 @@ spec:
                   name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
 ---
+apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: caesar-production-sidekiq
+ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+     name: caesar-production-sidekiq
+   minReplicas: 2
+   maxReplicas: 8
+   targetCPUUtilizationPercentage: 80
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -339,7 +368,6 @@ metadata:
   labels:
     app: caesar-production-tess-sidekiq
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: caesar-production-tess-sidekiq
@@ -381,6 +409,10 @@ spec:
             limits:
               memory: "2500Mi"
               cpu: "1000m"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/app/docker/stop-sidekiq.sh"]
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -458,6 +490,19 @@ spec:
                 secretKeyRef:
                   name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
+---
+apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: caesar-production-sidekiq-tess
+ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+     name: caesar-production-sidekiq-tess
+   minReplicas: 2
+   maxReplicas: 4
+   targetCPUUtilizationPercentage: 80
 ---
 apiVersion: v1
 kind: Service
