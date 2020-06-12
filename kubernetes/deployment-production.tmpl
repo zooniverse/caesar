@@ -227,7 +227,6 @@ metadata:
   labels:
     app: caesar-production-sidekiq
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: caesar-production-sidekiq
@@ -358,7 +357,7 @@ apiVersion: autoscaling/v1
      kind: Deployment
      name: caesar-production-sidekiq
    minReplicas: 2
-   maxReplicas: 8
+   maxReplicas: 4
    targetCPUUtilizationPercentage: 80
 ---
 apiVersion: apps/v1
