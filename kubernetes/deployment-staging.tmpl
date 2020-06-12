@@ -60,7 +60,6 @@ metadata:
   labels:
     app: caesar-staging-app
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: caesar-staging-app
@@ -199,6 +198,19 @@ spec:
           configMap:
             name: caesar-nginx-conf-staging
 ---
+apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: caesar-staging-app
+ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+     name: caesar-staging-app
+   minReplicas: 1
+   maxReplicas: 2
+   targetCPUUtilizationPercentage: 80
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -237,6 +249,10 @@ spec:
             limits:
               memory: "200Mi"
               cpu: "500m"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/app/docker/stop-sidekiq.sh"]
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -303,6 +319,19 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: SIDEKIQ_WEB_USERNAME
+---
+apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: caesar-staging-sidekiq
+ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+     name: caesar-staging-sidekiq
+   minReplicas: 1
+   maxReplicas: 2
+   targetCPUUtilizationPercentage: 80
 ---
 apiVersion: v1
 kind: Service
