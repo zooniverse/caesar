@@ -267,10 +267,6 @@ spec:
             limits:
               memory: "750Mi"
               cpu: "500m"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/app/docker/stop-sidekiq.sh"]
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -408,10 +404,6 @@ spec:
             limits:
               memory: "2500Mi"
               cpu: "1000m"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/app/docker/stop-sidekiq.sh"]
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
