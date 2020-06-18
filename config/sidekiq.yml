@@ -1,8 +1,6 @@
-:verbose: false
-#:logfile: ./log/sidekiq.log
-:pidfile: ./tmp/pids/sidekiq.pid
-:concurrency: <%= ENV["SIDEKIQ_CONCURRENCY"] || 10 %>
-:timeout: 30
+:verbose: <%= !!ENV.fetch('SIDEKIQ_VERBOSE', false) %>
+:concurrency: <%= ENV.fetch('SIDEKIQ_CONCURRENCY', 10).to_i %>
+:timeout:  <%= ENV.fetch('SIDEKIQ_TIMEOUT', 25).to_i %>
 :queues:
   - [internal, 4]
   - [default, 3]
