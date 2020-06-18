@@ -6,4 +6,6 @@ set -ex
 mkdir -p tmp/pids/
 rm -f tmp/pids/*.pid
 
-exec bundle exec sidekiq -C config/sidekiq.yml
+# allow the sidekiq args to come via the env variables
+CLI_ARGS=${SIDEKIQ_ARGS:-''}
+exec bundle exec sidekiq $CLI_ARGS
