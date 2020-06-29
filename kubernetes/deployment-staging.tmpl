@@ -220,8 +220,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: caesar-staging-app
-  minReplicas: 1
-  maxReplicas: 2
+  minReplicas: 2
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 ---
 apiVersion: apps/v1
@@ -231,7 +231,6 @@ metadata:
   labels:
     app: caesar-staging-sidekiq
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: caesar-staging-sidekiq
@@ -338,8 +337,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: caesar-staging-sidekiq
-  minReplicas: 1
-  maxReplicas: 2
+  minReplicas: 2
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 ---
 apiVersion: v1
