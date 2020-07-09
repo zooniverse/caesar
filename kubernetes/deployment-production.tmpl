@@ -236,6 +236,16 @@ spec:
   maxReplicas: 4
   targetCPUUtilizationPercentage: 80
 ---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+   name: caesar-production-app-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: caesar-production-app
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
