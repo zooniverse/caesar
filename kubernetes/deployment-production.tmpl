@@ -74,7 +74,7 @@ spec:
           resources:
             requests:
               memory: "500Mi"
-              cpu: "50m"
+              cpu: "100m"
             limits:
               memory: "500Mi"
               cpu: "500m"
@@ -378,7 +378,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: caesar-production-sidekiq
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 4
   targetCPUUtilizationPercentage: 80
 ---
@@ -517,8 +517,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: caesar-production-tess-sidekiq
-  minReplicas: 2
-  maxReplicas: 4
+  minReplicas: 1
+  maxReplicas: 2
   targetCPUUtilizationPercentage: 80
 ---
 apiVersion: v1
