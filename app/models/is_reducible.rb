@@ -38,7 +38,7 @@ module IsReducible
       subject_groups = extracts.pluck(:subject_id, :id).group_by{ |pair| pair[0] }
 
       # allow up to 90 subjects to be re-reduced per minute
-      duration = (subject_groups.count / 90).ceil.minutes
+      duration = (subject_groups.count / 90.0).ceil.minutes
 
       subject_groups.each do |subject_id, pairs|
         ReduceWorker.perform_in(rand(duration.to_i).seconds, id, self.class.name, subject_id, nil, pairs.map{ |pair| pair[1] })
