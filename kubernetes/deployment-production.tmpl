@@ -506,7 +506,7 @@ spec:
             - name: SIDEKIQ_ARGS
               value: '-q tess -q internal -q default -q external -q batch'
             - name: SIDEKIQ_CONCURRENCY
-              value: '10'
+              value: '1'
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
