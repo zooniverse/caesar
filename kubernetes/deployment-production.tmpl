@@ -73,8 +73,8 @@ spec:
           image: zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "100m"
+              memory: "300Mi"
+              cpu: "250m"
             limits:
               memory: "500Mi"
               cpu: "500m"
@@ -193,7 +193,7 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              memory: "100Mi"
+              memory: "70Mi"
               cpu: "10m"
             limits:
               memory: "100Mi"
@@ -266,11 +266,11 @@ spec:
           image: zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
-              memory: "750Mi"
-              cpu: "200m"
+              memory: "500Mi"
+              cpu: "250m"
             limits:
               memory: "750Mi"
-              cpu: "500m"
+              cpu: "1000m"
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
@@ -368,7 +368,7 @@ spec:
     name: caesar-production-sidekiq
   minReplicas: 1
   maxReplicas: 4
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 90
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -390,8 +390,8 @@ spec:
           image: zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
-              memory: "2500Mi"
-              cpu: "200m"
+              memory: "1000Mi"
+              cpu: "500m"
             limits:
               memory: "2500Mi"
               cpu: "1000m"
@@ -495,7 +495,7 @@ spec:
     name: caesar-production-tess-sidekiq
   minReplicas: 1
   maxReplicas: 2
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 90
 ---
 apiVersion: v1
 kind: Service
