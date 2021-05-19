@@ -1,4 +1,8 @@
-require 'sidekiq/web'
+# frozen_string_literal: true
+
+# require 'sidekiq/web' via the unique jobs web require
+require 'sidekiq_unique_jobs/web'
+
 Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
 
 require 'panoptes_admin_constraint'
