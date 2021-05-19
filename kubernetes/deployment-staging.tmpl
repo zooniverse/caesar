@@ -73,8 +73,8 @@ spec:
           image: zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "50m"
+              memory: "300Mi"
+              cpu: "200m"
             limits:
               memory: "500Mi"
               cpu: "500m"
@@ -182,7 +182,7 @@ spec:
           image: zooniverse/apps-nginx:xenial
           resources:
             requests:
-              memory: "100Mi"
+              memory: "70Mi"
               cpu: "10m"
             limits:
               memory: "100Mi"
@@ -225,7 +225,7 @@ spec:
     name: caesar-staging-app
   minReplicas: 1
   maxReplicas: 2
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 90
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -248,8 +248,8 @@ spec:
           image: zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "50m"
+              memory: "300Mi"
+              cpu: "200m"
             limits:
               memory: "500Mi"
               cpu: "500m"
@@ -331,7 +331,7 @@ spec:
     name: caesar-staging-sidekiq
   minReplicas: 1
   maxReplicas: 2
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 90
 ---
 apiVersion: v1
 kind: Service
