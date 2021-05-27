@@ -179,10 +179,10 @@ spec:
               exec:
                 command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-staging-nginx
-          image: zooniverse/apps-nginx:xenial
+          image: zooniverse/nginx:1.19.0
           resources:
             requests:
-              memory: "70Mi"
+              memory: "25Mi"
               cpu: "10m"
             limits:
               memory: "100Mi"
@@ -191,12 +191,23 @@ spec:
             httpGet:
               path: /
               port: 80
+              httpHeaders:
+                 - name: X-Forwarded-Proto
+                   value: https
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 80
+              httpHeaders:
+                 - name: X-Forwarded-Proto
+                   value: https
             initialDelaySeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                # SIGTERM triggers a quick exit; gracefully terminate instead
+                command: ["/usr/sbin/nginx","-s","quit"]
           ports:
             - containerPort: 80
           volumeMounts:
