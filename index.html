@@ -1,0 +1,975 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>API Reference</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cpf {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s, .highlight .sa, .highlight .dl {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf, .highlight .fm {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .nn {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .nl {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .ni {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .bp {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .vg {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .vi {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .nv, .highlight .vm {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .w {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+  background-color: #272822;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all.js"></script>
+  </head>
+
+  <body class="index" data-languages="[&quot;http&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" alt="" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="images/logo.png" class="logo" alt="" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="http">http</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc" class="toc-list-h1">
+          <li>
+            <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#usage" class="toc-h1 toc-link" data-title="Usage">Usage</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#configuring-caesar-via-the-web-ui" class="toc-h2 toc-link" data-title="Usage">Configuring Caesar via the Web UI</a>
+                  </li>
+                  <li>
+                    <a href="#configuring-caesar-via-the-api" class="toc-h2 toc-link" data-title="Usage">Configuring Caesar via the API</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+          </li>
+          <li>
+            <a href="#extracts" class="toc-h1 toc-link" data-title="Extracts">Extracts</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#get-extracts" class="toc-h2 toc-link" data-title="Extracts">Get extracts</a>
+                  </li>
+                  <li>
+                    <a href="#create-amp-update-extracts" class="toc-h2 toc-link" data-title="Extracts">Create &amp; update extracts</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#reducer-configuration" class="toc-h1 toc-link" data-title="Reducer Configuration">Reducer Configuration</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#extractor-keys" class="toc-h2 toc-link" data-title="Reducer Configuration">Extractor Keys</a>
+                  </li>
+                  <li>
+                    <a href="#topic" class="toc-h2 toc-link" data-title="Reducer Configuration">Topic</a>
+                  </li>
+                  <li>
+                    <a href="#grouping" class="toc-h2 toc-link" data-title="Reducer Configuration">Grouping</a>
+                  </li>
+                  <li>
+                    <a href="#reduction-mode" class="toc-h2 toc-link" data-title="Reducer Configuration">Reduction Mode</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#reduction-mode-examples" class="toc-h1 toc-link" data-title="Reduction Mode Examples">Reduction Mode Examples</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#default-reduction" class="toc-h2 toc-link" data-title="Reduction Mode Examples">Default Reduction</a>
+                  </li>
+                  <li>
+                    <a href="#running-reduction" class="toc-h2 toc-link" data-title="Reduction Mode Examples">Running Reduction</a>
+                  </li>
+                  <li>
+                    <a href="#points-of-note" class="toc-h2 toc-link" data-title="Reduction Mode Examples">Points of Note</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#subject-metadata" class="toc-h1 toc-link" data-title="Subject Metadata">Subject Metadata</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#caesar-can-reflect-on-several-attributes-in-a-subject-39-s-metadata-to-know-how-to-perform-certain-actions" class="toc-h2 toc-link" data-title="Subject Metadata">Caesar can reflect on several attributes in a subject's metadata to know how to perform certain actions.</a>
+                  </li>
+                  <li>
+                    <a href="#code-training_subject-code" class="toc-h2 toc-link" data-title="Subject Metadata"><code>#training_subject</code>:</a>
+                  </li>
+                  <li>
+                    <a href="#code-previous_subject_ids-code" class="toc-h2 toc-link" data-title="Subject Metadata"><code>#previous_subject_ids</code>:</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#rules" class="toc-h1 toc-link" data-title="Rules">Rules</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#conditions" class="toc-h2 toc-link" data-title="Rules">Conditions</a>
+                  </li>
+                  <li>
+                    <a href="#sample-conditions" class="toc-h2 toc-link" data-title="Rules">Sample conditions</a>
+                  </li>
+                  <li>
+                    <a href="#effects" class="toc-h2 toc-link" data-title="Rules">Effects</a>
+                  </li>
+                  <li>
+                    <a href="#sample-effects" class="toc-h2 toc-link" data-title="Rules">Sample Effects</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#how-to-do-swap" class="toc-h1 toc-link" data-title="How to do SWAP">How to do SWAP</a>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+          </li>
+      </div>
+        <ul class="toc-footer">
+            <li><a href='https://github.com/zooniverse/caesar/tree/master/docs/source/'>Modify documentation</a></li>
+            <li><a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='introduction'>Introduction</h1>
+<p>Caesar is an evolution of the Nero codebase, which is made more generic. In
+essence, Caesar receives classifications from the event stream (a Lambda script
+sends them to Caesars HTTP API).</p>
+
+<p>For each classification, it runs zero or more extractors defined in the
+workflow to generate &quot;extracts&quot;. These extracts specify information summarized
+out of the full classification.</p>
+
+<p>Whenever extracts change, Caesar will then run zero or more reducers defined in
+the workflow. Each reducer receives all the extracts, merged into one hash per
+classification. The task of the reducer is to aggregate results from multiple
+classifications into key-value pairs, where values are simple data types:
+integers or booleans. The output of each reducer is stored in the database as a
+<code>Reduction</code>.</p>
+
+<p>Whenever a reduction changes, Caesar will then run zero or more <a href="https://github.com/zooniverse/caesar/blob/master/docs/rules.md">rules defined
+in the
+workflow</a>. Each
+rule is a boolean statement that can look at values produced by reducers (by
+key), compare. Rules support logic clauses like <code>and</code> / <code>or</code> / <code>not</code>. When the
+rule evaluates to <code>true</code>, all of the effects associated with that rule will be
+performed. For instance, an effect might be to retire a subject.</p>
+<div class="highlight"><pre class="highlight plaintext"><code>┏━━━━━━━━━━━━━━━━━━┓
+┃     Kinesis      ┃
+┗━━━┳━━━━━━━━━━━━━━┛
+    │                                                       ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+    │                                                         EXTRACTS:
+    │   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐         ┌──────────────────┐    │                           │
+    ├──▶ Classification 1  ────┬───▶│ FlaggedExtractor │──────▶{flagged: true}
+    │   └ ─ ─ ─ ─ ─ ─ ─ ─ ┘    │    └──────────────────┘    │                           │
+    │                          │    ┌──────────────────┐
+    │                          └───▶│ SurveyExtractor  │────┼─▶{raccoon: 1}             │
+    │                               └──────────────────┘
+    │   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐         ┌──────────────────┐    │                           │
+    └──▶ Classification 2  ────┬───▶│ FlaggedExtractor │──────▶{flagged: false}
+        └ ─ ─ ─ ─ ─ ─ ─ ─ ┘    │    └──────────────────┘    │                           │
+                               │    ┌──────────────────┐
+                               └───▶│ SurveyExtractor  │────┼─▶{beaver: 1, raccoon: 1}  │
+                                    └──────────────────┘
+   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐                          └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+     REDUCTIONS:                                                          │
+   │                             │                                        │
+      {                                                                   │
+   │    votes_flagged: 1,        │  ┌──────────────────┐                  │
+        votes_beaver: 1,      ◀─────│ VoteCountReducer │◀─────────────────┘
+   │    votes_raccoon: 2         │  └──────────────────┘
+      }
+   │                             │
+                                                                              ┏━━━━━━━━━━━━━━━━┓
+   │  {                          │  ┌──────────────────┐                      ┃Some script run ┃
+        swap_confidence: 0.23 ◀─────│ ExternalReducer  │◀────HTTP API call────┃by project owner┃
+   │  }                          │  └──────────────────┘                      ┃  (externally)  ┃
+                                                                              ┗━━━━━━━━━━━━━━━━┛
+   └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+                  │
+                  │
+                  │                 ┌──────────────────┐         POST         ┏━━━━━━━━━━━━━━━━┓
+                  └────────────────▶│       Rule       │───/subjects/retire──▶┃    Panoptes    ┃
+                                    └──────────────────┘                      ┗━━━━━━━━━━━━━━━━┛
+</code></pre></div>
+<p>To make this more concrete, an example would be a survey-task workflow where:</p>
+
+<ul>
+<li>An extractor emits key-value pairs like <code>lion=1</code> when the user tagged a lion
+in the image.</li>
+<li>A reducer combines multiple classifications by adding up the lion counts,
+emitting <code>lion=5, coyote=1</code></li>
+<li>A rule then checks <code>lion &gt; 4</code>, which returns true, and therefore Caesar
+retires the image.</li>
+</ul>
+
+<p>Reducers can reduce across multiple subjects&#39; extracts if the following is
+included in the new subject&#39;s metadata (when uploaded to Panoptes): <code>{
+previous_subject_ids: [1234] }</code>. Extracts whose subject ids match an id in that
+array will be included in reductions for the new subject.</p>
+<h1 id='usage'>Usage</h1>
+<p>Caesar listens to classification events for workflows from the event stream.
+You need to let Caesar know to listen to this workflow and it has to be a
+workflow you have access to in zooniverse.org.</p>
+
+<p>There are two ways to configure Caesar, manually via the UI or programmatically the API.
+E.g. with a Zooniverse.org workflow id = 1234</p>
+<h2 id='configuring-caesar-via-the-web-ui'>Configuring Caesar via the Web UI</h2>
+<ul>
+<li>Visit https://caesar.zooniverse.org/ and login.</li>
+<li>Then navigate to https://caesar.zooniverse.org/workflows/new?id=1234 and click enable</li>
+<li>Use the UI to configure your rules and effects as per the <a href="#rules">rules</a> &amp; <a href="#effects">effects</a> docs.</li>
+</ul>
+<h2 id='configuring-caesar-via-the-api'>Configuring Caesar via the API</h2>
+<ol>
+<li>Create a workflow
+
+<ul>
+<li>POST JSON request to <code>https://caesar.zooniverse.org/workflows/?id=1234</code></li>
+</ul></li>
+<li>Update the workflow with a configuration object payload (see <a href="docs/rules.md#rules">rules</a> &amp; <a href="docs/effects.md">effects</a>)
+
+<ul>
+<li>PUT JSON request to <code>/workflows/1234</code> with payload
+<code>
+{
+&quot;extractors_config&quot;: { },
+&quot;reducers_config&quot;: { }
+&quot;rules_config&quot;: [
+{
+&quot;if&quot;: [&quot;gte&quot;, [&quot;lookup&quot;, &quot;survey-total-VHCL&quot;], [&quot;const&quot;, 1]],
+&quot;then&quot;: [{&quot;action&quot;: &quot;retire_subject&quot;}]
+}
+]
+}
+</code></li>
+</ul></li>
+</ol>
+<h1 id='authentication'>Authentication</h1>
+<blockquote>
+<p>To authenticate, use an OAuth bearer token obtained from Panoptes:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
+curl <span class="s2">"api_endpoint_here"</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer xyz"</span>
+</code></pre></div>
+<p>Caesar uses the same OAuth bearer token as Panoptes to allow access to the API. By default any data relating to a workflow is only accessible to project owners and collaborators.</p>
+
+<p>Caesar expects for the bearer token to be included in all API requests to the server in a header that looks like the following:</p>
+
+<p><code>Authorization: Bearer xyz</code></p>
+
+<aside class="notice">
+You must replace <code>xyz</code> with your personal API key.
+</aside>
+<h1 id='extracts'>Extracts</h1><h2 id='get-extracts'>Get extracts</h2><div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/workflows/$WORKFLOW_ID/extractors/$EXTRACTOR_KEY/extracts?subject_id=$SUBJECT_ID</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">Bearer $TOKEN</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"classification_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-05-16T15:51:13.544Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"classification_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">54376560</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-05-16T20:37:39.124Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"extractor_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">411083</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"subject_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">458033</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-05-16T20:37:39.124Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">108</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"workflow_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4084</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>Extracts are pieces of information relating to a specific classification (and therefore to a specific subject as well).</p>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>WORKFLOW_ID</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies which workflow</td>
+</tr>
+<tr>
+<td>SUBJECT_ID</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies which subject</td>
+</tr>
+<tr>
+<td>EXTRACTOR_KEY</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies which extractor to fetch extracts from.</td>
+</tr>
+</tbody></table>
+<h2 id='create-amp-update-extracts'>Create &amp; update extracts</h2>
+<p>Inserting and updating extracts happens through one and the same API endpoint, which performs an &quot;upsert&quot;.</p>
+<div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">POST</span> <span class="nn">/workflows/$WORKFLOW_ID/extractors/$EXTRACTOR_KEY/extracts</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">Bearer $TOKEN</span>
+
+<span class="p">{</span><span class="w">
+    </span><span class="nl">"subject_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">458033</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"classification_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-05-16T15:51:13.544Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"classification_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">54376560</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">108</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"PENGUIN"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"POLARBEAR"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='body-fields'>Body fields</h3>
+<p>The request body should be encoded as a JSON with the following fields:</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>subject_id</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies which subject this extract is about</td>
+</tr>
+<tr>
+<td>classification_id</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies which classification this extract is about.<br>May be omitted if known to be an update rather than a create.</td>
+</tr>
+<tr>
+<td>classification_at</td>
+<td>null</td>
+<td><strong>Required</strong> &middot; Specifies what time the classification happened. This is used to sort extracts by classification time when reducing them.<br>May be omitted if known to be an update rather than a create.</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>null</td>
+<td>User that made the classification. <code>null</code> signifies anonymous.</td>
+</tr>
+</tbody></table>
+<h1 id='reducer-configuration'>Reducer Configuration</h1>
+<p>Configuring reducers can be tricky because they are flexible in so many different ways.</p>
+<h2 id='extractor-keys'>Extractor Keys</h2>
+<p>Sometimes multiple extractors will be defined but a particular reducer only cares about or can only work with a particular type of extract. In this case, you can use the extractor keys property to restrict the extracts that are sent to this reducer. The format of this value is either a string (for a single extractor key) or an array of strings (for multiple extractors). The default, a blank string or a nil, sends all extracts.</p>
+<h2 id='topic'>Topic</h2>
+<p>Extracts are always implicitly grouped before being combined. There are two different ways of doing this, whose names are hopefully self-explanatory. The default is <code>reduce_by_subject</code></p>
+
+<ul>
+<li><code>reduce_by_subject</code></li>
+<li><code>reduce_by_user</code></li>
+</ul>
+<h2 id='grouping'>Grouping</h2>
+<p>This is a confusing setting because extracts are already obviously grouped according to the <a href="#topic">topic</a>. This allows an additional grouping pass, which, crucially, can be done on the basis of the <em>value</em> of a specified field. So to configure this, you need to set the name of the field to group by (in format <code>extractor_key.field_name</code>) and then a flag indicating how to handle when the extracts for a given classification are missing that field. The value of the grouping field will be reflected in the name of the group, stored in the <code>subgroup</code> field. The default behavior is not to perform this secondary grouping.</p>
+<h2 id='reduction-mode'>Reduction Mode</h2>
+<p>This is probably the least understood part of configuring reducers. Briefly, the system offers two very different modes of performing reduction. These are:</p>
+
+<ul>
+<li><code>default_reduction</code></li>
+<li><code>running_reduction</code></li>
+</ul>
+<h3 id='default-reduction'>Default Reduction</h3>
+<p>In &quot;default reduction&quot; mode, each time a new extract is created, we fetch all of the other extracts for that subject (or user) and send them all to the reducer for processing. In cases where extracts are coming in very quickly, this can create some extra work fetching extracts, but is guaranteed to be free of race conditions because each new reduction will get a chance to reduce across all relevant extracts. This mode is much simpler and is preferred in almost every case. However, in the case where a given subject (or user) is likely to have thousands of associated extracts, it is recommended to use &quot;running reduction&quot; mode.</p>
+<h3 id='running-reduction'>Running Reduction</h3>
+<p>&quot;Running reduction&quot; mode was created to support the Notes for Nature use case, where we are reducing across a user&#39;s entire classification history within a given project, which could run to tens of thousands of items for power users. In this use case, fetching all 10,000 extracts each time a new extract is created is impractical and the operations we want to perform are relatively simple to perform using only the new extracts created in a given extraction pass.</p>
+
+<p>When a reducer is configured for running reduction, each time a new classification produces new extracts, the reducer is invoked with only those new extracts. Any additional information it would need in order to correctly compute the reduction should be present in a field <em>on</em> the reduction, called a <code>store</code>. With the new extracts and the store, the reducer will compute an updated value and update its store appropriately. However, this can&#39;t be done in a multithreaded way or else the object might be available while in an inconsistent state (example: its store has been updated but its value has not). Accordingly, we use optimistic locking semantics, so that we prefetch all possible relevant extracts and reductions before reducing and throw a sync error if the object versions don&#39;t match when we try to save. Further, we need to avoid updating the reduction multiple times with the same extract, which is not a concern with running reduction. Therefore, this mode populates a relation tracking which extracts have been incorporated into which reductions. Between this and the synchronization retries, there is considerable added complexity and overhead compared to default reduction mode. It&#39;s not recommended to use running reduction mode with external reducers, because the added complexity of writing reducers that reduce from a <code>store</code>.</p>
+<h3 id='reduction-mode-example'>Reduction Mode Example</h3>
+<p>See <a href="Reduction-Mode-Example">Reduction Mode Example</a></p>
+<h1 id='reduction-mode-examples'>Reduction Mode Examples</h1>
+<p>This example is to clarify the difference between how default reduction and running reduction work. Imagine the extract from each classification produces a number from 0 to 10 and the reducer computes the average of these numbers.</p>
+
+<p>The same extracts are processed by each reducer in the same order and we illustrate the changing values in the system as they arrive. For clarity, the values of extracts are indicated in bold.</p>
+<h2 id='default-reduction'>Default Reduction</h2>
+<table><thead>
+<tr>
+<th>Extract ID</th>
+<th>Extract Value</th>
+<th>Extracts to reducer</th>
+<th>Store Value In</th>
+<th>Calculation</th>
+<th>Store Value</th>
+<th>Items in Association</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td><strong>5</strong></td>
+<td>1</td>
+<td>nil</td>
+<td><strong>5</strong>/1</td>
+<td>nil</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>3</strong></td>
+<td>1, 2</td>
+<td>nil</td>
+<td>(<strong>5</strong>+<strong>3</strong>)/2</td>
+<td>nil</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>3</strong></td>
+<td>1, 2</td>
+<td>nil</td>
+<td>(<strong>5</strong>+<strong>3</strong>)/2</td>
+<td>nil</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>4</strong></td>
+<td>1, 2, 3</td>
+<td>nil</td>
+<td>(<strong>5</strong>+<strong>3</strong>+<strong>4</strong>)/3</td>
+<td>nil</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<h2 id='running-reduction'>Running Reduction</h2>
+<table><thead>
+<tr>
+<th>Extract ID</th>
+<th>Extract Value</th>
+<th>Extracts to reducer</th>
+<th>Store Value In</th>
+<th>Calculation</th>
+<th>Store Value</th>
+<th>Items in Association</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td><strong>5</strong></td>
+<td>1</td>
+<td>nil</td>
+<td>(0*0+<strong>5</strong>)/(0+1)</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>3</strong></td>
+<td>2</td>
+<td>1</td>
+<td>(5*1+<strong>3</strong>)/(1+1)</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>3</strong></td>
+<td>nil</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>4</strong></td>
+<td>3</td>
+<td>2</td>
+<td>(4*2+<strong>4</strong>)/(2+1)</td>
+<td>3</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<h2 id='points-of-note'>Points of Note</h2>
+<p>Note that in default reduction mode, re-reduction is always triggered, regardless of whether an extract is being processed twice. Also notice that each computation in default reduction consumes all of the extracts. We calculate an average by summing together the values of all of the extracts and then dividing by the number of extracts.</p>
+
+<p>In running reduction, on the other hand, the store keeps a running count of how many items the reducer has seen. This store, with the previous value of the reduction, can be used to compute the new average using only the new value by using the formula <code>((old average * previous count) + new value)/(old count + 1)</code> and the store can be updated with the new count <code>(old count + 1)</code>.</p>
+
+<p>When using running reducers for performance reasons, please keep in mind that the performance benefits of running reduction are only realized if <em>every</em> reducer for that reducible is executed in running mode. The primary advantage of running reduction is that it eliminates the need to load large numbers of extracts for a given subject or user.</p>
+<h1 id='subject-metadata'>Subject Metadata</h1><h3 id='caesar-can-reflect-on-several-attributes-in-a-subject-39-s-metadata-to-know-how-to-perform-certain-actions'>Caesar can reflect on several attributes in a subject&#39;s metadata to know how to perform certain actions.</h3><h2 id='code-training_subject-code'><code>#training_subject</code>:</h2>
+<ul>
+<li>Boolean. If true, subject is a training subject.</li>
+<li>Used to funnel training subjects to a separate reduction pathway.</li>
+<li>Example: TESS user weighting</li>
+<li>ExtractFilter allows filtering by training behavior.</li>
+<li>To use: set a filter on reducer to include:
+<code>training_behavior: training_only</code> or <code>experiment_only</code></li>
+<li>See Subject#training_subject? and Filters::FilterByTrainingBehavior for use.</li>
+</ul>
+<h2 id='code-previous_subject_ids-code'><code>#previous_subject_ids</code>:</h2>
+<ul>
+<li>Array of Zooniverse subject ids</li>
+<li>Subjects whose ids are included in array will be passed by RunsReducers to FetchExtractsBySubject</li>
+<li>Used to indicate that one or more prior subjects&#39; extracts should be included when reducing a new subject.</li>
+<li>Example: TESS takes a new image of the same piece of the sky as a previous subject on a subsequent pass. The previous subject&#39;s Zooniverse id is included in the subject metadata and all extracts for both subjects are included in the new subject&#39;s reduction.</li>
+<li>See Subject#additional_subject_ids_for_reduction for use.</li>
+</ul>
+<h1 id='rules'>Rules</h1>
+<p>A workflow can configure one or many rules. Each rule has a condition and one or more effects that happen when that condition evaluates to true. Conditions can be nested to achieve complicated if statements.</p>
+
+<p>Rules may pertain to either subjects or users. Rules have an evaluation order that can be set in the database if need be, and then rules can either be all evaluated or evaluated until the first true condition is reached.</p>
+<h2 id='conditions'>Conditions</h2>
+<p>The condition is a single operation, but some types of operations can be nested. The general syntax is like if you&#39;d write Lisp in JSON. It&#39;s always an array with as the first item a string identifying the operator. The other values are operations in themselves: <code>[operator, arg1, arg2, ...]</code>.</p>
+
+<ul>
+<li><code>[&quot;lt&quot;, operation, operation, ...]</code> - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as <code>a &lt; b &lt; c &lt; d</code>.</li>
+<li><code>[&quot;lte&quot;, operation, operation, ...]</code> - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as <code>a &lt;= b &lt;= c &lt;= d</code>.</li>
+<li><code>[&quot;gt&quot;, operation, operation, ...]</code> - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as <code>a &gt; b &gt; c &gt; d</code>.</li>
+<li><code>[&quot;gte&quot;, operation, operation, ...]</code> - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as <code>a &gt;= b &gt;= c &gt;= d</code>.</li>
+<li><code>[&quot;eq&quot;, operation, operation, ...]</code> - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as <code>a == b == c == d</code>.</li>
+<li><code>[&quot;const&quot;, value]</code> - Always returns the configured value.</li>
+<li><code>[&quot;lookup&quot;, key]</code> - Look up a reduction value by the given key.</li>
+<li><code>[&quot;not&quot;, operation]</code> - Negates the operation</li>
+<li><code>[&quot;and&quot;, operation, operation, ...]</code> - Returns true if all of the given operations evaluate to logical true</li>
+<li><code>[&quot;or&quot;, operation, operation, ...]</code> - Returns true if any of the given operations evaluates to logical true</li>
+</ul>
+<h2 id='sample-conditions'>Sample conditions</h2><h3 id='if-one-or-more-vehicles-is-detected'>If one or more vehicles is detected</h3>
+<p>From the console:
+<code>ruby
+SubjectRule.new
+  workflow_id: 123,
+  condition: [&#39;gte&#39;, [&#39;lookup&#39;, &#39;survey-total-VHCL&#39;], [&#39;const&#39;, 1]],
+  row_order: 1
+</code></p>
+
+<p>Input into UI:
+<code>json
+  [&quot;gte&quot;, [&quot;lookup&quot;, &quot;survey-total-VHCL&quot;], [&quot;const&quot;, 1]]
+</code></p>
+<h3 id='if-the-most-likely-identification-is-quot-human-quot'>If the most likely identification is &quot;HUMAN&quot;</h3>
+<p>From the console:
+<code>ruby
+SubjectRule.new
+  workflow_id: 123,
+  condition: [&#39;gte&#39;, [&#39;lookup&#39;, &#39;consensus.most_likely&#39;, &#39;&#39;], [&#39;const&#39;, &#39;HUMAN&#39;]],
+  row_order: 3
+</code>
+Input into UI:
+<code>json
+  [&quot;gte&quot;, [&quot;lookup&quot;, &quot;consensus.most_likely&quot;, &quot;&quot;], [&quot;const&quot;, &quot;HUMAN&quot;]]
+</code></p>
+<h2 id='effects'>Effects</h2>
+<p>Each rule can have one or more effects associated with it. Those effects will be performed when that rule&#39;s condition evaluates to true. Subject Rules have effects that affect subjects (and implicitly receive <code>subject_id</code> as a parameter) and User Rules have effects that affect users (<code>user_id</code>).</p>
+<h3 id='subject-rule-effects'>Subject Rule Effects</h3>
+<table><thead>
+<tr>
+<th>effect_type</th>
+<th><code>config</code> Parameters</th>
+<th>Effect Code</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>retire_subject</code></td>
+<td><code>reason</code> (string)*</td>
+<td><a href="https://github.com/zooniverse/caesar/blob/master/app/models/effects/retire_subject.rb">Effects::RetireSubject</a></td>
+</tr>
+<tr>
+<td><code>add_subject_to_set</code></td>
+<td><code>subject_set_id</code> (string)</td>
+<td><a href="https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_set.rb">Effects::AddSubjectToSet</a></td>
+</tr>
+<tr>
+<td><code>add_subject_to_collection</code></td>
+<td><code>collection_id</code> (string)</td>
+<td><a href="https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_collection.rb">Effects::AddSubjectToCollection</a></td>
+</tr>
+<tr>
+<td><code>external_effect</code></td>
+<td><code>url</code> (string)**</td>
+<td><a href="https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_collection.rb">Effects::ExternalEffect</a></td>
+</tr>
+</tbody></table>
+
+<p><sub>* Panoptes API validates <code>reason</code> against a list of permitted values. Choose from <code>blank</code>, <code>consensus</code>, or <code>other</code></sub></p>
+
+<p><sub>** <code>url</code> must be HTTPS</sub></p>
+<h3 id='user-rule-effects'>User Rule Effects</h3>
+<table><thead>
+<tr>
+<th>effect_type</th>
+<th><code>config</code> Parameters</th>
+<th>Effect Code</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>promote_user</code></td>
+<td><code>workflow_id</code> (string)</td>
+<td><a href="https://github.com/zooniverse/caesar/blob/master/app/models/effects/promote_user.rb">Effects::ExternalEffect</a></td>
+</tr>
+</tbody></table>
+<h2 id='sample-effects'>Sample Effects</h2><h3 id='retire-a-subject'>Retire a subject</h3>
+<p>From the console:</p>
+<div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="no">SubjectRuleEffect</span><span class="p">.</span><span class="nf">new</span>
+  <span class="ss">rule_id: </span><span class="mi">123</span><span class="p">,</span>
+  <span class="ss">effect_type: </span><span class="s1">'retire_subject'</span><span class="p">,</span>
+  <span class="ss">config: </span><span class="p">{</span> <span class="ss">reason: </span><span class="s1">'consensus'</span> <span class="p">}</span>
+</code></pre></div>
+<p>In the UI:</p>
+
+<p>These can be configured in the UI normally, there&#39;s nothing complicated like the <code>condition</code> field.</p>
+<h3 id='promote-a-user-to-a-new-workflow'>Promote a user to a new workflow</h3>
+<p>From the console:
+<code>ruby
+UserRuleEffect.new
+  rule_id: 234,
+  effect_type: &#39;promote_user&#39;,
+  config: { &#39;workflow_id&#39;: &#39;555&#39; }
+</code></p>
+<h1 id='how-to-do-swap'>How to do SWAP</h1>
+<blockquote>
+<p>In Panoptes, set <code>workflow.configuration</code> to something like:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight plaintext"><code>{"subject_set_chances": {"EXPERT_SET_ID": 0}}
+</code></pre></div>
+<blockquote>
+<p>In Caesar, set the workflow like so:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"extractors_config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"who"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"who"</span><span class="p">},</span><span class="w">
+    </span><span class="nl">"swap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"external"</span><span class="p">,</span><span class="w"> </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://darryls-server.com"</span><span class="p">}</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="err">OPTIONAL</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"reducers_config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"swap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"external"</span><span class="p">},</span><span class="w">
+    </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"count"</span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="nl">"rules_config"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"if"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">RULES</span><span class="p">],</span><span class="w"> </span><span class="nl">"then"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"retire_subject"</span><span class="p">}]}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>When you detect an expert user, update their probabilities like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">POST</span> <span class="nn">/api/project_preferences/update_settings?project_id=PROJECT_ID&amp;user_id=USER_ID</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">panoptes-staging.zooniverse.org</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">Bearer TOKEN</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/vnd.api+json; version=1</span>
+
+<span class="p">{</span><span class="w">
+  </span><span class="nl">"project_preferences"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"designator"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"subject_set_chances"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"WORKFLOW_ID"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"SUBJECT_SET_ID"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>And store expert-seenness in Caesar so that you can use it in the rulse</p>
+</blockquote>
+<div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">POST</span> <span class="nn">/workflows/WORKFLOW_ID/reducers/REDUCER_KEY/reductions</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">caesar-staging.zooniverse.org</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">Bearer TOKEN</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+
+<span class="p">{</span><span class="w">
+  </span><span class="nl">"likelyhood"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.864</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"seen_by_expert"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This document is a reference to the current state of affairs on doing SWAP on
+the Panoptes platform (by which we mean the Panoptes API, Caesar, and
+Designator).</p>
+
+<p>To do SWAP, one must:</p>
+
+<ol>
+<li><p><strong>Track the confusion matrix of users</strong>. We currently expect this to be done
+by some entity outside the Panoptes platform. This could be a script that
+runs periodically on someone&#39;s laptop, or it can be an external webservice
+that gets classifications streamed to it in real-time by Caesar (this is what
+Darryl is doing). We don&#39;t currently have a good place to store the confusion
+matrix itself inside the Panoptes platform. But, if the matrix identifies an
+expert classifier, post that into Panoptes under the <code>project_preferences</code>
+resource (API calls explained in later section)</p></li>
+<li><p><strong>Calculate the likelyhood of subjects</strong>. This is done in the same place that
+also calculates the confusion matrices. The resulting likelyhood should be
+posted into Caesar as a <code>reduction</code>.</p></li>
+<li><p><strong>Retire subjects when we know the answer</strong>. By posting the likelyhood into Caesar,
+we can set rules on it. For instance:</p>
+
+<ul>
+<li><code>IF likelyhood &lt; 0.1 AND classifications_count &gt; 5 THEN retire()</code></li>
+<li><code>IF likelyhood &gt; 0.9 AND classifications_count &gt; 5 THEN retire()</code></li>
+<li><code>IF likelyhood &gt; 0.1 AND likelyhood &lt; 0.9 AND not seen_by_expert AND classifications &gt; 10 THEN move to expert_set</code></li>
+</ul></li>
+<li><p>When Caesar moves subjects into an expert-only subject set, Designator can then serve subjects from that set only to users marked as experts by the <code>project_preferences</code>. Designator is all about serving subjects from sets with specific chances, which means that we avoid the situation where experts only ever see the really hard subjects by mixing e.g. 50% hard images with 50% &quot;general population&quot;.</p></li>
+</ol>
+<h1 id='errors'>Errors</h1>
+<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files...just save them to the `includes` folder and add them to the top of your `index.md`'s frontmatter. Files are included in the order listed.</aside>
+
+<p>The Kittn API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request -- Your request sucks.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- Your API key is wrong.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found -- The specified kitten could not be found.</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone -- The kitten requested has been removed from our servers.</td>
+</tr>
+<tr>
+<td>418</td>
+<td>I&#39;m a teapot.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+</tr>
+</tbody></table>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="http">http</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
