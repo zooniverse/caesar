@@ -108,6 +108,8 @@ spec:
                   key: SECRET_KEY_BASE
             - name: RAILS_SERVE_STATIC_FILES
               value: 'true'
+            - name: DATABASE_POOL_SIZE
+              value: '2'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -320,6 +322,8 @@ spec:
                 secretKeyRef:
                   name: caesar-staging-env-vars
                   key: SENTRY_DSN
+            - name: SIDEKIQ_CONCURRENCY
+              value: '4'
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:

@@ -13,10 +13,10 @@ pipeline {
       steps {
         script {
           def dockerRepoName = 'zooniverse/caesar'
-          def dockerImageName = "${dockerRepoName}:${BRANCH_NAME}"
-          def newImage = docker.build(dockerImageName)
+          def dockerImageName = "${dockerRepoName}:${GIT_COMMIT}"
+          def buildArgs = "--build-arg REVISION='${GIT_COMMIT}' ."
+          def newImage = docker.build(dockerImageName, buildArgs)
           newImage.push()
-          newImage.push('${GIT_COMMIT}')
 
           if (BRANCH_NAME == 'master') {
             stage('Update latest tag') {
