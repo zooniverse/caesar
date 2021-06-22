@@ -42,7 +42,7 @@ gem "sentry-raven"
 gem 'omniauth'
 gem 'omniauth-zooniverse'
 gem 'responders'
-gem 'listen', '>= 3.0.5', '< 3.2'
+gem 'listen', '>= 3.0.5', '< 3.6'
 gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
