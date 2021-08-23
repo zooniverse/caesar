@@ -12,22 +12,23 @@ module Importers
 
     def run(csv_filepath)
       @bulk_extracts = []
-      CSV.foreach(csv_filepath) do |row|
-        bulk_extracts << row
+
+      CSV.foreach(csv_filepath, headers: true, header_converters: :symbol) do |row|
+        extract = row.to_hash
+        extract[:workflow_id] = workflow_id
+        extract[:classification_at] = DateTime.now
+        extract[:classification_id] = workflow_id
+        @bulk_extracts << extract
       end
-      bulk_enqueue_current_batch
+      @bulk_extracts
+    #   bulk_enqueue_current_batch
     end
 
     private
 
-    def batch
-      @batch ||= Sidekiq::Batch.new
-    end
-
     def bulk_enqueue_current_batch
-      CreateExtractsWorker.push_bulk(bulk_extracts) do |extract|
-        [extract, workflow_id]
-      end
+      byebug
+      CreateExtractsWorker.perform_async(@bulk_extracts)
       @bulk_extracts = []
     end
   end
