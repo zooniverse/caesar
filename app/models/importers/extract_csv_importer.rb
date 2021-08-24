@@ -22,14 +22,12 @@ module Importers
         extract[:classification_id] = workflow_id
         @bulk_extracts << extract
       end
-      @bulk_extracts
-    #   bulk_enqueue_current_batch
+      bulk_enqueue_current_batch
     end
 
     private
 
     def bulk_enqueue_current_batch
-      byebug
       CreateExtractsWorker.perform_async(@bulk_extracts)
       @bulk_extracts = []
     end
