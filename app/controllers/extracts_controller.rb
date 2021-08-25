@@ -4,6 +4,13 @@ class ExtractsController < ApplicationController
     render json: extracts
   end
 
+  def import
+    skip_authorization
+    file_path = params[:file].path
+    workflow_id = params[:workflow_id]
+    CreateExtractsWorker.perform_async(file_path, workflow_id)
+  end
+
   private
 
   def workflow
