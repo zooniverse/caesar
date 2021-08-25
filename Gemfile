@@ -54,8 +54,8 @@ gem 'ranked-model'
 gem 'deferred_associations'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sqs'
-gem 'strong_migrations'
 gem 'activerecord-import'
+gem 'strong_migrations'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
