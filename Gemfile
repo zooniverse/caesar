@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
+gem 'activerecord-import'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.4'
 # Use postgresql as the database for Active Record
@@ -54,7 +54,6 @@ gem 'ranked-model'
 gem 'deferred_associations'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sqs'
-gem 'activerecord-import'
 gem 'strong_migrations'
 
 # Use Capistrano for deployment
