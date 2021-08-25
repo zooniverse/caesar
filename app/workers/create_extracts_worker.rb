@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'csv'
 # Worker to bulk import extracts from csv
 class CreateExtractsWorker
   include Sidekiq::Worker
@@ -21,7 +22,7 @@ class CreateExtractsWorker
   private
 
   def bulk_enqueue_current_batch
-    Extract.import extracts, validate: false
+    Extract.import @bulk_extracts, validate: false
     @bulk_extracts = []
   end
 end
