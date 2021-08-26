@@ -9,18 +9,20 @@ toc_footers:
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
-  - extracts
   - reducer_configuration
   - reduction_mode
   - subject_metadata
   - rules
   - how_to_swap
   - errors
+  - extracts
 
 search: true
 ---
 
 # Introduction
+
+This is on the docupdate branch.
 
 Caesar is an evolution of the Nero codebase, which is made more generic. In
 essence, Caesar receives classifications from the event stream (a Lambda script
