@@ -11,7 +11,7 @@ class WorkflowPolicy < ApplicationPolicy
   end
 
   def import?
-    create?
+    show?
   end
 
   def index?
