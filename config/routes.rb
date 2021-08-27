@@ -20,15 +20,15 @@ Rails.application.routes.draw do
 
   post 'kinesis', to: 'kinesis#create'
 
-  resources :extracts, only: [:import] do
-    collection { post 'import', to: 'extracts#import' }
-  end
-
   resources :workflows do
     resources :extractors
     resources :extractors, param: :key do
       resource :extract, except: [:edit, :update]
       resources :extracts, only: [:index]
+    end
+
+    resources :extracts, only: [:import] do
+      collection { post 'import', to: 'extracts#import' }
     end
 
     resources :reducers

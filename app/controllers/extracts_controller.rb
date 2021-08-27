@@ -5,10 +5,11 @@ class ExtractsController < ApplicationController
   end
 
   def import
-    skip_authorization
-    file_path = params[:file].path
-    workflow_id = params[:workflow_id]
-    CreateExtractsWorker.perform_async(file_path, workflow_id)
+    authorize workflow
+    # file_path = params[:file].path
+    # workflow_id = params[:workflow_id]
+    # CreateExtractsWorker.perform_async(file_path, workflow_id)
+    puts workflow
   end
 
   private
