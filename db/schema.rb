@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_09_170951) do
+ActiveRecord::Schema.define(version: 2021_08_30_183627) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2021_08_09_170951) do
   end
 
   create_table "extracts", id: :serial, force: :cascade do |t|
-    t.integer "classification_id", null: false
+    t.integer "classification_id"
     t.datetime "classification_at", null: false
     t.string "extractor_key", null: false
     t.integer "workflow_id", null: false

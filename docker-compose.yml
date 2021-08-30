@@ -5,6 +5,8 @@ services:
     environment:
       - "POSTGRES_USER=caesar"
       - "POSTGRES_PASSWORD=caesar"
+    ports: 
+      - "5432:5432"
 
   redis:
     image: redis
