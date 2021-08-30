@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UrlDownloader
   def self.stream(url)
     Tempfile.create('caesar-downloaded-file') do |file|

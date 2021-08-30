@@ -20,7 +20,6 @@ class CreateExtractsWorker
         extract = row.to_hash
         extract[:workflow_id] = workflow_id
         extract[:classification_at] = Time.now
-        puts extract
         @bulk_extracts << extract
       end
     end
