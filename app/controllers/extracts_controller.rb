@@ -6,9 +6,11 @@ class ExtractsController < ApplicationController
 
   def import
     authorize workflow
-    # file_path = params[:file].path
+    file_path = params[:file]
+    workflow_id = params[:workflow_id]
+    puts "HELLO WORLD"
     # workflow_id = params[:workflow_id]
-    # CreateExtractsWorker.perform_async(file_path, workflow_id)
+    CreateExtractsWorker.perform_async(file_path, workflow_id)
     puts workflow
   end
 
