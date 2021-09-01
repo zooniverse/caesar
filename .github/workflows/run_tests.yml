@@ -11,7 +11,6 @@ jobs:
       postgres:
         image: postgres:11
         env:
-          POSTGRES_DB: caesar_test
           POSTGRES_PASSWORD: postgres
         ports: ["5432:5432"]
         options:
@@ -33,6 +32,7 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
+          DATABASE_URL_TEST: postgresql://localhost/caesar_test?user=postgres
         run: |
           bin/rails db:create
           bin/rails db:schema:load
