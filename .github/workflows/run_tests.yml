@@ -38,4 +38,8 @@ jobs:
           bin/rails db:schema:load
 
       - name: Run tests
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
         run: bin/rspec
