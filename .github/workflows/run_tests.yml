@@ -13,7 +13,7 @@ jobs:
         env:
           POSTGRES_USER: caesar_test
           POSTGRES_DB: caesar_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: postgres
         ports: ["5432:5432"]
         options:
           --health-cmd pg_isready
@@ -33,7 +33,7 @@ jobs:
       - name: Setup test database
         env:
           RAILS_ENV: test
-          PGHOST: 127.0.0.1
+          PGHOST: localhost
           PGUSER: caesar_test
         run: |
           bin/rails db:create
