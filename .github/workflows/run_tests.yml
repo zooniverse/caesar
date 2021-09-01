@@ -32,7 +32,7 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          DATABASE_URL_TEST: postgresql://localhost:postgres/caesar_test?user=postgres
+          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
         run: |
           bin/rails db:create
           bin/rails db:schema:load
