@@ -28,7 +28,7 @@ jobs:
       - name: Setup test database
         env:
           RAILS_ENV: test
-          PGHOST: localhost
+          PGHOST: 127.0.0.1
           PGUSER: caesar_test
         run: |
           bin/rails db:create
