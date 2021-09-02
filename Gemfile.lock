@@ -33,8 +33,6 @@ GEM
       activemodel (= 5.2.6)
       activesupport (= 5.2.6)
       arel (>= 9.0)
-    activerecord-import (1.0.7)
-      activerecord (>= 3.2)
     activestorage (5.2.6)
       actionpack (= 5.2.6)
       activerecord (= 5.2.6)
@@ -372,7 +370,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-import
   aws-sdk-s3
   aws-sdk-sqs
   bootsnap (>= 1.1.0)
