@@ -89,3 +89,26 @@ The ExternalExtractor gets the raw data from the classification. There are a set
 ```
 
 ### Task data format
+
+
+>Sample task data for a Rectangle Extractor
+
+```
+"T1": [
+      {
+        "task": "T1",
+        "value": [
+          {
+            "r": 82.84781455160156,
+            "x": 276.80859375,
+            "y": 317.0390625,
+            "tool": 0,
+            "angle": 159.37755608105448,
+            "frame": 0,
+            "details": []
+          }
+        ]
+        ]
+```
+
+
