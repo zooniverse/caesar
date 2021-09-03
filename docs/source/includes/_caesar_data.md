@@ -75,7 +75,10 @@ The ExternalExtractor gets the raw data from the classification. There are a set
 	+ `id` : The unique subject ID in the database
 	+ `metadata` : Additional data about the subject (including filename, and whether it is a `gold_standard` data)
 
+## Data Formats for Extractors
+In this section, we outline the JSON data format details to be passed to different extractors in the aggregation-caeser API.
 
+### Question Extractor 
 
 >Sample task data for a simple Question extractor
 
@@ -88,12 +91,81 @@ The ExternalExtractor gets the raw data from the classification. There are a set
   }
 ```
 
-### Task data format
+### Rectangle Extractor
+A rectangle extractor takes the following information from the data dump (in the specified format on the right) to extract details of the rectangles specified by the classifier.
+
+#### Input
++ `x`: x coodrinate of the rectangle's centroid.
++ `y`: y coordinate of the rectangle's centroid.
++ `tool`: tool id of the rectangle?
++ `angle`: rotation angle of the rectangle.
++ `frame`: ???
++ `width`: width of the rectangle.
++ `height`: height of the rectangle.
 
 
->Sample task data for a Rectangle Extractor
+> Example data for a Rectangle Extractor
 
+```json
+ "T1": [
+      {
+        "task": "T1",
+        "value": [
+          {
+            "x": 190.0546875,
+            "y": 292.55859375,
+            "tool": 1,
+            "angle": -36.34308118417328,
+            "frame": 0,
+            "width": 313.40234375,
+            "height": 149.66796875,
+            "details": []
+          }
+        ]
+      }
+    ],
 ```
+
+#### Output
+The parameters follow the general format of TaskIdentifier_ToolIdentifier 
+
++ `frameX`: ??
++ `T*_tool*_height`: The width of the .
++ `T*_tool*_width`: The height of the tool ()
+
+>Example output of the rectangle extractor
+
+```json
+{
+    "aggregation_version": "3.6.0",
+    "frame0": {
+        "T1_tool1_height": [
+            149.66796875
+        ],
+        "T1_tool1_width": [
+            313.40234375
+        ],
+        "T1_tool1_x": [
+            190.0546875
+        ],
+        "T1_tool1_y": [
+            292.55859375
+        ]
+    }
+}
+```
+
+### Circle Extractor
++ `task`: task identifier
++ `r`: Radius of the circle.
++ `x`: x coordinate of the circle's center.
++ `y`: y coordinate of the circle's center.
++ `tool`: ??
++ `angle`: azimuthal rotation angle??
+
+>Sample task data for a Circle Extractor
+
+```json
 "T1": [
       {
         "task": "T1",
@@ -108,7 +180,7 @@ The ExternalExtractor gets the raw data from the classification. There are a set
             "details": []
           }
         ]
-        ]
+]
 ```
 
 
