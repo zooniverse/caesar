@@ -78,30 +78,32 @@ The ExternalExtractor gets the raw data from the classification. There are a set
 ## Data Formats for Extractors
 In this section, we outline the JSON data format details to be passed to different extractors in the aggregation-caeser API.
 
-### Question Extractor 
-
 >Sample task data for a simple Question extractor
 
 ```json
 "T0": [
   {
 	"task": "T0",
-	"value": 1,
+	"value": 0,
 	"taskType": "single"
   }
 ```
 
-### Rectangle Extractor
-A rectangle extractor takes the following information from the data dump (in the specified format on the right) to extract details of the rectangles specified by the classifier.
+### Question Extractor 
 
-#### Input
-+ `x`: x coodrinate of the rectangle's centroid.
-+ `y`: y coordinate of the rectangle's centroid.
-+ `tool`: tool id of the rectangle?
-+ `angle`: rotation angle of the rectangle.
-+ `frame`: ???
-+ `width`: width of the rectangle.
-+ `height`: height of the rectangle.
+
+The question extract retrieves the `value` key from a task. For a normal
+question task, the value is the index of the answer (first answer is a
+0), and how many times that answer has been chosen. 
+
+> returns
+
+```json
+{
+    "0": 1,
+    "aggregation_version": "3.6.0"
+}
+```
 
 
 > Example data for a Rectangle Extractor
@@ -126,12 +128,21 @@ A rectangle extractor takes the following information from the data dump (in the
     ],
 ```
 
-#### Output
-The parameters follow the general format of TaskIdentifier_ToolIdentifier 
+### Rectangle Extractor
 
-+ `frameX`: ??
-+ `T*_tool*_height`: The width of the .
-+ `T*_tool*_width`: The height of the tool ()
+A rectangle extractor takes the following information from the data dump (in the specified format on the right) to extract details of the rectangles specified by the classifier.
+
+
+#### Input
++ `x`: x coodrinate of the rectangle's centroid.
++ `y`: y coordinate of the rectangle's centroid.
++ `tool`: tool id of the rectangle?
++ `angle`: rotation angle of the rectangle.
++ `frame`: ???
++ `width`: width of the rectangle.
++ `height`: height of the rectangle.
+
+
 
 >Example output of the rectangle extractor
 
@@ -155,13 +166,14 @@ The parameters follow the general format of TaskIdentifier_ToolIdentifier
 }
 ```
 
-### Circle Extractor
-+ `task`: task identifier
-+ `r`: Radius of the circle.
-+ `x`: x coordinate of the circle's center.
-+ `y`: y coordinate of the circle's center.
-+ `tool`: ??
-+ `angle`: azimuthal rotation angle??
+#### Output
+The parameters follow the general format of TaskIdentifier_ToolIdentifier 
+
++ `frameX`: ??
++ `T*_tool*_height`: The width of the .
++ `T*_tool*_width`: The height of the tool ()
+
+
 
 >Sample task data for a Circle Extractor
 
@@ -182,5 +194,91 @@ The parameters follow the general format of TaskIdentifier_ToolIdentifier
         ]
 ]
 ```
+### Circle Extractor
+
++ `task`: task identifier
++ `r`: Radius of the circle.
++ `x`: x coordinate of the circle's center.
++ `y`: y coordinate of the circle's center.
++ `tool`: ??
++ `angle`: azimuthal rotation angle??
 
 
+
+
+> Sample data for the tasks empty extractor
+> Multiple tasks where each task is empty:
+
+```json
+    "T0": [
+      {
+        "task": "T0"
+      }
+    ],
+    "T1": [
+      {
+        "task": "T1"
+      }
+    ]
+```
+### All Tasks Empty extractor
+
+This extractor checks whether all tasks in the classification are empty. 
+If all tasks do not have a `value` key, then the extractor returns the 
+`result` key as `True`. If any of the tasks have a classification, then 
+the `result` key is `False`. 
+
+> returns
+
+```json
+{
+    "aggregation_version": "3.6.0",
+    "result": true
+}
+```
+
+> Sample data for point extractor
+
+```json
+"T1": [
+  {
+	"task": "T1",
+	"value": [
+	  {
+		"x": 278.75,
+		"y": 141.96665954589844,
+		"tool": 3,
+		"frame": 0,
+		"details": []
+	  }
+	]
+  }
+]
+
+```
+
+### Point extractor
+This extractor obtains the x, y coordinate values of the point task. Note that in this case,
+the external URL must also contain the task ID (e.g., [https://aggregation-caesar.zooniverse.org/extractors/point_extractor?task=T1](https://aggregation-caesar.zooniverse.org/extractors/point_extractor?task=T1)) so that the extractor has information about the task from which to extract the coordinate values. In this case, the following values are used as input in the `value` key:
+
++ `x` : The x-coordinate of the point
++ `y` : The y-coordinate of the point
++ `tool`: (I think this is the index of the tool on the front end?)
++ `frame` : .... no clue
++ `details` : .... no clue
+
+The returned values are in the format `[taskID]_tool[toolID]_[x/y]`, similar to the other shape extractors above. 
+
+> returns
+
+```json
+{
+    "T1_tool3_x": [
+        278.75
+    ],
+    "T1_tool3_y": [
+        141.96665954589844
+    ],
+    "aggregation_version": "3.6.0"
+}
+```
