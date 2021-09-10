@@ -31,6 +31,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check for focus specs
+        run: ./scripts/no_focus.sh
+
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
