@@ -37,6 +37,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version: 2.6 # ensure we test the same ruby version we run under (see Dockerfile)
           bundler-cache: true
 
       - name: Setup test database
