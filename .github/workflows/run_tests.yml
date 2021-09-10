@@ -1,7 +1,10 @@
 name: Run Tests
 on:
-  pull_request:
-  workflow_dispatch:
+  pull_request: # run tests for all PRs
+  push: { branches: master } # only run tests on push / merges to master branch
+
+env:
+  DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
 
 jobs:
   tests:
@@ -28,23 +31,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check for focus specs
+        run: ./scripts/no_focus.sh
+
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version: 2.6 # ensure we test the same ruby version we run under (see Dockerfile)
           bundler-cache: true
 
       - name: Setup test database
-        env:
-          RAILS_ENV: test
-          PGHOST: localhost
-          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
-        run: |
-          bin/rails db:create
-          bin/rails db:schema:load
+        run: RAILS_ENV=test bin/rails db:create
 
       - name: Run tests
-        env:
-          RAILS_ENV: test
-          PGHOST: localhost
-          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
-        run: bin/rspec
+        run: RAILS_ENV=test bundle exec rspec # avoid running spring via bin/rspec binstub
