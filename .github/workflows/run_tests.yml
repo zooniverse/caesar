@@ -1,7 +1,7 @@
 name: Run Tests
 on:
-  pull_request:
-  workflow_dispatch:
+  pull_request: # run tests for all PRs
+  push: { branches: master } # only run tests on push / merges to master branch
 
 jobs:
   tests:
