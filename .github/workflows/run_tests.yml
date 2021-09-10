@@ -41,17 +41,7 @@ jobs:
           bundler-cache: true
 
       - name: Setup test database
-        env:
-          RAILS_ENV: test
-          PGHOST: localhost
-          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
-        run: |
-          bin/rails db:create
-          bin/rails db:schema:load
+        run: RAILS_ENV=test bin/rails db:create
 
       - name: Run tests
-        env:
-          RAILS_ENV: test
-          PGHOST: localhost
-          DATABASE_URL_TEST: postgresql://postgres:postgres@localhost/caesar_test
-        run: bin/rspec
+        run: RAILS_ENV=test bundle exec rspec # avoid running spring via bin/rspec binstub
