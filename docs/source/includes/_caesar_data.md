@@ -106,6 +106,17 @@ question task, the value is the index of the answer (first answer is a
 ```
 
 
+
+
+## Shape Extractor
+This is a general-purpose extractor that can retrieve information regarding various shape tools used. One can specify which shape information to extract by passing the `task identifier` (e.g., `T0`) and `shape=name` (e.g., `shape=rectangle`) as such: `https://aggregation-caesar.zooniverse.org/extractors/shape_extractor?task=T1&shape=circle`. The following are the list of shapes that you can extract using the shape extractor:
+
++ `Rectangle Extractor`
++ `Circle Extractor`
++ `Point Extractor`
++ `Line Extractor`
+
+
 > Example data for a Rectangle Extractor
 
 ```json
@@ -128,10 +139,12 @@ question task, the value is the index of the answer (first answer is a
     ],
 ```
 
+
 ### Rectangle Extractor
 
-A rectangle extractor takes the following information from the data dump (in the specified format on the right) to extract details of the rectangles specified by the classifier.
+A rectangle extractor takes the following information from the data dump (in the specified format on the right) to extract details of the rectangles specified by the classifier. The usage is `https://aggregation-caesar.zooniverse.org/extractors/shape_extractor?task=T1&shape=rectangle`
 
+__Note__: There is a dedicated `Rectangle Extractor` that one can use instead of the shape extractor by `https://aggregation-caesar.zooniverse.org/extractors/rectangle_extractor?task=T1`, where `task=T*` should be the task identifier corresponding to the rectangle tool usage task.
 
 #### Input
 + `x`: x coodrinate of the rectangle's centroid.
@@ -141,8 +154,6 @@ A rectangle extractor takes the following information from the data dump (in the
 + `frame`: ???
 + `width`: width of the rectangle.
 + `height`: height of the rectangle.
-
-
 
 >Example output of the rectangle extractor
 
@@ -175,6 +186,12 @@ The parameters follow the general format of TaskIdentifier_ToolIdentifier
 
 
 
+
+
+
+
+
+
 >Sample task data for a Circle Extractor
 
 ```json
@@ -194,7 +211,9 @@ The parameters follow the general format of TaskIdentifier_ToolIdentifier
         ]
 ]
 ```
+
 ### Circle Extractor
+You can use the `shape=circle` argument to specify the shape extractor to get the information of the circle tool used in the classification task. Example usage is: `https://aggregation-caesar.zooniverse.org/extractors/shape_extractor?task=T1&shape=circle`, where `task=T*` is the task corresponding to the circle tool.
 
 + `task`: task identifier
 + `r`: Radius of the circle.
@@ -220,21 +239,6 @@ The parameters follow the general format of TaskIdentifier_ToolIdentifier
         "task": "T1"
       }
     ]
-```
-### All Tasks Empty extractor
-
-This extractor checks whether all tasks in the classification are empty. 
-If all tasks do not have a `value` key, then the extractor returns the 
-`result` key as `True`. If any of the tasks have a classification, then 
-the `result` key is `False`. 
-
-> returns
-
-```json
-{
-    "aggregation_version": "3.6.0",
-    "result": true
-}
 ```
 
 > Sample data for point extractor
@@ -298,5 +302,62 @@ The `point_extractor_by_frame` extractor performs a similar function, except at 
         	141.96665954589844
         ]
     }
+}
+```
+
+### Line Extractor 
+A line extraction functionality in the shape extractor retrieves the information of the `(x1,y1)` and `(x2,y2)` points of the line. Example usage is: `https://aggregation-caesar.zooniverse.org/extractors/shape_extractor?task=T1&shape=line`, where `task=T*` is the task corresponding to the line tool.
+
+> Sample input data to line extractor
+
+```json
+{
+          {
+            "x1": 191.75,
+            "x2": 647.75,
+            "y1": 477.9666748046875,
+            "y2": 295.9666748046875,
+            "tool": 2,
+            "frame": 0,
+            "details": []
+          }
+}
+```
+
+> Output of the line extraction
+
+```json
+{
+    "aggregation_version": "3.6.0",
+    "frame0": {
+        "T1_tool2_x1": [
+            191.75
+        ],
+        "T1_tool2_x2": [
+            647.75
+        ],
+        "T1_tool2_y1": [
+            477.9666748046875
+        ],
+        "T1_tool2_y2": [
+            295.9666748046875
+        ]
+    }
+}
+```
+
+### All Tasks Empty extractor
+
+This extractor checks whether all tasks in the classification are empty. 
+If all tasks do not have a `value` key, then the extractor returns the 
+`result` key as `True`. If any of the tasks have a classification, then 
+the `result` key is `False`. 
+
+> returns
+
+```json
+{
+    "aggregation_version": "3.6.0",
+    "result": true
 }
 ```
