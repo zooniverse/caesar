@@ -1,7 +1,7 @@
 # Caesar Data Model
 
 ## External API calls
-When an ExternalExtractor or ExternalReducer the classification data is sent to the given URL (requires HTTPS) as JSON data. The external API then does the processing and returns a response to Caeser. The response from the external endpoint must be:
+When an ExternalExtractor or ExternalReducer is called the classification data is sent to the given URL (requires HTTPS) as JSON data. The external API then does the processing and returns a response to Caeser. The response from the external endpoint must be:
 
 + 200 (OK) 
 + 201 (Resource Created)
@@ -257,7 +257,7 @@ the `result` key is `False`.
 
 ```
 
-### Point extractor
+### Point extractor/Point extractor by frame
 This extractor obtains the x, y coordinate values of the point task. Note that in this case,
 the external URL must also contain the task ID (e.g., [https://aggregation-caesar.zooniverse.org/extractors/point_extractor?task=T1](https://aggregation-caesar.zooniverse.org/extractors/point_extractor?task=T1)) so that the extractor has information about the task from which to extract the coordinate values. In this case, the following values are used as input in the `value` key:
 
@@ -268,6 +268,8 @@ the external URL must also contain the task ID (e.g., [https://aggregation-caesa
 + `details` : .... no clue
 
 The returned values are in the format `[taskID]_tool[toolID]_[x/y]`, similar to the other shape extractors above. 
+
+The `point_extractor_by_frame` extractor performs a similar function, except at the output level, where each (x,y) coordinate value is categorized by the frame number:
 
 > returns
 
@@ -280,5 +282,21 @@ The returned values are in the format `[taskID]_tool[toolID]_[x/y]`, similar to 
         141.96665954589844
     ],
     "aggregation_version": "3.6.0"
+}
+```
+
+> or with the `point_extractor_by_frame`:
+
+```json
+{
+    "aggregation_version": "3.6.0",
+    "frame0": {
+        "T1_tool3_x": [
+            278.75
+        ],
+        "T1_tool3_y": [
+        	141.96665954589844
+        ]
+    }
 }
 ```
