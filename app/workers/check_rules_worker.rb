@@ -1,7 +1,7 @@
 class CheckRulesWorker
   include Sidekiq::Worker
   sidekiq_options retry: 2
-  sidekiq_options unique: :until_executing unless Rails.env.test?
+  sidekiq_options lock: :until_executing unless Rails.env.test?
   sidekiq_options queue: 'internal'
 
   # TODO: Remove this class after CheckSubjectRulesWorker and CheckUserRulesWorker have been deployed
