@@ -1,0 +1,26 @@
+name: Publish Docs to Github Pages
+on:
+  workflow_dispatch:
+  push:
+      branches:
+        - master
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Build Middleman
+        run: bundle exec middleman build --clean
+        working-directory: ${{ github.workspace }}/docs
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: ${{ github.workspace }}/docs/build
