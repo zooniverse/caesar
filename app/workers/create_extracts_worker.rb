@@ -23,7 +23,7 @@ class CreateExtractsWorker
         hashed_row = row.to_hash
         upsert_subject hashed_row['subject_id']
         extract = init_extract hashed_row, workflow_id
-        extract.data = hashed_row['data']
+        extract.data = JSON.parse hashed_row['data']
         extract.classification_at = Time.now unless extract.classification_at.present?
         extract.save!
       end
