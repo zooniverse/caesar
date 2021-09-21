@@ -23,8 +23,7 @@ class CreateExtractsWorker
         hashed_row = row.to_hash
         upsert_subject hashed_row['subject_id']
         extract = init_extract hashed_row, workflow_id
-        extract.data = JSON.parse hashed_row['data']
-        extract.classification_at = Time.now unless extract.classification_at.present?
+        set_extract_data_from_row hashed_row, extract
         extract.save!
       end
     end
@@ -48,8 +47,13 @@ class CreateExtractsWorker
     ).first_or_initialize
   end
 
+  def set_extract_data_from_row(hashed_row, extract)
+    extract.data = JSON.parse hashed_row['data']
+    extract.classification_at = Time.now unless extract.classification_at.present?
+    extract
+  end
+
   def run_workflow_reducers(workflow)
-    puts "MDY114 REDUCERS!"
     workflow.rerun_reducers
   end
 
