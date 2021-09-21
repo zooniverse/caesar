@@ -21,13 +21,19 @@ class CreateExtractsWorker
       csv = CSV.new(io, headers: true)
       csv.each do |row|
         hashed_row = row.to_hash
+        upsert_subject hashed_row['subject_id']
         extract = init_extract hashed_row, workflow_id
         extract.data = hashed_row['data']
         extract.classification_at = Time.now unless extract.classification_at.present?
         extract.save!
-        puts extract
       end
     end
+  end
+
+  def upsert_subject(subject_id)
+    s = Subject.where(id: subject_id).first_or_initialize
+    s.metadata = {} if s.metadata.nil?
+    s.save!
   end
 
   def init_extract(hashed_row, workflow)
