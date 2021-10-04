@@ -14,7 +14,7 @@ RSpec.describe ExtractsController, type: :controller do
   end
 
   describe '#import' do
-    file_path = 'test.csv'
+    let(:file_path) { 'https://example.org/file.csv' }
     it 'returns a 204 status' do 
       post :import, params: { file: file_path, workflow_id: workflow.id }
       expect(response.status).to eq(204)

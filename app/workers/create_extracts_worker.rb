@@ -48,9 +48,20 @@ class CreateExtractsWorker
   end
 
   def set_extract_data_from_row(hashed_row, extract)
-    extract.data = JSON.parse hashed_row['data']
+    puts hashed_row['data']
+    extract.data = if valid_json?(hashed_row['data'])
+                     JSON.parse hashed_row['data']
+                   else
+                     hashed_row['data']
+                   end
     extract.classification_at = Time.now unless extract.classification_at.present?
     extract
+  end
+
+  def valid_json?(str)
+    !!JSON.parse(str)
+  rescue JSON::ParserError
+    false
   end
 
   def run_workflow_reducers(workflow)
