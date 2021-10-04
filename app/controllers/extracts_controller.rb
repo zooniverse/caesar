@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExtractsController < ApplicationController
   def index
     extracts = policy_scope(Extract).where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
