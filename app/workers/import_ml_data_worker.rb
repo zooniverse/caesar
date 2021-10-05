@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'csv'
-# Worker to bulk import machine learnt extracts from web accessibly located csv
-class CreateExtractsWorker
+# Worker to bulk import Machine Learnt (ML) extracts from web accessibly located csv
+class ImportMLDataWorker
   include Sidekiq::Worker
   sidekiq_options retry: 2
 

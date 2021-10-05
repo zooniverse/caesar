@@ -2,14 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe CreateExtractsWorker, type: :worker do
+RSpec.describe ImportMLDataWorker, type: :worker do
   let(:project) { create :project }
   let(:workflow) { create :workflow, project_id: project.id }
   let(:source_url) { 'https://example.org/file.csv' }
   let(:subject) { create :subject, id: 31 }
   let(:extractor_key1) { 'alice' }
   let(:extractor_key2) { 'complete' }
-  let(:workflow_reducer) { create(:reducer, key: extractor_key1, reducible_type: 'Workflow', reducible_id: workflow.id) }
   let(:csv_file) do
     StringIO.new <<~CSV
       extractor_key,subject_id,data
@@ -53,9 +52,22 @@ RSpec.describe CreateExtractsWorker, type: :worker do
       expect(Subject.find(29).metadata).to eq({})
     end
 
-    it 'runs any workflow reducers' do
+    it 'does not run any reducers if there are no reducers' do
+      expect_any_instance_of(IsReducible).not_to receive(:rerun_reducers)
       described_class.new.perform(source_url, workflow.id)
-      # expect(workflow).to receive(:rerun_reducers).once
+    end
+
+    it 'runs any workflow reducers' do
+      workflow2 = create :workflow, reducers_count: 1, project_id: project.id
+      expect_any_instance_of(IsReducible).to receive(:rerun_reducers)
+      described_class.new.perform(source_url, workflow2.id)
+    end
+
+    it 'runs any project reducers' do
+      project2 = create :project, reducers_count: 1
+      workflow2 = create :workflow, project_id: project2.id
+      expect_any_instance_of(IsReducible).to receive(:rerun_reducers)
+      described_class.new.perform(source_url, workflow2.id)
     end
   end
 end

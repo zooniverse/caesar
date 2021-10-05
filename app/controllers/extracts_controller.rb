@@ -10,7 +10,7 @@ class ExtractsController < ApplicationController
     authorize workflow
     file_path = params[:file]
     workflow_id = params[:workflow_id]
-    CreateExtractsWorker.perform_async(file_path, workflow_id)
+    ImportMLDataWorker.perform_async(file_path, workflow_id)
   end
 
   private
