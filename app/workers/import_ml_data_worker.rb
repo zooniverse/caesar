@@ -8,7 +8,10 @@ class ImportMLDataWorker
 
   def perform(csv_filepath, workflow_id)
     workflow = Workflow.find(workflow_id)
-    upsert_extracts csv_filepath, workflow
+    UrlDownloader.stream(csv_filepath) do |io|
+      csv = CSV.new(io, headers: true)
+      upsert_data_from_csv csv, workflow
+    end
     run_workflow_reducers(workflow) if workflow&.reducers&.any?
     project = Project.find(workflow.project_id)
     run_project_reducers(project) if project&.has_reducers?
@@ -16,21 +19,22 @@ class ImportMLDataWorker
 
   private
 
-  def upsert_extracts(csv_filepath, workflow_id)
-    UrlDownloader.stream(csv_filepath) do |io|
-      csv = CSV.new(io, headers: true)
-      csv.each do |row|
-        hashed_row = row.to_hash
-        upsert_subject hashed_row['subject_id']
-        extract = init_extract hashed_row, workflow_id
-        set_extract_data_from_row hashed_row, extract
-        extract.save!
-      end
+  def upsert_data_from_csv(csv, workflow)
+    csv.each do |row|
+      hashed_row = row.to_hash
+      upsert_subject hashed_row['subject_id']
+      upsert_extract hashed_row, workflow
     end
   end
 
+  def upsert_extract(hashed_row, workflow)
+    extract = init_extract hashed_row, workflow
+    set_extract_data_from_row hashed_row, extract
+    extract.save!
+  end
+
   def upsert_subject(subject_id)
-    s = Subject.where(id: subject_id).first_or_initialize
+    s = Subject.where(id: subject_id).first_or_create
     s.metadata = {} if s.metadata.nil?
     s.save!
   end
