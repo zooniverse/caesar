@@ -34,9 +34,7 @@ class ImportMLDataWorker
   end
 
   def upsert_subject(subject_id)
-    s = Subject.where(id: subject_id).first_or_create
-    s.metadata = {} if s.metadata.nil?
-    s.save!
+    Subject.where(id: subject_id).first_or_create
   end
 
   def init_extract(hashed_row, workflow)
