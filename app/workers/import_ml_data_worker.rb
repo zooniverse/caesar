@@ -38,15 +38,22 @@ class ImportMLDataWorker
   end
 
   def init_extract(hashed_row, workflow)
+    extract_find_params = create_find_params hashed_row, workflow
     Extract.where(
-      workflow_id: workflow.id,
-      subject_id: hashed_row['subject_id'],
-      extractor_key: hashed_row['extractor_key'],
-      workflow_version: hashed_row['workflow_version'],
-      project_id: workflow.project_id,
-      machine_data: true,
-      classification_id: nil
+      extract_find_params
     ).first_or_initialize
+  end
+
+  def create_find_params(hashed_row, workflow)
+    extract_find_params = {
+      machine_data: true,
+      workflow_id: workflow.id,
+      classification_id: nil
+    }
+    extract_find_params['subject_id'] = hashed_row['subject_id'] if hashed_row['subject_id']
+    extract_find_params['extractor_key'] = hashed_row['extractor_key'] if hashed_row['extractor_key']
+    extract_find_params['workflow_version'] = hashed_row['workflow_version'] if hashed_row['workflow_version']
+    extract_find_params.compact
   end
 
   def set_extract_data_from_row(hashed_row, extract)
