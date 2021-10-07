@@ -13,7 +13,7 @@ class ImportMLDataWorker
       upsert_data_from_csv csv, workflow
     end
     run_workflow_reducers(workflow) if workflow&.reducers&.any?
-    project = Project.find(workflow.project_id)
+    project = Project.where(id: workflow.project_id).first
     run_project_reducers(project) if project&.has_reducers?
   end
 
