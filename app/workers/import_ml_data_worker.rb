@@ -4,7 +4,6 @@ require 'csv'
 # Worker to bulk import Machine Learnt (ML) extracts from web accessibly located csv
 class ImportMLDataWorker
   include Sidekiq::Worker
-  sidekiq_options retry: 2
 
   def perform(csv_filepath, workflow_id)
     workflow = Workflow.find(workflow_id)
@@ -22,8 +21,10 @@ class ImportMLDataWorker
   def upsert_data_from_csv(csv, workflow)
     csv.each do |row|
       hashed_row = row.to_hash
-      upsert_subject hashed_row['subject_id']
-      upsert_extract hashed_row, workflow
+      if valid_find_params(hashed_row)
+        upsert_subject hashed_row['subject_id']
+        upsert_extract hashed_row, workflow
+      end
     end
   end
 
@@ -44,14 +45,18 @@ class ImportMLDataWorker
     ).first_or_initialize
   end
 
+  def valid_find_params(hashed_row)
+    [hashed_row['subject_id'], hashed_row['extractor_key']].all?
+  end
+
   def create_find_params(hashed_row, workflow)
     extract_find_params = {
       machine_data: true,
       workflow_id: workflow.id,
       classification_id: nil
     }
-    extract_find_params['subject_id'] = hashed_row['subject_id'] if hashed_row['subject_id']
-    extract_find_params['extractor_key'] = hashed_row['extractor_key'] if hashed_row['extractor_key']
+    extract_find_params['subject_id'] = hashed_row['subject_id']
+    extract_find_params['extractor_key'] = hashed_row['extractor_key']
     extract_find_params['workflow_version'] = hashed_row['workflow_version'] if hashed_row['workflow_version']
     extract_find_params.compact
   end
