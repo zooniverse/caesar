@@ -1,7 +1,7 @@
 class ReduceWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
-  sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args unless Rails.env.test?
+  sidekiq_options lock: :until_and_while_executing, lock_args_method: :unique_args unless Rails.env.test?
   sidekiq_options queue: 'internal'
   sidekiq_retry_in do |count|
     (count ** 8) + 15 + (rand(30) * count + 1)
@@ -32,9 +32,9 @@ class ReduceWorker
 
   def self.test_uniq(testing)
     if testing
-      sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args
+      sidekiq_options lock: :until_and_while_executing, lock_args_method: :unique_args
     else
-      sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args unless Rails.env.test?
+      sidekiq_options lock: :until_and_while_executing, lock_args_method: :unique_args unless Rails.env.test?
     end
   end
 end

@@ -1,7 +1,7 @@
 class CheckUserRulesWorker
   include Sidekiq::Worker
   sidekiq_options retry: 2
-  sidekiq_options unique: :until_executing unless Rails.env.test?
+  sidekiq_options lock: :until_executing unless Rails.env.test?
   sidekiq_options queue: 'internal'
 
   def perform(reducible_id, reducible_type, user_id)
