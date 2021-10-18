@@ -27,6 +27,10 @@ Rails.application.routes.draw do
       resources :extracts, only: [:index]
     end
 
+    resources :extracts, only: [:import] do
+      collection { post 'import', to: 'extracts#import' }
+    end
+
     resources :reducers
     resources :subject_reductions, param: :reducer_key
     resources :user_reductions, param: :reducer_key
