@@ -2,7 +2,7 @@
 class DescribeWorkflowWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'batch'
-  sidekiq_options unique: :until_executed unless Rails.env.test?
+  sidekiq_options lock: :until_executed unless Rails.env.test?
 
   def perform(workflow_id)
     light = Stoplight("describe-workflow-#{workflow_id}") do

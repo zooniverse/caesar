@@ -1,7 +1,21 @@
+# frozen_string_literal: true
+
 class ExtractsController < ApplicationController
   def index
     extracts = policy_scope(Extract).where(workflow_id: params[:workflow_id], subject_id: params[:subject_id])
     render json: extracts
+  end
+
+  def import
+    authorize workflow
+    if params[:file].present?
+      params.require(:file)
+      file_path = params[:file]
+      workflow_id = params[:workflow_id]
+      ImportMLDataWorker.perform_async(file_path, workflow_id)
+    else
+      render json: { error: 'CSV must be included' }, status: 404
+    end
   end
 
   private

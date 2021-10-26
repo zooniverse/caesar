@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
+gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.4'
 # Use postgresql as the database for Active Record
@@ -30,7 +30,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'bcrypt', '~> 3.1.7'
 gem 'sidekiq'
 gem 'sidekiq-congestion', '~> 0.1.0'
-gem 'sidekiq-unique-jobs'
+gem 'sidekiq-unique-jobs', '~> 7.1.0'
 gem 'sidekiq-logstash'
 gem 'flipper'
 gem 'flipper-active_record'

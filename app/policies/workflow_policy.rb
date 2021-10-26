@@ -10,6 +10,10 @@ class WorkflowPolicy < ApplicationPolicy
     end
   end
 
+  def import?
+    show?
+  end
+
   def index?
     true
   end

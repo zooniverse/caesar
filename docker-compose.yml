@@ -1,10 +1,12 @@
 version: '2'
 services:
   postgres:
-    image: postgres:9.5
+    image: postgres:11
     environment:
       - "POSTGRES_USER=caesar"
       - "POSTGRES_PASSWORD=caesar"
+    ports: 
+      - "5432:5432"
 
   redis:
     image: redis
