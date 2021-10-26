@@ -9,14 +9,14 @@ toc_footers:
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
-  - caesar_data
+  - extracts
+  - external_extracts
   - reducer_configuration
   - reduction_mode
   - subject_metadata
   - rules
   - how_to_swap
   - errors
-  - extracts
 
 search: true
 ---
@@ -104,16 +104,10 @@ array will be included in reductions for the new subject.
 
 # Usage
 
-Caesar listens to classification events for workflows from the event stream.
-You need to let Caesar know to listen to this workflow and it has to be a
-workflow you have access to in zooniverse.org.
+Caesar listens to classification events for workflows from the event stream. The tasks and subject sets connected to a specific workflow are configured via the [project builder](https://www.zooniverse.org/lab/). To configure the data handling from classifications, 
 
-There are two ways to configure Caesar, manually via the UI or programmatically the API.
-E.g. with a Zooniverse.org workflow id = 1234
-
-## Configuring Caesar via the Web UI
- + Visit https://caesar.zooniverse.org/ and login.
+ + Go to the [Caesar Web UI](https://caesar.zooniverse.org/) and login.
  + Click on "Workflows" and click "Add" and enter the workflow ID (you can find this in the Project Builder page)
- + You can use the Extractors and Reducers to configure the extraction and reduction pipeline
+ + You can use the Extractors and Reducers to configure the extraction and reduction pipeline (as detailed below). 
  + Use the UI to configure your rules and effects as per the [rules](#rules) & [effects](#effects) docs.
 
