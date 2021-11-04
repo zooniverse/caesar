@@ -46,7 +46,7 @@ gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
-gem 'pundit', "~> 2.1.0"
+gem 'pundit', "~> 2.1.1"
 gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
