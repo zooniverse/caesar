@@ -35,7 +35,7 @@ class ExtractorsController < ApplicationController
     @extractor.save
     respond_to do |format|
       format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
-      format.json { respond_with @extractor }
+      format.json { render json: @extractor }
     end
   end
 
