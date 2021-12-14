@@ -86,7 +86,7 @@ describe ExtractorsController, :type => :controller do
       it 'renders json when Accept Header is application/json' do
         request.headers['Accept'] = 'application/json'
         post :create, params: { workflow_id: workflow.id, extractor: extractor_params }
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(201)
         parsed_body = JSON.parse(response.body)
         expect(parsed_body['key']).to eq(extractor_params[:key])
         expect(parsed_body['id']).not_to be(nil)
