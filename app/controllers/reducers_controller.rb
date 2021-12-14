@@ -48,11 +48,14 @@ class ReducersController < ApplicationController
     end
 
     @reducer = reducer_class.new(new_params)
-    @reducer.save
 
     respond_to do |format|
+      if @reducer.save
+        format.json { render json: @reducer }
+      else
+        format.json { render json: @reducer.errors, status: :unprocessable_entity }
+      end
       format.html { respond_with @reducer, location: redirect_path }
-      format.json { respond_with @reducer, location: workflow_reducer_path(workflow, @reducer) }
     end
   end
 

@@ -89,7 +89,7 @@ describe ReducersController, :type => :controller do
           }
         }, format: :json
 
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:ok)
         expect(workflow.reducers.count).to eq(1)
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
@@ -105,7 +105,7 @@ describe ReducersController, :type => :controller do
           }
         }, format: :json
 
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:ok)
         expect(workflow.reducers.count).to eq(1)
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
@@ -114,8 +114,13 @@ describe ReducersController, :type => :controller do
         post :create, params: {workflow_id: workflow.id, reducer: {key: nil, type: 'external'}}
         expect(response.status).to eq(200)
       end
-    end
 
+      it 'renders 422 on error and Accept headers is application/json' do
+        request.headers['Accept'] = 'application/json'
+        post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' } }
+        expect(response.status).to eq(422)
+      end
+    end
     describe '#update' do
       it 'updates the specified reducer' do
         put :update, params: {workflow_id: workflow.id,
