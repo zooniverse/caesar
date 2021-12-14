@@ -120,6 +120,11 @@ describe ReducersController, :type => :controller do
         post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' } }
         expect(response.status).to eq(422)
       end
+
+      it 'renders 422 on non-unique/db key error' do
+        post :create, params: { workflow_id: workflow.id, reducer: { key: reducer.key, type: 'external' } }
+        expect(response.status).to eq(422)
+      end
     end
     describe '#update' do
       it 'updates the specified reducer' do

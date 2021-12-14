@@ -56,6 +56,10 @@ class ReducersController < ApplicationController
         format.json { render json: @reducer.errors, status: :unprocessable_entity }
       end
       format.html { respond_with @reducer, location: redirect_path }
+    rescue StandardError => e
+      flash[:alert] = e
+      format.json { render json: e, status: :unprocessable_entity }
+      format.html { render :new, status: :unprocessable_entity }
     end
   end
 
