@@ -32,10 +32,13 @@ class ExtractorsController < ApplicationController
     extractor_class = Extractor.of_type(params[:extractor][:type])
     @extractor = extractor_class.new(extractor_params(extractor_class))
 
-    @extractor.save
     respond_to do |format|
+      if @extractor.save
+        format.json { render json: @extractor }
+      else
+        format.json { render json: @extractor.errors, status: :unprocessable_entity }
+      end
       format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
-      format.json { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
     end
   end
 

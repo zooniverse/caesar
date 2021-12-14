@@ -78,18 +78,24 @@ describe ExtractorsController, :type => :controller do
         expect(workflow.extractors.first.url).to eq('https://example.org')
       end
 
+      it 'renders json when Accept Header is application/json' do
+        request.headers['Accept'] = 'application/json'
+        post :create, params: { workflow_id: workflow.id, extractor: extractor_params }
+        expect(response.status).to eq(200)
+        parsed_body = JSON.parse(response.body)
+        expect(parsed_body['key']).to eq(extractor_params[:key])
+        expect(parsed_body['id']).not_to be(nil)
+      end
+
       it 'renders form on errors' do
         post :create, params: { workflow_id: workflow.id, extractor: { key: nil, type: 'external' } }
         expect(response.status).to eq(200)
       end
 
-      it 'renders json when Accept Header is application/json' do
+      it 'returns 422 on errors and Accept Header is application/json' do
         request.headers['Accept'] = 'application/json'
-        post :create, params: { workflow_id: workflow.id, extractor: extractor_params }
-        expect(response.status).to eq(201)
-        parsed_body = JSON.parse(response.body)
-        expect(parsed_body['key']).to eq(extractor_params[:key])
-        expect(parsed_body['id']).not_to be(nil)
+        post :create, params: { workflow_id: workflow.id, extractor: { key: nil, type: 'external' } }
+        expect(response.status).to eq(422)
       end
     end
 
