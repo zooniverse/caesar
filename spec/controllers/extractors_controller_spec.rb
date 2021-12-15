@@ -69,7 +69,7 @@ describe ExtractorsController, :type => :controller do
     end
 
     describe '#create' do
-      let(:extractor_params) { { key: 'a', type: 'external', url: 'https://example.org'} }
+      let(:extractor_params) { { key: 'a', type: 'external', url: 'https://example.org' } }
 
       it 'creates a new extractor' do
         post :create, params: { workflow_id: workflow.id, extractor: extractor_params }
