@@ -108,7 +108,7 @@ describe ReducersController, :type => :controller do
       end
 
       it 'renders form on errors' do
-        post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' }}
+        post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' } }
         expect(response.status).to eq(200)
       end
 

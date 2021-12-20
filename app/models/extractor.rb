@@ -2,7 +2,7 @@ class Extractor < ApplicationRecord
   include Configurable
 
   class ExtractionFailed < StandardError; end
- 
+
   class UnknownTypeError < StandardError; end
 
   def self.of_type(type)
