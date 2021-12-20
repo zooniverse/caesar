@@ -10,3 +10,5 @@ gem 'nokogiri', '~> 1.12.5'
 gem 'redcarpet', '~> 3.5.1'
 gem 'rouge', '~> 3.20'
 gem 'sass'
+
+gem "webrick", "~> 1.7"
