@@ -1,5 +1,6 @@
 class ReducersController < ApplicationController
   responders :flash
+  rescue_from Reducer::UnknownTypeError, with: :record_not_valid
 
   def index
     authorize reducible
@@ -35,10 +36,8 @@ class ReducersController < ApplicationController
 
   def create
     authorize reducible, :edit?
-
     reducer_class = Reducer.of_type(params[:reducer][:type])
     new_params = reducer_params(reducer_class)
-
     new_params.fetch('filters', {}).reject!{ |k, v| v.blank? }
     new_params.fetch('grouping', {}).reject!{ |k, v| v.blank? }
 
@@ -56,10 +55,6 @@ class ReducersController < ApplicationController
         format.json { render json: @reducer.errors, status: :unprocessable_entity }
       end
       format.html { respond_with @reducer, location: redirect_path }
-    rescue StandardError => e
-      flash[:alert] = e
-      format.json { render json: e, status: :unprocessable_entity }
-      format.html { render :new, status: :unprocessable_entity }
     end
   end
 
@@ -131,5 +126,9 @@ class ReducersController < ApplicationController
       filters: {},
       grouping: {},
     ).merge(reducible_id: reducible.id, reducible_type: reducible_type)
+  end
+
+  def record_not_valid(exception)
+    render json: { error: exception.message }, status: 422
   end
 end

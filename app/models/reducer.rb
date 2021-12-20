@@ -1,6 +1,7 @@
 class Reducer < ApplicationRecord
   include Configurable
   include BelongsToReducibleCached
+  class UnknownTypeError < StandardError; end
 
   enum topic: {
     reduce_by_subject: 0,
@@ -35,7 +36,7 @@ class Reducer < ApplicationRecord
     when 'sqs'
       Reducers::SqsReducer
     else
-      raise "Unknown type #{type}"
+      raise UnknownTypeError, "Unknown type #{type}"
     end
   end
 

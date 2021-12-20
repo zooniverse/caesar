@@ -97,6 +97,12 @@ describe ExtractorsController, :type => :controller do
         post :create, params: { workflow_id: workflow.id, extractor: { key: nil, type: 'external' } }
         expect(response.status).to eq(422)
       end
+
+      it 'returns 422 on unknown types' do
+        extractor_params[:type] = ''
+        post :create, params: { workflow_id: workflow.id, extractor: extractor_params }
+        expect(response.status).to eq(422)
+      end
     end
 
     describe '#update' do

@@ -2,6 +2,8 @@ class Extractor < ApplicationRecord
   include Configurable
 
   class ExtractionFailed < StandardError; end
+ 
+  class UnknownTypeError < StandardError; end
 
   def self.of_type(type)
     case type.to_s
@@ -20,7 +22,7 @@ class Extractor < ApplicationRecord
     when "shape"
       Extractors::AggregationExtractors::ShapeExtractor
     else
-      raise "Unknown type #{type}"
+      raise UnknownTypeError, "Unknown type #{type}"
     end
   end
 
