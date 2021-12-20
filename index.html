@@ -234,26 +234,30 @@
           </li>
           <li>
             <a href="#usage" class="toc-h1 toc-link" data-title="Usage">Usage</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#configuring-caesar-via-the-web-ui" class="toc-h2 toc-link" data-title="Usage">Configuring Caesar via the Web UI</a>
-                  </li>
-                  <li>
-                    <a href="#configuring-caesar-via-the-api" class="toc-h2 toc-link" data-title="Usage">Configuring Caesar via the API</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
-            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
           </li>
           <li>
             <a href="#extracts" class="toc-h1 toc-link" data-title="Extracts">Extracts</a>
               <ul class="toc-list-h2">
                   <li>
+                    <a href="#creating-an-extractor" class="toc-h2 toc-link" data-title="Extracts">Creating an extractor</a>
+                  </li>
+                  <li>
+                    <a href="#extractor-types" class="toc-h2 toc-link" data-title="Extracts">Extractor types</a>
+                  </li>
+                  <li>
                     <a href="#get-extracts" class="toc-h2 toc-link" data-title="Extracts">Get extracts</a>
                   </li>
                   <li>
                     <a href="#create-amp-update-extracts" class="toc-h2 toc-link" data-title="Extracts">Create &amp; update extracts</a>
+                  </li>
+                  <li>
+                    <a href="#external-api-calls" class="toc-h2 toc-link" data-title="Extracts">External API calls</a>
+                  </li>
+                  <li>
+                    <a href="#classification-data-format" class="toc-h2 toc-link" data-title="Extracts">Classification data format</a>
+                  </li>
+                  <li>
+                    <a href="#task-specific-data" class="toc-h2 toc-link" data-title="Extracts">Task specific data</a>
                   </li>
               </ul>
           </li>
@@ -335,6 +339,8 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
+<p>This is on the docupdate branch. We are updating this page</p>
+
 <p>Caesar is an evolution of the Nero codebase, which is made more generic. In
 essence, Caesar receives classifications from the event stream (a Lambda script
 sends them to Caesars HTTP API).</p>
@@ -411,61 +417,48 @@ included in the new subject&#39;s metadata (when uploaded to Panoptes): <code>{
 previous_subject_ids: [1234] }</code>. Extracts whose subject ids match an id in that
 array will be included in reductions for the new subject.</p>
 <h1 id='usage'>Usage</h1>
-<p>Caesar listens to classification events for workflows from the event stream.
-You need to let Caesar know to listen to this workflow and it has to be a
-workflow you have access to in zooniverse.org.</p>
+<p>Caesar listens to classification events for workflows from the event stream. The tasks and subject sets connected to a specific workflow are configured via the <a href="https://www.zooniverse.org/lab/">project builder</a>. To configure the data handling from classifications, </p>
 
-<p>There are two ways to configure Caesar, manually via the UI or programmatically the API.
-E.g. with a Zooniverse.org workflow id = 1234</p>
-<h2 id='configuring-caesar-via-the-web-ui'>Configuring Caesar via the Web UI</h2>
 <ul>
-<li>Visit https://caesar.zooniverse.org/ and login.</li>
-<li>Then navigate to https://caesar.zooniverse.org/workflows/new?id=1234 and click enable</li>
+<li>Go to the <a href="https://caesar.zooniverse.org/">Caesar Web UI</a> and login.</li>
+<li>Click on &quot;Workflows&quot; and click &quot;Add&quot; and enter the workflow ID (you can find this in the Project Builder page)</li>
+<li>You can use the Extractors and Reducers to configure the extraction and reduction pipeline (as detailed below). </li>
 <li>Use the UI to configure your rules and effects as per the <a href="#rules">rules</a> &amp; <a href="#effects">effects</a> docs.</li>
 </ul>
-<h2 id='configuring-caesar-via-the-api'>Configuring Caesar via the API</h2>
-<ol>
-<li>Create a workflow
+<h1 id='extracts'>Extracts</h1>
+<p>Extractors are tools that allow Caesar to extract specific data from the full classification output. Caesar (and the aggregations-for-caesar app) feature a collection of extractors for specific tasks. </p>
+<h2 id='creating-an-extractor'>Creating an extractor</h2>
+<p>To create an extractor:</p>
 
 <ul>
-<li>POST JSON request to <code>https://caesar.zooniverse.org/workflows/?id=1234</code></li>
-</ul></li>
-<li>Update the workflow with a configuration object payload (see <a href="docs/rules.md#rules">rules</a> &amp; <a href="docs/effects.md">effects</a>)
+<li>From the workflow summary page, click on the ‘Extractors’ tab. Press the ‘+Create Extractor’ button. You will be prompted to choose a type of extractor. </li>
+</ul>
+
+<p><img src="images/new-extractor.png" alt="new-extractor" /></p>
 
 <ul>
-<li>PUT JSON request to <code>/workflows/1234</code> with payload
-<code>
-{
-&quot;extractors_config&quot;: { },
-&quot;reducers_config&quot;: { }
-&quot;rules_config&quot;: [
-{
-&quot;if&quot;: [&quot;gte&quot;, [&quot;lookup&quot;, &quot;survey-total-VHCL&quot;], [&quot;const&quot;, 1]],
-&quot;then&quot;: [{&quot;action&quot;: &quot;retire_subject&quot;}]
-}
-]
-}
-</code></li>
+<li>Fill out the form for the new extractor. The generic fields for all extractors are:
+
+<ul>
+<li>The <code>key</code> is an alpha-numeric identifier for this extractor that is unique to this workflow. Set a short, but descriptive string for this, e.g., <code>galaxy-type-extract</code>.</li>
+<li>The <code>task key</code> is the identifier of the task in the workflow. You can get this information from the project builder page (see image below)
+<img src="images/extract-task-key.jpg" alt="task-key" /></li>
+<li>The <code>if missing</code> entry allows you to decide what should be done if the classification data is missing. The default choice is to error out of that extract. </li>
+<li>The <code>minimum workflow version</code> provides the choice to filter out early versions of the workflow, useful for limiting the data domain to post-development or post-launch classifications.</li>
+<li>Each extractor will also have unique fields that need to be filled out, as detailed below.</li>
 </ul></li>
-</ol>
-<h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>To authenticate, use an OAuth bearer token obtained from Panoptes:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer xyz"</span>
-</code></pre></div>
-<p>Caesar uses the same OAuth bearer token as Panoptes to allow access to the API. By default any data relating to a workflow is only accessible to project owners and collaborators.</p>
-
-<p>Caesar expects for the bearer token to be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code>Authorization: Bearer xyz</code></p>
-
-<aside class="notice">
-You must replace <code>xyz</code> with your personal API key.
-</aside>
-<h1 id='extracts'>Extracts</h1><h2 id='get-extracts'>Get extracts</h2><div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/workflows/$WORKFLOW_ID/extractors/$EXTRACTOR_KEY/extracts?subject_id=$SUBJECT_ID</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</ul>
+<h2 id='extractor-types'>Extractor types</h2>
+<p>There are different types of extractors built into Caesar for specific tasks. The following sections shows the types of tools that each extractor supports. </p>
+<h3 id='blank-extractor'>Blank extractor</h3>
+<p>This extractor checks for whether a text entry (or some drawing tasks) in the classification is blank. The extractor outputs <code>blank=true</code> if the classification is empty or <code>false</code> instead. </p>
+<h3 id='question-extractor'>Question extractor</h3>
+<p>Suited for question tasks, this extracts retrieves the index of the answer from the classification. Indices are C-style, i.e. the first index is <code>&quot;0&quot;</code>.</p>
+<h3 id='pluck-field-extractor'>Pluck field extractor</h3>
+<p>This extractor is used to retrieve a value from the classification/subject metadata. For example, if the filename of the subject is used during aggregation, this extractor would pass it as an extracted value. </p>
+<h3 id='survey-extractor'>Survey extractor</h3><h3 id='shape-extractor'>Shape extractor</h3><h3 id='external-extractor'>External extractor</h3>
+<p>The External Extractor API passes the classification data to an external (HTTPS) URL, which responds with the extracted data in a JSON format. See the <a href="#external-api-calls">External API</a> section below for more information. </p>
+<h2 id='get-extracts'>Get extracts</h2><div class="highlight"><pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/workflows/$WORKFLOW_ID/extractors/$EXTRACTOR_KEY/extracts?subject_id=$SUBJECT_ID</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">Bearer $TOKEN</span>
@@ -558,6 +551,123 @@ You must replace <code>xyz</code> with your personal API key.
 <td>User that made the classification. <code>null</code> signifies anonymous.</td>
 </tr>
 </tbody></table>
+<h2 id='external-api-calls'>External API calls</h2>
+<p>When an ExternalExtractor or ExternalReducer is called the classification data is sent to the given URL (requires HTTPS) as JSON data. The external API then does the processing and returns a response to Caeser. The response from the external endpoint must be:</p>
+
+<ul>
+<li>200 (OK) </li>
+<li>201 (Resource Created)</li>
+<li>202 (Processing Started)</li>
+<li>204 (No Data)</li>
+</ul>
+
+<p>All other responses will result in an error on Caesar. The data format for the classification data sent to an external extractor is shown below below:</p>
+<h2 id='classification-data-format'>Classification data format</h2>
+<blockquote>
+<p>Sample classification data</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">356374099</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"project_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">16747</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"workflow_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">19487</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"workflow_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20.23"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"subject_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">67913886</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2245813</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"annotations"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">main</span><span class="w"> </span><span class="err">task</span><span class="w"> </span><span class="err">data</span><span class="w"> </span><span class="err">here</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"started_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-31T19:24:09.056Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"finished_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-31T19:24:25.576Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"live_project"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"interventions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"opt_in"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nl">"messageShown"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">},</span><span class="w">
+    </span><span class="nl">"user_language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"user_group_ids"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="nl">"workflow_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20.23"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"subject_dimensions"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"clientWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">700</span><span class="p">,</span><span class="w"> </span><span class="nl">"clientHeight"</span><span class="p">:</span><span class="w"> </span><span class="mi">390</span><span class="p">,</span><span class="w"> </span><span class="nl">"naturalWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">700</span><span class="p">,</span><span class="w"> </span><span class="nl">"naturalHeight"</span><span class="p">:</span><span class="w"> </span><span class="mi">390</span><span class="p">}],</span><span class="w">
+    </span><span class="nl">"subject_selection_state"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"retired"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"selected_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-31T19:24:08.886Z"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"already_seen"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"selection_state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"normal"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"finished_workflow"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"user_has_finished_workflow"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"workflow_translation_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"48794"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"subject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">67913886</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">subject</span><span class="w"> </span><span class="err">metadata</span><span class="w"> </span><span class="err">here</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-31T19:24:26.032Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-31T19:24:26.032Z"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+
+</span></code></pre></div>
+<p>The extractors gets the raw data from the classification. There are a set of standard fields that are common across all task types, but individual tasks contain specific data formats tailored to the data that they send. The common fields are:</p>
+
+<ul>
+<li><code>id</code> : The unique ID for the classification</li>
+<li><code>project_id</code> : The ID for the project that this classification belongs to</li>
+<li><code>workflow_id</code> : The workflow attached to the classification</li>
+<li><code>workflow_version</code> : The version for the workflow (<em>is this something that project builders can set?</em>)</li>
+<li><code>subject_id</code> : The ID for the subject that was classified</li>
+<li><code>user_id</code> : The unique ID for the user who classified this subject</li>
+<li><code>annotations</code> : Dictionary containing the actual classification data (differs based on the number of tasks, and the task types)</li>
+<li><code>metadata</code> : Additional data for this classification. Most are standard HTTP headers, except
+
+<ul>
+<li><code>started_at</code>, <code>finished_at</code> : The start and times for this classification</li>
+<li><code>live_project</code> : whether the project is live</li>
+<li><code>interventions</code> : data on whether the volunteer was shown any feedback messages</li>
+<li><code>subject_dimensions</code> : The size of the subject (in pixels) on the screen</li>
+<li><code>subject_selection_state</code> : Data about the subject&#39;s retirement state and whether it has been seen before. </li>
+</ul></li>
+<li><code>subject</code> : Data about the subject, including
+
+<ul>
+<li><code>id</code> : The unique subject ID in the database</li>
+<li><code>metadata</code> : Additional data about the subject (including filename, and whether it is a <code>gold_standard</code> data)</li>
+</ul></li>
+</ul>
+<h2 id='task-specific-data'>Task specific data</h2>
+<blockquote>
+<p>Example of annotation data</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="w">  </span><span class="nl">"annotations"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"T0"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"T0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"T1"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"T1"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"x"</span><span class="p">:</span><span class="w"> </span><span class="mf">315.75</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"y"</span><span class="p">:</span><span class="w"> </span><span class="mf">151.96665954589844</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"toolIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"tool"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"frame"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"T2"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"T2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ffdddsssaaa"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>The data for each task is passed into the <code>annotations</code> key in the JSON dictionary. The tasks are listed by the task name, with each entry containing information related to the type of task. The name of the task is stored in the <code>task</code> key, while the data associated with the task is stored in the <code>value</code> key. The <code>value</code> can vary from a simple text/number to a dictionary depending on the task type. In the example on the right, the first task is a question, the second is a point tool, and the third is a text tool. </p>
 <h1 id='reducer-configuration'>Reducer Configuration</h1>
 <p>Configuring reducers can be tricky because they are flexible in so many different ways.</p>
 <h2 id='extractor-keys'>Extractor Keys</h2>
