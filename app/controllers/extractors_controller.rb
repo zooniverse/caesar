@@ -1,5 +1,6 @@
 class ExtractorsController < ApplicationController
   responders :flash
+  rescue_from Extractor::UnknownTypeError, with: :record_not_valid
 
   def index
     authorize workflow
@@ -32,10 +33,13 @@ class ExtractorsController < ApplicationController
     extractor_class = Extractor.of_type(params[:extractor][:type])
     @extractor = extractor_class.new(extractor_params(extractor_class))
 
-    @extractor.save
     respond_to do |format|
+      if @extractor.save
+        format.json { render json: @extractor }
+      else
+        format.json { render json: @extractor.errors, status: :unprocessable_entity }
+      end
       format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
-      format.json { respond_with @extractor }
     end
   end
 
@@ -75,5 +79,9 @@ class ExtractorsController < ApplicationController
       *klass.configuration_fields.keys,
       config: {},
     ).merge(workflow_id: workflow.id)
+  end
+
+  def record_not_valid(exception)
+    render json: { error: exception.message }, status: 422
   end
 end

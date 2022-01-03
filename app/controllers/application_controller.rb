@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
   rescue_from Pundit::NotAuthorizedError, with: :not_authorized
+  rescue_from ActiveRecord::RecordNotUnique, with: :record_not_unique
 
   private
 
@@ -70,6 +71,10 @@ class ApplicationController < ActionController::Base
 
   def record_invalid(exception)
     render json: exception.record.errors, status: 422
+  end
+
+  def record_not_unique(exception)
+    render json: { error: exception.message }, status: 422
   end
 
   def not_authorized

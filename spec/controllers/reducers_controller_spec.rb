@@ -69,8 +69,15 @@ describe ReducersController, :type => :controller do
     end
 
     describe '#create' do
-      let(:reducer_params) { {key: 'a', type: 'external', url: 'https://example.org'} }
-
+      let(:reducer_params) { { key: 'a', type: 'external', url: 'https://example.org' } }
+      let(:nested_reducer_params) {
+        {
+          key: 'a',
+          type: 'external',
+          config: { url: 'https://example.org' },
+          filters: { extractor_keys: ['test'] }
+        }
+      }
       it 'creates a new reducer' do
         post :create, params: {workflow_id: workflow.id, reducer: reducer_params}
         expect(response).to redirect_to(workflow_path(workflow, anchor: 'reducers'))
@@ -81,15 +88,10 @@ describe ReducersController, :type => :controller do
       it 'handles properties on nested objects' do
         post :create, params: {
           workflow_id: workflow.id,
-          reducer: {
-            key: 'a',
-            type: 'external',
-            config: { url: 'https://example.org' },
-            filters: { extractor_keys: ['test'] }
-          }
+          reducer: nested_reducer_params
         }, format: :json
 
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:ok)
         expect(workflow.reducers.count).to eq(1)
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
@@ -97,25 +99,39 @@ describe ReducersController, :type => :controller do
       it 'jsonifies extractor_keys' do
         post :create, params: {
           workflow_id: workflow.id,
-          reducer: {
-            key: 'a',
-            type: 'external',
-            config: { url: 'https://example.org' },
-            filters: { extractor_keys: ['test'].to_json }
-          }
+          reducer: nested_reducer_params
         }, format: :json
 
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:ok)
         expect(workflow.reducers.count).to eq(1)
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
 
       it 'renders form on errors' do
-        post :create, params: {workflow_id: workflow.id, reducer: {key: nil, type: 'external'}}
+        post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' } }
         expect(response.status).to eq(200)
       end
-    end
 
+      it 'renders 422 on error and Accept headers is application/json' do
+        request.headers['Accept'] = 'application/json'
+        post :create, params: { workflow_id: workflow.id, reducer: { key: nil, type: 'external' } }
+        expect(response.status).to eq(422)
+      end
+
+      it 'renders 422 on non-unique/db key error' do
+        post :create, params: { workflow_id: workflow.id, reducer: { key: reducer.key, type: 'external' } }
+        expect(response.status).to eq(422)
+      end
+
+      it 'renders 422 on unknown reducer type' do
+        nested_reducer_params[:type] = ''
+        post :create, params: {
+          workflow_id: workflow.id,
+          reducer: nested_reducer_params
+        }, format: :json
+        expect(response.status).to eq(422)
+      end
+    end
     describe '#update' do
       it 'updates the specified reducer' do
         put :update, params: {workflow_id: workflow.id,
