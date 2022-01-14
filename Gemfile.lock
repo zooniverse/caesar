@@ -143,10 +143,9 @@ GEM
       multi_json
       to_regexp (~> 0.2.1)
     jwt (1.5.6)
-    listen (3.1.5)
-      rb-fsevent (~> 0.9, >= 0.9.4)
-      rb-inotify (~> 0.9, >= 0.9.7)
-      ruby_dep (~> 1.2)
+    listen (3.7.1)
+      rb-fsevent (~> 0.10, >= 0.10.3)
+      rb-inotify (~> 0.9, >= 0.9.10)
     lograge (0.11.2)
       actionpack (>= 4)
       activesupport (>= 4)
@@ -252,8 +251,8 @@ GEM
     rake (13.0.3)
     ranked-model (0.4.4)
       activerecord (>= 4.1.16)
-    rb-fsevent (0.10.3)
-    rb-inotify (0.10.0)
+    rb-fsevent (0.11.0)
+    rb-inotify (0.10.1)
       ffi (~> 1.0)
     redis (4.1.4)
     request_store (1.4.1)
@@ -292,7 +291,6 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
     ruby-progressbar (1.10.1)
-    ruby_dep (1.5.0)
     safe_yaml (1.0.5)
     sass (3.7.2)
       sass-listen (~> 4.0.0)
@@ -389,7 +387,7 @@ DEPENDENCIES
   httparty
   jquery-rails
   jsonpath
-  listen (>= 3.0.5, < 3.2)
+  listen (>= 3.0.5, < 3.8)
   lograge
   logstash-event
   newrelic_rpm
