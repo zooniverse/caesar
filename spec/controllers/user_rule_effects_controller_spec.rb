@@ -65,7 +65,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
       it 'makes a new effect' do
         post :create, params: {user_rule_effect: {action: 'promote_user', config: { workflow_id: 1234 }}, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
 
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
         result = JSON.parse(response.body)
         expect(result["id"]).not_to be(nil)
         expect(result["user_rule_id"]).to eq(rule.id)

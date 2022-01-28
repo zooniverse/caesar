@@ -32,7 +32,7 @@ class SubjectRuleEffectsController < ApplicationController
 
     respond_to do |format|
       if @subject_rule_effect.save
-        format.json { respond_with workflow, subject_rule, @subject_rule_effect }
+        format.json { render json: @subject_rule_effect }
       else
         format.json { render json: json_error_messages(@subject_rule_effect.errors), status: :unprocessable_entity }
       end
