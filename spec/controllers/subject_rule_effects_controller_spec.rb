@@ -108,7 +108,6 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
             }, format: :html
 
             expect(response.status).to eq(200)
-            expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
           end
         end
       end
