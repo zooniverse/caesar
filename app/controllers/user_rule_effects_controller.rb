@@ -32,11 +32,14 @@ class UserRuleEffectsController < ApplicationController
     authorize workflow, :edit?
 
     @user_rule_effect = UserRuleEffect.new(effect_params)
-    @user_rule_effect.save
 
     respond_to do |format|
+      if @user_rule_effect.save
+        format.json { render json: @user_rule_effect }
+      else
+        format.json { render json: json_error_messages(@user_rule_effect.errors), status: :unprocessable_entity}
+      end
       format.html { respond_with @user_rule_effect, location: edit_workflow_user_rule_path(workflow, user_rule) }
-      format.json { respond_with workflow, user_rule, @user_rule_effect }
     end
   end
 
