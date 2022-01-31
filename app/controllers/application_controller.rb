@@ -81,6 +81,12 @@ class ApplicationController < ActionController::Base
     head 401
   end
 
+  def json_error_messages(errors)
+    errors_array = []
+    errors.full_messages.each { |msg| errors_array << { message: msg } }
+    { errors: errors_array }
+  end
+
   def handle_unauthenticated_request(message)
     respond_to do |format|
       format.html do

@@ -37,7 +37,7 @@ class ExtractorsController < ApplicationController
       if @extractor.save
         format.json { render json: @extractor }
       else
-        format.json { render json: @extractor.errors, status: :unprocessable_entity }
+        format.json { render json: json_error_messages(@extractor.errors), status: :unprocessable_entity }
       end
       format.html { respond_with @extractor, location: workflow_path(workflow, anchor: 'extractors') }
     end

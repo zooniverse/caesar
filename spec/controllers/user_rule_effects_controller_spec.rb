@@ -65,7 +65,7 @@ RSpec.describe UserRuleEffectsController, type: :controller do
       it 'makes a new effect' do
         post :create, params: {user_rule_effect: {action: 'promote_user', config: { workflow_id: 1234 }}, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
 
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
         result = JSON.parse(response.body)
         expect(result["id"]).not_to be(nil)
         expect(result["user_rule_id"]).to eq(rule.id)
@@ -74,6 +74,15 @@ RSpec.describe UserRuleEffectsController, type: :controller do
       it 'redirects to the user rule in html mode' do
         post :create, params: {user_rule_effect: {action: 'promote_user', config: { workflow_id: 1234 }}, workflow_id: workflow.id, user_rule_id: rule.id }, format: :html
         expect(response).to redirect_to(edit_workflow_user_rule_path(workflow,rule))
+      end
+
+      it 'returns 422 when incorrectly configured' do
+        post :create, params: { user_rule_effect: { action: 'promote_user' }, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
+
+        expect(response.status).to eq(422)
+        result = JSON.parse(response.body)
+        expect(result['id']).to be(nil)
+        expect(result['errors']).not_to be(nil)
       end
     end
 

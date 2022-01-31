@@ -15,7 +15,7 @@ module Effects
     end
 
     def collection_id
-      config.fetch("collection_id")
+      config.fetch('collection_id', nil)
     end
   end
 end

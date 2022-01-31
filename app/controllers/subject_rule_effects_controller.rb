@@ -29,11 +29,14 @@ class SubjectRuleEffectsController < ApplicationController
   def create
     @subject_rule_effect = SubjectRuleEffect.new(effect_params)
     authorize @subject_rule_effect
-    @subject_rule_effect.save
 
     respond_to do |format|
+      if @subject_rule_effect.save
+        format.json { render json: @subject_rule_effect }
+      else
+        format.json { render json: json_error_messages(@subject_rule_effect.errors), status: :unprocessable_entity }
+      end
       format.html { respond_with workflow, subject_rule, @subject_rule_effect, location: edit_workflow_subject_rule_path(workflow, subject_rule) }
-      format.json { respond_with workflow, subject_rule, @subject_rule_effect }
     end
   rescue Pundit::NotAuthorizedError
     respond_to do |format|
@@ -95,5 +98,9 @@ class SubjectRuleEffectsController < ApplicationController
       :action_type,
       config: {}
     ).merge(subject_rule_id: params[:subject_rule_id])
+  end
+
+  def record_not_valid(exception)
+    render json: { error: exception.message }, status: 422
   end
 end

@@ -22,8 +22,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
 
         it 'makes a new effect' do
           post :create, params: create_params, format: :json
-
-          expect(response.status).to eq(201)
+          expect(response.status).to eq(200)
           result = JSON.parse(response.body)
           expect(result['id']).not_to be(nil)
           expect(result['subject_rule_id']).to eq(rule.id)
@@ -77,7 +76,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
           it 'makes a new effect' do
             post :create, params: create_params, format: :json
 
-            expect(response.status).to eq(201)
+            expect(response.status).to eq(200)
             result = JSON.parse(response.body)
             expect(result['id']).not_to be(nil)
             expect(result['subject_rule_id']).to eq(rule.id)
@@ -86,6 +85,19 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
           it 'redirects to the subject rule in html mode' do
             post :create, params: create_params, format: :html
             expect(response).to redirect_to(edit_workflow_subject_rule_path(workflow, rule))
+          end
+
+          it 'return 422 when missing config' do
+            post :create, params: {
+              subject_rule_effect: { action: 'add_subject_to_set', config: {} },
+              workflow_id: workflow.id,
+              subject_rule_id: rule.id
+            }, format: :json
+
+            expect(response.status).to eq(422)
+            result = JSON.parse(response.body)
+            expect(result['id']).to be(nil)
+            expect(result['errors']).not_to be(nil)
           end
         end
       end
@@ -246,7 +258,7 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
       it 'makes a new effect' do
         post :create, params: {subject_rule_effect: {action: 'retire_subject', config: {}}, workflow_id: workflow.id, subject_rule_id: rule.id }, format: :json
 
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
         result = JSON.parse(response.body)
         expect(result["id"]).not_to be(nil)
         expect(result["subject_rule_id"]).to eq(rule.id)

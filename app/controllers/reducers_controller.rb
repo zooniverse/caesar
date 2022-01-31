@@ -52,7 +52,7 @@ class ReducersController < ApplicationController
       if @reducer.save
         format.json { render json: @reducer }
       else
-        format.json { render json: @reducer.errors, status: :unprocessable_entity }
+        format.json { render json: json_error_messages(@reducer.errors), status: :unprocessable_entity }
       end
       format.html { respond_with @reducer, location: redirect_path }
     end
