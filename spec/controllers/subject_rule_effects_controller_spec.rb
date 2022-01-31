@@ -99,16 +99,6 @@ RSpec.describe SubjectRuleEffectsController, type: :controller do
             expect(result['id']).to be(nil)
             expect(result['errors']).not_to be(nil)
           end
-
-          it 'redirects to subject rule in html mode when missing config' do
-            post :create, params: {
-              subject_rule_effect: { action: 'add_subject_to_set', config: {} },
-              workflow_id: workflow.id,
-              subject_rule_id: rule.id
-            }, format: :html
-
-            expect(response.status).to eq(200)
-          end
         end
       end
     end
