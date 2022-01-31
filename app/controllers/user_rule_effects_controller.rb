@@ -37,7 +37,7 @@ class UserRuleEffectsController < ApplicationController
       if @user_rule_effect.save
         format.json { render json: @user_rule_effect }
       else
-        format.json { render json: json_error_messages(@user_rule_effect.errors), status: :unprocessable_entity}
+        format.json { render json: json_error_messages(@user_rule_effect.errors), status: :unprocessable_entity }
       end
       format.html { respond_with @user_rule_effect, location: edit_workflow_user_rule_path(workflow, user_rule) }
     end

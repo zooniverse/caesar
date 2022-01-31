@@ -17,7 +17,7 @@ module Effects
     end
 
     def subject_set_id
-      config.fetch("subject_set_id", nil)
+      config.fetch('subject_set_id', nil)
     end
 
     def self.was_duplicate(err)
