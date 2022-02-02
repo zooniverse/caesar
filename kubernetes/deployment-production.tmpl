@@ -186,7 +186,7 @@ spec:
               exec:
                 command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-production-nginx
-          image: zooniverse/nginx:1.19.0
+          image: zooniverse/nginx
           ports:
             - containerPort: 80
           resources:
