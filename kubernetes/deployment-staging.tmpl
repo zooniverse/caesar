@@ -181,7 +181,7 @@ spec:
               exec:
                 command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-staging-nginx
-          image: zooniverse/nginx:1.19.0
+          image: zooniverse/nginx
           resources:
             requests:
               memory: "25Mi"
