@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Effects::ExternalWithBasicAuth do
   let(:subject) { create(:subject) }
-  let(:reduction) { create(:subject_reduction, reducer_key: "key", subject: subject, data: {}) }
+  let(:reduction) { create(:subject_reduction, reducer_key: 'key', subject: subject, data: {}) }
   let(:url) { 'https://example.org/post/reduction/here' }
   let(:username) { 'sloan-api' }
   let(:password) { 'sloan-api-password' }
-  let(:effect_config) { { url: url, reducer_key: "key", username: username, password: password } }
+  let(:effect_config) { { url: url, reducer_key: 'key', username: username, password: password } }
   let(:effect) { described_class.new(effect_config) }
 
   before do
@@ -55,9 +57,9 @@ describe Effects::ExternalWithBasicAuth do
 
   describe 'config' do
     it 'does not care about symbol keys' do
-      effect = described_class.new("url": "https://www.google.com")
+      effect = described_class.new('url': 'https://www.google.com')
       expect(effect.url).not_to be(nil)
-      effect = described_class.new(url: "https://www.google.com")
+      effect = described_class.new(url: 'https://www.google.com')
       expect(effect.url).not_to be(nil)
     end
   end
