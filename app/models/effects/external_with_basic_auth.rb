@@ -1,56 +1,40 @@
+# frozen_string_literal: true
+
 module Effects
-  class ExternalWithBasicAuth < Effect
-    class ExternalEffectFailed < StandardError; end
-    class InvalidConfiguration < StandardError; end
-
-    def perform(workflow_id, subject_id)
-      raise InvalidConfiguration unless valid?
-
-      reductions = SubjectReduction.where(
-        workflow_id: workflow_id,
-        subject_id: subject_id,
-        reducer_key: reducer_key
-      )
-
-      if reductions.length != 1
-        raise ExternalEffectFailed, "Incorrect number of reductions found"
-      end
-
-      begin
-        response = RestClient.post(url, reductions.first.prepare.to_json, {content_type: :json, accept: :json})
-      rescue RestClient::InternalServerError
-        raise ExternalEffectFailed
-      end
+  class ExternalWithBasicAuth < External
+    def self.config_fields
+      @config_fields ||= %i[url reducer_key username password].freeze
     end
 
     def valid?
-      # TOD: this should not be valid unless the basic creds are in the config as well
-      reducer_key.present? && url.present? && valid_url?
+      super && username.present? && password.present?
     end
 
-    def self.config_fields
-      [:url, :reducer_key].freeze
+    def username
+      config[:username]
     end
 
-    def url
-      config[:url]
+    def password
+      config[:password]
     end
 
-    def reducer_key
-      config[:reducer_key]
+    private
+
+    def post_payload_to_url
+      options = {
+        body: reduction_payload,
+        basic_auth: { username: username, password: password },
+        headers: post_request_headers
+      }
+      response = HTTParty.post(url, options)
+      # success is a 200, 201 or 204 response code - allow some leeway with the target endpoint
+      return response if response.ok? || response.created? || response.no_content?
+
+      raise ExternalEffectFailed
     end
 
-    def valid_url?
-      if url.present?
-        begin
-          uri = URI.parse(url)
-          uri && uri.host && uri.kind_of?(URI::HTTPS)
-        rescue URI::InvalidURIError
-          false
-        end
-      else
-        false
-      end
+    def post_request_headers
+      { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     end
   end
 end
