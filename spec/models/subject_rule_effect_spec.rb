@@ -17,7 +17,7 @@ RSpec.describe SubjectRuleEffect, type: :model do
     end
 
     describe 'external_with_basic_auth action' do
-      let(:config) { { url: 'https://example.com', reducer_key: 'my_reducer', username: '', password: '' } }
+      let(:config) { { url: 'https://example.com', reducer_key: 'my_reducer', username: 'user', password: 'pass' } }
       let(:subject_rule_effect) do
         build :subject_rule_effect, subject_rule: subject_rule, action: :external_with_basic_auth, config: config
       end
