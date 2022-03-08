@@ -20,6 +20,8 @@ module Effects
       Effects::PromoteUser
     when "external"
       Effects::External
+    when 'external_with_basic_auth'
+      Effects::ExternalWithBasicAuth
     else
       raise UnknownEffect, "Don't know what to do with #{effect_type}"
     end
