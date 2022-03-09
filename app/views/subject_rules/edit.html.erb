@@ -12,6 +12,7 @@
     <li><%= link_to "Add to Subject Set", new_workflow_subject_rule_subject_rule_effect_path(@workflow, @subject_rule, action_type: 'add_subject_to_set') %></li>
     <li><%= link_to "Add to Collection", new_workflow_subject_rule_subject_rule_effect_path(@workflow, @subject_rule, action_type: 'add_subject_to_collection') %></li>
     <li><%= link_to "Send to External URL", new_workflow_subject_rule_subject_rule_effect_path(@workflow, @subject_rule, action_type: 'external') %></li>
+    <li><%= link_to "Send to External URL with Basic Auth", new_workflow_subject_rule_subject_rule_effect_path(@workflow, @subject_rule, action_type: 'external_with_basic_auth') %></li>
   </ul>
 </div>
 <table class="table table-striped table-sm">
