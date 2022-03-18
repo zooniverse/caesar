@@ -1,0 +1,92 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: __JOB_NAME__
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: caesar-db-migrate-staging
+        image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
+        command: ["bundle",  "exec", "rails", "db:migrate"]
+        env:
+        - name: RAILS_ENV
+          value: staging
+        - name: REDIS_URL
+          value: redis://caesar-staging-redis:6379
+        - name: PORT
+          value: "81"
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: SECRET_KEY_BASE
+        - name: RAILS_SERVE_STATIC_FILES
+          value: 'true'
+        - name: DATABASE_POOL_SIZE
+          value: '2'
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: DATABASE_URL
+        - name: AWS_REGION
+          value: us-east-1
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: AWS_SECRET_ACCESS_KEY
+        - name: NEW_RELIC_APP_NAME
+          value: Caesar (staging)
+        - name: NEW_RELIC_MONITOR_MODE
+          value: 'true'
+        - name: NEW_RELIC_LICENSE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: NEW_RELIC_LICENSE_KEY
+        - name: PANOPTES_URL
+          value: https://panoptes-staging.zooniverse.org
+        - name: PANOPTES_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: PANOPTES_CLIENT_ID
+        - name: PANOPTES_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: PANOPTES_CLIENT_SECRET
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: SENTRY_DSN
+        - name: SIDEKIQ_WEB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: SIDEKIQ_WEB_PASSWORD
+        - name: SIDEKIQ_WEB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: SIDEKIQ_WEB_USERNAME
+        - name: KINESIS_STREAM_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: KINESIS_STREAM_USERNAME
+        - name: KINESIS_STREAM_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: caesar-staging-env-vars
+              key: KINESIS_STREAM_PASSWORD
