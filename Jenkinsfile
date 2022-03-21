@@ -30,7 +30,7 @@ pipeline {
     stage('Dry run deployments') {
       agent any
       steps {
-        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl --context azure apply --dry-run=client --record -f -"
+        // sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl --context azure apply --dry-run=client --record -f -"
         sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-production.tmpl | kubectl --context azure apply --dry-run=client --record -f -"
       }
     }
@@ -43,13 +43,13 @@ pipeline {
       }
     }
 
-    stage('Deploy to staging to Kubernetes') {
-      when { branch 'master' }
-      agent any
-      steps {
-        sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl --context azure apply --record -f -"
-      }
-    }
+    // stage('Deploy to staging to Kubernetes') {
+    //   when { branch 'master' }
+    //   agent any
+    //   steps {
+    //     sh "sed 's/__IMAGE_TAG__/${GIT_COMMIT}/g' kubernetes/deployment-staging.tmpl | kubectl --context azure apply --record -f -"
+    //   }
+    // }
   }
   post {
     success {
