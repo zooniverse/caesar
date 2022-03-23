@@ -6,13 +6,13 @@ spec:
   template:
     spec:
       containers:
-      - name: caesar-rake-task-staging
-        image: zooniverse/caesar:__IMAGE_TAG__
+      - name: caesar-rake-task-production
+        image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
         command: ["bundle",  "exec", "rake", __RAKE_TASK_NAME__]
         envFrom:
         - secretRef:
-            name: caesar-staging-environment
+            name: caesar-production-environment
         - secretRef:
-            name: caesar-staging-env-vars
+            name: caesar-production-env-vars
       restartPolicy: Never
   backoffLimit: 1
