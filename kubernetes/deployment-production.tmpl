@@ -70,7 +70,7 @@ spec:
     spec:
       containers:
         - name: caesar-production-app
-          image: zooniverse/caesar:__IMAGE_TAG__
+          image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
               memory: "300Mi"
@@ -272,7 +272,7 @@ spec:
     spec:
       containers:
         - name: caesar-production-sidekiq
-          image: zooniverse/caesar:__IMAGE_TAG__
+          image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
               memory: "500Mi"
@@ -392,7 +392,7 @@ spec:
     spec:
       containers:
         - name: caesar-production-tess-sidekiq
-          image: zooniverse/caesar:__IMAGE_TAG__
+          image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
           resources:
             requests:
               memory: "1000Mi"
