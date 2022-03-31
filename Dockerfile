@@ -25,7 +25,6 @@ RUN bundle config --global jobs `cat /proc/cpuinfo | grep processor | wc -l | xa
 
 ADD ./ /app
 
-RUN (cp commit_id.txt ./public/commit_id.txt)
 RUN (cd /app && mkdir -p tmp/pids)
 RUN (cd /app && SECRET_KEY_BASE=1 bundle exec rails assets:precompile)
 
