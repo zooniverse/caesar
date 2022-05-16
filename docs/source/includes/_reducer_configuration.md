@@ -161,4 +161,3 @@ aggregate the shapes together.
 ### External
 This is similar to an external extractor, and is configured by providing a URL (requires HTTPS) that 
 serves as an endpoint for the extractor data from Caesar. 
-
