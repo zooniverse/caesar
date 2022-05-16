@@ -70,3 +70,95 @@ When a reducer is configured for running reduction, each time a new classificati
 
 ### Reduction Mode Example
 See [Reduction Mode Example](Reduction-Mode-Example)
+
+## Reducer types
+
+Caesar features a set of standard reducers that are useful for most projects. These are described below:
+
+> Given the following extracts 
+
+```json
+extract_list = [
+	{"data": 
+		{"ZEBRA": 1}
+	},
+	{"data": 
+		{"ZEBRA": 1}
+	},
+	{"data": 
+		{"AARDVARK": 1}
+	},
+	{"data": 
+		{"ZEBRA": 1}
+	}
+]
+
+```
+
+> The consensus, count and simple stats reducers will output
+
+
+```json
+consensus_reducer_return = {
+	"most_likely": "ZEBRA",
+	"num_votes": 3,
+	"agreement": 0.75
+}
+```
+
+### Consensus
+
+Uses the counting hash to summate the unique extracted key:value pairs. 
+The reducer will select the key with the highest summated value as the most likely (`most_likely`) answer.
+It will also return the total number of votes (`num_votes`) for this `most_likely` answer.
+Finally it will return an `agreement` value which is the num_votes/ number of all submitted classifications. 
+An example is shown on the right.
+
+```json
+count_reducer_return = {
+	"classifications": 4,
+	"extracts": 4
+}
+```
+
+### Count
+
+The count reducer will simply return a count of the number of classifications 
+(accounting for the rules set up for repeated classifications). The `classifications` entry shows 
+the number of classifications, and the `extracts` key shows the number of corresponding extracts. 
+
+
+```json
+simple_stats_reducer_return = {
+	"ZEBRA": 4,
+	"AARDVARK": 1
+}
+```
+
+### Simple Stats
+Summates the extracted classification annotations key:value pair data.
+This reducer relies on the annotation data being in the correct format for summation, e.g. [["ZEBRA", 1]]
+Please note if the annotation shape doesn't include a summatable value, e.g. the 1 in above example,
+this reducer will require an aligned extractor to configure the key value to be summated.
+
+Note this reducer can count True and False values as well, True increments by 1, False does note increment
+
+### First  Extract
+This reducer will return the output of the first extract in the list of extracts. This is useful when 
+extracting data that is common to the subject or the user (e.g., subject metadata). 
+
+### SQS
+Setting up an SQS reducer instructs Caesar to send the output of our extractor to an AWS SQS queue.
+We can then use remote aggregation code to consume and process those extracts asynchronously 
+and without having to maintain a dedicated server to accept extracted data. The reducer needs to be 
+configured (through the admin console) with the URL and name of an AWS SQS queue that will receive 
+and temporarily store the classifications from the workflow
+
+### Rectangle
+This reducer is used to cluster extracts from the Rectangle tool. It uses the DBSCAN algorithm to 
+aggregate the shapes together.
+
+### External
+This is similar to an external extractor, and is configured by providing a URL (requires HTTPS) that 
+serves as an endpoint for the extractor data from Caesar. 
+
