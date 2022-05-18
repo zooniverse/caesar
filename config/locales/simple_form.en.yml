@@ -35,6 +35,8 @@ en:
         to: "Counts based on classifications in chronological order. Zero-based. A value of 2 would ignore all classifications after the first two for a subject. Supports negative numbers, which count from the end, such that -2 would ignore the last classification, and -1 (default) will not ignore any classifications. When using negative numbers, keep in mind that the meaning of 'the last classification' changes when another classification is made."
         extractor_keys: "Whitelist of keys of extractors. Ignores extracts from non-whitelisted extractors. Does nothing if left completely empty."
         repeated_classifications: "What to do when a user makes multiple classifications for a subject. Usually you'll want to ensure that classifications are made independently without prior knowledge, so the default is to keep the first classification made, and ignore others from that user (per subject)."
+        empty_extracts: "Choose keep_all to use all known the extracts or ignore_empty to include only include extracts that have data."
+        training_behavior: "Choose to ignore any training subjects or include only training subjects. Experimental - Use experiment_only for rejecting all training subjects."
     # hints:
     #   defaults:
     #     username: 'User name to sign in.'

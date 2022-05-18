@@ -32,11 +32,12 @@
     <div class="panel-body collapse" id="filterInputs">
       <p>Using filters it is possible to limit which extracts this reducer works on.</p>
       <%= f.simple_fields_for :filters do |filters| %>
-        <%= filters.input :from %>
-        <%= filters.input :to %>
-        <%= filters.input :extractor_keys, placeholder: '["list", "of", "keys"]' %>
-        <%= filters.input :repeated_classifications, collection: ::Filters::FilterByRepeatedness::REPEATED_CLASSIFICATIONS %>
-        <%= filters.input :training_behavior, collection: ::Filters::FilterByTrainingBehavior::TRAINING_BEHAVIOR %>
+        <%= filters.input :from, input_html: { value: @reducer.filters['from'] } %>
+        <%= filters.input :to, input_html: { value: @reducer.filters['to'] } %>
+        <%= filters.input :extractor_keys, placeholder: '["list", "of", "keys"]', input_html: { value: @reducer.filters['extractor_keys'].to_s } %>
+        <%= filters.input :repeated_classifications, collection: ::Filters::FilterByRepeatedness::REPEATED_CLASSIFICATIONS, selected: @reducer.filters['repeated_classifications'] %>
+        <%= filters.input :empty_extracts, collection: ::Filters::FilterByEmptiness::EMPTY_EXTRACTS, selected: @reducer.filters['empty_extracts'] %>
+        <%= filters.input :training_behavior, collection: ::Filters::FilterByTrainingBehavior::TRAINING_BEHAVIOR, selected: @reducer.filters['training_behavior'] %>
       <% end %>
     </div>
   </div>
