@@ -306,7 +306,7 @@ GEM
     sassc (2.0.0)
       ffi (~> 1.9.6)
       rake
-    sentry-raven (2.11.0)
+    sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (5.2.10)
       connection_pool (~> 2.2, >= 2.2.2)
