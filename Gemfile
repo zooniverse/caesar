@@ -9,7 +9,7 @@ gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 1.1'
+gem 'pg', '~> 1.3'
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
@@ -46,7 +46,7 @@ gem 'listen', '>= 3.0.5', '< 3.2'
 gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
-gem 'pundit', "~> 2.1.0"
+gem 'pundit', "~> 2.2.0"
 gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
