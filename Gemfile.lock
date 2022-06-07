@@ -84,8 +84,8 @@ GEM
       connection_pool (>= 2.0)
       redis (>= 3.1)
     connection_pool (2.2.5)
-    crack (0.4.3)
-      safe_yaml (~> 1.0.0)
+    crack (0.4.5)
+      rexml
     crass (1.0.6)
     deferred_associations (0.6.5)
       activerecord
@@ -124,7 +124,7 @@ GEM
       railties
       sprockets-rails
     graphql (1.9.9)
-    hashdiff (1.0.0)
+    hashdiff (1.0.1)
     hashie (4.1.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -291,7 +291,6 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
     ruby-progressbar (1.10.1)
-    safe_yaml (1.0.5)
     sass (3.7.2)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -360,8 +359,8 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webmock (3.6.2)
-      addressable (>= 2.3.6)
+    webmock (3.14.0)
+      addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     websocket-driver (0.7.5)
