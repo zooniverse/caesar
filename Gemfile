@@ -70,7 +70,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'pry-byebug'
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails', '~> 5.1'
   gem 'pry-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
