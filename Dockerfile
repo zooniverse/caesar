@@ -28,9 +28,6 @@ ADD ./ /app
 RUN (cd /app && mkdir -p tmp/pids)
 RUN (cd /app && SECRET_KEY_BASE=1 bundle exec rails assets:precompile)
 
-# remove the node JS installation
-RUN apt-get purge -y --auto-remove nodejs
-
 EXPOSE 80
 
 CMD ["/app/docker/start-puma.sh"]
