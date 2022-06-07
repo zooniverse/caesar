@@ -76,7 +76,7 @@ spec:
               memory: "300Mi"
               cpu: "200m"
             limits:
-              memory: "500Mi"
+              memory: "1000Mi"
               cpu: "500m"
           livenessProbe:
             httpGet:
@@ -264,8 +264,8 @@ spec:
               memory: "300Mi"
               cpu: "200m"
             limits:
-              memory: "500Mi"
-              cpu: "500m"
+              memory: "1000Mi"
+              cpu: "1000m"
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: RAILS_ENV
