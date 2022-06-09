@@ -300,6 +300,8 @@ spec:
               value: Caesar (staging)
             - name: NEW_RELIC_MONITOR_MODE
               value: 'true'
+            - name: NEW_RELIC_APPLICATION_LOGGING_ENABLED
+              value: 'false'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
