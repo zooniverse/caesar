@@ -319,6 +319,8 @@ spec:
               value: Caesar
             - name: NEW_RELIC_MONITOR_MODE
               value: 'true'
+            - name: NEW_RELIC_APPLICATION_LOGGING_ENABLED
+              value: 'false'
             - name: NEW_RELIC_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
@@ -437,6 +439,8 @@ spec:
                   key: AWS_SECRET_ACCESS_KEY
             - name: NEW_RELIC_APP_NAME
               value: Caesar
+            - name: NEW_RELIC_APPLICATION_LOGGING_ENABLED
+              value: 'false'
             - name: NEW_RELIC_MONITOR_MODE
               value: 'true'
             - name: NEW_RELIC_LICENSE_KEY
