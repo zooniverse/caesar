@@ -65,5 +65,3 @@ directory.
 ```
 RAILS_ENV=test bundle exec mutant -r ./config/environment --use rspec Reducers::ExternalReducer
 ```
-
-[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
