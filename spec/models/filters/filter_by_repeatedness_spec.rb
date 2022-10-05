@@ -41,8 +41,8 @@ describe Filters::FilterByRepeatedness do
     describe 'set to keep first' do
       it 'keeps the first classification for a given user' do
         extracts = [
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 2.minute)),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 2.minute)),
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: Time.now),
@@ -58,8 +58,8 @@ describe Filters::FilterByRepeatedness do
         extracts = [
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: Time.now),
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: 'b', classification_at: Time.now),
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 2.minute)),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 2.minute)),
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b', classification_at: (Time.now - 1.minute))
         ]
@@ -84,8 +84,8 @@ describe Filters::FilterByRepeatedness do
 
       it 'keeps the last classification for a given user' do
         extracts = [
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 1)),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 1)),
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 2)),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 2)),
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at: (Time.now - 1)),
           Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b', classification_at: (Time.now - 1)),
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: Time.now),
