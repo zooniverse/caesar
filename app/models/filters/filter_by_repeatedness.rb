@@ -6,18 +6,18 @@ module Filters
     validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
 
     def apply(extract_groups)
+      ordered_extract_groups = extract_groups.sort_by(&:classification_at)
       case repeated_classifications
       when "keep_all"
         extract_groups
       when "keep_first"
-        keep_first_classification(extract_groups)
+        keep_first_classification(ordered_extract_groups)
       when "keep_last"
-        keep_first_classification(extract_groups.reverse).reverse
+        keep_first_classification(ordered_extract_groups.reverse).reverse
       end
     end
 
     private
-
     def keep_first_classification(extracts)
       subjects ||= Hash.new
 

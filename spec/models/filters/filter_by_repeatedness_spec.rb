@@ -41,18 +41,17 @@ describe Filters::FilterByRepeatedness do
     describe 'set to keep first' do
       it 'keeps the first classification for a given user' do
         extracts = [
-          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: "a"),
-          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: "b"),
-          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: "a"),
-          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: "b"),
-          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: "a"),
-          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: "b")
+          Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at:(Time.now - 1.minute)),
+          Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at:(Time.now - 1.minute)),
+          Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at:(Time.now - 1.minute)),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b',  classification_at:(Time.now - 1.minute)),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a',  classification_at:(Time.now - 2.minute)),
+          Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: 'b', classification_at:(Time.now - 2.minute))
         ]
         extract_groups = ExtractsForClassification.from(extracts)
-
         filter = described_class.new(repeated_classifications: "keep_first")
         result = filter.apply(extract_groups).flat_map(&:extracts)
-        expect(result).to eq(extracts[0..3])
+        expect(result).to match_array(extracts[2..5])
       end
 
       it 'keeps repeated anonymous classifications' do
