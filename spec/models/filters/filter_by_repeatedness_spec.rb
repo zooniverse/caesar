@@ -44,8 +44,8 @@ describe Filters::FilterByRepeatedness do
           Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
-          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b',  classification_at: (Time.now - 1.minute)),
-          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a',  classification_at: Time.now),
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: Time.now),
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: 'b', classification_at: Time.now)
         ]
         extract_groups = ExtractsForClassification.from(extracts)
@@ -56,15 +56,15 @@ describe Filters::FilterByRepeatedness do
 
       it 'keeps the first classification for a given user when extracts are not ordered' do
         extracts = [
-          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a',  classification_at: Time.now),
+          Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: Time.now),
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: 'b', classification_at: Time.now),
           Extract.new(id: 1, classification_id: 1, user_id: 1, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 2, classification_id: 1, user_id: 1, extractor_key: 'b', classification_at: (Time.now - 1.minute)),
           Extract.new(id: 3, classification_id: 2, user_id: 2, extractor_key: 'a', classification_at: (Time.now - 1.minute)),
-          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b',  classification_at: (Time.now - 1.minute))
+          Extract.new(id: 4, classification_id: 2, user_id: 2, extractor_key: 'b', classification_at: (Time.now - 1.minute))
         ]
         extract_groups = ExtractsForClassification.from(extracts)
-        filter = described_class.new(repeated_classifications: "keep_first")
+        filter = described_class.new(repeated_classifications: 'keep_first')
         result = filter.apply(extract_groups).flat_map(&:extracts)
         expect(result).to match_array(extracts[2..5])
       end
