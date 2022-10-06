@@ -6,7 +6,7 @@ module Filters
     validates :to, numericality: true
 
     def apply(extract_groups)
-      extract_groups.sort_by(&:classification_at)[subrange]
+      extract_groups[subrange]
     end
 
     private
