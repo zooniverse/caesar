@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 module Filters
   class FilterByRepeatedness < Filter
     include ActiveModel::Validations
 
-    REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
+    REPEATED_CLASSIFICATIONS = %w[keep_first keep_last keep_all]
     validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
 
     def apply(extract_groups)
       case repeated_classifications
-      when "keep_all"
+      when 'keep_all'
         extract_groups
-      when "keep_first"
+      when 'keep_first'
         keep_first_user_classification(extract_groups)
-      when "keep_last"
+      when 'keep_last'
         keep_last_user_classification(extract_groups)
       end
     end
@@ -20,9 +22,9 @@ module Filters
 
     def keep_last_user_classification(extract_groups)
       # reverse the list so we can use the same logic as keep_first
-      only_last_classifications = keep_first_user_classification(extract_groups.reverse)
-      # preserve the sort order of the original extract groups
-      only_last_classifications.reverse
+      last_user_classifications = keep_first_user_classification(extract_groups.reverse)
+      # preserve the original sort order of the extract groups
+      last_user_classifications.reverse
     end
 
     def keep_first_user_classification(extract_groups)
@@ -44,9 +46,9 @@ module Filters
       user_ids_that_have_classified_subject = subjects_user_has_classified[subject_id]
 
       # skip the extract if we've already got one for this user id
-      return false if user_ids_that_have_classified_subject.include?(extracts_from_single_classification.user_id)
+      return false if user_ids_that_have_classified_subject.include?(user_id)
 
-      user_ids_that_have_classified_subject << extracts_from_single_classification.user_id
+      user_ids_that_have_classified_subject << user_id
       true # keep the extract and record the associated user for next lookup
     end
 
