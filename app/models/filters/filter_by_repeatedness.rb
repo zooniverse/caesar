@@ -26,25 +26,28 @@ module Filters
     end
 
     def keep_first_user_classification(extract_groups)
-      subjects_user_has_classified = Hash.new
+      # track the subjects a user has classified across the extract groups (different / duplicate classifications)
+      subjects_user_has_classified = {}
+      filtered_extract_groups = extract_groups.select do |extracts_from_single_classification|
+        uniq_user_classifications_per_subject(subjects_user_has_classified, extracts_from_single_classification)
+      end
+      filtered_extract_groups.to_a
+    end
 
-      extract_groups.select do |extracts_from_single_classification|
-        subject_id = extracts_from_single_classification.subject_id
-        user_id = extracts_from_single_classification.user_id
+    def uniq_user_classifications_per_subject(subjects_user_has_classified, extracts_from_single_classification)
+      user_id = extracts_from_single_classification.user_id
+      return true if user_id.nil? # keep all anonymous classifications
 
-        subjects_user_has_classified[subject_id] ||= Set.new
-        user_ids_that_have_classified_subject = subjects_user_has_classified[subject_id]
+      subject_id = extracts_from_single_classification.subject_id
 
-        case
-        when extracts_from_single_classification.user_id.nil?
-          true # keep anonymous classifications
-        when user_ids_that_have_classified_subject.include?(user_id)
-          false # skip the extract if we've already got one for this user id
-        else
-          user_ids_that_have_classified_subject << user_id
-          true # keep the extract and record the associated user for next lookup
-        end
-      end.to_a
+      subjects_user_has_classified[subject_id] ||= Set.new
+      user_ids_that_have_classified_subject = subjects_user_has_classified[subject_id]
+
+      # skip the extract if we've already got one for this user id
+      return false if user_ids_that_have_classified_subject.include?(extracts_from_single_classification.user_id)
+
+      user_ids_that_have_classified_subject << extracts_from_single_classification.user_id
+      true # keep the extract and record the associated user for next lookup
     end
 
     def repeated_classifications
