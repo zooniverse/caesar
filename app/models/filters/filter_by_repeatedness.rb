@@ -1,38 +1,56 @@
+# frozen_string_literal: true
+
 module Filters
   class FilterByRepeatedness < Filter
     include ActiveModel::Validations
 
-    REPEATED_CLASSIFICATIONS = ["keep_first", "keep_last", "keep_all"]
+    REPEATED_CLASSIFICATIONS = %w[keep_first keep_last keep_all]
     validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
 
     def apply(extract_groups)
       ordered_extract_groups = extract_groups.sort_by(&:classification_at)
       case repeated_classifications
-      when "keep_all"
+      when 'keep_all'
         extract_groups
-      when "keep_first"
-        keep_first_classification(ordered_extract_groups)
-      when "keep_last"
-        keep_first_classification(ordered_extract_groups.reverse).reverse
+      when 'keep_first'
+        keep_first_user_classification(ordered_extract_groups)
+      when 'keep_last'
+        keep_last_user_classification(ordered_extract_groups)
       end
     end
 
     private
-    def keep_first_classification(extracts)
-      subjects ||= Hash.new
 
-      extracts.select do |extracts_for_classification|
-        subject_id = extracts_for_classification.subject_id
-        user_id = extracts_for_classification.user_id
+    def keep_last_user_classification(extract_groups)
+      # reverse the list so we can use the same logic as keep_first
+      last_user_classifications = keep_first_user_classification(extract_groups.reverse)
+      # preserve the original sort order of the extract groups
+      last_user_classifications.reverse
+    end
 
-        subjects[subject_id] = Set.new unless subjects.has_key? subject_id
-        id_list = subjects[subject_id]
+    def keep_first_user_classification(extract_groups)
+      # track the subjects a user has classified across the extract groups (different / duplicate classifications)
+      subjects_user_has_classified = {}
+      filtered_extract_groups = extract_groups.select do |extracts_from_single_classification|
+        uniq_user_classifications_per_subject(subjects_user_has_classified, extracts_from_single_classification)
+      end
+      filtered_extract_groups.to_a
+    end
 
-        next true unless extracts_for_classification.user_id
-        next false if id_list.include?(user_id)
-        id_list << user_id
-        true
-      end.to_a
+    def uniq_user_classifications_per_subject(subjects_user_has_classified, extracts_from_single_classification)
+      user_id = extracts_from_single_classification.user_id
+      return true if user_id.nil? # keep all anonymous classifications
+
+      subject_id = extracts_from_single_classification.subject_id
+
+      subjects_user_has_classified[subject_id] ||= Set.new
+      user_ids_that_have_classified_subject = subjects_user_has_classified[subject_id]
+
+      # skip the extract if we've already got one for this user id
+      return false if user_ids_that_have_classified_subject.include?(user_id)
+
+      user_ids_that_have_classified_subject << user_id
+      true # keep the extract and record the associated user for next lookup
     end
 
     def repeated_classifications
