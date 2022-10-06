@@ -55,7 +55,7 @@ describe Filters::FilterByRepeatedness do
         expect(result).to match_array(extracts[0..3])
       end
 
-      it 'keeps the first classification for a given user' do
+      it 'keeps the first classification for a given user no matter the input order of extracts' do
         extracts = [
           Extract.new(id: 5, classification_id: 3, user_id: 1, extractor_key: 'a', classification_at: now),
           Extract.new(id: 6, classification_id: 3, user_id: 1, extractor_key: 'b', classification_at: now),
