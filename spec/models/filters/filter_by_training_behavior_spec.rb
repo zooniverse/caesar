@@ -19,7 +19,7 @@ describe Filters::FilterByTrainingBehavior do
     it 'does nothing if we tell it to' do
       filter = described_class.new training_behavior: 'ignore_training'
       result = filter.apply(extract_groups).flat_map(&:extracts)
-      expect(result).to eq(extracts)
+      expect(result).to match_array(extracts)
     end
 
     it 'can pull out training subjects' do

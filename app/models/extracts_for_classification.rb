@@ -1,6 +1,7 @@
 class ExtractsForClassification
   def self.from(extracts)
     extracts \
+      .sort_by(&:classification_at)
       .group_by(&:classification_id)
       .map { |_, group| new(group) }
   end

@@ -8,14 +8,13 @@ module Filters
     validates :repeated_classifications, inclusion: {in: REPEATED_CLASSIFICATIONS}
 
     def apply(extract_groups)
-      ordered_extract_groups = extract_groups.sort_by(&:classification_at)
       case repeated_classifications
       when 'keep_all'
         extract_groups
       when 'keep_first'
-        keep_first_user_classification(ordered_extract_groups)
+        keep_first_user_classification(extract_groups)
       when 'keep_last'
-        keep_last_user_classification(ordered_extract_groups)
+        keep_last_user_classification(extract_groups)
       end
     end
 
