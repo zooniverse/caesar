@@ -50,7 +50,7 @@ class WorkflowsController < ApplicationController
       return
     end
 
-    if Workflow.exists?(workflow_id)
+    if Workflow.where(id: workflow_id).exists?
       flash[:alert] = "Workflow already exists"
       redirect_to Workflow.find(workflow_id) and return
     end
