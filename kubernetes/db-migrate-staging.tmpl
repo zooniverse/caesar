@@ -12,6 +12,8 @@ spec:
         image: ghcr.io/zooniverse/caesar:__IMAGE_TAG__
         command: ["bundle",  "exec", "rails", "db:migrate"]
         env:
+        - name: PG_STATEMENT_TIMEOUT
+          value: '0'
         - name: RAILS_ENV
           value: staging
         - name: REDIS_URL
