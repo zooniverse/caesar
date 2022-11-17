@@ -421,7 +421,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SECRET_KEY_BASE
             - name: DATABASE_POOL_SIZE
-              value: '2'
+              value: '5'
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -470,7 +470,7 @@ spec:
             - name: SIDEKIQ_ARGS
               value: '-q tess -q internal -q default -q external -q batch'
             - name: SIDEKIQ_CONCURRENCY
-              value: '1'
+              value: '4'
             - name: SIDEKIQ_WEB_PASSWORD
               valueFrom:
                 secretKeyRef:
