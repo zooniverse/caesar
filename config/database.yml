@@ -2,6 +2,9 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("DATABASE_POOL_SIZE") { 4 }.to_i %>
+  variables:
+    # default 30s for the DB query exectution - override this via env vars
+    statement_timeout: <%= ENV.fetch('PG_STATEMENT_TIMEOUT', 30000).to_i %>
 development:
   <<: *default
   database: caesar_development
