@@ -285,7 +285,7 @@ spec:
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: PG_STATEMENT_TIMEOUT
-              value: '30000'
+              value: '60000'
             - name: RAILS_ENV
               value: production
             - name: RAILS_SERVE_STATIC_FILES
@@ -409,7 +409,7 @@ spec:
           args: ["/app/docker/start-sidekiq.sh"]
           env:
             - name: PG_STATEMENT_TIMEOUT
-              value: '30000'
+              value: '60000'
             - name: RAILS_ENV
               value: production
             - name: RAILS_SERVE_STATIC_FILES
