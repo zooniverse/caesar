@@ -49,7 +49,7 @@ This entry allows you to subset which extracts (defined in the extractor configu
 This prescribes what Caesar should in case there are multiple classifications by the same user ID. `keep_first` is the default value, and Caesar will remove everything but the first time the user saw the subject. `keep_last` chooses the latest classification. `keep_all` will not delete any classifications. We recommend ‘keep_first’ unless you feel strongly that you’d prefer another of those options. It’s a rare event, but good to have a rule in place for it. 
 
 ### Training behavior
-This configures what Caesar should do about training data (those with metadata keys `#training_subjects`). The default behaviour is to `ignore_training` where Caesar does not actively run reductions on training subjects. This can be configured to work on `training_only`, where the reductions is only run on classifications which contain training subjects or the converse, where all training data is removed before aggregations (`experiment_only`). See [training subject metadata](#code-training_subject-code) for more info on training subjects. 
+This configures what Caesar should do about training data (those with metadata keys `#training_subjects` = `true`). The default behaviour is to `ignore_training` where Caesar does not actively filter reduction inputs based on training metadata. This can be configured to work on `training_only`, where the reductions is only run on classifications which contain training subjects or the converse, where all training data is removed before aggregations (`experiment_only`). See [training subject metadata](#code-training_subject-code) for more info on training subjects. 
 
 ## Reduction Mode
 
