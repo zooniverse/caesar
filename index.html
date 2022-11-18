@@ -262,19 +262,28 @@
               </ul>
           </li>
           <li>
-            <a href="#reducer-configuration" class="toc-h1 toc-link" data-title="Reducer Configuration">Reducer Configuration</a>
+            <a href="#reducers" class="toc-h1 toc-link" data-title="Reducers">Reducers</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#extractor-keys" class="toc-h2 toc-link" data-title="Reducer Configuration">Extractor Keys</a>
+                    <a href="#creating-reducers" class="toc-h2 toc-link" data-title="Reducers">Creating Reducers</a>
                   </li>
                   <li>
-                    <a href="#topic" class="toc-h2 toc-link" data-title="Reducer Configuration">Topic</a>
+                    <a href="#key" class="toc-h2 toc-link" data-title="Reducers">Key</a>
                   </li>
                   <li>
-                    <a href="#grouping" class="toc-h2 toc-link" data-title="Reducer Configuration">Grouping</a>
+                    <a href="#topic" class="toc-h2 toc-link" data-title="Reducers">Topic</a>
                   </li>
                   <li>
-                    <a href="#reduction-mode" class="toc-h2 toc-link" data-title="Reducer Configuration">Reduction Mode</a>
+                    <a href="#grouping" class="toc-h2 toc-link" data-title="Reducers">Grouping</a>
+                  </li>
+                  <li>
+                    <a href="#filters" class="toc-h2 toc-link" data-title="Reducers">Filters</a>
+                  </li>
+                  <li>
+                    <a href="#reduction-mode" class="toc-h2 toc-link" data-title="Reducers">Reduction Mode</a>
+                  </li>
+                  <li>
+                    <a href="#reducer-types" class="toc-h2 toc-link" data-title="Reducers">Reducer types</a>
                   </li>
               </ul>
           </li>
@@ -668,19 +677,48 @@ array will be included in reductions for the new subject.</p>
   </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>The data for each task is passed into the <code>annotations</code> key in the JSON dictionary. The tasks are listed by the task name, with each entry containing information related to the type of task. The name of the task is stored in the <code>task</code> key, while the data associated with the task is stored in the <code>value</code> key. The <code>value</code> can vary from a simple text/number to a dictionary depending on the task type. In the example on the right, the first task is a question, the second is a point tool, and the third is a text tool. </p>
-<h1 id='reducer-configuration'>Reducer Configuration</h1>
-<p>Configuring reducers can be tricky because they are flexible in so many different ways.</p>
-<h2 id='extractor-keys'>Extractor Keys</h2>
-<p>Sometimes multiple extractors will be defined but a particular reducer only cares about or can only work with a particular type of extract. In this case, you can use the extractor keys property to restrict the extracts that are sent to this reducer. The format of this value is either a string (for a single extractor key) or an array of strings (for multiple extractors). The default, a blank string or a nil, sends all extracts.</p>
+<h1 id='reducers'>Reducers</h1>
+<p>Reducers are used to compile a set of extracts together to create an aggregated result. For example, a set of answers from a question task can be combined to get the &quot;best&quot; answer (i.e. one with the most votes). </p>
+<h2 id='creating-reducers'>Creating Reducers</h2>
+<p>Reducers can be created from the &quot;Reducers&quot; tab in the workflow configure page. Like extractors, Caesar features a set of standard reducers, which are task dependent. To add a reducer to your workflow, click on the &#39;Create&#39; button and choose from dropdown: </p>
+
+<p><img src="images/new-reducer.png" alt="new-reducer" /></p>
+
+<p>This will take you to a configuration window for that reducer:</p>
+
+<p><img src="images/reducer-page.png" alt="reducer-config" /></p>
+
+<p>All reducers share the same set of keys, but configuring reducers can be tricky because they are flexible in so many different ways. These keys will be described below:</p>
+<h2 id='key'>Key</h2>
+<p>This is the unique ID for this reducer. Use something that defines the functionality of the reducer. For example, a reducer that generates the consensus of a question task of galaxy morphology could be <code>galaxy-morphology-consensus</code>.</p>
 <h2 id='topic'>Topic</h2>
-<p>Extracts are always implicitly grouped before being combined. There are two different ways of doing this, whose names are hopefully self-explanatory. The default is <code>reduce_by_subject</code></p>
+<p>Extracts are always implicitly grouped before being combined. There are two different ways of doing this: </p>
 
 <ul>
-<li><code>reduce_by_subject</code></li>
+<li><code>reduce_by_subject</code>: </li>
+</ul>
+
+<p>This filters all classifications by subject ID. Consequently, the aggregation will run on all classifications of a given subject. This is a useful way to get information about a specific subject. </p>
+
+<ul>
 <li><code>reduce_by_user</code></li>
 </ul>
+
+<p>This filters all classifications by user ID. Therefore, aggregation is done on all classifications done by that user in the current workflow. This is useful in getting statistics about specific users. </p>
+
+<p>The default is <code>reduce_by_subject</code>. </p>
 <h2 id='grouping'>Grouping</h2>
 <p>This is a confusing setting because extracts are already obviously grouped according to the <a href="#topic">topic</a>. This allows an additional grouping pass, which, crucially, can be done on the basis of the <em>value</em> of a specified field. So to configure this, you need to set the name of the field to group by (in format <code>extractor_key.field_name</code>) and then a flag indicating how to handle when the extracts for a given classification are missing that field. The value of the grouping field will be reflected in the name of the group, stored in the <code>subgroup</code> field. The default behavior is not to perform this secondary grouping.</p>
+<h2 id='filters'>Filters</h2>
+<p>This tab allows you to filter what classifications are combined together. Caesar will search and retrieve all classifications based on the <code>topic</code> key defined above. In the <code>filters</code> tab, you can further refine which classifications in this subset you want to use (default: all), and which extracts to use for that classification. These keys are described below:</p>
+<h3 id='from-to'>From/To</h3>
+<p>These keys allow you to subset the list of extracts to use, where from and to define the (zero-based) start and end index of the list of classifications. By default, Caesar will use all the retrieved extracts. For example, if you want everything from the 5th index to the end, set <code>start=5</code> and <code>end=-1</code>. </p>
+<h3 id='extractor-keys'>Extractor Keys</h3>
+<p>This entry allows you to subset which extracts (defined in the extractor configuration) should be used for this reducer. Sometimes multiple extractors will be defined but a particular reducer only cares about or can only work with a particular type of extract. In this case, you can use the extractor keys property to restrict the extracts that are sent to this reducer. The format of this value is either a string (for a single extractor key) or an array of strings (for multiple extractors) of the extractor keys defined in the extractor configuration in the format <code>[&quot;extractor-key-1&quot;, &quot;extractor-key-2&quot;, &quot;extractor-key-3&quot;]</code>. The default, a blank string or a nil, sends all extracts.</p>
+<h3 id='repeated-classifications'>Repeated classifications</h3>
+<p>This prescribes what Caesar should in case there are multiple classifications by the same user ID. <code>keep_first</code> is the default value, and Caesar will remove everything but the first time the user saw the subject. <code>keep_last</code> chooses the latest classification. <code>keep_all</code> will not delete any classifications. We recommend ‘keep_first’ unless you feel strongly that you’d prefer another of those options. It’s a rare event, but good to have a rule in place for it. </p>
+<h3 id='training-behavior'>Training behavior</h3>
+<p>This configures what Caesar should do about training data (those with metadata keys <code>#training_subjects</code> = <code>true</code>). The default behaviour is to <code>ignore_training</code> where Caesar does not actively filter reduction inputs based on training metadata. This can be configured to work on <code>training_only</code>, where the reductions is only run on classifications which contain training subjects or the converse, where all training data is removed before aggregations (<code>experiment_only</code>). See <a href="#code-training_subject-code">training subject metadata</a> for more info on training subjects. </p>
 <h2 id='reduction-mode'>Reduction Mode</h2>
 <p>This is probably the least understood part of configuring reducers. Briefly, the system offers two very different modes of performing reduction. These are:</p>
 
@@ -696,6 +734,76 @@ array will be included in reductions for the new subject.</p>
 <p>When a reducer is configured for running reduction, each time a new classification produces new extracts, the reducer is invoked with only those new extracts. Any additional information it would need in order to correctly compute the reduction should be present in a field <em>on</em> the reduction, called a <code>store</code>. With the new extracts and the store, the reducer will compute an updated value and update its store appropriately. However, this can&#39;t be done in a multithreaded way or else the object might be available while in an inconsistent state (example: its store has been updated but its value has not). Accordingly, we use optimistic locking semantics, so that we prefetch all possible relevant extracts and reductions before reducing and throw a sync error if the object versions don&#39;t match when we try to save. Further, we need to avoid updating the reduction multiple times with the same extract, which is not a concern with running reduction. Therefore, this mode populates a relation tracking which extracts have been incorporated into which reductions. Between this and the synchronization retries, there is considerable added complexity and overhead compared to default reduction mode. It&#39;s not recommended to use running reduction mode with external reducers, because the added complexity of writing reducers that reduce from a <code>store</code>.</p>
 <h3 id='reduction-mode-example'>Reduction Mode Example</h3>
 <p>See <a href="Reduction-Mode-Example">Reduction Mode Example</a></p>
+<h2 id='reducer-types'>Reducer types</h2>
+<p>Caesar features a set of standard reducers that are useful for most projects. These are described below:</p>
+
+<blockquote>
+<p>Given the following extracts </p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="err">extract_list</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> 
+        </span><span class="p">{</span><span class="nl">"ZEBRA"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> 
+        </span><span class="p">{</span><span class="nl">"ZEBRA"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> 
+        </span><span class="p">{</span><span class="nl">"AARDVARK"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> 
+        </span><span class="p">{</span><span class="nl">"ZEBRA"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+
+</span></code></pre></div>
+<blockquote>
+<p>The consensus, count and simple stats reducers will output</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="err">consensus_reducer_return</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"most_likely"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ZEBRA"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"num_votes"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"agreement"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.75</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='consensus'>Consensus</h3>
+<p>Uses the counting hash to summate the unique extracted key:value pairs. 
+The reducer will select the key with the highest summated value as the most likely (<code>most_likely</code>) answer.
+It will also return the total number of votes (<code>num_votes</code>) for this <code>most_likely</code> answer.
+Finally it will return an <code>agreement</code> value which is the num_votes/ number of all submitted classifications. 
+An example is shown on the right.</p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="err">count_reducer_return</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"classifications"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"extracts"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='count'>Count</h3>
+<p>The count reducer will simply return a count of the number of classifications 
+(accounting for the rules set up for repeated classifications). The <code>classifications</code> entry shows 
+the number of classifications, and the <code>extracts</code> key shows the number of corresponding extracts. </p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="err">simple_stats_reducer_return</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"ZEBRA"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"AARDVARK"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='simple-stats'>Simple Stats</h3>
+<p>Summates the extracted classification annotations key:value pair data.
+This reducer relies on the annotation data being in the correct format for summation, e.g. [[&quot;ZEBRA&quot;, 1]]
+Please note if the annotation shape doesn&#39;t include a summatable value, e.g. the 1 in above example,
+this reducer will require an aligned extractor to configure the key value to be summated.</p>
+
+<p>Note this reducer can count True and False values as well, True increments by 1, False does note increment</p>
+<h3 id='first-extract'>First  Extract</h3>
+<p>This reducer will return the output of the first extract in the list of extracts. This is useful when 
+extracting data that is common to the subject or the user (e.g., subject metadata). </p>
+<h3 id='sqs'>SQS</h3>
+<p>Setting up an SQS reducer instructs Caesar to send the output of our extractor to an AWS SQS queue.
+We can then use remote aggregation code to consume and process those extracts asynchronously 
+and without having to maintain a dedicated server to accept extracted data. The reducer needs to be 
+configured (through the admin console) with the URL and name of an AWS SQS queue that will receive 
+and temporarily store the classifications from the workflow</p>
+<h3 id='rectangle'>Rectangle</h3>
+<p>This reducer is used to cluster extracts from the Rectangle tool. It uses the DBSCAN algorithm to 
+aggregate the shapes together.</p>
+<h3 id='external'>External</h3>
+<p>This is similar to an external extractor, and is configured by providing a URL (requires HTTPS) that 
+serves as an endpoint for the extractor data from Caesar. </p>
 <h1 id='reduction-mode-examples'>Reduction Mode Examples</h1>
 <p>This example is to clarify the difference between how default reduction and running reduction work. Imagine the extract from each classification produces a number from 0 to 10 and the reducer computes the average of these numbers.</p>
 
