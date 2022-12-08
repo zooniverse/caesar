@@ -16,17 +16,14 @@ module Exporters
 
     def dump(path=nil, estimated_count: nil)
       if path.blank?
-        path = "tmp/#{get_topic.name.demodulize.underscore.pluralize}_#{resource_id}.csv"
+        path = "tmp/#{export_resource_class.name.demodulize.underscore.pluralize}_#{resource_id}.csv"
       end
 
-      items = get_items
       total = estimated_count || 0
       progress = 0
 
-      CSV.open(path, "wb",
-        :write_headers => true,
-        :headers => get_csv_headers) do |csv|
-        items.find_each do |item|
+      CSV.open(path, 'wb', write_headers: true, headers: csv_headers) do |csv|
+        exportable_scope.find_each do |item|
           csv << extract_row(item)
           progress += 1
           yield(progress, total) if block_given?
@@ -38,65 +35,71 @@ module Exporters
       end
     end
 
-    def get_csv_headers
-      get_model_cols + get_unique_json_cols.map{|col| "data.#{col}"}
+    def csv_headers
+      model_cols + unique_json_cols_keys.map { |col| "data.#{col}" }
     end
 
     def extract_row(source_row)
-      model_cols = get_model_cols
-      json_cols = get_unique_json_cols
-
       string_source = source_row.attributes.stringify_keys
-      model_values = model_cols.map{ |col| format_item(string_source[col]) }
-      json_values = json_cols.map{ |col| format_item(source_row[:data][col]) }
+      model_values = model_cols.map { |col| format_item(string_source[col]) }
+      json_values = unique_json_cols_keys.map { |col| format_item(source_row[:data][col]) }
       model_values + json_values
     end
 
     private
 
     def format_item(item)
-      return "" unless item.present?
+      return '' unless item.present?
 
       case item
-        when Integer, Float, String, TrueClass, FalseClass then item
-        when Array then item.to_json
-        when Hash then item.to_json
-        when DateTime, ActiveSupport::TimeWithZone then item
+      when Integer, Float, String, TrueClass, FalseClass,DateTime, ActiveSupport::TimeWithZone
+        item
+      when Array, Hash
+        item.to_json
       end
     end
 
-    def get_topic
+    def export_resource_class
       requested_data.camelcase.singularize.constantize
     end
 
-    def get_items
-      if get_topic == Extract
-        find_hash = { workflow_id: resource_id }
-      elsif get_topic == SubjectReduction
-        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
-      elsif get_topic == UserReduction
-        find_hash = { reducible_id: resource_id, reducible_type: resource_type }
-      end
-
-      if get_topic != SubjectReduction
-        find_hash[:user_id] = user_id unless user_id.blank?
-      end
-
-      find_hash[:subgroup] = subgroup unless subgroup.blank?
-
-      get_topic.where(find_hash)
+    def exportable_scope
+      # this is an  an optimization fence using a CTE
+      # to force the query planner to use the indexed columns on the exportable resouce table (workflow_id, reducible_id, reducible_type etc)
+      # so we can resolve the export query scopes in a decent timeframe
+      # and avoid the table scans with filtering that the query planner currently uses
+      # due to a lack of selectivity on the exportable resource table indexes (i.e. PK scan over the table and filter on the where clauses)
+      export_resource_class.with(export_resource_class.table_name => export_resource_class.where(exportable_scope_where_clause))
     end
 
-    def get_model_cols
-      @model_cols ||= get_topic.attribute_names - ["data", "store"]
+    def exportable_scope_where_clause
+      find_hash = case export_resource_class.to_s
+                  when 'Extract'
+                    { workflow_id: resource_id }
+                  when 'SubjectReduction', 'UserReduction'
+                    { reducible_id: resource_id, reducible_type: resource_type }
+                  end
+      find_hash[:user_id] = user_id if user_id.present? && export_resource_class != SubjectReduction
+      find_hash[:subgroup] = subgroup if subgroup.present?
+      find_hash
     end
 
-    def get_unique_json_cols
-      @unique_json_cols ||= get_items
-                              .where("jsonb_typeof(data)='object'")
-                              .select("DISTINCT(jsonb_object_keys(data)) AS key")
-                              .map(&:key)
+    def model_cols
+      @model_cols ||= export_resource_class.attribute_names - %w[data store]
     end
 
+    def unique_json_cols_keys
+      @unique_json_cols_keys ||= unique_json_cols_scope.map(&:key)
+    end
+
+    def unique_json_cols_scope
+      export_resource_class.with(
+        export_resource_class.table_name =>
+          export_resource_class
+            .where(exportable_scope_where_clause)
+            .where("jsonb_typeof(#{export_resource_class.table_name}.data)='object'")
+            .select("DISTINCT(jsonb_object_keys(#{export_resource_class.table_name}.data)) AS key")
+      ).select(:key)
+    end
   end
 end
