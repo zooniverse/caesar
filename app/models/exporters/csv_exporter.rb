@@ -52,7 +52,7 @@ module Exporters
       return '' unless item.present?
 
       case item
-      when Integer, Float, String, TrueClass, FalseClass,DateTime, ActiveSupport::TimeWithZone
+      when Integer, Float, String, TrueClass, FalseClass, DateTime, ActiveSupport::TimeWithZone
         item
       when Array, Hash
         item.to_json
