@@ -28,27 +28,19 @@ class DataRequestWorker
 
       # use the counter cache, if possible, to estimate the number of
       # rows, since querying the table is too expensive in many cases
-      estimated_count = if request.simple?
-       (request.exportable.send related_counter) || 0
-      else
-        nil
-      end
-
+      estimated_count = nil
+      estimated_count = request.exportable.send(related_counter) || 0 if request.simple?
       actual_count = 0
 
       exporter.dump(path, estimated_count: estimated_count) do |progress, total|
         actual_count += 1
-        if (progress > 0) && (progress % progress_interval == 0)
-          if request.reload.canceling?
-            raise DataRequest::DataRequestCanceled.new
-          end
+        if progress.positive? && (progress % progress_interval).zero?
+          raise DataRequest::DataRequestCanceled, 'data request cancelled!' if request.reload.canceling?
+
           request.records_count = total
           request.records_exported = progress
-
-          if request.records_exported > request.records_count
-            request.records_count = request.records_exported
-          end
-
+          # if we've exported more records than we thought we would, update the records count
+          request.records_count = request.records_exported if request.records_exported > request.records_count
           request.save
         end
       end
@@ -58,22 +50,23 @@ class DataRequestWorker
       if request.simple? && ((actual_count - estimated_count).abs > 100)
         request.exportable.class.update_counters request.exportable.id, { related_counter => (actual_count-estimated_count)}
       end
-
       request.stored_export.upload(path)
-      request.complete!
+      # ensure we update the data request with the total count of exported records
+      request.records_count = actual_count
+      request.status = 'complete'
+      request.save
     rescue DataRequest::DataRequestCanceled
       DataRequest.find(request_id).canceled!
     rescue Exception          # bare rescue only rescues StandardError
       request.failed!
       raise
     ensure
-      if(path.present? and ::File.exists?(path))
-        ::File.unlink path
-      end
+      # cleanup the resulting export file - this should really have been a tmp file
+      ::File.unlink path if path.present? && ::File.exist?(path)
     end
   end
 
   def progress_interval
-    return 1000
+    @progress_interval ||= 1000
   end
 end
