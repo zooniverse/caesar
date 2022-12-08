@@ -30,9 +30,11 @@ describe DataRequestWorker do
     end
 
     describe '#perform' do
-      it 'performs the export' do
-        create :extract, workflow_id: workflow.id
+      before do
+        create :extract, workflow_id: workflow.id, data: { 'foo' => 'bar' }
+      end
 
+      it 'performs the export' do
         worker.perform(workflow_request_id)
         expect(DataRequest.find(workflow_request_id).complete?).to be(true)
       end
@@ -41,6 +43,14 @@ describe DataRequestWorker do
         allow(File).to receive(:unlink).and_return(nil)
         worker.perform(workflow_request_id)
         expect(File.exist?("tmp/#{workflow_request_id}.csv")).to be(true)
+        # cleanup the reuslting export file - this should really have been a tmp file
+        ::File.unlink("tmp/#{workflow_request_id}.csv")
+      end
+
+      it 'exports the correct number of rows' do
+        create :extract # create a fake workflow to ensure our scope filtering is correct
+        worker.perform(workflow_request_id)
+        expect(workflow_request.reload.records_count).to eq(1)
       end
 
       it 'uploads the file' do
