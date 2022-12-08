@@ -247,7 +247,7 @@ spec:
   maxReplicas: 4
   targetCPUUtilizationPercentage: 80
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
    name: caesar-production-app-pdb
@@ -358,7 +358,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
    name: caesar-production-sidekiq-pdb
@@ -486,7 +486,7 @@ spec:
                   name: caesar-production-env-vars
                   key: SIDEKIQ_WEB_USERNAME
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
    name: caesar-production-sidekiq-tess-pdb
