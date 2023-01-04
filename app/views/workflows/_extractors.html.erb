@@ -43,7 +43,7 @@
         <td><%= extractor.key %></td>
         <td><%= extractor.class.to_s.demodulize %></td>
         <td class="params-column"><%= render_hash extractor.config, "No Configuration" %></td>
-        <td><%= extractor.minimum_workflow_version || "any" %></td>
+        <td><%= extractor.minimum_workflow_version || "" %></td>
         <td style="text-align: center;">
           <%= link_to [:edit, @workflow, extractor.becomes(Extractor)] do %>
             <i class="glyphicon glyphicon-cog text-warning"></i>
