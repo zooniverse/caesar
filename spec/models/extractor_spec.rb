@@ -50,8 +50,13 @@ describe Extractor do
       expect(extractor).to_not be_valid
     end
 
-    it 'allows numerics for min_workflow_version' do
+    it 'allows string of numbers for min_workflow_version' do
       extractor = build :extractor, minimum_workflow_version: '1.8', workflow: workflow
+      expect(extractor).to be_valid
+    end
+
+    it 'allows numerics for min_workflow_version' do
+      extractor = build :extractor, minimum_workflow_version: 3.14, workflow: workflow
       expect(extractor).to be_valid
     end
 
