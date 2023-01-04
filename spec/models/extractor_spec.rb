@@ -44,6 +44,23 @@ describe Extractor do
     )
   end
 
+  describe 'minimum_workflow_version' do
+    it 'disallows letters for min_workflow_version' do
+      extractor = build :extractor, minimum_workflow_version: 'any', workflow: workflow
+      expect(extractor).to_not be_valid
+    end
+
+    it 'allows numerics for min_workflow_version' do
+      extractor = build :extractor, minimum_workflow_version: '1.8', workflow: workflow
+      expect(extractor).to be_valid
+    end
+
+    it 'allows nil for min_workflow_version' do
+      extractor = build :extractor, workflow: workflow
+      expect(extractor).to be_valid
+    end
+  end
+
   describe '#process' do
     it 'processes normally when nothing is changed' do
       extractor = build :extractor, key: 'r'
