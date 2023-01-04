@@ -1,5 +1,6 @@
 class Extractor < ApplicationRecord
   include Configurable
+  validates :minimum_workflow_version, numericality: true, allow_nil: true
 
   class ExtractionFailed < StandardError; end
 
