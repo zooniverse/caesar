@@ -11,7 +11,7 @@
     <% end %>
   <% end %>
 
-  <%= f.input :minimum_workflow_version %>
+  <%= f.input :minimum_workflow_version, as: :float%>
 
   <%= f.submit class: 'btn btn-primary' %>
   <%= link_to 'Back', workflow_path(@workflow, anchor: 'extractors'), class: 'btn btn-default' %>
