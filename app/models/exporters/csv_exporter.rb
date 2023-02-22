@@ -49,7 +49,8 @@ module Exporters
     private
 
     def format_item(item)
-      return '' unless item.present?
+      # `false` is a valid value here but it's not #present?
+      return '' unless item.present? || item.class == FalseClass
 
       case item
       when Integer, Float, String, TrueClass, FalseClass, DateTime, ActiveSupport::TimeWithZone
