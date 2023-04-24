@@ -14,7 +14,7 @@ gem 'pg', '~> 1.3'
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 6.0'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'jquery-rails'
 # Use Uglifier as compressor for JavaScript assets
@@ -31,7 +31,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'bcrypt', '~> 3.1.7'
 gem 'sidekiq'
 gem 'sidekiq-congestion', '~> 0.1.0'
-gem 'sidekiq-unique-jobs', '~> 7.1.0'
+gem 'sidekiq-unique-jobs', '~> 8.0.2'
 gem 'sidekiq-logstash'
 gem 'flipper'
 gem 'flipper-active_record'
