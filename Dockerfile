@@ -1,4 +1,4 @@
-FROM ruby:2.6-slim-stretch
+FROM ruby:2.7-slim
 WORKDIR /app
 
 RUN apt-get update && \
@@ -6,10 +6,14 @@ RUN apt-get update && \
     build-essential \
     libpq-dev \
     nodejs \
-    libjemalloc1 && \
+    libjemalloc2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.1
+# configure jemalloc v5 with v3 behaviours (trade ram usage over performance)
+# https://twitter.com/nateberkopec/status/1442894624935137288
+# https://github.com/code-dot-org/code-dot-org/blob/5c8b24674d1c2f7e51e85dd32124e113dc423d84/cookbooks/cdo-jemalloc/attributes/default.rb#L10
+ENV MALLOC_CONF="narenas:2,background_thread:true,thp:never,dirty_decay_ms:1000,muzzy_decay_ms:0"
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 ADD ./Gemfile /app/
 ADD ./Gemfile.lock /app/
@@ -20,8 +24,8 @@ ENV RAILS_ENV=$RAILS_ENV
 
 RUN bundle config --global jobs `cat /proc/cpuinfo | grep processor | wc -l | xargs -I % expr % - 1` && \
     if echo "development test" | grep -w "$RAILS_ENV"; then \
-    bundle install; \
-    else bundle install --without development test; fi
+    gem update --system && bundle install; \
+    else gem update --system && bundle install --without development test; fi
 
 ADD ./ /app
 
