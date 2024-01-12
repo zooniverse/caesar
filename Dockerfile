@@ -24,8 +24,8 @@ ENV RAILS_ENV=$RAILS_ENV
 
 RUN bundle config --global jobs `cat /proc/cpuinfo | grep processor | wc -l | xargs -I % expr % - 1` && \
     if echo "development test" | grep -w "$RAILS_ENV"; then \
-    gem update --system && bundle install; \
-    else gem update --system && bundle install --without development test; fi
+    bundle install; \
+    else bundle install --without development test; fi
 
 ADD ./ /app
 
