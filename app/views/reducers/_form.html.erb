@@ -15,6 +15,15 @@
 
   <%= f.input :reducible_type, :as => :hidden %>
 
+  <div id='user_reducer_keys'>
+    <%= f.input :user_reducer_keys%>
+  </div>
+
+
+  <div class='hidden' id='subject_reducer_keys'>
+    <%= f.input :subject_reducer_keys%>
+  </div>
+
   <div class="panel panel-info">
     <div class="panel-heading"><a role="button" data-toggle="collapse" href="#groupingInputs" aria-expanded="false" aria-controls="groupingInputs">Grouping <span class="caret"></span></a></div>
     <div class="panel-body collapse" id="groupingInputs">

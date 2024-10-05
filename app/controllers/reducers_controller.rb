@@ -46,6 +46,8 @@ class ReducersController < ApplicationController
       filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
 
+    remove_unwanted_config_key(new_params)
+
     @reducer = reducer_class.new(new_params)
 
     respond_to do |format|
@@ -71,6 +73,8 @@ class ReducersController < ApplicationController
     if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
       filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
+
+    remove_unwanted_config_key(params)
 
     @reducer.update(params)
 
@@ -122,6 +126,8 @@ class ReducersController < ApplicationController
     params.require(:reducer).permit(
       :key,
       :topic,
+      :user_reducer_keys,
+      :subject_reducer_keys,
       *klass.configuration_fields.keys,
       filters: {},
       grouping: {},
@@ -130,5 +136,14 @@ class ReducersController < ApplicationController
 
   def record_not_valid(exception)
     render json: { error: exception.message }, status: 422
+  end
+
+  def remove_unwanted_config_key(param_object)
+    if param_object[:topic] == 'reduce_by_subject'
+      param_object[:subject_reducer_keys] = nil
+    elsif
+      param_object[:user_reducer_keys] = nil
+    end
+    @reducer.save if @reducer
   end
 end
