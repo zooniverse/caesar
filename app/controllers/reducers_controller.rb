@@ -144,6 +144,5 @@ class ReducersController < ApplicationController
     elsif
       param_object[:user_reducer_keys] = nil
     end
-    @reducer.save if @reducer
   end
 end
