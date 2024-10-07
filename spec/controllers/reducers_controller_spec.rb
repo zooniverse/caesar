@@ -153,7 +153,12 @@ describe ReducersController, :type => :controller do
           put :update, params: {
             workflow_id: workflow.id,
             id: reducer.id,
-            reducer: {url: 'https://example.org/2', user_reducer_keys: 'user_reducer_keys_value', subject_reducer_keys: 'subject_reducer_keys',topic: 'reduce_by_subject'},
+            reducer: {
+              url: 'https://example.org/2',
+              user_reducer_keys: 'user_reducer_keys_value',
+              subject_reducer_keys: 'subject_reducer_keys',
+              topic: 'reduce_by_subject'
+            },
           }
 
           reducer.reload
@@ -167,7 +172,12 @@ describe ReducersController, :type => :controller do
           put :update, params: {
             workflow_id: workflow.id,
             id: reducer.id,
-            reducer: {url: 'https://example.org/2', user_reducer_keys: 'user_reducer_keys_value', subject_reducer_keys: 'subject_reducer_keys_value',topic: 'reduce_by_user'},
+            reducer: {
+              url: 'https://example.org/2',
+              user_reducer_keys: 'user_reducer_keys_value',
+              subject_reducer_keys: 'subject_reducer_keys_value',
+              topic: 'reduce_by_user'
+            }
           }
 
           reducer.reload
