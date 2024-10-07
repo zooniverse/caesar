@@ -16,12 +16,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if(hidden_input){
         hidden_input.classList.remove('hidden');
-    };
+    }
 
     var visible_input = document.getElementById(visible_input_id);
     if(visible_input){
         visible_input.classList.add('hidden');
-    };
+    }
   };
 
   if (is_reducer_form) {

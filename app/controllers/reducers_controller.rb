@@ -141,7 +141,10 @@ class ReducersController < ApplicationController
   def remove_unwanted_config_key(param_object)
     if param_object[:topic] == 'reduce_by_subject'
       param_object[:subject_reducer_keys] = nil
-    elsif
+    elsif param_object[:topic] == 'reduce_by_user'
+      param_object[:user_reducer_keys] = nil
+    else
+      param_object[:subject_reducer_keys] = nil
       param_object[:user_reducer_keys] = nil
     end
   end
