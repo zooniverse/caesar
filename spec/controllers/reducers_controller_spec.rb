@@ -96,6 +96,16 @@ describe ReducersController, :type => :controller do
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
 
+      it 'saves extractor_keys as an array' do
+        nested_reducer_params[:extractor_keys] = 'test'
+        post :create, params: {
+          workflow_id: workflow.id,
+          reducer: nested_reducer_params
+        }, format: :json
+
+        expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
+      end
+
       it 'jsonifies extractor_keys' do
         post :create, params: {
           workflow_id: workflow.id,
@@ -141,6 +151,14 @@ describe ReducersController, :type => :controller do
         expect(workflow.reducers.first.url).to eq('https://example.org/2')
       end
 
+      it 'saves extractor_keys as an array' do
+        put :update, params: {workflow_id: workflow.id,
+                              id: reducer.id,
+                              reducer: {url: 'https://example.org/2', filters: { extractor_keys: 'test' }}}
+
+        reducer.reload
+        expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
+      end
       it 'renders form on errors' do
         put :update, params: {workflow_id: workflow.id,
                               id: reducer.id,
