@@ -43,7 +43,10 @@ class ReducersController < ApplicationController
 
     filters = new_params.fetch('filters', {})
     if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
-      filters['extractor_keys'] = convert_to_array(filters['extractor_keys'])
+      begin
+        filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      rescue JSON::ParserError, TypeError;
+      end
     end
 
     @reducer = reducer_class.new(new_params)
@@ -69,7 +72,10 @@ class ReducersController < ApplicationController
 
     filters = params.fetch('filters', {})
     if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
-      filters['extractor_keys'] = convert_to_array(filters['extractor_keys'])
+      begin
+        filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      rescue JSON::ParserError, TypeError;
+      end
     end
 
     @reducer.update(params)
@@ -132,16 +138,4 @@ class ReducersController < ApplicationController
     render json: { error: exception.message }, status: 422
   end
 
-  def convert_to_array(input)
-    if input.strip.start_with?("[") && input.strip.end_with?("]")
-      json_string = input.gsub("'", '"')
-      begin
-        JSON.parse(json_string)
-      rescue JSON::ParserError
-        [input]
-      end
-    else
-      [input]
-    end
-  end
 end

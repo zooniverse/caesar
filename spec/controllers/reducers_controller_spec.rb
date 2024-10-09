@@ -151,14 +151,6 @@ describe ReducersController, :type => :controller do
         expect(workflow.reducers.first.url).to eq('https://example.org/2')
       end
 
-      it 'saves extractor_keys as an array' do
-        put :update, params: {workflow_id: workflow.id,
-                              id: reducer.id,
-                              reducer: {url: 'https://example.org/2', filters: { extractor_keys: 'test' }}}
-
-        reducer.reload
-        expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
-      end
       it 'renders form on errors' do
         put :update, params: {workflow_id: workflow.id,
                               id: reducer.id,
