@@ -20,7 +20,7 @@
   </div>
 
 
-  <div class='hidden' id='subject_reducer_keys'>
+  <div id='subject_reducer_keys'>
     <%= f.input :subject_reducer_keys%>
   </div>
 
@@ -59,3 +59,25 @@
     <%= link_to 'Back', project_path(@reducible, anchor: 'reducers'), class: 'btn btn-default' %>
   <% end %>
 <% end %>
+
+<script type="text/javascript">
+  function toggle_reducer_keys_inputs(topic) {
+    if (topic.includes('subject')){
+      $('#subject_reducer_keys').hide()
+      $('#user_reducer_keys').show()
+    } else {
+      $('#subject_reducer_keys').show()
+      $('#user_reducer_keys').hide()
+    }
+  }
+
+  $(function() {
+    var reducer_topic = $('#reducer_topic').val();
+    toggle_reducer_keys_inputs(reducer_topic)
+  });
+
+  $('#reducer_topic').on('change', function(event){
+    var reducer_topic = event.target.value;
+    toggle_reducer_keys_inputs(reducer_topic)
+  })
+</script>

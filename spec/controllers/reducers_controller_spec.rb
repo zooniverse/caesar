@@ -158,7 +158,7 @@ describe ReducersController, :type => :controller do
               user_reducer_keys: 'user_reducer_keys_value',
               subject_reducer_keys: 'subject_reducer_keys',
               topic: 'reduce_by_subject'
-            },
+            }
           }
 
           reducer.reload

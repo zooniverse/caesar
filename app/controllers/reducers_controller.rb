@@ -46,7 +46,7 @@ class ReducersController < ApplicationController
       filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
 
-    remove_unwanted_config_key(new_params)
+    reset_config_reducer_keys(new_params)
 
     @reducer = reducer_class.new(new_params)
 
@@ -74,7 +74,7 @@ class ReducersController < ApplicationController
       filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
     end
 
-    remove_unwanted_config_key(params)
+    reset_config_reducer_keys(params)
 
     @reducer.update(params)
 
@@ -138,7 +138,7 @@ class ReducersController < ApplicationController
     render json: { error: exception.message }, status: 422
   end
 
-  def remove_unwanted_config_key(param_object)
+  def reset_config_reducer_keys(param_object)
     if param_object[:topic] == 'reduce_by_subject'
       param_object[:subject_reducer_keys] = nil
     elsif param_object[:topic] == 'reduce_by_user'
