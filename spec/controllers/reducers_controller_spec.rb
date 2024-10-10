@@ -147,6 +147,44 @@ describe ReducersController, :type => :controller do
                               reducer: {key: nil, type: 'external'}}
         expect(response.status).to eq(200)
       end
+
+      context 'when topic is reduce_by_subject' do
+        it 'sets subject_reducer_keys to nil' do
+          put :update, params: {
+            workflow_id: workflow.id,
+            id: reducer.id,
+            reducer: {
+              url: 'https://example.org/2',
+              user_reducer_keys: 'user_reducer_keys_value',
+              subject_reducer_keys: 'subject_reducer_keys',
+              topic: 'reduce_by_subject'
+            }
+          }
+
+          reducer.reload
+          expect(reducer.subject_reducer_keys).to be_nil
+          expect(reducer.user_reducer_keys).to eq('user_reducer_keys_value')
+        end
+      end
+
+      context 'when topic is not reduce_by_subject' do
+        it 'sets user_reducer_keys to nil' do
+          put :update, params: {
+            workflow_id: workflow.id,
+            id: reducer.id,
+            reducer: {
+              url: 'https://example.org/2',
+              user_reducer_keys: 'user_reducer_keys_value',
+              subject_reducer_keys: 'subject_reducer_keys_value',
+              topic: 'reduce_by_user'
+            }
+          }
+
+          reducer.reload
+          expect(reducer.subject_reducer_keys).to eq('subject_reducer_keys_value')
+          expect(reducer.user_reducer_keys).to be_nil
+        end
+      end
     end
   end
 end
