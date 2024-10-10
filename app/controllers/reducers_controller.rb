@@ -49,6 +49,8 @@ class ReducersController < ApplicationController
       end
     end
 
+    reset_config_reducer_keys(new_params)
+
     @reducer = reducer_class.new(new_params)
 
     respond_to do |format|
@@ -77,6 +79,8 @@ class ReducersController < ApplicationController
       rescue JSON::ParserError, TypeError;
       end
     end
+
+    reset_config_reducer_keys(params)
 
     @reducer.update(params)
 
@@ -128,6 +132,8 @@ class ReducersController < ApplicationController
     params.require(:reducer).permit(
       :key,
       :topic,
+      :user_reducer_keys,
+      :subject_reducer_keys,
       *klass.configuration_fields.keys,
       filters: {},
       grouping: {},
@@ -138,4 +144,14 @@ class ReducersController < ApplicationController
     render json: { error: exception.message }, status: 422
   end
 
+  def reset_config_reducer_keys(param_object)
+    if param_object[:topic] == 'reduce_by_subject'
+      param_object[:subject_reducer_keys] = nil
+    elsif param_object[:topic] == 'reduce_by_user'
+      param_object[:user_reducer_keys] = nil
+    else
+      param_object[:subject_reducer_keys] = nil
+      param_object[:user_reducer_keys] = nil
+    end
+  end
 end
