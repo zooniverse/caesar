@@ -96,14 +96,14 @@ describe ReducersController, :type => :controller do
         expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
       end
 
-      it 'saves extractor_keys as an array' do
-        nested_reducer_params[:extractor_keys] = 'test'
+      it 'saves extractor_keys in inputted format' do
+        nested_reducer_params[:filters][:extractor_keys] = '[\'test\']'
         post :create, params: {
           workflow_id: workflow.id,
           reducer: nested_reducer_params
         }, format: :json
 
-        expect(workflow.reducers.first.filters['extractor_keys']).to eq(['test'])
+        expect(workflow.reducers.first.filters['extractor_keys']).to eq('[\'test\']')
       end
 
       it 'jsonifies extractor_keys' do
