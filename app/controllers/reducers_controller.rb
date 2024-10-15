@@ -43,7 +43,10 @@ class ReducersController < ApplicationController
 
     filters = new_params.fetch('filters', {})
     if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
-      filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      begin
+        filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      rescue JSON::ParserError, TypeError;
+      end
     end
 
     reset_config_reducer_keys(new_params)
@@ -71,7 +74,10 @@ class ReducersController < ApplicationController
 
     filters = params.fetch('filters', {})
     if filters.has_key?('extractor_keys') && filters['extractor_keys'].is_a?(String)
-      filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      begin
+        filters['extractor_keys'] = JSON.parse(filters['extractor_keys'])
+      rescue JSON::ParserError, TypeError;
+      end
     end
 
     reset_config_reducer_keys(params)
