@@ -31,7 +31,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'bcrypt', '~> 3.1.7'
 gem 'sidekiq'
 gem 'sidekiq-congestion', '~> 0.1.0'
-gem 'sidekiq-unique-jobs', '~> 7.1.0'
+gem 'sidekiq-unique-jobs', '~> 7.1.33'
 gem 'sidekiq-logstash'
 gem 'flipper'
 gem 'flipper-active_record'
