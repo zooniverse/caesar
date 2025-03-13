@@ -2,12 +2,12 @@ module Effects
   class PromoteUser < Effect
     def perform(workflow_id, user_id)
       project_id = Workflow.find(workflow_id).project_id
-      light = Stoplight("promote-user-to-workflow-#{workflow_id}-#{subject_id}") do
+      light = Stoplight("promote-user-to-workflow-#{workflow_id}-#{user_id}") do
         Effects.panoptes.promote_user_to_workflow(user_id, project_id, target_workflow_id)
       end
       light.run
-    rescue Panoptes::Client::ServerError => e
-      raise 
+    rescue Panoptes::Client::ServerError
+      raise
     end
 
     def valid?

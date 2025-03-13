@@ -20,16 +20,16 @@ describe Effects::AddSubjectToSet do
 
   describe 'failure' do
     it 'knows when an exception is safe to ignore' do
-      duplicate = { :errors => [{:message => "PG::UniqueViolation"}]}
-      unexpected = { :errors => [{:message => "ActiveRecord::Error"}]}
+      duplicate = { :errors => [{ message: 'PG::UniqueViolation' }]}
+      unexpected = { :errors => [{ message: 'ActiveRecord::Error' }]}
 
       expect(described_class.was_duplicate(Panoptes::Client::ServerError.new(duplicate))).to be(true)
       expect(described_class.was_duplicate(Panoptes::Client::ServerError.new(unexpected))).to be(false)
     end
 
-    it 'trips the circuit breaker after repeated failures' do
+    it 'does not attempt the call on repeated failures' do
       allow(panoptes).to receive(:add_subjects_to_subject_set)
-        .and_raise(Panoptes::Client::ServerError.new("Another error"))
+        .and_raise(Panoptes::Client::ServerError.new('Another error'))
 
       3.times do
         expect { effect.perform(workflow_id, subject_id) }

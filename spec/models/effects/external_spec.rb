@@ -46,7 +46,6 @@ describe Effects::External do
         effect.perform(reduction.workflow_id, reduction.subject_id)
       end.to raise_error(Stoplight::Error::RedLight)
     end
-
   end
 
   describe 'validations' do

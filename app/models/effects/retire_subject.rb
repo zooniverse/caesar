@@ -8,6 +8,8 @@ module Effects
         Effects.panoptes.retire_subject(workflow_id, subject_id, reason: reason)
       end
       light.run
+    rescue Panoptes::Client::ServerError
+      raise
     end
 
     def valid?

@@ -42,7 +42,6 @@ describe Effects::ExternalWithBasicAuth do
           headers: { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
         )
         .to_return(status: 500, headers: {})
-
     end
     it 'raises an error if the post fails' do
       expect do
@@ -60,7 +59,6 @@ describe Effects::ExternalWithBasicAuth do
         effect.perform(reduction.workflow_id, reduction.subject_id)
       end.to raise_error(Stoplight::Error::RedLight)
     end
-
   end
 
   it 'does not post if no url is configured' do
