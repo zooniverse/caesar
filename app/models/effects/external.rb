@@ -57,7 +57,10 @@ module Effects
     end
 
     def post_payload_to_url
-      RestClient.post(url, reduction_payload, post_request_headers)
+      light = Stoplight("external-#{@workflow_id}-#{@subject_id}") do
+        RestClient.post(url, reduction_payload, post_request_headers)
+      end
+      light.run
     rescue RestClient::InternalServerError
       raise ExternalEffectFailed
     end

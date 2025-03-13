@@ -24,12 +24,29 @@ describe Effects::External do
     end.to raise_error(Effects::External::ExternalEffectFailed)
   end
 
-  it 'raises an error if the post fails' do
-    stub_request(:post, url).to_return(status: 500, headers: {})
 
-    expect do
-      effect.perform(reduction.workflow_id, reduction.subject_id)
-    end.to raise_error(Effects::External::ExternalEffectFailed)
+  describe 'failure' do
+    before do
+      stub_request(:post, url).to_return(status: 500, headers: {})
+    end
+
+    it 'raises an error if the post fails' do
+      expect do
+        effect.perform(reduction.workflow_id, reduction.subject_id)
+      end.to raise_error(Effects::External::ExternalEffectFailed)
+    end
+
+    it 'does not attempt the call on repeated failures' do
+      3.times do
+        expect do
+          effect.perform(reduction.workflow_id, reduction.subject_id)
+        end.to raise_error(Effects::External::ExternalEffectFailed)
+      end
+      expect do
+        effect.perform(reduction.workflow_id, reduction.subject_id)
+      end.to raise_error(Stoplight::Error::RedLight)
+    end
+
   end
 
   describe 'validations' do
