@@ -18,7 +18,11 @@ module Effects
       raise InvalidConfiguration unless valid?
       raise ExternalEffectFailed, 'Incorrect number of reductions found' if reductions.length != 1
 
-      post_payload_to_url
+      light = Stoplight("external-post-payload-to-url-#{@workflow_id}-#{@subject_id}") do
+        post_payload_to_url
+      end
+
+      light.run
     end
 
     def valid?
@@ -57,10 +61,7 @@ module Effects
     end
 
     def post_payload_to_url
-      light = Stoplight("external-#{@workflow_id}-#{@subject_id}") do
-        RestClient.post(url, reduction_payload, post_request_headers)
-      end
-      light.run
+      RestClient.post(url, reduction_payload, post_request_headers)
     rescue RestClient::InternalServerError
       raise ExternalEffectFailed
     end
