@@ -86,9 +86,9 @@ class WorkflowsController < ApplicationController
 
       workflow.update(workflow_params)
 
-      if (was_paused || was_halted) && workflow.active?
-        UnpauseWorkflowWorker.perform_async workflow.id
-        flash[:notice] = 'Resuming workflow'
+      if workflow.active?
+        flash[:notice] = 'Resuming workflow' if was_paused || was_halted
+        UnpauseWorkflowWorker.perform_async(workflow.id) if was_paused && !was_halted
       end
 
       if !was_paused && workflow.paused?

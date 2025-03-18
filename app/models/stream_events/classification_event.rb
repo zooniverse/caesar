@@ -32,7 +32,7 @@ module StreamEvents
 
     def enabled?
       Rails.cache.fetch("workflows/#{workflow_id}/enabled?", expires_in: 5.minutes) do
-        workflow.present?
+        workflow.present? && !workflow.halted?
       end
     end
 
