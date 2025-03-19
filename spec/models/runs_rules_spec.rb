@@ -63,4 +63,33 @@ describe RunsRules do
     expect(user_rule1).to have_received(:process).with(user_id, any_args).once
     expect(user_rule2).not_to have_received(:process)
   end
+
+  it 'runs no subject rule' do
+    subject_rule1 = instance_double(SubjectRule, process: true)
+    subject_rule2 = instance_double(SubjectRule, process: true)
+
+    workflow = create :workflow
+    subject = create :subject
+
+    runner = described_class.new(workflow, [subject_rule1, subject_rule2], [], :no_rules)
+    runner.check_rules(subject.id, nil)
+
+    expect(subject_rule1).not_to have_received(:process)
+    expect(subject_rule2).not_to have_received(:process)
+  end
+
+  it 'runs no user rule' do
+    user_rule1 = instance_double(UserRule, process: true)
+    user_rule2 = instance_double(UserRule, process: true)
+
+    workflow = create :workflow
+    subject = create :subject
+    user_id = 1234
+
+    runner = described_class.new(workflow, [], [user_rule1, user_rule2], :no_rules)
+    runner.check_rules(subject.id, user_id)
+
+    expect(user_rule1).not_to have_received(:process)
+    expect(user_rule2).not_to have_received(:process)
+  end
 end
