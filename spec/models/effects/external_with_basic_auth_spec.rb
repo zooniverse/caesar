@@ -34,17 +34,31 @@ describe Effects::ExternalWithBasicAuth do
     end.to raise_error(Effects::ExternalWithBasicAuth::ExternalEffectFailed)
   end
 
-  it 'raises an error if the post fails' do
-    stub_request(:post, url)
-      .with(
-        basic_auth: [username, password],
-        headers: { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
-      )
-      .to_return(status: 500, headers: {})
+  describe 'failure' do
+    before do
+      stub_request(:post, url)
+        .with(
+          basic_auth: [username, password],
+          headers: { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
+        )
+        .to_return(status: 500, headers: {})
+    end
+    it 'raises an error if the post fails' do
+      expect do
+        effect.perform(reduction.workflow_id, reduction.subject_id)
+      end.to raise_error(Effects::ExternalWithBasicAuth::ExternalEffectFailed)
+    end
 
-    expect do
-      effect.perform(reduction.workflow_id, reduction.subject_id)
-    end.to raise_error(Effects::ExternalWithBasicAuth::ExternalEffectFailed)
+    it 'does not attempt the call on repeated failures' do
+      3.times do
+        expect do
+          effect.perform(reduction.workflow_id, reduction.subject_id)
+        end.to raise_error(Effects::ExternalWithBasicAuth::ExternalEffectFailed)
+      end
+      expect do
+        effect.perform(reduction.workflow_id, reduction.subject_id)
+      end.to raise_error(Stoplight::Error::RedLight)
+    end
   end
 
   it 'does not post if no url is configured' do

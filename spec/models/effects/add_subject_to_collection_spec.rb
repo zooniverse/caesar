@@ -19,14 +19,30 @@ describe Effects::AddSubjectToCollection do
   end
 
   it 'propagates normal errors normally' do
-    allow(panoptes).to receive(:add_subjects_to_collection).and_raise(Panoptes::Client::ServerError.new("foo"))
+    allow(panoptes).to receive(:add_subjects_to_collection)
+      .and_raise(Panoptes::Client::ServerError.new('foo'))
     expect do
       effect.perform(workflow_id, subject_id)
     end.to raise_error(Panoptes::Client::ServerError)
   end
 
-  it 'swallows error if subject is already in collection' do
-    allow(panoptes).to receive(:add_subjects_to_collection).and_raise(Panoptes::Client::ServerError.new("Subject is already in the collection"))
-    effect.perform(workflow_id, subject_id)
+  describe 'failure' do
+    it 'swallows error if subject is already in collection' do
+      allow(panoptes).to receive(:add_subjects_to_collection).and_raise(Panoptes::Client::ServerError.new('Subject is already in the collection'))
+      effect.perform(workflow_id, subject_id)
+    end
+
+    it 'does not attempt the call on repeated failures' do
+      allow(panoptes).to receive(:add_subjects_to_collection)
+        .and_raise(Panoptes::Client::ServerError.new('Another error'))
+
+      3.times do
+        expect { effect.perform(workflow_id, subject_id) }
+          .to raise_error(Panoptes::Client::ServerError)
+      end
+
+      expect { effect.perform(workflow_id, subject_id) }
+        .to raise_error(Stoplight::Error::RedLight)
+    end
   end
 end

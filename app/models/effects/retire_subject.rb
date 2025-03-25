@@ -4,7 +4,12 @@ module Effects
                       "blank", "consensus", "other", "human"]
 
     def perform(workflow_id, subject_id)
-      Effects.panoptes.retire_subject(workflow_id, subject_id, reason: reason)
+      light = Stoplight("retire-subjects-#{workflow_id}-#{subject_id}") do
+        Effects.panoptes.retire_subject(workflow_id, subject_id, reason: reason)
+      end
+      light.run
+    rescue Panoptes::Client::ServerError
+      raise
     end
 
     def valid?

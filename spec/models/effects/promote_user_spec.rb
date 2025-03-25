@@ -17,4 +17,17 @@ describe Effects::PromoteUser do
     expect(panoptes).to have_received(:promote_user_to_workflow)
       .with(user_id, workflow.project_id, target_workflow_id)
   end
+
+  describe 'failure' do
+    it 'does not attempt the call on repeated failures' do
+      allow(panoptes).to receive(:promote_user_to_workflow)
+        .and_raise(Panoptes::Client::ServerError.new('Another error'))
+      3.times do
+        expect { effect.perform(workflow.id, user_id) }
+          .to raise_error(Panoptes::Client::ServerError)
+      end
+      expect { effect.perform(workflow.id, user_id) }
+        .to raise_error(Stoplight::Error::RedLight)
+    end
+  end
 end

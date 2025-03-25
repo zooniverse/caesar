@@ -19,4 +19,17 @@ describe Effects::RetireSubject do
     retire_subject.perform(workflow_id, subject_id)
     expect(panoptes).to have_received(:retire_subject).with(workflow_id, subject_id, reason: "other")
   end
+
+  describe 'failure' do
+    it 'does not attempt the call on repeated failures' do
+      allow(panoptes).to receive(:retire_subject)
+        .and_raise(Panoptes::Client::ServerError.new('Another error'))
+      3.times do
+        expect { effect.perform(workflow_id, subject_id) }
+          .to raise_error(Panoptes::Client::ServerError)
+      end
+      expect { effect.perform(workflow_id, subject_id) }
+        .to raise_error(Stoplight::Error::RedLight)
+    end
+  end
 end
