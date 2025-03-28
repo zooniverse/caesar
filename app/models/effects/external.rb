@@ -18,7 +18,11 @@ module Effects
       raise InvalidConfiguration unless valid?
       raise ExternalEffectFailed, 'Incorrect number of reductions found' if reductions.length != 1
 
-      post_payload_to_url
+      light = Stoplight("external-post-payload-to-url-#{@workflow_id}-#{@subject_id}") do
+        post_payload_to_url
+      end
+
+      light.run
     end
 
     def valid?
