@@ -28,7 +28,9 @@
   <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
     <%= f.hidden_field :status, :value => 'halted' %>
-    <%= f.button :button, class: 'btn btn-default pull-right' do %>
+    <%= f.button :button, class: 'btn btn-default pull-right',
+    title: @halt_confirmation,
+    data: { confirm: @halt_confirmation } do %>
       <span class="glyphicon glyphicon-stop"></span> Halt Workflow
     <% end %>
   <% end %>
@@ -38,7 +40,9 @@
   <p class="pull-right">&nbsp;</p>
   <%= simple_form_for(@workflow, url: [@workflow]) do |f| %>
     <%= f.hidden_field :status, :value => 'paused' %>
-    <%= f.button :button, class: 'btn btn-default pull-right' do %>
+    <%= f.button :button, class: 'btn btn-default pull-right',
+        title: @paused_confirmation,
+        data: { confirm: @paused_confirmation} do %>
       <span class="glyphicon glyphicon-pause"></span> Pause Workflow
     <% end %>
   <% end %>

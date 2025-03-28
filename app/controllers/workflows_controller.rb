@@ -9,6 +9,8 @@ class WorkflowsController < ApplicationController
 
   def show
     authorize workflow
+    @paused_confirmation = 'Temporarily stops processing. When unpaused, workflow will pick up from where it left off. Use for temporary interruptions while editing configurations and/or fixing problems'
+    @halt_confirmation = 'Halts processing and intake of classifications, equivalent to case where workflow does not exist on Caesar. When resumed, workflow will start processing classifications from that point forward, but all classifications submitted when halted are ignored. Use for long-term interruptions when Caesar should ignore incoming data.'
     @summary = WorkflowSummary.new(workflow)
     respond_with @workflow
   end
