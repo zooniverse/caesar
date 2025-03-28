@@ -131,6 +131,40 @@ RSpec.describe WorkflowsController, type: :controller do
         put :update, params: {id: workflow.id, workflow: {rerun: 'reducers'}}
       end
     end
+
+    describe 'update previously halted and paused workflows' do
+      subject(:update_workflow) do
+        put :update, params: { id: workflow.id, workflow: { status: 'active' } }
+      end
+
+      context 'previously paused workflow' do
+        let(:workflow) { create(:workflow, status: 'paused') }
+
+        it "flashes 'Resuming workflow'" do
+          update_workflow
+          expect(flash[:notice]).to eq('Resuming workflow')
+        end
+
+        it 'enqueues UnpauseWorkflowWorker' do
+          expect(UnpauseWorkflowWorker).to receive(:perform_async).with(workflow.id)
+          update_workflow
+        end
+      end
+
+      context 'previously halted workflow' do
+        let(:workflow) { create(:workflow, status: 'halted') }
+
+        it "flashes 'Resuming workflow'" do
+          update_workflow
+          expect(flash[:notice]).to eq('Resuming workflow')
+        end
+
+        it 'does not enqueue UnpauseWorkflowWorker' do
+          expect(UnpauseWorkflowWorker).not_to receive(:perform_async).with(workflow.id)
+          update_workflow
+        end
+      end
+    end
   end
 
 end
