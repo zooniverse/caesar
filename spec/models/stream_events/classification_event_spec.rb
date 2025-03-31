@@ -50,6 +50,13 @@ describe StreamEvents::ClassificationEvent do
         described_class.new(stream, hash).process
         expect(queue).not_to have_received(:add)
       end
+
+      it 'does not upsert a classification when the workflow is halted' do
+        workflow.halted!
+        expect(Classification).not_to receive(:upsert)
+
+        described_class.new(stream, hash).process
+      end
     end
 
     context 'when workflow has custom queue' do
