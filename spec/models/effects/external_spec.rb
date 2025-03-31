@@ -16,6 +16,11 @@ describe Effects::External do
       .to have_been_made.once
   end
 
+  it 'has initial stoplight_color of green' do
+    effect.perform(reduction.workflow_id, reduction.subject_id)
+    expect(effect.stoplight_color).to eq(Stoplight::Color::GREEN)
+  end
+
   it 'raises an error if more than one reduction is matched' do
     new_reduction = create(:subject_reduction, reducible: reduction.reducible, subgroup: "lol", reducer_key: "key", subject: subject, data: {})
 
@@ -45,6 +50,8 @@ describe Effects::External do
       expect do
         effect.perform(reduction.workflow_id, reduction.subject_id)
       end.to raise_error(Stoplight::Error::RedLight)
+
+      expect(effect.stoplight_color).to eq(Stoplight::Color::RED)
     end
   end
 

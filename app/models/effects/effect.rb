@@ -15,5 +15,12 @@ module Effects
     def valid?
       raise NotImplementedError
     end
+
+    def stoplight_color
+      if @stoplight_id
+        return Stoplight(@stoplight_id).color
+      end
+      return Stoplight::Color::GREEN
+    end
   end
 end

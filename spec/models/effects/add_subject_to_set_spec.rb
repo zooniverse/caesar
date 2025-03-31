@@ -18,6 +18,11 @@ describe Effects::AddSubjectToSet do
       .with(subject_set_id, [subject_id])
   end
 
+  it 'has initial stoplight_color of green' do
+    effect.perform(workflow_id, subject_id)
+    expect(effect.stoplight_color).to eq(Stoplight::Color::GREEN)
+  end
+
   describe 'failure' do
     it 'knows when an exception is safe to ignore' do
       duplicate = { :errors => [{ message: 'PG::UniqueViolation' }]}
@@ -38,6 +43,8 @@ describe Effects::AddSubjectToSet do
 
       expect { effect.perform(workflow_id, subject_id) }
         .to raise_error(Stoplight::Error::RedLight)
+
+      expect(effect.stoplight_color).to eq(Stoplight::Color::RED)
     end
   end
 end

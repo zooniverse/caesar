@@ -25,19 +25,7 @@
     <% for extractor in @workflow.extractors %>
       <tr>
         <td style="text-align: center; ">
-          <% case extractor.stoplight_color when 'green' %>
-            <span class="text-success glyphicon glyphicon-ok-sign">
-              <span class="sr-only">OK</span>
-            </span>
-          <% when 'yellow' %>
-            <span class="text-warning glyphicon glyphicon-exclamation-sign">
-              <span class="sr-only">Warning</span>
-            </span>
-          <% when 'red' %>
-            <span class="text-danger glyphicon glyphicon-remove-sign">
-              <span class="sr-only">Error</span>
-            </span>
-          <% end %>
+          <%= render partial: 'shared/stoplight_color', locals: {stoplight_color: extractor.stoplight_color} %>
         </td>
         <td><%= extractor.id %></td>
         <td><%= extractor.key %></td>

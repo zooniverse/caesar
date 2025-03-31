@@ -1,7 +1,8 @@
 module Effects
   class AddSubjectToSet < Effect
     def perform(workflow_id, subject_id)
-      light = Stoplight("add-to-subject-set-#{workflow_id}-#{subject_id}") do
+      @stoplight_id = "add-to-subject-set-#{workflow_id}-#{subject_id}"
+      light = Stoplight(@stoplight_id) do
         Effects.panoptes.add_subjects_to_subject_set(subject_set_id, [subject_id])
       end
       light.run

@@ -21,19 +21,7 @@
     <% for rule in @workflow.subject_rules %>
       <tr>
         <td style="text-align: center; line-height: 250%">
-          <% case rule.stoplight_color when 'green' %>
-            <span class="text-success glyphicon glyphicon-ok-sign">
-              <span class="sr-only">OK</span>
-            </span>
-          <% when 'yellow' %>
-            <span class="text-warning glyphicon glyphicon-exclamation-sign">
-              <span class="sr-only">Warning</span>
-            </span>
-          <% when 'red' %>
-            <span class="text-danger glyphicon glyphicon-remove-sign">
-              <span class="sr-only">Error</span>
-            </span>
-          <% end %>
+          <%= render partial: 'shared/stoplight_color', locals: {stoplight_color: rule.stoplight_color} %>
         </td>
         <td style="text-align: right; line-height: 250%">
           SR<%= rule.id %>
@@ -92,19 +80,7 @@
     <% for rule in @workflow.user_rules %>
       <tr>
         <td style="text-align: center; line-height: 250%;">
-          <% case rule.stoplight_color when 'green' %>
-            <span class="text-success glyphicon glyphicon-ok-sign">
-              <span class="sr-only">OK</span>
-            </span>
-          <% when 'yellow' %>
-            <span class="text-warning glyphicon glyphicon-exclamation-sign">
-              <span class="sr-only">Warning</span>
-            </span>
-          <% when 'red' %>
-            <span class="text-danger glyphicon glyphicon-remove-sign">
-              <span class="sr-only">Error</span>
-            </span>
-          <% end %>
+          <%= render partial: 'shared/stoplight_color', locals: {stoplight_color: rule.stoplight_color} %>
         </td>
         <td style="text-align: right; line-height: 250%;">
           UR<%= rule.id %>
