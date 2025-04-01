@@ -51,14 +51,15 @@ class WorkflowSummary
 
   def stoplight_status
     {
-      failed_extractors:   collection_selector(@workflow.extractors),
-      failed_reducers:     collection_selector(@workflow.reducers),
+      failed_extractors: collection_selector(@workflow.extractors),
+      failed_reducers: collection_selector(@workflow.reducers),
       failed_subject_rules: collection_selector(@workflow.subject_rules),
-      failed_user_rules:   collection_selector(@workflow.user_rules)
+      failed_user_rules: collection_selector(@workflow.user_rules)
     }
   end
 
   private
+
   def collection_selector(collection, status = Stoplight::Color::RED)
     collection.select { |collection_item| collection_item.stoplight_color == status }
   end
