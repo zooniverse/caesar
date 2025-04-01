@@ -33,6 +33,22 @@
           None
         <% else %>
           <%= @workflow.subject_rules.count %> for subjects, <%= @workflow.user_rules.count %> for users
+          <% if @summary.stoplight_status[:failed_subject_rules].any? %>
+            <dt>Failed subjects rule Id(s)</dt>
+            <dd>
+              <% @summary.stoplight_status[:failed_subject_rules].each do |rule| %>
+                <%= link_to rule.id, edit_workflow_subject_rule_path(@workflow, rule) %>
+              <% end %>
+            </dd>
+          <% end %>
+          <% if @summary.stoplight_status[:failed_user_rules].any? %>
+            <dt>Failed user rule Id(s)</dt>
+            <dd>
+              <% @summary.stoplight_status[:failed_user_rules].each do |rule| %>
+                <%= link_to rule.id, edit_workflow_user_rule_path(@workflow, rule) %>
+              <% end %>
+            </dd>
+          <% end %>
         <% end %>
       </dd>
       <br/>
@@ -48,8 +64,28 @@
         <dl class="dl-horizontal">
           <dt>Total Extracts</dt>
           <dd><%= @summary.extracts_count %></dd>
+          <dt>Failed Extract Count</dt>
+          <dd><%= @summary.stoplight_status[:failed_extractors].size %></dd>
+          <% if @summary.stoplight_status[:failed_extractors].any? %>
+            <dt>Failed Extract Id(s)</dt>
+            <dd>
+              <% @summary.stoplight_status[:failed_extractors].each do |extractor| %>
+                <%= link_to extractor.id, edit_workflow_extractor_path(@workflow, extractor) %>
+              <% end %>
+            </dd>
+          <% end %>
           <dt>Total Reductions</dt>
           <dd><%= @summary.reductions_count %></dd>
+          <dt>Failed Reductions</dt>
+          <dd><%= @summary.stoplight_status[:failed_reducers].size %></dd>
+          <% if @summary.stoplight_status[:failed_reducers].any? %>
+            <dt>Failed Extract Id(s)</dt>
+            <dd>
+              <% @summary.stoplight_status[:failed_reducers].each do |reducer| %>
+                <%= link_to reducer.id, edit_workflow_reducer_path(@workflow, reducer) %>
+              <% end %>
+            </dd>
+          <% end %>
           <dt>Total Actions</dt>
           <dd><%= @summary.actions_count %></dd>
           <br/><br/>

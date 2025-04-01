@@ -17,10 +17,7 @@ module Effects
     end
 
     def stoplight_color
-      if @stoplight_id
-        return Stoplight(@stoplight_id).color
-      end
-      return Stoplight::Color::GREEN
+      @stoplight_id ? Stoplight(@stoplight_id).color : Stoplight::Color::GREEN
     end
   end
 end
