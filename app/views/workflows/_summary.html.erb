@@ -2,16 +2,16 @@
   <div class="col-md-6">
     <dl class="dl-horizontal">
       <dt>Workflow Id</dt>
-      <dd><%= @workflow.id %>
+      <dd><%= @workflow.id %></dd>
       <dt>Workflow Name</dt>
-      <dd><%= @workflow.name %>
+      <dd><%= @workflow.name %></dd>
       <dt>Status</dt>
       <dd><%= @workflow.status.humanize %></dd>
       <br/><br/>
       <dt>Project Id</dt>
-      <dd><%= @workflow.project_id %>
+      <dd><%= @workflow.project_id %></dd>
       <dt>Project Name</dt>
-      <dd><%= @workflow.project_name %>
+      <dd><%= @workflow.project_name %></dd>
       <br/><br/>
       <dt>Extractors</dt>
       <dd>
@@ -33,66 +33,63 @@
           None
         <% else %>
           <%= @workflow.subject_rules.count %> for subjects, <%= @workflow.user_rules.count %> for users
-          <% if @summary.stoplight_status[:failed_subject_rules].any? %>
-            <dt>Failed subjects rule Id(s)</dt>
-            <dd>
-              <% @summary.stoplight_status[:failed_subject_rules].each do |rule| %>
-                <%= link_to rule.id, edit_workflow_subject_rule_path(@workflow, rule) %>
-              <% end %>
-            </dd>
-          <% end %>
-          <% if @summary.stoplight_status[:failed_user_rules].any? %>
-            <dt>Failed user rule Id(s)</dt>
-            <dd>
-              <% @summary.stoplight_status[:failed_user_rules].each do |rule| %>
-                <%= link_to rule.id, edit_workflow_user_rule_path(@workflow, rule) %>
-              <% end %>
-            </dd>
-          <% end %>
         <% end %>
       </dd>
       <br/>
+      <% if @summary.stoplight_status[:failed_extractors].any? %>
+        <dt>Failed Extractors</dt>
+        <dd>
+          <% @summary.stoplight_status[:failed_extractors].each do |extractor| %>
+            <%= link_to extractor.id, edit_workflow_extractor_path(@workflow, extractor) %>
+          <% end %>
+        </dd>
+      <% end %>
+      <% if @summary.stoplight_status[:failed_reducers].any? %>
+        <dt>Failed Reducers</dt>
+        <dd>
+          <% @summary.stoplight_status[:failed_reducers].each do |reducer| %>
+            <%= link_to reducer.id, edit_workflow_reducer_path(@workflow, reducer) %>
+          <% end %>
+        </dd>
+      <% end %>
+      <% if @summary.stoplight_status[:failed_subject_rules].any? %>
+        <dt>Failed Subject Rules</dt>
+        <dd>
+          <% @summary.stoplight_status[:failed_subject_rules].each do |rule| %>
+            <%= link_to rule.id, edit_workflow_subject_rule_path(@workflow, rule) %>
+          <% end %>
+        </dd>
+      <% end %>
+      <% if @summary.stoplight_status[:failed_user_rules].any? %>
+        <dt>Failed User Rules</dt>
+        <dd>
+          <% @summary.stoplight_status[:failed_user_rules].each do |rule| %>
+            <%= link_to rule.id, edit_workflow_user_rule_path(@workflow, rule) %>
+          <% end %>
+        </dd>
+      <% end %>
+      <br/>
       <dt>Created</dt>
-      <dd><%= @workflow.created_at %>
+      <dd><%= @workflow.created_at %></dd>
       <dt>Updated</dt>
-      <dd><%= @workflow.updated_at %>
+      <dd><%= @workflow.updated_at %></dd>
     </dl>
   </div>
   <div class="col-md-6">
     <div class="row">
       <div class="col-md-6">
         <dl class="dl-horizontal">
-          <dt>Total Extracts</dt>
-          <dd><%= @summary.extracts_count %></dd>
-          <dt>Failed Extract Count</dt>
-          <dd><%= @summary.stoplight_status[:failed_extractors].size %></dd>
-          <% if @summary.stoplight_status[:failed_extractors].any? %>
-            <dt>Failed Extract Id(s)</dt>
-            <dd>
-              <% @summary.stoplight_status[:failed_extractors].each do |extractor| %>
-                <%= link_to extractor.id, edit_workflow_extractor_path(@workflow, extractor) %>
-              <% end %>
-            </dd>
-          <% end %>
           <dt>Total Reductions</dt>
           <dd><%= @summary.reductions_count %></dd>
-          <dt>Failed Reductions</dt>
-          <dd><%= @summary.stoplight_status[:failed_reducers].size %></dd>
-          <% if @summary.stoplight_status[:failed_reducers].any? %>
-            <dt>Failed Reducer Id(s)</dt>
-            <dd>
-              <% @summary.stoplight_status[:failed_reducers].each do |reducer| %>
-                <%= link_to reducer.id, edit_workflow_reducer_path(@workflow, reducer) %>
-              <% end %>
-            </dd>
-          <% end %>
+          <dt>Total Extracts</dt>
+          <dd><%= @summary.extracts_count %></dd>
           <dt>Total Actions</dt>
           <dd><%= @summary.actions_count %></dd>
           <br/><br/>
           <dt>Public Extracts</dt>
-          <dd><%= if @workflow.public_extracts? then "Yes" else "No" end %>
+          <dd><%= if @workflow.public_extracts? then "Yes" else "No" end %></dd>
           <dt>Public Reductions</dt>
-          <dd><%= if @workflow.public_reductions? then "Yes" else "No" end %>
+          <dd><%= if @workflow.public_reductions? then "Yes" else "No" end %></dd>
           <br/><br/>
           <dt>Rule Application</dt>
           <dd><%= @workflow.rules_applied.humanize %></dd>
