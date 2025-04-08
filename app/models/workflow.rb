@@ -160,4 +160,19 @@ class Workflow < ApplicationRecord
   def random_n_subjects(n)
     (extracts.pluck(:subject_id).sample(n*3) + subject_reductions.pluck(:subject_id).sample(n*3)).uniq.sample(n)
   end
+
+  def stoplight_status
+    {
+      failed_extractors: collection_selector(extractors),
+      failed_reducers: collection_selector(reducers),
+      failed_subject_rules: collection_selector(subject_rules),
+      failed_user_rules: collection_selector(user_rules)
+    }
+  end
+
+  private
+
+  def collection_selector(collection, status = Stoplight::Color::RED)
+    collection.select { |collection_item| collection_item.stoplight_color == status }
+  end
 end
