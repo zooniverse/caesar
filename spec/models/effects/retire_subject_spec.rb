@@ -14,6 +14,11 @@ describe Effects::RetireSubject do
     expect(panoptes).to have_received(:retire_subject).with(workflow_id, subject_id, reason: "blank")
   end
 
+  it 'has initial stoplight_color of green' do
+    effect.perform(workflow_id, subject_id)
+    expect(effect.stoplight_color).to eq(Stoplight::Color::GREEN)
+  end
+
   it 'defaults to a reason of "other"' do
     retire_subject = described_class.new
     retire_subject.perform(workflow_id, subject_id)
@@ -30,6 +35,8 @@ describe Effects::RetireSubject do
       end
       expect { effect.perform(workflow_id, subject_id) }
         .to raise_error(Stoplight::Error::RedLight)
+
+      expect(effect.stoplight_color).to eq(Stoplight::Color::RED)
     end
   end
 end

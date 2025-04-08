@@ -15,5 +15,9 @@ module Effects
     def valid?
       raise NotImplementedError
     end
+
+    def stoplight_color
+      @stoplight_id ? Stoplight(@stoplight_id).color : Stoplight::Color::GREEN
+    end
   end
 end

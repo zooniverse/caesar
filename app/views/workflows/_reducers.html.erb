@@ -29,19 +29,7 @@
     <% for reducer in @workflow.reducers %>
       <tr>
         <td style="text-align: center; ">
-          <% case reducer.stoplight_color when 'green' %>
-            <span class="text-success glyphicon glyphicon-ok-sign">
-              <span class="sr-only">OK</span>
-            </span>
-          <% when 'yellow' %>
-            <span class="text-warning glyphicon glyphicon-exclamation-sign">
-              <span class="sr-only">Warning</span>
-            </span>
-          <% when 'red' %>
-            <span class="text-danger glyphicon glyphicon-remove-sign">
-              <span class="sr-only">Error</span>
-            </span>
-          <% end %>
+          <%= render partial: 'shared/stoplight_color', locals: {stoplight_color: reducer.stoplight_color} %>
         </td>
         <td><%= reducer.id %></td>
         <td><%= reducer.key %></td>

@@ -1,0 +1,13 @@
+<% case stoplight_color when 'green' %>
+  <span class="text-success glyphicon glyphicon-ok-sign">
+    <span class="sr-only">OK</span>
+  </span>
+<% when 'yellow' %>
+  <span class="text-warning glyphicon glyphicon-exclamation-sign">
+    <span class="sr-only">Warning</span>
+  </span>
+<% when 'red' %>
+  <span class="text-danger glyphicon glyphicon-remove-sign">
+    <span class="sr-only">Error</span>
+  </span>
+<% end %>

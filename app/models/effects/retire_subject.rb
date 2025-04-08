@@ -4,7 +4,9 @@ module Effects
                       "blank", "consensus", "other", "human"]
 
     def perform(workflow_id, subject_id)
-      light = Stoplight("retire-subjects-#{workflow_id}-#{subject_id}") do
+      @stoplight_id = "retire-subjects-#{workflow_id}-#{subject_id}"
+
+      light = Stoplight(@stoplight_id) do
         Effects.panoptes.retire_subject(workflow_id, subject_id, reason: reason)
       end
       light.run

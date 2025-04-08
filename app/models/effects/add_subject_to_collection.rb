@@ -1,7 +1,8 @@
 module Effects
   class AddSubjectToCollection < Effect
     def perform(workflow_id, subject_id)
-      light = Stoplight("add-subject-to-collection-#{workflow_id}-#{subject_id}") do
+      @stoplight_id = "add-subject-to-collection-#{workflow_id}-#{subject_id}"
+      light = Stoplight(@stoplight_id) do
         Effects.panoptes.add_subjects_to_collection(collection_id, [subject_id])
       end
       light.run

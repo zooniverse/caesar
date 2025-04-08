@@ -18,6 +18,11 @@ describe Effects::PromoteUser do
       .with(user_id, workflow.project_id, target_workflow_id)
   end
 
+  it 'has initial stoplight_color of green' do
+    effect.perform(workflow.id, user_id)
+    expect(effect.stoplight_color).to eq(Stoplight::Color::GREEN)
+  end
+
   describe 'failure' do
     it 'does not attempt the call on repeated failures' do
       allow(panoptes).to receive(:promote_user_to_workflow)
@@ -28,6 +33,8 @@ describe Effects::PromoteUser do
       end
       expect { effect.perform(workflow.id, user_id) }
         .to raise_error(Stoplight::Error::RedLight)
+
+      expect(effect.stoplight_color).to eq(Stoplight::Color::RED)
     end
   end
 end

@@ -18,6 +18,11 @@ describe Effects::AddSubjectToCollection do
       .with(collection_id, [subject_id])
   end
 
+  it 'has initial stoplight_color of green' do
+    effect.perform(workflow_id, subject_id)
+    expect(effect.stoplight_color).to eq(Stoplight::Color::GREEN)
+  end
+
   it 'propagates normal errors normally' do
     allow(panoptes).to receive(:add_subjects_to_collection)
       .and_raise(Panoptes::Client::ServerError.new('foo'))
@@ -43,6 +48,8 @@ describe Effects::AddSubjectToCollection do
 
       expect { effect.perform(workflow_id, subject_id) }
         .to raise_error(Stoplight::Error::RedLight)
+
+      expect(effect.stoplight_color).to eq(Stoplight::Color::RED)
     end
   end
 end
