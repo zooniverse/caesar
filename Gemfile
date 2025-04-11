@@ -1,3 +1,6 @@
+def next?
+  File.basename(__FILE__) == "Gemfile.next"
+end
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -78,6 +81,7 @@ group :development, :test do
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'ten_years_rails'
 end
 
 group :development do
