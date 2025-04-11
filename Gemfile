@@ -11,7 +11,11 @@ end
 gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2'
+if next?
+  gem "rails", "6.0.0"
+else
+  gem 'rails', '~> 5.2'
+end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
 # Use Puma as the app server
