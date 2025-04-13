@@ -12,7 +12,7 @@ gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 if next?
-  gem "rails", "6.0.0"
+  gem "rails", '~> 6.0'
 else
   gem 'rails', '~> 5.2'
 end
