@@ -1,3 +1,6 @@
+def next?
+  File.basename(__FILE__) == "Gemfile.next"
+end
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -8,7 +11,11 @@ end
 gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2'
+if next?
+  gem "rails", '~> 6.0'
+else
+  gem 'rails', '~> 5.2'
+end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
 # Use Puma as the app server
@@ -42,6 +49,8 @@ gem 'logstash-event'
 gem "sentry-raven"
 gem 'omniauth'
 gem 'omniauth-zooniverse'
+#  for omniauth-zooniverse
+gem 'omniauth-oauth2'
 gem 'responders'
 gem 'listen', '>= 3.0.5', '< 3.8'
 gem 'rest-client', '> 2.0'
@@ -71,13 +80,15 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'pry-byebug'
-  gem 'rspec-rails', '~> 3.8'
+  # gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails'
   gem 'pry-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'ten_years_rails'
 end
 
 group :development do

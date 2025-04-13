@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MutationRoot do
+describe Types::MutationRoot do
   let(:credential) { fake_credential admin: true }
   let(:context) { {credential: credential} }
   let(:variables) { {} }
