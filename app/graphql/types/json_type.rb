@@ -1,9 +1,16 @@
 require 'json'
 
-Types::JsonType = GraphQL::ScalarType.define do
-  name "JsonType"
-  description "Arbitrary JSON object"
+# app/graphql/types/json_type.rb
+module Types
+  class JsonType < GraphQL::Schema::Scalar
+    description 'Arbitrary JSON object'
 
-  coerce_input ->(value, ctx) { value }
-  coerce_result ->(value, ctx) { value }
+    def self.coerce_input(value, _context)
+      value
+    end
+
+    def self.coerce_result(value, _context)
+      value
+    end
+  end
 end
