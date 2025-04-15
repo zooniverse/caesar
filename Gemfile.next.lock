@@ -229,6 +229,8 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.15.7-aarch64-linux)
       racc (~> 1.4)
+    nokogiri (1.15.7-x86_64-linux)
+      racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
@@ -445,6 +447,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  x86_64-linux
 
 DEPENDENCIES
   active_record_extended
@@ -502,4 +505,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.3.26
+   2.3.22
