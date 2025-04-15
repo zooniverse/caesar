@@ -1,3 +1,6 @@
+def next?
+  File.basename(__FILE__) == "Gemfile.next"
+end
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -8,7 +11,11 @@ end
 gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2'
+if next?
+  gem "rails", '6.0.6.1'
+else
+  gem 'rails', '~> 5.2'
+end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
 # Use Puma as the app server
@@ -78,6 +85,7 @@ group :development, :test do
   gem 'rubocop'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'ten_years_rails'
 end
 
 group :development do

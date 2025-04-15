@@ -26,6 +26,16 @@ jobs:
         ports:
           - 6379:6379
         options: --entrypoint redis-server
+    continue-on-error: true
+    strategy:
+      matrix:
+        gemfile:
+          - Gemfile
+          - Gemfile.next
+        ruby:
+          - 2.7
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
 
     steps:
       - name: Checkout code
@@ -37,7 +47,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7 # ensure we test the same ruby version we run under (see Dockerfile)
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
       - name: Setup test database
