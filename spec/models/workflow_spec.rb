@@ -34,6 +34,95 @@ RSpec.describe Workflow, type: :model do
     end
   end
 
+  describe 'stoplight_status' do
+    let(:classification) { create :classification, subject: subject, workflow: workflow }
+
+    it 'should be an hash with relevant arrays' do
+      stoplight_status = workflow.stoplight_status
+
+      expect(stoplight_status).to be_a(Hash)
+
+      expected_keys = [
+        :failed_extractors,
+        :failed_reducers,
+        :failed_subject_rules,
+        :failed_user_rules
+      ]
+      expect(stoplight_status.keys).to match_array(expected_keys)
+
+      expected_keys.each do |key|
+        expect(stoplight_status[key]).to be_a(Array)
+      end
+    end
+
+    it 'includes details of failed extractors' do
+      extractor =  create :extractor, workflow: workflow, type: Extractors::ExternalExtractor
+      allow(extractor).to receive(:extract_data_for) { raise 'failure' }
+
+      3.times do
+        expect { extractor.process(classification) }.to raise_error('failure')
+      end
+
+      stoplight_status = workflow.stoplight_status
+      expect(stoplight_status[:failed_extractors].size).to eq(1)
+      extractor_item = stoplight_status[:failed_extractors].first
+      expect(extractor_item.id).to eq(extractor.id)
+    end
+
+    it 'includes details of failed reducers' do
+      reducer = create :reducer, workflow_id: workflow.id, type: Reducers::ExternalReducer
+
+      wf = Workflow.find(reducer.workflow_id)
+      extracts = [
+         create(:extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" })
+      ]
+      reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
+      allow(reducer).to receive(:reduce_into) { raise 'failure' }
+
+      3.times do
+        expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
+      end
+
+      stoplight_status = wf.stoplight_status
+      expect(stoplight_status[:failed_reducers].size).to eq(1)
+      reducer_item = stoplight_status[:failed_reducers].first
+      expect(reducer_item.id).to eq(reducer.id)
+
+    end
+
+    it 'includes details of failed subject rules' do
+      subject_rule =  create(:subject_rule, workflow: workflow)
+
+      allow(subject_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
+
+      3.times do
+        expect { subject_rule.process(subject.id, []) }.to raise_error('failure')
+      end
+
+      stoplight_status = workflow.stoplight_status
+      expect(stoplight_status[:failed_subject_rules].size).to eq(1)
+      subject_rule_item= stoplight_status[:failed_subject_rules].first
+      expect(subject_rule.id).to eq(subject_rule_item.id)
+
+    end
+
+    it 'includes details of failed user rules' do
+      user_rule =  create(:user_rule, workflow: workflow)
+
+      allow(user_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
+
+      3.times do
+        expect { user_rule.process(subject.id, []) }.to raise_error('failure')
+      end
+
+      stoplight_status = workflow.stoplight_status
+      expect(stoplight_status[:failed_user_rules].size).to eq(1)
+      user_rule_item= stoplight_status[:failed_user_rules].first
+      expect(user_rule.id).to eq(user_rule_item.id)
+
+    end
+  end
+
   describe 'cached counters' do
     it 'increments the extract count when new extracts are added' do
       Extract.create! workflow_id: workflow.id, subject_id: subject.id, classification_id: 12345, classification_at: DateTime.now, extractor_key: 'key'
