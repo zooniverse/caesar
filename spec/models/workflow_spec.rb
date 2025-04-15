@@ -68,8 +68,7 @@ RSpec.describe Workflow, type: :model do
       end
 
       it 'include empty array for successful reducers' do
-        wf = Workflow.find(reducer.workflow_id)
-        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" }
+        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { 'foo' => 'bar' }
 
         extracts = [extract]
         reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
@@ -120,7 +119,7 @@ RSpec.describe Workflow, type: :model do
 
       it 'includes details of failed reducers' do
         wf = Workflow.find(reducer.workflow_id)
-        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" }
+        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { 'foo' => 'bar' }
 
         extracts = [extract]
         reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
@@ -139,7 +138,7 @@ RSpec.describe Workflow, type: :model do
       it 'includes details of failed subject rules' do
         subject_rule = create :subject_rule, workflow: workflow
 
-        allow(subject_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
+        allow(subject_rule).to receive_message_chain(:condition, :apply).and_raise('failure')
 
         3.times do
           expect { subject_rule.process(subject.id, []) }.to raise_error('failure')
@@ -154,7 +153,7 @@ RSpec.describe Workflow, type: :model do
       it 'includes details of failed user rules' do
         user_rule = create :user_rule, workflow: workflow
 
-        allow(user_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
+        allow(user_rule).to receive_message_chain(:condition, :apply).and_raise('failure')
 
         3.times do
           expect { user_rule.process(subject.id, []) }.to raise_error('failure')
