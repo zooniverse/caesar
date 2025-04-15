@@ -36,6 +36,8 @@ RSpec.describe Workflow, type: :model do
 
   describe 'stoplight_status' do
     let(:classification) { create :classification, subject: subject, workflow: workflow }
+    let(:extractor) { create :extractor, workflow: workflow, type: Extractors::ExternalExtractor }
+    let(:reducer) { create :reducer, workflow_id: workflow.id, type: Reducers::ExternalReducer }
 
     it 'should be an hash with relevant arrays' do
       stoplight_status = workflow.stoplight_status
@@ -55,71 +57,114 @@ RSpec.describe Workflow, type: :model do
       end
     end
 
-    it 'includes details of failed extractors' do
-      extractor =  create :extractor, workflow: workflow, type: Extractors::ExternalExtractor
-      allow(extractor).to receive(:extract_data_for) { raise 'failure' }
+    describe 'success' do
+      it 'include empty array for successful extractor' do
+        allow(extractor).to receive(:extract_data_for).and_return(nil)
 
-      3.times do
-        expect { extractor.process(classification) }.to raise_error('failure')
+        extractor.process(classification)
+
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_extractors].size).to eq(0)
       end
 
-      stoplight_status = workflow.stoplight_status
-      expect(stoplight_status[:failed_extractors].size).to eq(1)
-      extractor_item = stoplight_status[:failed_extractors].first
-      expect(extractor_item.id).to eq(extractor.id)
+      it 'include empty array for successful reducers' do
+        wf = Workflow.find(reducer.workflow_id)
+        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" }
+
+        extracts = [extract]
+        reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
+        allow(reducer).to receive(:reduce_into).and_return(nil)
+
+        reducer.process(extracts, reduction_fetcher)
+
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_reducers].size).to eq(0)
+      end
+
+      it 'include empty array for successful subject rules' do
+        subject_rule = create :subject_rule, workflow: workflow
+
+        allow(subject_rule).to receive_message_chain(:condition, :apply).and_return(true)
+
+        subject_rule.process(subject.id, [])
+
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_subject_rules].size).to eq(0)
+      end
+
+      it 'include empty array for successful user rules' do
+        user_rule = create :user_rule, workflow: workflow
+
+        allow(user_rule).to receive_message_chain(:condition, :apply).and_return(true)
+
+        user_rule.process(subject.id, [])
+
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_user_rules].size).to eq(0)
+      end
     end
 
-    it 'includes details of failed reducers' do
-      reducer = create :reducer, workflow_id: workflow.id, type: Reducers::ExternalReducer
+    describe 'success' do
+      it 'includes details of failed extractors' do
+        allow(extractor).to receive(:extract_data_for) { raise 'failure' }
 
-      wf = Workflow.find(reducer.workflow_id)
-      extracts = [
-         create(:extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" })
-      ]
-      reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
-      allow(reducer).to receive(:reduce_into) { raise 'failure' }
+        3.times do
+          expect { extractor.process(classification) }.to raise_error('failure')
+        end
 
-      3.times do
-        expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_extractors].size).to eq(1)
+        extractor_item = stoplight_status[:failed_extractors].first
+        expect(extractor_item.id).to eq(extractor.id)
       end
 
-      stoplight_status = wf.stoplight_status
-      expect(stoplight_status[:failed_reducers].size).to eq(1)
-      reducer_item = stoplight_status[:failed_reducers].first
-      expect(reducer_item.id).to eq(reducer.id)
+      it 'includes details of failed reducers' do
+        wf = Workflow.find(reducer.workflow_id)
+        extract = create :extract, workflow_id: reducer.workflow_id, classification_id: classification.id, subject: subject, data: { "foo" => "bar" }
 
-    end
+        extracts = [extract]
+        reduction_fetcher = instance_double(SubjectReductionFetcher, retrieve: SubjectReduction.new)
+        allow(reducer).to receive(:reduce_into) { raise 'failure' }
 
-    it 'includes details of failed subject rules' do
-      subject_rule =  create(:subject_rule, workflow: workflow)
+        3.times do
+          expect { reducer.process(extracts, reduction_fetcher) }.to raise_error('failure')
+        end
 
-      allow(subject_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
-
-      3.times do
-        expect { subject_rule.process(subject.id, []) }.to raise_error('failure')
+        stoplight_status = wf.stoplight_status
+        expect(stoplight_status[:failed_reducers].size).to eq(1)
+        reducer_item = stoplight_status[:failed_reducers].first
+        expect(reducer_item.id).to eq(reducer.id)
       end
 
-      stoplight_status = workflow.stoplight_status
-      expect(stoplight_status[:failed_subject_rules].size).to eq(1)
-      subject_rule_item= stoplight_status[:failed_subject_rules].first
-      expect(subject_rule.id).to eq(subject_rule_item.id)
+      it 'includes details of failed subject rules' do
+        subject_rule = create :subject_rule, workflow: workflow
 
-    end
+        allow(subject_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
 
-    it 'includes details of failed user rules' do
-      user_rule =  create(:user_rule, workflow: workflow)
+        3.times do
+          expect { subject_rule.process(subject.id, []) }.to raise_error('failure')
+        end
 
-      allow(user_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
-
-      3.times do
-        expect { user_rule.process(subject.id, []) }.to raise_error('failure')
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_subject_rules].size).to eq(1)
+        subject_rule_item = stoplight_status[:failed_subject_rules].first
+        expect(subject_rule.id).to eq(subject_rule_item.id)
       end
 
-      stoplight_status = workflow.stoplight_status
-      expect(stoplight_status[:failed_user_rules].size).to eq(1)
-      user_rule_item= stoplight_status[:failed_user_rules].first
-      expect(user_rule.id).to eq(user_rule_item.id)
+      it 'includes details of failed user rules' do
+        user_rule = create :user_rule, workflow: workflow
 
+        allow(user_rule).to receive_message_chain(:condition, :apply).and_raise("failure")
+
+        3.times do
+          expect { user_rule.process(subject.id, []) }.to raise_error('failure')
+        end
+
+        stoplight_status = workflow.stoplight_status
+        expect(stoplight_status[:failed_user_rules].size).to eq(1)
+        user_rule_item = stoplight_status[:failed_user_rules].first
+        expect(user_rule.id).to eq(user_rule_item.id)
+      end
     end
   end
 
