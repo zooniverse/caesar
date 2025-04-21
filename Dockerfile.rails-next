@@ -1,0 +1,40 @@
+FROM ruby:2.7-slim
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    libpq-dev \
+    nodejs \
+    libjemalloc2 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# configure jemalloc v5 with v3 behaviours (trade ram usage over performance)
+# https://twitter.com/nateberkopec/status/1442894624935137288
+# https://github.com/code-dot-org/code-dot-org/blob/5c8b24674d1c2f7e51e85dd32124e113dc423d84/cookbooks/cdo-jemalloc/attributes/default.rb#L10
+ENV MALLOC_CONF="narenas:2,background_thread:true,thp:never,dirty_decay_ms:1000,muzzy_decay_ms:0"
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+
+ADD ./Gemfile.next /app/
+ADD ./Gemfile.next.lock /app/
+
+# ensure we use the rails-next gemfile setup to ensure we boot the upgraded libaries
+ENV BUNDLE_GEMFILE=Gemfile.next
+
+ENV PORT=80
+ARG RAILS_ENV=production
+ENV RAILS_ENV=$RAILS_ENV
+
+RUN bundle config --global jobs `cat /proc/cpuinfo | grep processor | wc -l | xargs -I % expr % - 1` && \
+    if echo "development test" | grep -w "$RAILS_ENV"; then \
+    bundle install; \
+    else bundle install --without development test; fi
+
+ADD ./ /app
+
+RUN (cd /app && mkdir -p tmp/pids)
+RUN (cd /app && SECRET_KEY_BASE=1 bundle exec rails assets:precompile)
+
+EXPOSE 80
+
+CMD ["/app/docker/start-puma.sh"]
