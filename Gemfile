@@ -13,8 +13,10 @@ gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 if next?
   gem "rails", '6.0.6.1'
+  gem 'graphql', "1.12"
 else
   gem 'rails', '~> 5.2'
+  gem 'graphql'
 end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
@@ -55,7 +57,6 @@ gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
 gem 'pundit', "~> 2.2.0"
-gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
 gem 'ranked-model'
@@ -78,7 +79,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: [:mri, :mingw, :x64_mingw]
   gem 'pry-byebug'
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails', '~> 4'
   gem 'pry-rails'
   gem 'webmock'
   gem 'spring-commands-rspec'
