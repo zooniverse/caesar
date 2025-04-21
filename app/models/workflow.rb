@@ -170,6 +170,10 @@ class Workflow < ApplicationRecord
     }
   end
 
+  def as_json(options = {})
+    super(options).merge(stoplight_status: stoplight_status)
+  end
+
   private
 
   def collection_selector(collection, status = Stoplight::Color::RED)
