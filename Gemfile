@@ -14,6 +14,7 @@ gem 'httparty'
 if next?
   gem "rails", '6.0.6.1'
   gem 'graphql', "1.12"
+  gem 'omniauth-oauth2'
 else
   gem 'rails', '~> 5.2'
   gem 'graphql'
