@@ -13,8 +13,10 @@ gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 if next?
   gem "rails", '6.0.6.1'
+  gem 'graphql', "1.12"
 else
   gem 'rails', '~> 5.2'
+  gem 'graphql'
 end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
@@ -55,7 +57,6 @@ gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
 gem 'pundit', "~> 2.2.0"
-gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
 gem 'ranked-model'
