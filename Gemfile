@@ -13,7 +13,6 @@ gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 if next?
   gem "rails", '6.0.6.1'
-  gem 'omniauth-oauth2'
 else
   gem 'rails', '~> 5.2'
 end
