@@ -248,9 +248,16 @@ RSpec.describe Workflow, type: :model do
       end
     end
   end
+
   describe 'IsReducible' do
     it 'can re-run reducers' do
       expect{workflow.rerun_reducers}.not_to raise_error
+    end
+  end
+
+  describe 'as_json' do
+    it 'includes stoplight status' do
+      expect(workflow.as_json).to have_key(:stoplight_status)
     end
   end
 end
