@@ -103,7 +103,7 @@ RSpec.describe Workflow, type: :model do
       end
     end
 
-    describe 'success' do
+    describe 'failure' do
       it 'includes details of failed extractors' do
         allow(extractor).to receive(:extract_data_for) { raise 'failure' }
 
