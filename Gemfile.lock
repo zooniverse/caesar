@@ -174,7 +174,7 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.2.0)
     netrc (0.11.0)
-    newrelic_rpm (8.8.0)
+    newrelic_rpm (9.18.0)
     nio4r (2.7.0)
     nokogiri (1.15.7)
       mini_portile2 (~> 2.8.2)
