@@ -464,7 +464,6 @@ DEPENDENCIES
   byebug
   deferred_associations
   factory_bot_rails
-  ffi
   flipper
   flipper-active_record
   flipper-ui
