@@ -13,9 +13,10 @@ gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 if next?
   gem "rails", '6.0.6.1'
-  gem "webrick"
 else
   gem 'rails', '~> 5.2'
+  # Use Uglifier as compressor for JavaScript assets
+  gem 'uglifier', '>= 1.3.0'
 end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
@@ -25,8 +26,6 @@ gem 'puma', '~> 5.6'
 gem 'sass-rails', '~> 5.0'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'jquery-rails'
-# Use Uglifier as compressor for JavaScript assets
-gem 'terser'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 gem 'bootsnap', '>= 1.1.0', require: false

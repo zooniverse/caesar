@@ -421,8 +421,6 @@ GEM
       activesupport
       colorize (>= 0.8.1)
       rest-client (>= 2.0.2)
-    terser (1.2.5)
-      execjs (>= 0.3.0, < 3)
     thor (1.3.2)
     thread_safe (0.3.6)
     tilt (2.0.8)
@@ -443,7 +441,6 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webrick (1.9.1)
     websocket-driver (0.7.7)
       base64
       websocket-extensions (>= 0.1.0)
@@ -505,11 +502,9 @@ DEPENDENCIES
   stoplight
   strong_migrations
   ten_years_rails
-  terser
   tzinfo-data
   web-console (>= 3.3.0)
   webmock
-  webrick
 
 BUNDLED WITH
    2.3.26
