@@ -22,9 +22,10 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor = Uglifier.new(harmony: true, mangle: false)
-
+  if Rails.version.starts_with?('5.2')
+    # Compress JavaScripts and CSS.
+    config.assets.js_compressor = Uglifier.new(harmony: true, mangle: false)
+  end
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
 

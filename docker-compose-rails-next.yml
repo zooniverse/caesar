@@ -16,6 +16,7 @@ services:
     image: caesar:rails-next-local
     build:
       context: .
+      dockerfile: Dockerfile.rails-next
       args:
         RAILS_ENV: development
     volumes:
