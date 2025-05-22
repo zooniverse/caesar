@@ -149,18 +149,6 @@ GEM
     faraday_middleware (1.2.1)
       faraday (~> 1.0)
     ffi (1.9.25)
-    flipper (1.3.4)
-      concurrent-ruby (< 2)
-    flipper-active_record (1.3.4)
-      activerecord (>= 4.2, < 9)
-      flipper (~> 1.3.4)
-    flipper-ui (1.3.4)
-      erubi (>= 1.0.0, < 2.0.0)
-      flipper (~> 1.3.4)
-      rack (>= 1.4, < 4)
-      rack-protection (>= 1.5.3, < 5.0.0)
-      rack-session (>= 1.0.2, < 3.0.0)
-      sanitize (< 8)
     globalid (1.1.0)
       activesupport (>= 5.0)
     graphiql-rails (1.10.4)
@@ -275,10 +263,6 @@ GEM
     rack (2.2.13)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
-    rack-protection (2.0.8.1)
-      rack
-    rack-session (1.0.2)
-      rack (< 3)
     rack-test (2.2.0)
       rack (>= 1.3)
     rails (6.0.6.1)
@@ -361,9 +345,6 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     ruby-progressbar (1.10.1)
     ruby2_keywords (0.0.5)
-    sanitize (6.1.3)
-      crass (~> 1.0.2)
-      nokogiri (>= 1.12.0)
     sass (3.7.2)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -463,9 +444,6 @@ DEPENDENCIES
   byebug
   deferred_associations
   factory_bot_rails
-  flipper
-  flipper-active_record
-  flipper-ui
   graphiql-rails
   graphql (= 1.12)
   httparty
