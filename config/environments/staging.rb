@@ -18,7 +18,7 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
-  if Rails.version != '6.0.6.1'
+  if Rails.version.starts_with?('5.2')
     # Compress JavaScripts and CSS.
     config.assets.js_compressor = Uglifier.new(harmony: true, mangle: false)
   end

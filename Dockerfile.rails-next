@@ -15,7 +15,6 @@ RUN apt-get update && \
 ENV MALLOC_CONF="narenas:2,background_thread:true,thp:never,dirty_decay_ms:1000,muzzy_decay_ms:0"
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
-
 ADD ./Gemfile.next /app/
 ADD ./Gemfile.next.lock /app/
 
