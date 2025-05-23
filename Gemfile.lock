@@ -409,8 +409,6 @@ GEM
     to_regexp (0.2.1)
     tzinfo (1.2.11)
       thread_safe (~> 0.1)
-    uglifier (4.2.1)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
@@ -483,7 +481,6 @@ DEPENDENCIES
   strong_migrations
   ten_years_rails
   tzinfo-data
-  uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
   webmock
 
