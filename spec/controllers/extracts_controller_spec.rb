@@ -23,9 +23,9 @@ RSpec.describe ExtractsController, type: :controller do
     end
 
     it 'queues ImportMachineLearntDataWorker' do
-      allow(ImportMLDataWorker).to receive(:perform_async).with(file_path, workflow.id.to_s)
+      allow(ImportMlDataWorker).to receive(:perform_async).with(file_path, workflow.id.to_s)
       post :import, params: { file: file_path, workflow_id: workflow.id }
-      expect(ImportMLDataWorker).to have_received(:perform_async).with(file_path, workflow.id.to_s)
+      expect(ImportMlDataWorker).to have_received(:perform_async).with(file_path, workflow.id.to_s)
     end
   end
 end

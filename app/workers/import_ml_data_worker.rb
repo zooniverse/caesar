@@ -2,7 +2,7 @@
 
 require 'csv'
 # Worker to bulk import Machine Learnt (ML) extracts from web accessibly located csv
-class ImportMLDataWorker
+class ImportMlDataWorker
   include Sidekiq::Worker
 
   def perform(csv_filepath, workflow_id)

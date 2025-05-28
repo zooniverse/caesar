@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe ImportMLDataWorker, type: :worker do
+RSpec.describe ImportMlDataWorker, type: :worker do
   let(:project) { create :project }
   let(:workflow) { create :workflow, project_id: project.id }
   let(:source_url) { 'https://example.org/file.csv' }
