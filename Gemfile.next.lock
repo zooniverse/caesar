@@ -389,7 +389,7 @@ GEM
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
-    spring (4.2.1)
+    spring (3.0.0)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
     sprockets (3.7.5)
@@ -480,7 +480,7 @@ DEPENDENCIES
   sidekiq-logstash
   sidekiq-unique-jobs (~> 7.1.0)
   simple_form
-  spring (~> 4.2.1)
+  spring (~> 3.0.0)
   spring-commands-rspec
   stoplight
   strong_migrations
