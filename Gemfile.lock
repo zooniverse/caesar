@@ -383,12 +383,9 @@ GEM
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
-    spring (2.1.0)
+    spring (3.0.0)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
-    spring-watcher-listen (2.0.1)
-      listen (>= 2.7, < 4.0)
-      spring (>= 1.2, < 3.0)
     sprockets (3.7.5)
       base64
       concurrent-ruby (~> 1.0)
@@ -477,9 +474,8 @@ DEPENDENCIES
   sidekiq-logstash
   sidekiq-unique-jobs (~> 7.1.0)
   simple_form
-  spring
+  spring (~> 3.0.0)
   spring-commands-rspec
-  spring-watcher-listen (~> 2.0.0)
   stoplight
   strong_migrations
   ten_years_rails

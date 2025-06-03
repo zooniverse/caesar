@@ -12,7 +12,7 @@ class ExtractsController < ApplicationController
       params.require(:file)
       file_path = params[:file]
       workflow_id = params[:workflow_id]
-      ImportMLDataWorker.perform_async(file_path, workflow_id)
+      ImportMlDataWorker.perform_async(file_path, workflow_id)
     else
       render json: { error: 'CSV must be included' }, status: 404
     end

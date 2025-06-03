@@ -11,7 +11,11 @@ end
 gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '6.1.7.10'
+if next?
+  gem 'rails', '7.0.8.7'
+else
+  gem 'rails', '6.1.7.10'
+end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
 # Use Puma as the app server
@@ -82,8 +86,7 @@ end
 group :development do
   gem 'web-console', '>= 3.3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring', '~> 3.0.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
