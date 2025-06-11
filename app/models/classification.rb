@@ -64,7 +64,7 @@ class Classification < ApplicationRecord
     }.with_indifferent_access
   end
 
-  def as_json(_options)
+  def as_json(_options = {})
     prepare
   end
 end
