@@ -533,7 +533,6 @@ DEPENDENCIES
   tzinfo-data
   web-console (>= 3.3.0)
   webmock
-  webrick (~> 1.7)
 
 BUNDLED WITH
    2.3.26
