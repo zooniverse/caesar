@@ -34,6 +34,8 @@ jobs:
           - Gemfile.next
         ruby:
           - 2.7
+        ruby_next:
+          - 3.0
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
 
@@ -47,7 +49,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ${{ matrix.gemfile == 'Gemfile.next' && matrix.ruby_next || matrix.ruby }}
           bundler-cache: true
 
       - name: Setup test database
