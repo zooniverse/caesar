@@ -254,10 +254,6 @@ GEM
     nokogiri (1.15.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.15.7-aarch64-linux)
-      racc (~> 1.4)
-    nokogiri (1.15.7-x86_64-linux)
-      racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
@@ -480,9 +476,7 @@ GEM
     zeitwerk (2.6.18)
 
 PLATFORMS
-  aarch64-linux
   ruby
-  x86_64-linux
 
 DEPENDENCIES
   active_record_extended
