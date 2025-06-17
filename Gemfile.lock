@@ -493,6 +493,7 @@ DEPENDENCIES
   byebug
   deferred_associations
   factory_bot_rails
+  ffi (< 1.17.0)
   graphiql-rails
   graphql (= 1.12)
   httparty
