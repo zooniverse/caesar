@@ -176,7 +176,7 @@ GEM
     faraday-retry (1.0.3)
     faraday_middleware (1.2.1)
       faraday (~> 1.0)
-    ffi (1.9.25)
+    ffi (1.16.3)
     globalid (1.2.1)
       activesupport (>= 6.1)
     graphiql-rails (1.10.4)
@@ -253,10 +253,6 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.15.7)
       mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
-    nokogiri (1.15.7-aarch64-linux)
-      racc (~> 1.4)
-    nokogiri (1.15.7-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
@@ -480,9 +476,7 @@ GEM
     zeitwerk (2.6.18)
 
 PLATFORMS
-  aarch64-linux
   ruby
-  x86_64-linux
 
 DEPENDENCIES
   active_record_extended
@@ -493,6 +487,7 @@ DEPENDENCIES
   byebug
   deferred_associations
   factory_bot_rails
+  ffi (< 1.17.0)
   graphiql-rails
   graphql (= 1.12)
   httparty
