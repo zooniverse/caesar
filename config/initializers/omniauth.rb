@@ -5,6 +5,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            client_options: {
              site: (Rails.env.production? ? "https://panoptes.zooniverse.org" : "https://panoptes-staging.zooniverse.org"),
              authorize_url: "/oauth/authorize",
-             scope: ['user', 'public']
+             scope: ['user', 'public'],
+             auth_scheme: :request_body
            })
 end
+OmniAuth.config.allowed_request_methods = [:post, :get]
