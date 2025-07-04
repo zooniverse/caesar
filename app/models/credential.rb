@@ -42,7 +42,7 @@ class Credential < ApplicationRecord
   end
 
   def fetch_accessible_projects
-    client.panoptes.paginate("/projects", current_user_roles: ['owner', 'collaborator'])
+    client.panoptes.paginate("/projects", {current_user_roles: ['owner', 'collaborator']})
   end
 
   def accessible_project?(id)
