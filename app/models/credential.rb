@@ -23,7 +23,10 @@ class Credential < ApplicationRecord
   end
 
   def expired?
+    return true unless token.present?
     client.token_expiry < Time.now.utc
+  rescue Panoptes::Client::NotLoggedIn
+    true
   end
 
   def logged_in?
