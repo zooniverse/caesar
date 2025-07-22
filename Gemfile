@@ -11,7 +11,11 @@ end
 gem 'active_record_extended'
 gem 'httparty'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '7.1.5.1'
+if next?
+  gem 'rails', '7.2.2.1'
+else
+  gem 'rails', '7.1.5.1'
+end
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.3'
 # Use Puma as the app server
@@ -46,7 +50,7 @@ gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
 gem 'pundit', "~> 2.2.0"
-gem 'graphql', "1.12"
+gem 'graphql', "1.12.25"
 gem 'graphiql-rails'
 gem 'stoplight'
 gem 'ranked-model'
