@@ -181,7 +181,7 @@ GEM
       activesupport (>= 6.1)
     graphiql-rails (1.10.4)
       railties
-    graphql (1.12.0)
+    graphql (1.12.25)
     hashdiff (1.0.1)
     hashie (5.0.0)
     http-accept (1.7.0)
@@ -371,7 +371,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rexml (3.2.5)
+    rexml (3.4.1)
     rspec-core (3.13.4)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.5)
@@ -499,7 +499,7 @@ DEPENDENCIES
   factory_bot_rails
   ffi (< 1.17.0)
   graphiql-rails
-  graphql (= 1.12)
+  graphql (= 1.12.25)
   httparty
   jquery-rails
   jsonpath
