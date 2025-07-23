@@ -22,8 +22,8 @@ class KinesisController < ApplicationController
   end
 
   def authenticate(given_username, given_password)
-    desired_username = Rails.application.secrets.kinesis[:username]
-    desired_password = Rails.application.secrets.kinesis[:password]
+    desired_username = Rails.application.credentials.dig(:kinesis, :username)
+    desired_password = Rails.application.credentials.dig(:kinesis, :password)
 
     if desired_username.present? || desired_password.present?
       given_username == desired_username && given_password == desired_password
