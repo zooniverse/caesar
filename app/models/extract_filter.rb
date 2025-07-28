@@ -1,7 +1,6 @@
 class ExtractFilter
   include ActiveModel::Validations
-  validates_with ActiveRecord::Validations::AssociatedValidator,
-    _merge_attributes([:filter_objects])
+  validate :validate_individual_filter_objects
 
   attr_reader :filter_config
 
@@ -25,6 +24,21 @@ class ExtractFilter
       ::Filters::FilterByTrainingBehavior,
       ::Filters::FilterBySubrange
     ].map{ |klass| klass.new(filter_config) }
+  end
+
+
+  def validate_individual_filter_objects
+    unless filter_objects.respond_to?(:each)
+      errors.add(:filter_objects, "must be a collection")
+    end
+
+    filter_objects.each_with_index do |filter_obj, index|
+      if filter_obj.respond_to?(:valid?) && !filter_obj.valid?
+        filter_obj.errors.full_messages.each do |message|
+          errors.add(:filter_objects, "at index #{index} is invalid: #{message}")
+        end
+      end
+    end
   end
 
   def apply_filters(classification_groups, configured_filters)
