@@ -28,10 +28,6 @@ class ExtractFilter
 
 
   def validate_individual_filter_objects
-    unless filter_objects.respond_to?(:each)
-      errors.add(:filter_objects, "must be a collection")
-    end
-
     filter_objects.each_with_index do |filter_obj, index|
       if filter_obj.respond_to?(:valid?) && !filter_obj.valid?
         filter_obj.errors.full_messages.each do |message|

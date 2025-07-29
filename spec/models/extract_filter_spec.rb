@@ -96,7 +96,10 @@ describe ExtractFilter do
     end
 
     it 'fails when something is broken' do
-      allow_any_instance_of(Filters::FilterByTrainingBehavior).to receive(:valid?).and_return(false)
+      invalid_config = {
+        training_behavior: 'wrong_type'
+      }
+      filter = ExtractFilter.new(invalid_config)
       expect(filter).not_to be_valid
     end
   end
