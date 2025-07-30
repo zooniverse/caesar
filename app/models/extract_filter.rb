@@ -14,7 +14,9 @@ class ExtractFilter
     apply_filters(extracts_by_classification, filter_objects)
   end
 
-  def custom_validation_context? = false
+  def custom_validation_context?
+    false
+  end
 
   private
 
