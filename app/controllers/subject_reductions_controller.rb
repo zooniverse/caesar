@@ -16,7 +16,7 @@ class SubjectReductionsController < ApplicationController
 
     Subject.maybe_create_subject(subject.id, reducible)
 
-    if reduction.data != reduction_params[:data]
+    if reduction.data != reduction_params[:data].to_h
       reduction.update! reduction_params
       CheckSubjectRulesWorker.perform_async(reducible.id, reducible_type, subject.id) if workflow.configured?
     end
