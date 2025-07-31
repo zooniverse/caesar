@@ -2,8 +2,12 @@ module Filters
   class FilterByExtractorKeys < Filter
     include ActiveModel::Validations
 
-    def valid?
-      (extractor_keys.is_a? String) || (extractor_keys.all?{ |key| key.is_a? String })
+    def valid?(context = nil)
+      super(context) &&
+        (
+          extractor_keys.is_a?(String) ||
+          extractor_keys.all? { |key| key.is_a?(String) }
+        )
     end
 
     def apply(extract_groups)
