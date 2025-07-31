@@ -14,7 +14,7 @@ class UserReductionsController < ApplicationController
                                                 subgroup: subgroup)
     authorize reduction
 
-    if reduction.data != reduction_params[:data]
+    if reduction.data != reduction_params[:data].to_h
       reduction.update! reduction_params
       CheckUserRulesWorker.perform_async(reducible.id, reducible_type, user_id) if workflow.configured?
     end
