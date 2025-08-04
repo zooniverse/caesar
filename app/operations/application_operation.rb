@@ -1,5 +1,5 @@
 class ApplicationOperation
-  include Pundit
+  include Pundit::Authorization
 
   # Our GraphQL API uses Javascript style camelCase, this class exists to convert that into snake_case.
   # There's some discussion of adding this converter directly into graphql-ruby, so before the resolve

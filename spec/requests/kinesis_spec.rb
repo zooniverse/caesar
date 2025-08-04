@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe "Kinesis stream", sidekiq: :inline do
   before do
-    allow(Rails.application.credentials).to receive(:dig).with(:kinesis, :username).and_return('testuser')
-    allow(Rails.application.credentials).to receive(:dig).with(:kinesis, :password).and_return('testpass')
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('KINESIS_STREAM_USERNAME').and_return('testuser')
+    allow(ENV).to receive(:[]).with('KINESIS_STREAM_PASSWORD').and_return('testpass')
 
     panoptes = instance_double(
       Panoptes::Client,
@@ -16,8 +17,8 @@ RSpec.describe "Kinesis stream", sidekiq: :inline do
     allow(Effects).to receive(:panoptes).and_return(panoptes)
   end
 
-  def http_login(username = Rails.application.credentials.dig(:kinesis, :username),
-                 password = Rails.application.credentials.dig(:kinesis, :password))
+  def http_login(username = ENV['KINESIS_STREAM_USERNAME'],
+                 password = ENV['KINESIS_STREAM_PASSWORD'])
     @env ||= {}
     @env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
     @env
