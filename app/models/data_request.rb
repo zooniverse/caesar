@@ -33,21 +33,9 @@ class DataRequest < ApplicationRecord
     field :status, !Status
   end
 
-  enum :status, {
-    empty: 0,
-    pending: 1,
-    processing: 2,
-    failed: 3,
-    complete: 4,
-    canceling: 11,
-    canceled: 12
-  }
+  enum :status, empty: 0, pending: 1, processing: 2, failed: 3, complete: 4, canceling: 11, canceled: 12
 
-  enum :requested_data, {
-    extracts: 0,
-    subject_reductions: 1,
-    user_reductions: 2
-  }
+  enum :requested_data, extracts: 0, subject_reductions: 1, user_reductions: 2
 
   validates :status, presence: true
   validates :requested_data, presence: true

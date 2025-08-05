@@ -14,7 +14,7 @@ class Project < ApplicationRecord
   has_many :user_actions
   has_many :data_requests, as: :exportable
 
-  enum :status, { halted: 0, active: 1 }
+  enum :status, halted: 0, active: 1
 
   attr_accessor :rerun
 

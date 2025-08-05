@@ -7,10 +7,7 @@ class SubjectRule < ApplicationRecord
 
   validate :valid_condition?
 
-  enum :topic, {
-    evaluate_by_subject: 0,
-    evaluate_by_user: 1
-  }
+  enum :topic, evaluate_by_subject: 0, evaluate_by_user: 1
 
   def condition
     Conditions::FromConfig.build(self[:condition]) unless self[:condition].blank?
