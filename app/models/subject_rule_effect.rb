@@ -1,7 +1,7 @@
 class SubjectRuleEffect < ApplicationRecord
   belongs_to :subject_rule
 
-  enum action: %i[retire_subject add_subject_to_set add_subject_to_collection external external_with_basic_auth]
+  enum :action, %i[retire_subject add_subject_to_set add_subject_to_collection external external_with_basic_auth]
 
   validates :action, presence: true, inclusion: {in: SubjectRuleEffect.actions.keys}
   validate :valid_effect?

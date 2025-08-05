@@ -1,7 +1,7 @@
 class UserRuleEffect < ApplicationRecord
   belongs_to :user_rule
 
-  enum action: [:promote_user]
+  enum :action, [:promote_user]
 
   validates :action, presence: true, inclusion: {in: UserRuleEffect.actions.keys}
   validate :valid_effect?

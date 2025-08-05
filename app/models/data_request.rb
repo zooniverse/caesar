@@ -33,7 +33,7 @@ class DataRequest < ApplicationRecord
     field :status, !Status
   end
 
-  enum status: {
+  enum :status, {
     empty: 0,
     pending: 1,
     processing: 2,
@@ -43,7 +43,7 @@ class DataRequest < ApplicationRecord
     canceled: 12
   }
 
-  enum requested_data: {
+  enum :requested_data, {
     extracts: 0,
     subject_reductions: 1,
     user_reductions: 2

@@ -3,12 +3,12 @@ class Reducer < ApplicationRecord
   include BelongsToReducibleCached
   class UnknownTypeError < StandardError; end
 
-  enum topic: {
+  enum :topic, {
     reduce_by_subject: 0,
     reduce_by_user: 1
   }
 
-  enum reduction_mode: {
+  enum :reduction_mode, {
     default_reduction: 0,
     running_reduction: 1
   }

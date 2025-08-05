@@ -20,7 +20,7 @@ class UserAction < ApplicationRecord
     field :completedAt, Types::TimeType, property: :completed_at
   end
 
-  enum status: [:pending, :completed, :failed]
+  enum :status, [:pending, :completed, :failed]
   belongs_to :workflow, counter_cache: true
 
   def perform
