@@ -20,7 +20,7 @@ class SubjectAction < ApplicationRecord
     field :completedAt, Types::TimeType, property: :completed_at
   end
 
-  enum status: [:pending, :completed, :failed]
+  enum :status, %i[pending completed failed]
 
   belongs_to :workflow, counter_cache: true
   belongs_to :subject

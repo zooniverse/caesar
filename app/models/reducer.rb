@@ -3,15 +3,9 @@ class Reducer < ApplicationRecord
   include BelongsToReducibleCached
   class UnknownTypeError < StandardError; end
 
-  enum topic: {
-    reduce_by_subject: 0,
-    reduce_by_user: 1
-  }
+  enum :topic, reduce_by_subject: 0, reduce_by_user: 1
 
-  enum reduction_mode: {
-    default_reduction: 0,
-    running_reduction: 1
-  }
+  enum :reduction_mode, default_reduction: 0, running_reduction: 1
 
   def self.of_type(type)
     case type.to_s
