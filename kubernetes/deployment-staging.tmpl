@@ -183,7 +183,7 @@ spec:
               exec:
                 command: ["/bin/bash", "-c", "cp -R /app/public/* /static-assets"]
         - name: caesar-staging-nginx
-          image: ghcr.io/zooniverse/nginx
+          image: ghcr.io/zooniverse/docker-nginx
           resources:
             requests:
               memory: "25Mi"
