@@ -46,7 +46,7 @@ gem 'rest-client', '> 2.0'
 gem 'jsonpath'
 gem 'simple_form'
 gem 'pundit', "~> 2.3.0"
-gem 'graphql', "1.12.25"
+gem 'graphql'
 gem 'graphiql-rails'
 gem 'stoplight'
 gem 'ranked-model'
