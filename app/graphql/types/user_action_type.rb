@@ -1,6 +1,6 @@
 module Types
   class UserActionType < GraphQL::Schema::Object
-    graphql_name "UserAction"
+    graphql_name 'UserAction'
 
     field :id, ID, null: false
 

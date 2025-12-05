@@ -1,6 +1,6 @@
 module Types
   class SubjectReductionType < GraphQL::Schema::Object
-    graphql_name "SubjectReduction"
+    graphql_name 'SubjectReduction'
 
     field :projectId, ID, null: true, method: :project_id
     field :workflowId, ID, null: false, method: :workflow_id

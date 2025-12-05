@@ -1,6 +1,6 @@
 module Types
   class DataRequestType < GraphQL::Schema::Object
-    graphql_name "DataRequest"
+    graphql_name 'DataRequest'
 
     field :id, ID, null: false
     field :subgroup, String, null: true

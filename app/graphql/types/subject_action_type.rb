@@ -1,6 +1,6 @@
 module Types
   class SubjectActionType < GraphQL::Schema::Object
-    graphql_name "SubjectAction"
+    graphql_name 'SubjectAction'
 
     field :id, ID, null: false
 

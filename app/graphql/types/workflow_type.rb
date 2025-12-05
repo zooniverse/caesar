@@ -1,6 +1,6 @@
 module Types
   class WorkflowType < GraphQL::Schema::Object
-    graphql_name "Workflow"
+    graphql_name 'Workflow'
 
     field :id, ID, null: false
     field :createdAt, Types::TimeType, null: false, method: :created_at

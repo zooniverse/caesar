@@ -1,6 +1,6 @@
 module Types
   class ExtractType < GraphQL::Schema::Object
-    graphql_name "Extract"
+    graphql_name 'Extract'
 
     field :classificationId, String, null: true, method: :classification_id
     field :classificationAt, Types::TimeType, null: true, method: :classification_at

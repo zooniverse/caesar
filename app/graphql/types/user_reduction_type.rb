@@ -1,6 +1,6 @@
 module Types
   class UserReductionType < GraphQL::Schema::Object
-    graphql_name "UserReduction"
+    graphql_name 'UserReduction'
 
     field :projectId, ID, null: true, method: :project_id
     field :workflowId, ID, null: false, method: :workflow_id

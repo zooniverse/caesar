@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# Root for GraphQL mutations.
 class MutationRoot < GraphQL::Schema::Object
-  graphql_name "MutationRoot"
+  graphql_name 'MutationRoot'
 
   field :create_data_request, Types::DataRequestType, null: true do
     description <<-END.strip_heredoc
@@ -16,17 +19,15 @@ class MutationRoot < GraphQL::Schema::Object
   end
 
   def create_data_request(exportable_id:, exportable_type:, requested_data:, subgroup: nil, user_id: nil)
-    CreatesDataRequests.call(
-      object,
-      {
-        exportable_id: exportable_id,
-        exportable_type: exportable_type,
-        requested_data: requested_data,
-        subgroup: subgroup,
-        user_id: user_id
-      }.with_indifferent_access,
-      context
-    )
+    args = {
+      exportable_id: exportable_id,
+      exportable_type: exportable_type,
+      requested_data: requested_data,
+      subgroup: subgroup,
+      user_id: user_id
+    }.with_indifferent_access
+
+    CreatesDataRequests.call(object, args, context)
   end
 
   field :upsert_extract, Types::ExtractType, null: true do
@@ -46,14 +47,13 @@ class MutationRoot < GraphQL::Schema::Object
     workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
     subject = Subject.find(subject_id)
     extractor = workflow.extractors[extractor_key]
-    extract = Extract.find_or_initialize_by(
+
+    Extract.find_or_initialize_by(
       workflow_id: workflow.id,
       extractor_id: extractor.id,
       classification_id: classification_id,
       subject_id: subject.id
-    )
-    extract.update!(data: data)
-    extract
+    ).tap { |extract| extract.update!(data: data) }
   end
 
   field :upsert_reduction, Types::SubjectReductionType, null: true do
@@ -72,13 +72,12 @@ class MutationRoot < GraphQL::Schema::Object
     workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
     subject = Subject.find(subject_id)
     reducer = workflow.reducers[reducer_key]
-    reduction = SubjectReduction.find_or_initialize_by(
+
+    SubjectReduction.find_or_initialize_by(
       workflow_id: workflow.id,
       reducer_id: reducer.id,
       subject_id: subject.id
-    )
-    reduction.update!(data: data)
-    reduction
+    ).tap { |reduction| reduction.update!(data: data) }
   end
 
   field :extract_subject, Boolean, null: true do
@@ -100,6 +99,10 @@ class MutationRoot < GraphQL::Schema::Object
     workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
     subject = Subject.find(subject_id)
 
-    !!FetchClassificationsWorker.perform_async(workflow.id, subject.id, FetchClassificationsWorker.fetch_for_subject)
+    FetchClassificationsWorker.perform_async(
+      workflow.id,
+      subject.id,
+      FetchClassificationsWorker.fetch_for_subject
+    ).present?
   end
 end
