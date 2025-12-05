@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Enum for the lifecycle of a data request.
   class DataRequestStatusEnum < GraphQL::Schema::Enum
     graphql_name 'Status'
     description 'What is the status of this request'

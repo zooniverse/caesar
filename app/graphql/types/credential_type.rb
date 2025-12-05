@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Current user's credential information.
   class CredentialType < GraphQL::Schema::Object
     graphql_name 'Credential'
 

@@ -16,9 +16,10 @@ class QueryRoot < GraphQL::Schema::Object
   end
 
   def workflow(id:)
-    Workflow.accessible_by(context[:credential])
-             .or(Workflow.where(public_extracts: true))
-             .or(Workflow.where(public_reductions: true))
-             .find(id)
+    Workflow
+      .accessible_by(context[:credential])
+      .or(Workflow.where(public_extracts: true))
+      .or(Workflow.where(public_reductions: true))
+      .find(id)
   end
 end

@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Extract GraphQL type.
   class ExtractType < GraphQL::Schema::Object
     graphql_name 'Extract'
 

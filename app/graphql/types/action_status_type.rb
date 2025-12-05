@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Enum describing the lifecycle of an action.
   class ActionStatusType < GraphQL::Schema::Enum
     graphql_name 'ActionStatus'
     description 'Status of a pending or performed action'

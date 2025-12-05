@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Data export request GraphQL type.
   class DataRequestType < GraphQL::Schema::Object
     graphql_name 'DataRequest'
 
