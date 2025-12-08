@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Subject action GraphQL type.
   class SubjectActionType < GraphQL::Schema::Object
     graphql_name 'SubjectAction'
 

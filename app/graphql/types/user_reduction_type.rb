@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # User reduction GraphQL type.
   class UserReductionType < GraphQL::Schema::Object
     graphql_name 'UserReduction'
 

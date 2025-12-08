@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # User action GraphQL type.
   class UserActionType < GraphQL::Schema::Object
     graphql_name 'UserAction'
 

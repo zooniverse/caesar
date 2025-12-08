@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Types
+  # Subject reduction GraphQL type.
   class SubjectReductionType < GraphQL::Schema::Object
     graphql_name 'SubjectReduction'
 
