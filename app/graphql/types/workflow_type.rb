@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class WorkflowType < GraphQL::Schema::Object
     graphql_name 'Workflow'
@@ -76,7 +78,8 @@ module Types
 
     def data_requests
       scope = Pundit.policy_scope!(context[:credential], DataRequest)
-      scope.where(workflow_id: object.id)
+      # Data requests are polymorphic on exportable (Workflow/Project), so filter on the exportable id/type.
+      scope.where(exportable_id: object.id, exportable_type: 'Workflow')
     end
   end
 end
