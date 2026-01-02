@@ -1,7 +1,16 @@
-Types::TimeType = GraphQL::ScalarType.define do
-  name "Time"
-  description "Time since epoch in seconds (aka UNIX timestamp)."
+# frozen_string_literal: true
 
-  coerce_input ->(value, ctx) { Time.at(Float(value)) }
-  coerce_result ->(value, ctx) { value.to_f }
+module Types
+  # Scalar representing UNIX timestamps.
+  class TimeType < GraphQL::Schema::Scalar
+    description 'Time since epoch in seconds (aka UNIX timestamp).'
+
+    def self.coerce_input(value, _ctx)
+      Time.at(Float(value))
+    end
+
+    def self.coerce_result(value, _ctx)
+      value.to_f
+    end
+  end
 end

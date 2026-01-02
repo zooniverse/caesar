@@ -1,25 +1,4 @@
 class SubjectAction < ApplicationRecord
-  Type = GraphQL::ObjectType.define do
-    name "SubjectAction"
-
-    field :id, !types.ID
-
-    field :classificationId, types.String, property: :classification_id
-    field :classificationAt, Types::TimeType, property: :classification_at
-
-    field :workflowId, !types.ID, property: :workflow_id
-    field :subjectId, !types.ID, property: :subject_id
-    field :effectType, !types.String, property: :effect_type
-    field :status, !Types::ActionStatusType
-
-    field :config, Types::JsonType
-
-    field :createdAt, !Types::TimeType, property: :created_at
-    field :updatedAt, !Types::TimeType, property: :updated_at
-    field :attemptedAt, Types::TimeType, property: :attempted_at
-    field :completedAt, Types::TimeType, property: :completed_at
-  end
-
   enum :status, %i[pending completed failed]
 
   belongs_to :workflow, counter_cache: true
