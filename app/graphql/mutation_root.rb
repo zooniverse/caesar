@@ -1,71 +1,86 @@
-MutationRoot = GraphQL::ObjectType.define do
-  name "MutationRoot"
+# frozen_string_literal: true
 
-  field :createDataRequest, DataRequest::Type do
+# Root for GraphQL mutations.
+class MutationRoot < GraphQL::Schema::Object
+  graphql_name 'MutationRoot'
+
+  field :create_data_request, Types::DataRequestType, null: true do
     description <<-END.strip_heredoc
       Creates a new DataRequest with the specified filters. Poll for new state and
       when marked COMPLETE, the url property will have a link to the downloadable
       export file.
     END
 
-    argument :exportableId, !types.ID
-    argument :exportableType, !types.ID
-    argument :requestedData, DataRequest::RequestedData
-    argument :subgroup, types.String
-    argument :userId, types.Int
-
-    resolve CreatesDataRequests.graphql
+    argument :exportable_id, ID, required: true
+    argument :exportable_type, ID, required: true
+    argument :requested_data, Types::RequestedDataEnum, required: true
+    argument :subgroup, String, required: false
+    argument :user_id, Integer, required: false
   end
 
-  field :upsertExtract, Extract::Type do
+  def create_data_request(exportable_id:, exportable_type:, requested_data:, subgroup: nil, user_id: nil)
+    args = {
+      exportable_id: exportable_id,
+      exportable_type: exportable_type,
+      requested_data: requested_data,
+      subgroup: subgroup,
+      user_id: user_id
+    }.with_indifferent_access
+
+    CreatesDataRequests.call(object, args, context)
+  end
+
+  field :upsert_extract, Types::ExtractType, null: true do
     description <<-END.strip_heredoc
       Creates/updates the data for an extract. Triggers evaluation of reductions and then
       rules afterwards (asynchronously).
     END
 
-    argument :workflowId, !types.ID
-    argument :subjectId, !types.ID
-    argument :classificationId, !types.ID
-    argument :extractorKey, !types.String
-    argument :data, Types::JsonType
-
-    resolve ->(obj, args, ctx) {
-      workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
-      subject   = Subject.find(args[:subjectId])
-      extractor = workflow.extractors[args[:extractorKey]]
-      extract   = Extract.find_or_initialize_by(workflow_id: workflow.id,
-                                                extractor_id: extractor.id,
-                                                classificationId: args[:classificationId],
-                                                subject_id: subject.id)
-      extract.update! data: args[:data]
-      extract
-    }
+    argument :workflow_id, ID, required: true
+    argument :subject_id, ID, required: true
+    argument :classification_id, ID, required: true
+    argument :extractor_key, String, required: true
+    argument :data, Types::JsonType, required: false
   end
 
-  field :upsertReduction, SubjectReduction::Type do
+  def upsert_extract(workflow_id:, subject_id:, classification_id:, extractor_key:, data: nil)
+    workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
+    subject = Subject.find(subject_id)
+    extractor = workflow.extractors[extractor_key]
+
+    Extract.find_or_initialize_by(
+      workflow_id: workflow.id,
+      extractor_id: extractor.id,
+      classification_id: classification_id,
+      subject_id: subject.id
+    ).tap { |extract| extract.update!(data: data) }
+  end
+
+  field :upsert_reduction, Types::SubjectReductionType, null: true do
     description <<-END.strip_heredoc
       Creates/updates the data for a reduction. Triggers evaluation of the workflow rules
       afterwards (asynchronously).
     END
 
-    argument :workflowId, !types.ID
-    argument :subjectId, !types.ID
-    argument :reducerKey, !types.String
-    argument :data, Types::JsonType
-
-    resolve ->(obj, args, ctx) {
-      workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
-      subject   = Subject.find(args[:subjectId])
-      reducer   = workflow.reducers[args[:reducerKey]]
-      reduction = SubjectReduction.find_or_initialize_by(workflow_id: workflow.id,
-                                                  reducer_id: reducer.id,
-                                                  subject_id: subject.id)
-      reduction.update! data: args[:data]
-      reduction
-    }
+    argument :workflow_id, ID, required: true
+    argument :subject_id, ID, required: true
+    argument :reducer_key, String, required: true
+    argument :data, Types::JsonType, required: false
   end
 
-  field :extractSubject, types.Boolean do
+  def upsert_reduction(workflow_id:, subject_id:, reducer_key:, data: nil)
+    workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
+    subject = Subject.find(subject_id)
+    reducer = workflow.reducers[reducer_key]
+
+    SubjectReduction.find_or_initialize_by(
+      workflow_id: workflow.id,
+      reducer_id: reducer.id,
+      subject_id: subject.id
+    ).tap { |reduction| reduction.update!(data: data) }
+  end
+
+  field :extract_subject, Boolean, null: true do
     description <<-END.strip_heredoc
       Forces a re-evaluation of extracts (and subsequently reducers and rules) for a subject.
       This works by fetching a complete list of classifications for the specified subject,
@@ -76,14 +91,18 @@ MutationRoot = GraphQL::ObjectType.define do
       was enqueued, typically this happens when one was already pending.
     END
 
-    argument :workflowId, !types.ID
-    argument :subjectId, !types.ID
+    argument :workflow_id, ID, required: true
+    argument :subject_id, ID, required: true
+  end
 
-    resolve ->(obj, args, ctx) {
-      workflow  = Workflow.accessible_by(ctx[:credential]).find(args[:workflowId])
-      subject   = Subject.find(args[:subjectId])
+  def extract_subject(workflow_id:, subject_id:)
+    workflow = Workflow.accessible_by(context[:credential]).find(workflow_id)
+    subject = Subject.find(subject_id)
 
-      !!FetchClassificationsWorker.perform_async(workflow.id, subject.id, FetchClassificationsWorker.fetch_for_subject)
-    }
+    FetchClassificationsWorker.perform_async(
+      workflow.id,
+      subject.id,
+      FetchClassificationsWorker.fetch_for_subject
+    ).present?
   end
 end

@@ -1,23 +1,25 @@
-QueryRoot = GraphQL::ObjectType.define do
-  name "QueryRoot"
+# frozen_string_literal: true
 
-  field :me do
-    type Credential::Type
+# Root for GraphQL queries.
+class QueryRoot < GraphQL::Schema::Object
+  graphql_name 'QueryRoot'
 
-    resolve ->(obj, args, ctx) {
-      ctx[:credential]
-    }
+  field :me, Types::CredentialType, null: true
+
+  def me
+    context[:credential]
   end
 
-  field :workflow do
-    type Workflow::Type
-    argument :id, !types.ID
-    description "Find a Workflow by ID"
-    resolve ->(obj, args, ctx) {
-      Workflow.accessible_by(ctx[:credential])
-        .or(Workflow.where(public_extracts: true))
-        .or(Workflow.where(public_reductions: true))
-        .find(args["id"])
-    }
+  field :workflow, Types::WorkflowType, null: true do
+    argument :id, ID, required: true
+    description 'Find a Workflow by ID'
+  end
+
+  def workflow(id:)
+    Workflow
+      .accessible_by(context[:credential])
+      .or(Workflow.where(public_extracts: true))
+      .or(Workflow.where(public_reductions: true))
+      .find(id)
   end
 end

@@ -493,7 +493,7 @@ DEPENDENCIES
   factory_bot_rails
   ffi (< 1.17.0)
   graphiql-rails
-  graphql (= 1.12.25)
+  graphql
   httparty
   jquery-rails
   jsonpath
