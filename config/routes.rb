@@ -5,12 +5,11 @@ require 'sidekiq_unique_jobs/web'
 
 require 'panoptes_admin_constraint'
 
-
 Sidekiq::Web.use Rack::Session::Cookie,
-  key: "_panoptes_sidekiq_session",
-  secret: Rails.application.secret_key_base,
-  same_site: :lax,
-  secure: Rails.env.production?
+                 key: '_panoptes_sidekiq_session',
+                 secret: Rails.application.secret_key_base,
+                 same_site: :lax,
+                 secure: Rails.env.production?
 
 Rails.application.routes.draw do
   post "/graphql", to: "graphql#execute"
