@@ -69,23 +69,23 @@ describe ReduceWorker, type: :worker do
         create :placeholder_reducer, reducible: workflow_subject_only, topic: 0, reduction_mode: 0
 
         expect do
-          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1, nil, [5])
+          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1.id, nil, [5])
         end.to change(ReduceWorker.jobs, :size).by(1)
 
         expect do
-          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s2, nil, [5])
+          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s2.id, nil, [5])
         end.to change(ReduceWorker.jobs, :size).by(1)
 
         expect do
-          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1, nil, [5])
+          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1.id, nil, [5])
         end.not_to change(ReduceWorker.jobs, :size)
 
         expect do
-          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1, nil, [5, 6])
+          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1.id, nil, [5, 6])
         end.not_to change(ReduceWorker.jobs, :size)
 
         expect do
-          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1, 7, [5])
+          ReduceWorker.perform_async(workflow_subject_only.id, 'Workflow', s1.id, 7, [5])
         end.not_to change(ReduceWorker.jobs, :size)
       end
 
