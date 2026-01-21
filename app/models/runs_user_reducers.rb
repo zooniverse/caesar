@@ -26,7 +26,7 @@ class RunsUserReducers
 
     new_reductions = reducers.map do |reducer|
       reducer.process(
-        extracts, 
+        extracts,
         reduction_fetcher,
         relevant_reductions(extracts, reducer)
       )
@@ -54,7 +54,7 @@ class RunsUserReducers
       end
     end
   end
-  
+
   def relevant_reductions(extracts, reducer)
     subject_ids = extracts.map(&:subject_id)
     SubjectReduction.where(subject_id: subject_ids, reducible: reducible, reducer_key: reducer.subject_reducer_keys)
@@ -74,9 +74,9 @@ class RunsUserReducers
   def check_rules(worker, user_id)
     if reducible.custom_queue_name.present?
       worker.set(queue: reducible.custom_queue_name)
-            .perform_async(reducible.id, reducible.class, user_id)
+            .perform_async(reducible.id, reducible.class.name, user_id)
     else
-      worker.perform_async(reducible.id, reducible.class, user_id)
+      worker.perform_async(reducible.id, reducible.class.name, user_id)
     end
   end
 end
