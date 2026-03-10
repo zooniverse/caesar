@@ -17,7 +17,7 @@ gem 'pg', '~> 1.3'
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 6.0'
+gem 'dartsass-sprockets'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'jquery-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes
