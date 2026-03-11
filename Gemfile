@@ -30,9 +30,9 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'sidekiq'
+gem 'sidekiq', '~> 6'
 gem 'sidekiq-congestion', '~> 0.1.0'
-gem 'sidekiq-unique-jobs', '~> 8.0.2'
+gem 'sidekiq-unique-jobs', '~> 7.1'
 gem 'sidekiq-logstash'
 gem 'panoptes-client', '~> 1.2'
 gem 'lograge'
