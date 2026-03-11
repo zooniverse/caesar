@@ -108,6 +108,9 @@ GEM
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
+    brpoplpush-redis_script (0.1.3)
+      concurrent-ruby (~> 1.0, >= 1.0.5)
+      redis (>= 1.0, < 6)
     builder (3.3.0)
     byebug (11.1.3)
     coderay (1.1.3)
@@ -357,8 +360,6 @@ GEM
       psych (>= 4.0.0)
       tsort
     redis (4.5.1)
-    redis-client (0.26.3)
-      connection_pool
     redlock (1.3.2)
       redis (>= 3.0.0, < 6.0)
     reline (0.6.3)
@@ -411,22 +412,22 @@ GEM
     securerandom (0.4.1)
     sentry-raven (3.1.2)
       faraday (>= 1.0)
-    sidekiq (7.3.10)
-      base64
-      connection_pool (>= 2.3.0, < 3)
-      logger
-      rack (>= 2.2.4, < 3.3)
-      redis-client (>= 0.23.0, < 1)
+    sidekiq (6.5.12)
+      connection_pool (>= 2.2.5, < 3)
+      rack (~> 2.0)
+      redis (>= 4.5.0, < 5)
     sidekiq-congestion (0.1.1)
       congestion (~> 0.1)
       sidekiq (>= 3.0)
-    sidekiq-logstash (3.2.1)
+    sidekiq-logstash (2.0.3)
       logstash-event (~> 1.2)
-      sidekiq (~> 7.0)
-    sidekiq-unique-jobs (8.0.13)
+      sidekiq (>= 6.0, < 7)
+    sidekiq-unique-jobs (7.1.33)
+      brpoplpush-redis_script (> 0.1.1, <= 2.0.0)
       concurrent-ruby (~> 1.0, >= 1.0.5)
-      sidekiq (>= 7.0.0, < 9.0.0)
-      thor (>= 1.0, < 3.0)
+      redis (< 5.0)
+      sidekiq (>= 5.0, < 7.0)
+      thor (>= 0.20, < 3.0)
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
@@ -523,10 +524,10 @@ DEPENDENCIES
   rspec-rails
   rubocop
   sentry-raven
-  sidekiq
+  sidekiq (~> 6)
   sidekiq-congestion (~> 0.1.0)
   sidekiq-logstash
-  sidekiq-unique-jobs (~> 8.0.2)
+  sidekiq-unique-jobs (~> 7.1)
   simple_form
   spring (~> 3.0.0)
   spring-commands-rspec
