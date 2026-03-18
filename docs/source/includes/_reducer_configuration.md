@@ -30,16 +30,20 @@ This is a confusing setting because extracts are already obviously grouped accor
 
 This tab allows you to filter what classifications are combined together. Caesar will search and retrieve all classifications based on the `topic` key defined above. In the `filters` tab, you can further refine which classifications in this subset you want to use (default: all), and which extracts to use for that classification. These keys are described below:
 
-#### From/To
+**From/To**
+
 These keys allow you to subset the list of extracts to use, where from and to define the (zero-based) start and end index of the list of classifications. By default, Caesar will use all the retrieved extracts. For example, if you want everything from the 5th index to the end, set `start=5` and `end=-1`. 
 
-#### Extractor Keys
+**Extractor Keys**
+
 This entry allows you to subset which extracts (defined in the extractor configuration) should be used for this reducer. Sometimes multiple extractors will be defined but a particular reducer only cares about or can only work with a particular type of extract. In this case, you can use the extractor keys property to restrict the extracts that are sent to this reducer. The format of this value is either a string (for a single extractor key) or an array of strings (for multiple extractors) of the extractor keys defined in the extractor configuration in the format `["extractor-key-1", "extractor-key-2", "extractor-key-3"]`. The default, a blank string or a nil, sends all extracts.
 
-#### Repeated classifications
+**Repeated classifications**
+
 This prescribes what Caesar should in case there are multiple classifications by the same user ID. `keep_first` is the default value, and Caesar will remove everything but the first time the user saw the subject. `keep_last` chooses the latest classification. `keep_all` will not delete any classifications. We recommend ‘keep_first’ unless you feel strongly that you’d prefer another of those options. It’s a rare event, but good to have a rule in place for it. 
 
-#### Training behavior
+**Training behavior**
+
 This configures what Caesar should do about training data (those with metadata keys `#training_subjects` = `true`). The default behaviour is to `ignore_training` where Caesar does not actively filter reduction inputs based on training metadata. This can be configured to work on `training_only`, where the reductions is only run on classifications which contain training subjects or the converse, where all training data is removed before aggregations (`experiment_only`). See [training subject metadata](#code-training_subject-code) for more info on training subjects. 
 
 ## Reduction Mode
