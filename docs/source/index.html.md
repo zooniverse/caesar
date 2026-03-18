@@ -25,6 +25,10 @@ search: true
 
 Caesar is Zooniverse’s decision engine and real-time data processing pipeline. Caesar monitors volunteer classifications as they are submitted (i.e., a Lambda script monitors the Kinesis data stream and forwards to Caesar's HTTP API; see [kinesis-to-http](https://github.com/zooniverse/caesar/tree/master/kinesis-to-http)), then extracts, reduces, and acts on these data in real time.
 
+Project teams primarily interact with and configure Caesar using the applications Web UI (https://caesar.zooniverse.org/). The [Panoptes Python Client](https://github.com/zooniverse/panoptes-python-client) can also be used for programatic interactions with the Caesar API; see examples in the [Python Client docs](https://panoptes-python-client.readthedocs.io/en/latest/user_guide.html#tutorial-adding-a-workflow-to-caesar).
+
+Caesar interacts with and is extended by the Zooniverse's [Aggregations](https://aggregation-caesar.zooniverse.org/docs) application, specifically through the use of online extractors and reducers made available through the Zooniverse-hosted Aggregations app that are integrated using Caesar's external extractor and reducer functionality.
+
 ## Data Flow
 
 - **Extract:** For each classification, extractors generate extracts, which pull essential information out of the full classification record. 
@@ -114,7 +118,7 @@ This will take you to a configuration window for that reducer:
 
 ![reducer-config](images/reducer-page.png)
 
-All reducers share the same set of configuration parameters, but given their individual flexibility it can be tricky to make decisions. See [detailed documentation](#reducer-parameters) of all parameters below.
+All reducers share the same set of configuration parameters, but given their individual flexibility it can be tricky to make decisions. See [detailed documentation](#reducer-parameters) of all parameters below. Overall, default values are OK in most cases.
 
 ## Configure Rules & Effects
 
