@@ -42,27 +42,57 @@ This prescribes what Caesar should in case there are multiple classifications by
 #### Training behavior
 This configures what Caesar should do about training data (those with metadata keys `#training_subjects` = `true`). The default behaviour is to `ignore_training` where Caesar does not actively filter reduction inputs based on training metadata. This can be configured to work on `training_only`, where the reductions is only run on classifications which contain training subjects or the converse, where all training data is removed before aggregations (`experiment_only`). See [training subject metadata](#code-training_subject-code) for more info on training subjects. 
 
-### Reduction Mode
+## Reduction Mode
 
 This is probably the least understood part of configuring reducers. Briefly, the system offers two very different modes of performing reduction. These are:
 
 * `default_reduction`
 * `running_reduction`
 
-#### Default Reduction
+### Default Reduction
 
 In "default reduction" mode, each time a new extract is created, we fetch all of the other extracts for that subject (or user) and send them all to the reducer for processing. In cases where extracts are coming in very quickly, this can create some extra work fetching extracts, but is guaranteed to be free of race conditions because each new reduction will get a chance to reduce across all relevant extracts. This mode is much simpler and is preferred in almost every case. However, in the case where a given subject (or user) is likely to have thousands of associated extracts, it is recommended to use "running reduction" mode.
 
-#### Running Reduction
+### Running Reduction
 
 "Running reduction" mode was created to support the Notes for Nature use case, where we are reducing across a user's entire classification history within a given project, which could run to tens of thousands of items for power users. In this use case, fetching all 10,000 extracts each time a new extract is created is impractical and the operations we want to perform are relatively simple to perform using only the new extracts created in a given extraction pass.
 
 When a reducer is configured for running reduction, each time a new classification produces new extracts, the reducer is invoked with only those new extracts. Any additional information it would need in order to correctly compute the reduction should be present in a field *on* the reduction, called a `store`. With the new extracts and the store, the reducer will compute an updated value and update its store appropriately. However, this can't be done in a multithreaded way or else the object might be available while in an inconsistent state (example: its store has been updated but its value has not). Accordingly, we use optimistic locking semantics, so that we prefetch all possible relevant extracts and reductions before reducing and throw a sync error if the object versions don't match when we try to save. Further, we need to avoid updating the reduction multiple times with the same extract, which is not a concern with running reduction. Therefore, this mode populates a relation tracking which extracts have been incorporated into which reductions. Between this and the synchronization retries, there is considerable added complexity and overhead compared to default reduction mode. It's not recommended to use running reduction mode with external reducers, because the added complexity of writing reducers that reduce from a `store`.
 
-#### Reduction Mode Example
-See [Reduction Mode Example](Reduction-Mode-Example)
+### Reduction Mode Example
 
-## Reducer types
+This example is to clarify the difference between how default reduction and running reduction work. Imagine the extract from each classification produces a number from 0 to 10 and the reducer computes the average of these numbers.
+
+The same extracts are processed by each reducer in the same order and we illustrate the changing values in the system as they arrive. For clarity, the values of extracts are indicated in bold.
+
+**Default Reduction**
+
+| Extract ID | Extract Value | Extracts to reducer | Store Value In | Calculation | Store Value | Items in Association |
+|------------|---------------|---------------------|----------------|-------------|-------------|----------------------|
+| 1 | **5** | 1 | nil | **5**/1 | nil | 0 |
+| 2 | **3** | 1, 2 | nil | (**5**+**3**)/2 | nil | 0 |
+| 2 | **3** | 1, 2 | nil | (**5**+**3**)/2 | nil | 0 |
+| 3 | **4** | 1, 2, 3 | nil | (**5**+**3**+**4**)/3 | nil | 0 |
+
+
+**Running Reduction**
+
+| Extract ID | Extract Value | Extracts to reducer | Store Value In | Calculation | Store Value | Items in Association |
+|------------|---------------|---------------------|----------------|-------------|-------------|----------------------|
+| 1 | **5** | 1 | nil | (0*0+**5**)/(0+1) | 1 | 1 |
+| 2 | **3** | 2 | 1 | (5*1+**3**)/(1+1) | 2 | 2 |
+| 2 | **3** | nil | N/A | N/A | 2 | 2 |
+| 3 | **4** | 3 | 2 | (4*2+**4**)/(2+1) | 3 | 3 |
+
+**Points of Note**
+
+Note that in default reduction mode, re-reduction is always triggered, regardless of whether an extract is being processed twice. Also notice that each computation in default reduction consumes all of the extracts. We calculate an average by summing together the values of all of the extracts and then dividing by the number of extracts.
+
+In running reduction, on the other hand, the store keeps a running count of how many items the reducer has seen. This store, with the previous value of the reduction, can be used to compute the new average using only the new value by using the formula `((old average * previous count) + new value)/(old count + 1)` and the store can be updated with the new count `(old count + 1)`.
+
+When using running reducers for performance reasons, please keep in mind that the performance benefits of running reduction are only realized if *every* reducer for that reducible is executed in running mode. The primary advantage of running reduction is that it eliminates the need to load large numbers of extracts for a given subject or user.
+
+## Reducer Types
 
 Caesar features a set of standard reducers that are useful for most projects. These are described below:
 

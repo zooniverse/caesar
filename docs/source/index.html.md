@@ -12,7 +12,6 @@ includes:
   - extracts
   - external_extracts
   - reducer_configuration
-  - reduction_mode
   - subject_metadata
   - rules
   - how_to_swap
