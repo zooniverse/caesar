@@ -1,8 +1,8 @@
 # Rules
 
-A workflow can configure one or many rules. Each rule has a condition and one or more effects that happen when that condition evaluates to true. Conditions can be nested to achieve complicated if statements.
+A workflow can configure one or many rules. Each rule has a condition; when that condition evaluates to true, one or more effects linked to that rule are triggered. Conditions can be nested to achieve complicated logical statements.
 
-Rules may pertain to either subjects or users. Rules have an evaluation order that can be set in the database if need be, and then rules can either be all evaluated or evaluated until the first true condition is reached.
+Rules may pertain to either subjects or users. Rules have an evaluation order that can be set in the database if need be, and then rules can either be all evaluated, or evaluated until the first true condition is reached, or none evaluated.
 
 ## Conditions
 
@@ -14,41 +14,20 @@ The condition is a single operation, but some types of operations can be nested.
 * `["gte", operation, operation, ...]` - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as `a >= b >= c >= d`.
 * `["eq", operation, operation, ...]` - Performs numerical comparison. You can specify more than two arguments, and it will evaluate as `a == b == c == d`.
 * `["const", value]` - Always returns the configured value.
-* `["lookup", key]` - Look up a reduction value by the given key.
+* `["lookup", key, fallback_value]` - Look up a reduction value by the given key. In the case that the lookup fails, the `fallback_value` will be adopted.
 * `["not", operation]` - Negates the operation
 * `["and", operation, operation, ...]` - Returns true if all of the given operations evaluate to logical true
 * `["or", operation, operation, ...]` - Returns true if any of the given operations evaluates to logical true
 
-## Sample conditions
+## Condition Examples
 
-### If one or more vehicles is detected
+- If one or more vehicles is detected
 
-From the console:
-```ruby
-SubjectRule.new
-  workflow_id: 123,
-  condition: ['gte', ['lookup', 'survey-total-VHCL'], ['const', 1]],
-  row_order: 1
-```
+`["gte", ["lookup", "survey-total-VHCL", 0], ["const", 1]]`
 
-Input into UI:
-```json
-  ["gte", ["lookup", "survey-total-VHCL"], ["const", 1]]
-```
+- If the most likely identification is "HUMAN"
 
-### If the most likely identification is "HUMAN"
-
-From the console:
-```ruby
-SubjectRule.new
-  workflow_id: 123,
-  condition: ['gte', ['lookup', 'consensus.most_likely', ''], ['const', 'HUMAN']],
-  row_order: 3
-```
-Input into UI:
-```json
-  ["gte", ["lookup", "consensus.most_likely", ""], ["const", "HUMAN"]]
-```
+`["gte", ["lookup", "consensus.most_likely", ""], ["const", "HUMAN"]]`
 
 
 ## Effects
@@ -62,7 +41,7 @@ Each rule can have one or more effects associated with it. Those effects will be
 | `retire_subject` | `reason` (string)\* | [Effects::RetireSubject](https://github.com/zooniverse/caesar/blob/master/app/models/effects/retire_subject.rb)                      |
 | `add_subject_to_set` | `subject_set_id` (string)| [Effects::AddSubjectToSet](https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_set.rb) |
 | `add_subject_to_collection` | `collection_id` (string) | [Effects::AddSubjectToCollection](https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_collection.rb) |
-| `external_effect` | `url` (string)** | [Effects::ExternalEffect](https://github.com/zooniverse/caesar/blob/master/app/models/effects/add_subject_to_collection.rb)
+| `external_effect` | `url` (string)** | [Effects::ExternalEffect](https://github.com/zooniverse/caesar/blob/master/app/models/effects/external.rb)
 
 <sub>\* Panoptes API validates `reason` against a list of permitted values. Choose from `blank`, `consensus`, or `other`</sub>
 
@@ -73,30 +52,3 @@ Each rule can have one or more effects associated with it. Those effects will be
 | effect_type | `config` Parameters | Effect Code |
 | ---------- | ---------- | ------------|
 | `promote_user` | `workflow_id` (string) | [Effects::ExternalEffect](https://github.com/zooniverse/caesar/blob/master/app/models/effects/promote_user.rb)
-
-## Sample Effects
-
-### Retire a subject
-
-From the console:
-
-```ruby
-SubjectRuleEffect.new
-  rule_id: 123,
-  effect_type: 'retire_subject',
-  config: { reason: 'consensus' }
-```
-
-In the UI:
-
-These can be configured in the UI normally, there's nothing complicated like the `condition` field.
-
-### Promote a user to a new workflow
-
-From the console:
-```ruby
-UserRuleEffect.new
-  rule_id: 234,
-  effect_type: 'promote_user',
-  config: { 'workflow_id': '555' }
-```
