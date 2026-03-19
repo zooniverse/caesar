@@ -12,4 +12,4 @@ gem 'redcarpet'
 gem 'rouge', '~> 3.28.0'
 gem 'sass'
 
-gem "webrick", "~> 1.8"
+gem 'webrick', '~> 1.8'
