@@ -1,5 +1,6 @@
 # How to do SWAP
 
+The Space Warps Analysis Pipeline (SWAP; [repo](https://github.com/zooniverse/swap), [docs](https://zooniverse.github.io/swap)) is a probabilistic framework for quantifying the probability that a candidate object is a strong gravitational lens that accounts for volunteer-specific performance, as described in the Space Warps [overview publication](https://doi.org/10.1093/mnras/stv2009). 
 This document is a reference to the current state of affairs on doing SWAP on
 the Panoptes platform (by which we mean the Panoptes API, Caesar, and
 Designator).
