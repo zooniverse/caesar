@@ -9,7 +9,7 @@ on:
         default: 'routes'
 
 jobs:
-  run_staging_task:
+  run_production_task:
     name: Run Production Task
     uses: zooniverse/ci-cd/.github/workflows/run_task.yaml@main
     with:

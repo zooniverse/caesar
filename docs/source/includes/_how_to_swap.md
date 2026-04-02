@@ -1,5 +1,34 @@
 # How to do SWAP
 
+The Space Warps Analysis Pipeline (SWAP; [repo](https://github.com/zooniverse/swap), [docs](https://zooniverse.github.io/swap)) is a probabilistic framework for quantifying the probability that a candidate object is a strong gravitational lens that accounts for volunteer-specific performance, as described in the Space Warps [overview publication](https://doi.org/10.1093/mnras/stv2009). 
+This document is a reference to the current state of affairs on doing SWAP on
+the Panoptes platform (by which we mean the Panoptes API, Caesar, and
+Designator).
+
+To do SWAP, one must:
+
+1. **Track the confusion matrix of users**. We currently expect this to be done
+   by some entity outside the Panoptes platform. This could be a script that
+   runs periodically on someone's laptop, or it can be an external webservice
+   that gets classifications streamed to it in real-time by Caesar (this is what
+   Darryl is doing). We don't currently have a good place to store the confusion
+   matrix itself inside the Panoptes platform. But, if the matrix identifies an
+   expert classifier, post that into Panoptes under the `project_preferences`
+   resource (API calls explained in later section)
+
+2. **Calculate the likelyhood of subjects**. This is done in the same place that
+   also calculates the confusion matrices. The resulting likelyhood should be
+   posted into Caesar as a `reduction`.
+
+3. **Retire subjects when we know the answer**. By posting the likelyhood into Caesar,
+   we can set rules on it. For instance:
+   * `IF likelyhood < 0.1 AND classifications_count > 5 THEN retire()`
+   * `IF likelyhood > 0.9 AND classifications_count > 5 THEN retire()`
+   * `IF likelyhood > 0.1 AND likelyhood < 0.9 AND not seen_by_expert AND classifications > 10 THEN move to expert_set`
+
+4. When Caesar moves subjects into an expert-only subject set, Designator can then serve subjects from that set only to users marked as experts by the `project_preferences`. Designator is all about serving subjects from sets with specific chances, which means that we avoid the situation where experts only ever see the really hard subjects by mixing e.g. 50% hard images with 50% "general population".
+
+
 > In Panoptes, set `workflow.configuration` to something like:
 
 ```
@@ -58,30 +87,3 @@ Accept: application/json
   "seen_by_expert": false
 }
 ```
-
-This document is a reference to the current state of affairs on doing SWAP on
-the Panoptes platform (by which we mean the Panoptes API, Caesar, and
-Designator).
-
-To do SWAP, one must:
-
-1. **Track the confusion matrix of users**. We currently expect this to be done
-   by some entity outside the Panoptes platform. This could be a script that
-   runs periodically on someone's laptop, or it can be an external webservice
-   that gets classifications streamed to it in real-time by Caesar (this is what
-   Darryl is doing). We don't currently have a good place to store the confusion
-   matrix itself inside the Panoptes platform. But, if the matrix identifies an
-   expert classifier, post that into Panoptes under the `project_preferences`
-   resource (API calls explained in later section)
-
-2. **Calculate the likelyhood of subjects**. This is done in the same place that
-   also calculates the confusion matrices. The resulting likelyhood should be
-   posted into Caesar as a `reduction`.
-
-3. **Retire subjects when we know the answer**. By posting the likelyhood into Caesar,
-   we can set rules on it. For instance:
-   * `IF likelyhood < 0.1 AND classifications_count > 5 THEN retire()`
-   * `IF likelyhood > 0.9 AND classifications_count > 5 THEN retire()`
-   * `IF likelyhood > 0.1 AND likelyhood < 0.9 AND not seen_by_expert AND classifications > 10 THEN move to expert_set`
-
-4. When Caesar moves subjects into an expert-only subject set, Designator can then serve subjects from that set only to users marked as experts by the `project_preferences`. Designator is all about serving subjects from sets with specific chances, which means that we avoid the situation where experts only ever see the really hard subjects by mixing e.g. 50% hard images with 50% "general population".

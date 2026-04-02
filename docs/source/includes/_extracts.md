@@ -2,21 +2,6 @@
 
 Extractors are tools that allow Caesar to extract specific data from the full classification output. Caesar (and the aggregations-for-caesar app) feature a collection of extractors for specific tasks. 
 
-## Creating an extractor
-To create an extractor:
-
-+ From the workflow summary page, click on the ‘Extractors’ tab. Press the ‘+Create Extractor’ button. You will be prompted to choose a type of extractor. 
-
-![new-extractor](images/new-extractor.png)
-
-+ Fill out the form for the new extractor. The generic fields for all extractors are:
-  + The `key` is an alpha-numeric identifier for this extractor that is unique to this workflow. Set a short, but descriptive string for this, e.g., `galaxy-type-extract`.
-  + The `task key` is the identifier of the task in the workflow. You can get this information from the project builder page (see image below)
-![task-key](images/extract-task-key.jpg)
-  + The `if missing` entry allows you to decide what should be done if the classification data is missing. The default choice is to error out of that extract. 
-  + The `minimum workflow version` provides the choice to filter out early versions of the workflow, useful for limiting the data domain to post-development or post-launch classifications.
-  + Each extractor will also have unique fields that need to be filled out, as detailed below.
-
 ## Extractor types
 
 There are different types of extractors built into Caesar for specific tasks. The following sections shows the types of tools that each extractor supports. 
