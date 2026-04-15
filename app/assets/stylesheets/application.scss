@@ -168,3 +168,107 @@ h4.modal-title {
   padding-top: 1em !important;
   padding-bottom: 1em !important;
 }
+
+// Caesar Rule Builder (embedded from caesar-rules-ui)
+.crb-container {
+  margin-top: 10px;
+}
+
+.crb-rules {
+  border: 1px solid $zooniverse-light-teal;
+  border-radius: 4px;
+  padding: 15px;
+  background: lighten($zooniverse-light-teal, 20%);
+}
+
+.crb-rule {
+  border: 1px solid $zooniverse-mid-grey;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: $white;
+}
+
+.crb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crb-select {
+  display: inline-block;
+  width: auto;
+  max-width: 250px;
+}
+
+.crb-add-value {
+  margin-top: 8px;
+  max-width: 200px;
+}
+
+.crb-comparator {
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid lighten($zooniverse-mid-grey, 15%);
+  border-radius: 4px;
+  background: $zooniverse-light-grey;
+}
+
+.crb-conjunction {
+  margin-top: 8px;
+  margin-left: 20px;
+  padding: 10px;
+  border-left: 3px solid $zooniverse-teal;
+}
+
+.crb-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.crb-value .label {
+  min-width: 55px;
+  text-align: center;
+}
+
+.crb-input {
+  display: inline-block;
+  width: auto;
+  max-width: 200px;
+}
+
+.crb-label {
+  font-weight: bold;
+  color: $zooniverse-dark-teal;
+  margin-bottom: 6px;
+}
+
+.crb-btn {
+  display: inline-block;
+  padding: 4px 10px;
+  background: $zooniverse-teal;
+  color: $white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &:hover {
+    background: $zooniverse-dark-teal;
+  }
+}
+
+.crb-output {
+  margin-top: 12px;
+
+  pre {
+    background: lighten($zooniverse-light-grey, 5%);
+    border: 1px solid $zooniverse-mid-grey;
+    padding: 10px;
+    font-size: 12px;
+    max-height: 200px;
+    overflow: auto;
+  }
+}
