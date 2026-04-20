@@ -30,3 +30,6 @@
 # ingore rvm gemset files
 .ruby-gemset
 
+# Local docker-compose overrides (port mappings, volume mounts)
+docker-compose.override.yml
+
