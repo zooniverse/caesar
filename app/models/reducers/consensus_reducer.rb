@@ -17,11 +17,13 @@ module Reducers
         r.store = counter.to_h
         r.data = if num_votes > 0
           agreement = num_votes.to_f / counter.sum
+          total_votes = counter.sum
 
           {
             "most_likely" => most_likely,
             "num_votes" => num_votes,
-            "agreement" => agreement
+            "agreement" => agreement,
+            "total_votes" => total_votes
           }
         else
           {
