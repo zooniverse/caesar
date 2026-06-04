@@ -33,8 +33,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'sidekiq', '~> 6'
 gem 'sidekiq-congestion', '~> 0.1.0'
 gem 'sidekiq-unique-jobs', '~> 7.1'
+gem 'panoptes-client', '~> 1.3'
 gem 'sidekiq-logstash'
-gem 'panoptes-client', '~> 1.2'
 gem 'lograge'
 gem 'logstash-event'
 gem "sentry-raven"
