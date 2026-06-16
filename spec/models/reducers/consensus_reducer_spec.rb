@@ -24,13 +24,13 @@ describe Reducers::ConsensusReducer do
     it 'returns the most likely' do
       extracts = build_extracts(["ZEBRA", "ZEBRA", "ZEBRA", ["ZEBRA", "BIRD"]])
       expect(reducer.reduce_into(extracts, build(:subject_reduction)).data)
-        .to include({"most_likely" => "ZEBRA", "agreement" => 0.75, "num_votes" => 3})
+        .to include({"most_likely" => "ZEBRA", "agreement" => 0.75, "num_votes" => 3, "total_votes" => 4})
     end
 
     it 'handles multiple species' do
       extracts = build_extracts([["ZEBRA", "BIRD"], ["BIRD", "ZEBRA"]])
       expect(reducer.reduce_into(extracts, build(:subject_reduction)).data)
-        .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0, "num_votes" => 2})
+        .to include({"most_likely" => "BIRD+ZEBRA", "agreement" => 1.0, "num_votes" => 2, "total_votes" => 2})
     end
   end
 
@@ -42,11 +42,14 @@ describe Reducers::ConsensusReducer do
       result = default_reducer.reduce_into(build_extracts(["ZEBRA", "ZEBRA", "ZEBRA"]), reduction)
       expect(result.data).to include({"most_likely" => "ZEBRA"})
       expect(result.data).to include({"num_votes" => 3})
+      expect(result.data).to include({"total_votes" => 3})
 
       reduction = build :subject_reduction
       result = default_reducer.reduce_into(build_extracts(["ZEBRA", "ZEBRA"]), reduction)
       expect(result.data).to include({"most_likely" => "ZEBRA"})
       expect(result.data).to include({"num_votes" => 2})
+      expect(result.data).to include({"total_votes" => 2})
+
     end
 
     it 'works in running aggregation mode' do
@@ -56,10 +59,12 @@ describe Reducers::ConsensusReducer do
       result = running_reducer.reduce_into(build_extracts(["ZEBRA", "ZEBRA", "ZEBRA"]), reduction)
       expect(result.data).to include({"most_likely" => "RCCN"})
       expect(result.data).to include({"num_votes" => 4})
+      expect(result.data).to include({"total_votes" => 7})
 
       result = running_reducer.reduce_into(build_extracts(["ZEBRA", "ZEBRA"]), reduction)
       expect(result.data).to include({"most_likely" => "ZEBRA"})
       expect(result.data).to include({"num_votes" => 5})
+      expect(result.data).to include({"total_votes" => 9})
     end
 
     context 'empty extracts' do
@@ -67,7 +72,7 @@ describe Reducers::ConsensusReducer do
         reducer.ignore_empty_extracts = true
         extracts = build_extracts([[], [], ["1"]])
         expect(reducer.reduce_into(extracts, build(:subject_reduction)).data)
-          .to include({"most_likely" => "1", "num_votes" => 1, "agreement" => 1.0})
+          .to include({"most_likely" => "1", "num_votes" => 1, "agreement" => 1.0, "total_votes" => 1})
       end
     end
   end
