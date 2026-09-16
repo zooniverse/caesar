@@ -5,7 +5,32 @@ RSpec.describe UserRuleEffectsController, type: :controller do
   let(:rule) { create :user_rule, workflow: workflow }
 
   context 'as a permissioned user' do
-    before{ fake_session admin: false, project_ids: [workflow.project_id], logged_in: true }
+    before { fake_session admin: false, project_ids: [workflow.project_id], logged_in: true }
+
+    describe '#edit' do
+      it 'does not let a user read an effect from another project with their own workflow id' do
+        other_workflow = create :workflow, project_id: workflow.project_id + 1
+        other_rule = create :user_rule, workflow: other_workflow
+        other_effect = create :user_rule_effect, user_rule: other_rule
+
+        get :edit, params: { id: other_effect.id, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
+
+        expect(response.status).to eq(404)
+      end
+    end
+
+    describe '#update' do
+      it 'does not let a user update an effect from another project with their own workflow id' do
+        other_workflow = create :workflow, project_id: workflow.project_id + 1
+        other_rule = create :user_rule, workflow: other_workflow
+        other_effect = create :user_rule_effect, action: 'promote_user', config: { workflow_id: 'other' }, user_rule: other_rule
+
+        put :update, params: { user_rule_effect: { config: { workflow_id: 'owned' } }, id: other_effect.id, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
+
+        expect(response.status).to eq(404)
+        expect(other_effect.reload.config['workflow_id']).to eq('other')
+      end
+    end
 
     describe '#destroy' do
       it 'lets a user delete user_rule_effects if they own the workflow' do
@@ -24,6 +49,17 @@ RSpec.describe UserRuleEffectsController, type: :controller do
 
         expect(response.status).to eq(404)
         expect(UserRuleEffect.find_by_id(ure2.id)).not_to be(nil)
+      end
+
+      it 'does not let a user delete an effect from another project with their own workflow id' do
+        other_workflow = create :workflow, project_id: workflow.project_id + 1
+        other_rule = create :user_rule, workflow: other_workflow
+        other_effect = create :user_rule_effect, user_rule: other_rule
+
+        delete :destroy, params: { id: other_effect.id, workflow_id: workflow.id, user_rule_id: rule.id }, format: :json
+
+        expect(response.status).to eq(404)
+        expect(UserRuleEffect.find_by_id(other_effect.id)).not_to be(nil)
       end
     end
   end

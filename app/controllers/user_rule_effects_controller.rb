@@ -24,7 +24,8 @@ class UserRuleEffectsController < ApplicationController
 
   def edit
     authorize workflow
-    @user_rule_effect = UserRuleEffect.find(params[:id])
+    @user_rule_effect = policy_scope(UserRuleEffect).find(params[:id])
+    authorize @user_rule_effect
     respond_with workflow, user_rule, @user_rule_effect
   end
 
@@ -47,7 +48,9 @@ class UserRuleEffectsController < ApplicationController
     authorize workflow
     user_rule
 
-    @user_rule_effect = UserRuleEffect.find(params[:id]) or not_found
+    @user_rule_effect = policy_scope(UserRuleEffect).find(params[:id]) or not_found
+    authorize @user_rule_effect
+
     @user_rule_effect.update(effect_params)
     respond_to do |format|
       format.html { respond_with @user_rule_effect, location: edit_workflow_user_rule_path(workflow, user_rule) }
@@ -59,7 +62,8 @@ class UserRuleEffectsController < ApplicationController
     authorize workflow, :edit?
     user_rule
 
-    effect = UserRuleEffect.find(params[:id])
+    effect = policy_scope(UserRuleEffect).find(params[:id])
+    authorize effect
 
     effect.destroy
     respond_with effect, location: edit_workflow_user_rule_path(workflow, user_rule)
@@ -72,7 +76,7 @@ class UserRuleEffectsController < ApplicationController
   end
 
   def user_rule
-    @user_rule ||= UserRule.find(params[:user_rule_id])
+    @user_rule ||= workflow.user_rules.find(params[:user_rule_id])
   end
 
   def effect_params
@@ -80,7 +84,6 @@ class UserRuleEffectsController < ApplicationController
       :action,
       :action_type,
       config: {}
-    ).merge(user_rule_id: params[:user_rule_id])
+    ).merge(user_rule_id: user_rule.id)
   end
 end
-
