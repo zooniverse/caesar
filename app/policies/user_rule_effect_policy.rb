@@ -17,10 +17,13 @@ class UserRuleEffectPolicy < ApplicationPolicy
 
   def update?
     return true if credential.admin?
-    credential.project_ids.include?(record.workflow.project_id)
+
+    credential.project_ids.include?(record.user_rule.workflow.project_id)
   end
 
   def destroy?
-    credential.admin?
+    return true if credential.admin?
+
+    credential.project_ids.include?(record.user_rule.workflow.project_id)
   end
 end
