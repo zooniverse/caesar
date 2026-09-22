@@ -2,11 +2,37 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :condition_string, label: 'Condition' %>
+    <label class="control-label">Condition</label>
+    <p class="help-block">
+      <a href="https://zooniverse.github.io/caesar/#rules" target="_blank">Caesar Rules documentation</a>
+    </p>
+    <%= f.hidden_field :condition_string, id: 'condition_string_field' %>
+    <div id="caesar-rule-builder" class="crb-container"></div>
   </div>
 
-  <div class="form-actions">
+  <div class="form-actions" style="margin-top: 15px;">
     <%= f.button :submit, class: 'btn btn-primary' %>
     <%= link_to 'Back', workflow_path(@workflow, anchor: 'rules'), class: 'btn btn-default' %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var rawCondition = <%= raw (@subject_rule[:condition] || []).to_json %>;
+    var initialRules = (Array.isArray(rawCondition) && rawCondition.length > 0) ? [rawCondition] : [];
+
+    CaesarRuleBuilder.mount(document.getElementById('caesar-rule-builder'), {
+      initialRules: initialRules,
+      onChange: function(rules) {
+        var field = document.getElementById('condition_string_field');
+        if (rules.length === 0) {
+          field.value = '';
+        } else if (rules.length === 1) {
+          field.value = JSON.stringify(rules[0]);
+        } else {
+          field.value = JSON.stringify(['and'].concat(rules));
+        }
+      }
+    });
+  });
+</script>
