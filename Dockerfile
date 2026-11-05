@@ -6,6 +6,7 @@ RUN apt-get update && \
     build-essential \
     libpq-dev \
     nodejs \
+    ca-certificates \
     libjemalloc2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
