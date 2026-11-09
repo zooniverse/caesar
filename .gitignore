@@ -30,3 +30,6 @@
 # ingore rvm gemset files
 .ruby-gemset
 
+# local docker compose overrides
+docker-compose.override.yml
+
