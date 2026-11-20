@@ -26,14 +26,11 @@ jobs:
         ports:
           - 6379:6379
         options: --entrypoint redis-server
-    continue-on-error: true
     strategy:
       matrix:
         gemfile:
           - Gemfile
           - Gemfile.next
-        ruby:
-          - '3.2'
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
 
@@ -47,7 +44,6 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
       - name: Setup test database
